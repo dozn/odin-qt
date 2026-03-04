@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - All error unions MUST use `#shared_nil`
 - Each `.odin` file MUST have `#+vet explicit-allocators` at the top
 - Attributes (`@(<attribute>)`) MUST be on the same line as what they're affecting
+- Attribute key-value pairs MUST NOT have spaces around `=` (e.g., `@(link_prefix="qt_")`, not `@(link_prefix = "qt_")`)
 - Use single-line error checking `if` statements when possible (`if err := some_proc(); err != nil {`)
 - Use `core:os` instead of `core:os/os2`
 - All error names should look like `err_<what_we_were_doing>`, or if it's a type that's returned from a procedure, `Err_<Procedure_Name>`

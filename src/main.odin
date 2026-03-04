@@ -105,11 +105,11 @@ main :: proc() {
 	window := qt.main_window_create(nil)
 	defer qt.widget_destroy(auto_cast window)
 
-	qt.widget_set_title(auto_cast window, "Odin + Qt — Widget Demo")
+	qt.widget_set_window_title(auto_cast window, "Odin + Qt — Widget Demo")
 	qt.widget_resize(auto_cast window, 640, 480)
 
 	// Menu bar
-	menu_bar := qt.main_window_get_menu_bar(window)
+	menu_bar := qt.main_window_menu_bar(window)
 	file_menu := qt.menu_bar_add_menu(menu_bar, "&File")
 	_ = qt.menu_add_action(file_menu, "&Open")
 	_ = qt.menu_add_action(file_menu, "&Save")
