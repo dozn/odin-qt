@@ -52,6 +52,22 @@
 #include <QStringList>
 #include <QHeaderView>
 #include <QScrollBar>
+#include <QPixmap>
+#include <QIcon>
+#include <QShortcut>
+#include <QDialogButtonBox>
+#include <QToolButton>
+#include <QButtonGroup>
+#include <QCalendarWidget>
+#include <QDateEdit>
+#include <QTimeEdit>
+#include <QDateTimeEdit>
+#include <QDial>
+#include <QProgressDialog>
+#include <QTextBrowser>
+#include <QSystemTrayIcon>
+#include <QUrl>
+#include <QAbstractButton>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -1644,6 +1660,508 @@ void qt_clipboard_set_text(const char *text) {
     QApplication::clipboard()->setText(QString::fromUtf8(text));
 }
 
+/* ── QPixmap ────────────────────────────────────────────────────────── */
+
+void *qt_pixmap_create_from_file(const char *file_path) {
+    auto *pm = new QPixmap(QString::fromUtf8(file_path));
+    return static_cast<void *>(pm);
+}
+
+void qt_pixmap_destroy(void *pixmap) {
+    delete static_cast<QPixmap *>(pixmap);
+}
+
+int qt_pixmap_get_width(void *pixmap) {
+    return static_cast<QPixmap *>(pixmap)->width();
+}
+
+int qt_pixmap_get_height(void *pixmap) {
+    return static_cast<QPixmap *>(pixmap)->height();
+}
+
+int qt_pixmap_is_null(void *pixmap) {
+    return static_cast<QPixmap *>(pixmap)->isNull() ? 1 : 0;
+}
+
+/* ── QIcon ──────────────────────────────────────────────────────────── */
+
+void *qt_icon_create(void) {
+    return static_cast<void *>(new QIcon());
+}
+
+void *qt_icon_create_from_file(const char *file_path) {
+    return static_cast<void *>(new QIcon(QString::fromUtf8(file_path)));
+}
+
+void *qt_icon_create_from_pixmap(void *pixmap) {
+    return static_cast<void *>(new QIcon(*static_cast<QPixmap *>(pixmap)));
+}
+
+void qt_icon_destroy(void *icon) {
+    delete static_cast<QIcon *>(icon);
+}
+
+int qt_icon_is_null(void *icon) {
+    return static_cast<QIcon *>(icon)->isNull() ? 1 : 0;
+}
+
+void qt_push_button_set_icon(void *button, void *icon) {
+    static_cast<QPushButton *>(button)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_action_set_icon(void *action, void *icon) {
+    static_cast<QAction *>(action)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_widget_set_window_icon(void *widget, void *icon) {
+    static_cast<QWidget *>(widget)->setWindowIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_tab_widget_set_tab_icon(void *tab_widget, int index, void *icon) {
+    static_cast<QTabWidget *>(tab_widget)->setTabIcon(index, *static_cast<QIcon *>(icon));
+}
+
+void qt_label_set_pixmap(void *label, void *pixmap) {
+    static_cast<QLabel *>(label)->setPixmap(*static_cast<QPixmap *>(pixmap));
+}
+
+/* ── QShortcut ──────────────────────────────────────────────────────── */
+
+void *qt_shortcut_create(void *parent, const char *key_sequence) {
+    return static_cast<void *>(new QShortcut(
+        QKeySequence(QString::fromUtf8(key_sequence)),
+        static_cast<QWidget *>(parent)
+    ));
+}
+
+void qt_shortcut_destroy(void *shortcut) {
+    delete static_cast<QShortcut *>(shortcut);
+}
+
+void qt_shortcut_set_key(void *shortcut, const char *key_sequence) {
+    static_cast<QShortcut *>(shortcut)->setKey(QKeySequence(QString::fromUtf8(key_sequence)));
+}
+
+void qt_shortcut_set_enabled(void *shortcut, int is_enabled) {
+    static_cast<QShortcut *>(shortcut)->setEnabled(is_enabled != 0);
+}
+
+/* ── QDialogButtonBox ───────────────────────────────────────────────── */
+
+void *qt_dialog_button_box_create(void *parent) {
+    return static_cast<void *>(new QDialogButtonBox(static_cast<QWidget *>(parent)));
+}
+
+void *qt_dialog_button_box_create_with_buttons(int buttons, void *parent) {
+    return static_cast<void *>(new QDialogButtonBox(
+        static_cast<QDialogButtonBox::StandardButtons>(buttons),
+        static_cast<QWidget *>(parent)
+    ));
+}
+
+void *qt_dialog_button_box_add_button(void *button_box, int button) {
+    return static_cast<void *>(
+        static_cast<QDialogButtonBox *>(button_box)->addButton(
+            static_cast<QDialogButtonBox::StandardButton>(button)
+        )
+    );
+}
+
+void qt_dialog_button_box_set_orientation(void *button_box, int orientation) {
+    static_cast<QDialogButtonBox *>(button_box)->setOrientation(
+        static_cast<Qt::Orientation>(orientation)
+    );
+}
+
+/* ── QToolButton ────────────────────────────────────────────────────── */
+
+void *qt_tool_button_create(void *parent) {
+    return static_cast<void *>(new QToolButton(static_cast<QWidget *>(parent)));
+}
+
+void qt_tool_button_set_text(void *button, const char *text) {
+    static_cast<QToolButton *>(button)->setText(QString::fromUtf8(text));
+}
+
+void qt_tool_button_set_icon(void *button, void *icon) {
+    static_cast<QToolButton *>(button)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_tool_button_set_popup_mode(void *button, int mode) {
+    static_cast<QToolButton *>(button)->setPopupMode(
+        static_cast<QToolButton::ToolButtonPopupMode>(mode)
+    );
+}
+
+void qt_tool_button_set_menu(void *button, void *menu) {
+    static_cast<QToolButton *>(button)->setMenu(static_cast<QMenu *>(menu));
+}
+
+void qt_tool_button_set_default_action(void *button, void *action) {
+    static_cast<QToolButton *>(button)->setDefaultAction(static_cast<QAction *>(action));
+}
+
+void qt_tool_button_set_auto_raise(void *button, int is_auto_raise) {
+    static_cast<QToolButton *>(button)->setAutoRaise(is_auto_raise != 0);
+}
+
+void qt_tool_button_set_tool_button_style(void *button, int style) {
+    static_cast<QToolButton *>(button)->setToolButtonStyle(
+        static_cast<Qt::ToolButtonStyle>(style)
+    );
+}
+
+/* ── QButtonGroup ───────────────────────────────────────────────────── */
+
+void *qt_button_group_create(void *parent) {
+    return static_cast<void *>(new QButtonGroup(static_cast<QObject *>(parent)));
+}
+
+void qt_button_group_destroy(void *group) {
+    delete static_cast<QButtonGroup *>(group);
+}
+
+void qt_button_group_add_button(void *group, void *button, int id) {
+    static_cast<QButtonGroup *>(group)->addButton(
+        static_cast<QAbstractButton *>(button), id
+    );
+}
+
+void qt_button_group_remove_button(void *group, void *button) {
+    static_cast<QButtonGroup *>(group)->removeButton(
+        static_cast<QAbstractButton *>(button)
+    );
+}
+
+void qt_button_group_set_exclusive(void *group, int is_exclusive) {
+    static_cast<QButtonGroup *>(group)->setExclusive(is_exclusive != 0);
+}
+
+int qt_button_group_get_checked_id(void *group) {
+    return static_cast<QButtonGroup *>(group)->checkedId();
+}
+
+/* ── QCalendarWidget ────────────────────────────────────────────────── */
+
+void *qt_calendar_widget_create(void *parent) {
+    return static_cast<void *>(new QCalendarWidget(static_cast<QWidget *>(parent)));
+}
+
+void qt_calendar_widget_get_selected_date(void *calendar, int *year, int *month, int *day) {
+    QDate date = static_cast<QCalendarWidget *>(calendar)->selectedDate();
+    *year = date.year();
+    *month = date.month();
+    *day = date.day();
+}
+
+void qt_calendar_widget_set_selected_date(void *calendar, int year, int month, int day) {
+    static_cast<QCalendarWidget *>(calendar)->setSelectedDate(QDate(year, month, day));
+}
+
+void qt_calendar_widget_set_minimum_date(void *calendar, int year, int month, int day) {
+    static_cast<QCalendarWidget *>(calendar)->setMinimumDate(QDate(year, month, day));
+}
+
+void qt_calendar_widget_set_maximum_date(void *calendar, int year, int month, int day) {
+    static_cast<QCalendarWidget *>(calendar)->setMaximumDate(QDate(year, month, day));
+}
+
+void qt_calendar_widget_set_grid_visible(void *calendar, int is_visible) {
+    static_cast<QCalendarWidget *>(calendar)->setGridVisible(is_visible != 0);
+}
+
+/* ── QDateEdit ──────────────────────────────────────────────────────── */
+
+void *qt_date_edit_create(void *parent) {
+    return static_cast<void *>(new QDateEdit(static_cast<QWidget *>(parent)));
+}
+
+void qt_date_edit_get_date(void *date_edit, int *year, int *month, int *day) {
+    QDate date = static_cast<QDateEdit *>(date_edit)->date();
+    *year = date.year();
+    *month = date.month();
+    *day = date.day();
+}
+
+void qt_date_edit_set_date(void *date_edit, int year, int month, int day) {
+    static_cast<QDateEdit *>(date_edit)->setDate(QDate(year, month, day));
+}
+
+void qt_date_edit_set_minimum_date(void *date_edit, int year, int month, int day) {
+    static_cast<QDateEdit *>(date_edit)->setMinimumDate(QDate(year, month, day));
+}
+
+void qt_date_edit_set_maximum_date(void *date_edit, int year, int month, int day) {
+    static_cast<QDateEdit *>(date_edit)->setMaximumDate(QDate(year, month, day));
+}
+
+void qt_date_edit_set_display_format(void *date_edit, const char *format) {
+    static_cast<QDateEdit *>(date_edit)->setDisplayFormat(QString::fromUtf8(format));
+}
+
+void qt_date_edit_set_calendar_popup(void *date_edit, int is_enabled) {
+    static_cast<QDateEdit *>(date_edit)->setCalendarPopup(is_enabled != 0);
+}
+
+/* ── QTimeEdit ──────────────────────────────────────────────────────── */
+
+void *qt_time_edit_create(void *parent) {
+    return static_cast<void *>(new QTimeEdit(static_cast<QWidget *>(parent)));
+}
+
+void qt_time_edit_get_time(void *time_edit, int *hour, int *minute, int *second) {
+    QTime time = static_cast<QTimeEdit *>(time_edit)->time();
+    *hour = time.hour();
+    *minute = time.minute();
+    *second = time.second();
+}
+
+void qt_time_edit_set_time(void *time_edit, int hour, int minute, int second) {
+    static_cast<QTimeEdit *>(time_edit)->setTime(QTime(hour, minute, second));
+}
+
+void qt_time_edit_set_display_format(void *time_edit, const char *format) {
+    static_cast<QTimeEdit *>(time_edit)->setDisplayFormat(QString::fromUtf8(format));
+}
+
+/* ── QDateTimeEdit ──────────────────────────────────────────────────── */
+
+void *qt_date_time_edit_create(void *parent) {
+    return static_cast<void *>(new QDateTimeEdit(static_cast<QWidget *>(parent)));
+}
+
+void qt_date_time_edit_get_date_time(void *dt_edit, int *year, int *month, int *day,
+                                     int *hour, int *minute, int *second) {
+    QDateTime dt = static_cast<QDateTimeEdit *>(dt_edit)->dateTime();
+    QDate date = dt.date();
+    QTime time = dt.time();
+    *year = date.year();
+    *month = date.month();
+    *day = date.day();
+    *hour = time.hour();
+    *minute = time.minute();
+    *second = time.second();
+}
+
+void qt_date_time_edit_set_date_time(void *dt_edit, int year, int month, int day,
+                                     int hour, int minute, int second) {
+    static_cast<QDateTimeEdit *>(dt_edit)->setDateTime(
+        QDateTime(QDate(year, month, day), QTime(hour, minute, second))
+    );
+}
+
+void qt_date_time_edit_set_display_format(void *dt_edit, const char *format) {
+    static_cast<QDateTimeEdit *>(dt_edit)->setDisplayFormat(QString::fromUtf8(format));
+}
+
+void qt_date_time_edit_set_calendar_popup(void *dt_edit, int is_enabled) {
+    static_cast<QDateTimeEdit *>(dt_edit)->setCalendarPopup(is_enabled != 0);
+}
+
+/* ── QDial ──────────────────────────────────────────────────────────── */
+
+void *qt_dial_create(void *parent) {
+    return static_cast<void *>(new QDial(static_cast<QWidget *>(parent)));
+}
+
+void qt_dial_set_range(void *dial, int min_val, int max_val) {
+    static_cast<QDial *>(dial)->setRange(min_val, max_val);
+}
+
+int qt_dial_get_value(void *dial) {
+    return static_cast<QDial *>(dial)->value();
+}
+
+void qt_dial_set_value(void *dial, int value) {
+    static_cast<QDial *>(dial)->setValue(value);
+}
+
+void qt_dial_set_notch_target(void *dial, double target) {
+    static_cast<QDial *>(dial)->setNotchTarget(target);
+}
+
+void qt_dial_set_notches_visible(void *dial, int is_visible) {
+    static_cast<QDial *>(dial)->setNotchesVisible(is_visible != 0);
+}
+
+void qt_dial_set_wrapping(void *dial, int is_wrapping) {
+    static_cast<QDial *>(dial)->setWrapping(is_wrapping != 0);
+}
+
+void qt_dial_set_single_step(void *dial, int step) {
+    static_cast<QDial *>(dial)->setSingleStep(step);
+}
+
+/* ── QProgressDialog ────────────────────────────────────────────────── */
+
+void *qt_progress_dialog_create(void *parent, const char *label_text,
+                                const char *cancel_button_text, int minimum, int maximum) {
+    return static_cast<void *>(new QProgressDialog(
+        QString::fromUtf8(label_text),
+        QString::fromUtf8(cancel_button_text),
+        minimum, maximum,
+        static_cast<QWidget *>(parent)
+    ));
+}
+
+void qt_progress_dialog_set_value(void *dialog, int progress) {
+    static_cast<QProgressDialog *>(dialog)->setValue(progress);
+}
+
+int qt_progress_dialog_get_value(void *dialog) {
+    return static_cast<QProgressDialog *>(dialog)->value();
+}
+
+void qt_progress_dialog_set_label_text(void *dialog, const char *text) {
+    static_cast<QProgressDialog *>(dialog)->setLabelText(QString::fromUtf8(text));
+}
+
+void qt_progress_dialog_set_cancel_button_text(void *dialog, const char *text) {
+    static_cast<QProgressDialog *>(dialog)->setCancelButtonText(QString::fromUtf8(text));
+}
+
+void qt_progress_dialog_set_range(void *dialog, int minimum, int maximum) {
+    static_cast<QProgressDialog *>(dialog)->setRange(minimum, maximum);
+}
+
+void qt_progress_dialog_set_minimum_duration(void *dialog, int ms) {
+    static_cast<QProgressDialog *>(dialog)->setMinimumDuration(ms);
+}
+
+void qt_progress_dialog_set_auto_close(void *dialog, int is_auto_close) {
+    static_cast<QProgressDialog *>(dialog)->setAutoClose(is_auto_close != 0);
+}
+
+void qt_progress_dialog_set_auto_reset(void *dialog, int is_auto_reset) {
+    static_cast<QProgressDialog *>(dialog)->setAutoReset(is_auto_reset != 0);
+}
+
+int qt_progress_dialog_was_canceled(void *dialog) {
+    return static_cast<QProgressDialog *>(dialog)->wasCanceled() ? 1 : 0;
+}
+
+void qt_progress_dialog_reset(void *dialog) {
+    static_cast<QProgressDialog *>(dialog)->reset();
+}
+
+/* ── QTextBrowser ───────────────────────────────────────────────────── */
+
+void *qt_text_browser_create(void *parent) {
+    return static_cast<void *>(new QTextBrowser(static_cast<QWidget *>(parent)));
+}
+
+void qt_text_browser_set_html(void *browser, const char *html) {
+    static_cast<QTextBrowser *>(browser)->setHtml(QString::fromUtf8(html));
+}
+
+void qt_text_browser_set_source(void *browser, const char *url) {
+    static_cast<QTextBrowser *>(browser)->setSource(QUrl(QString::fromUtf8(url)));
+}
+
+void qt_text_browser_set_open_external_links(void *browser, int is_open) {
+    static_cast<QTextBrowser *>(browser)->setOpenExternalLinks(is_open != 0);
+}
+
+void qt_text_browser_backward(void *browser) {
+    static_cast<QTextBrowser *>(browser)->backward();
+}
+
+void qt_text_browser_forward(void *browser) {
+    static_cast<QTextBrowser *>(browser)->forward();
+}
+
+void qt_text_browser_home(void *browser) {
+    static_cast<QTextBrowser *>(browser)->home();
+}
+
+/* ── QHeaderView ────────────────────────────────────────────────────── */
+
+void qt_header_view_set_section_resize_mode(void *header, int mode) {
+    static_cast<QHeaderView *>(header)->setSectionResizeMode(
+        static_cast<QHeaderView::ResizeMode>(mode)
+    );
+}
+
+void qt_header_view_set_section_resize_mode_for(void *header, int section, int mode) {
+    static_cast<QHeaderView *>(header)->setSectionResizeMode(
+        section, static_cast<QHeaderView::ResizeMode>(mode)
+    );
+}
+
+void qt_header_view_set_stretch_last_section(void *header, int is_stretch) {
+    static_cast<QHeaderView *>(header)->setStretchLastSection(is_stretch != 0);
+}
+
+void qt_header_view_set_visible(void *header, int is_visible) {
+    static_cast<QHeaderView *>(header)->setVisible(is_visible != 0);
+}
+
+void qt_header_view_set_sort_indicator(void *header, int section, int order) {
+    static_cast<QHeaderView *>(header)->setSortIndicator(
+        section, static_cast<Qt::SortOrder>(order)
+    );
+}
+
+void qt_header_view_set_sort_indicator_shown(void *header, int is_shown) {
+    static_cast<QHeaderView *>(header)->setSortIndicatorShown(is_shown != 0);
+}
+
+void *qt_table_widget_get_horizontal_header(void *table) {
+    return static_cast<void *>(static_cast<QTableWidget *>(table)->horizontalHeader());
+}
+
+void *qt_table_widget_get_vertical_header(void *table) {
+    return static_cast<void *>(static_cast<QTableWidget *>(table)->verticalHeader());
+}
+
+void *qt_tree_widget_get_header(void *tree) {
+    return static_cast<void *>(static_cast<QTreeWidget *>(tree)->header());
+}
+
+/* ── QSystemTrayIcon ────────────────────────────────────────────────── */
+
+void *qt_system_tray_icon_create(void *parent) {
+    return static_cast<void *>(new QSystemTrayIcon(static_cast<QObject *>(parent)));
+}
+
+void qt_system_tray_icon_destroy(void *tray_icon) {
+    delete static_cast<QSystemTrayIcon *>(tray_icon);
+}
+
+void qt_system_tray_icon_set_icon(void *tray_icon, void *icon) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_system_tray_icon_set_tooltip(void *tray_icon, const char *tooltip) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->setToolTip(QString::fromUtf8(tooltip));
+}
+
+void qt_system_tray_icon_set_context_menu(void *tray_icon, void *menu) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->setContextMenu(static_cast<QMenu *>(menu));
+}
+
+void qt_system_tray_icon_show(void *tray_icon) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->show();
+}
+
+void qt_system_tray_icon_hide(void *tray_icon) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->hide();
+}
+
+void qt_system_tray_icon_show_message(void *tray_icon, const char *title, const char *message,
+                                      int icon_type, int timeout_ms) {
+    static_cast<QSystemTrayIcon *>(tray_icon)->showMessage(
+        QString::fromUtf8(title),
+        QString::fromUtf8(message),
+        static_cast<QSystemTrayIcon::MessageIcon>(icon_type),
+        timeout_ms
+    );
+}
+
+int qt_system_tray_icon_is_available(void) {
+    return QSystemTrayIcon::isSystemTrayAvailable() ? 1 : 0;
+}
+
 /* ── String management ──────────────────────────────────────────────── */
 
 void qt_free_string(char *str) {
@@ -2183,6 +2701,107 @@ int qt_dialog_connect_rejected(void *dialog, qt_callback_t callback, void *user_
 int qt_dialog_connect_finished(void *dialog, qt_int_callback_t callback, void *user_data) {
     auto conn = QObject::connect(static_cast<QDialog *>(dialog), &QDialog::finished, [callback, user_data](int result) {
         callback(result, user_data);
+    });
+    return store_connection(conn);
+}
+
+/* New signals for section 4 */
+
+int qt_shortcut_connect_activated(void *shortcut, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QShortcut *>(shortcut), &QShortcut::activated, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_dialog_button_box_connect_accepted(void *button_box, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDialogButtonBox *>(button_box), &QDialogButtonBox::accepted, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_dialog_button_box_connect_rejected(void *button_box, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDialogButtonBox *>(button_box), &QDialogButtonBox::rejected, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_tool_button_connect_clicked(void *button, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QToolButton *>(button), &QToolButton::clicked, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_button_group_connect_id_clicked(void *group, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QButtonGroup *>(group), &QButtonGroup::idClicked, [callback, user_data](int id) {
+        callback(id, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_button_group_connect_id_toggled(void *group, qt_cell_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QButtonGroup *>(group), &QButtonGroup::idToggled, [callback, user_data](int id, bool checked) {
+        callback(id, checked ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_calendar_widget_connect_selection_changed(void *calendar, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QCalendarWidget *>(calendar), &QCalendarWidget::selectionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_date_edit_connect_date_changed(void *date_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDateEdit *>(date_edit), &QDateEdit::dateChanged, [callback, user_data](const QDate &) {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_time_edit_connect_time_changed(void *time_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTimeEdit *>(time_edit), &QTimeEdit::timeChanged, [callback, user_data](const QTime &) {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_date_time_edit_connect_date_time_changed(void *dt_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDateTimeEdit *>(dt_edit), &QDateTimeEdit::dateTimeChanged, [callback, user_data](const QDateTime &) {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_dial_connect_value_changed(void *dial, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDial *>(dial), &QDial::valueChanged, [callback, user_data](int value) {
+        callback(value, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_progress_dialog_connect_canceled(void *dialog, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProgressDialog *>(dialog), &QProgressDialog::canceled, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextBrowser *>(browser), &QTextBrowser::anchorClicked, [callback, user_data](const QUrl &url) {
+        QByteArray utf8 = url.toString().toUtf8();
+        callback(utf8.constData(), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSystemTrayIcon *>(tray_icon), &QSystemTrayIcon::activated, [callback, user_data](QSystemTrayIcon::ActivationReason reason) {
+        callback(static_cast<int>(reason), user_data);
     });
     return store_connection(conn);
 }

@@ -19,7 +19,7 @@
 - [x] QCheckBox: `get_text`, tristate support (`set_tristate`, `is_tristate`, `get_check_state`, `set_check_state`) + `Check_State` enum
 - [x] QFrame: `get_frame_shape`, `get_frame_shadow`, `get_line_width`
 - [x] QGroupBox: `get_title`, `set_flat`/`is_flat`
-- [ ] QPushButton: `set_icon` (deferred to QIcon/QPixmap section)
+- [x] QPushButton: `set_icon` (deferred to QIcon/QPixmap section)
 
 ## 3. Missing Common Operations on Existing Widgets
 - [x] QTabWidget: `remove_tab`, `insert_tab`, `set_tab_enabled`/`is_tab_enabled`, `set_tabs_closable`, `set_movable`, `get_widget`, `index_of`
@@ -54,18 +54,18 @@
 - [x] Signal disconnection mechanism
 
 ## 4. New Widget Types
-- [ ] QIcon / QPixmap (load from file, set on buttons/actions/windows/tabs/labels)
-- [ ] QShortcut (standalone keyboard shortcuts)
-- [ ] QDialogButtonBox (standard OK/Cancel/Apply bars)
-- [ ] QToolButton (toolbar buttons with dropdown menus)
-- [ ] QButtonGroup (logical grouping with ID signals)
-- [ ] QCalendarWidget (date picker)
-- [ ] QDateEdit / QTimeEdit / QDateTimeEdit (date/time input)
-- [ ] QDial (rotary input)
-- [ ] QProgressDialog (modal progress with cancel)
-- [ ] QTextBrowser (read-only rich text with hyperlinks)
-- [ ] QHeaderView (section resize modes, sort indicators)
-- [ ] QSystemTrayIcon (tray icon with context menu)
+- [x] QIcon / QPixmap (load from file, set on buttons/actions/windows/tabs/labels)
+- [x] QShortcut (standalone keyboard shortcuts)
+- [x] QDialogButtonBox (standard OK/Cancel/Apply bars)
+- [x] QToolButton (toolbar buttons with dropdown menus)
+- [x] QButtonGroup (logical grouping with ID signals)
+- [x] QCalendarWidget (date picker)
+- [x] QDateEdit / QTimeEdit / QDateTimeEdit (date/time input)
+- [x] QDial (rotary input)
+- [x] QProgressDialog (modal progress with cancel)
+- [x] QTextBrowser (read-only rich text with hyperlinks)
+- [x] QHeaderView (section resize modes, sort indicators)
+- [x] QSystemTrayIcon (tray icon with context menu)
 
 ## 5. Application & Utility Features
 - [ ] QSettings (persistent app settings)

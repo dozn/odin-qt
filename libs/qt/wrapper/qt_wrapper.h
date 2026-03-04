@@ -462,6 +462,156 @@ int   qt_timer_get_interval(void *timer);
 int   qt_timer_get_remaining_time(void *timer);
 void  qt_timer_single_shot(int interval_ms, qt_callback_t callback, void *user_data);
 
+/* ── QPixmap ────────────────────────────────────────────────────────── */
+
+void *qt_pixmap_create_from_file(const char *file_path);
+void  qt_pixmap_destroy(void *pixmap);
+int   qt_pixmap_get_width(void *pixmap);
+int   qt_pixmap_get_height(void *pixmap);
+int   qt_pixmap_is_null(void *pixmap);
+
+/* ── QIcon ──────────────────────────────────────────────────────────── */
+
+void *qt_icon_create(void);
+void *qt_icon_create_from_file(const char *file_path);
+void *qt_icon_create_from_pixmap(void *pixmap);
+void  qt_icon_destroy(void *icon);
+int   qt_icon_is_null(void *icon);
+
+/* Icon/pixmap setters on existing widgets */
+void  qt_push_button_set_icon(void *button, void *icon);
+void  qt_action_set_icon(void *action, void *icon);
+void  qt_widget_set_window_icon(void *widget, void *icon);
+void  qt_tab_widget_set_tab_icon(void *tab_widget, int index, void *icon);
+void  qt_label_set_pixmap(void *label, void *pixmap);
+
+/* ── QShortcut ──────────────────────────────────────────────────────── */
+
+void *qt_shortcut_create(void *parent, const char *key_sequence);
+void  qt_shortcut_destroy(void *shortcut);
+void  qt_shortcut_set_key(void *shortcut, const char *key_sequence);
+void  qt_shortcut_set_enabled(void *shortcut, int is_enabled);
+
+/* ── QDialogButtonBox ───────────────────────────────────────────────── */
+
+void *qt_dialog_button_box_create(void *parent);
+void *qt_dialog_button_box_create_with_buttons(int buttons, void *parent);
+void *qt_dialog_button_box_add_button(void *button_box, int button);
+void  qt_dialog_button_box_set_orientation(void *button_box, int orientation);
+
+/* ── QToolButton ────────────────────────────────────────────────────── */
+
+void *qt_tool_button_create(void *parent);
+void  qt_tool_button_set_text(void *button, const char *text);
+void  qt_tool_button_set_icon(void *button, void *icon);
+void  qt_tool_button_set_popup_mode(void *button, int mode);
+void  qt_tool_button_set_menu(void *button, void *menu);
+void  qt_tool_button_set_default_action(void *button, void *action);
+void  qt_tool_button_set_auto_raise(void *button, int is_auto_raise);
+void  qt_tool_button_set_tool_button_style(void *button, int style);
+
+/* ── QButtonGroup ───────────────────────────────────────────────────── */
+
+void *qt_button_group_create(void *parent);
+void  qt_button_group_destroy(void *group);
+void  qt_button_group_add_button(void *group, void *button, int id);
+void  qt_button_group_remove_button(void *group, void *button);
+void  qt_button_group_set_exclusive(void *group, int is_exclusive);
+int   qt_button_group_get_checked_id(void *group);
+
+/* ── QCalendarWidget ────────────────────────────────────────────────── */
+
+void *qt_calendar_widget_create(void *parent);
+void  qt_calendar_widget_get_selected_date(void *calendar, int *year, int *month, int *day);
+void  qt_calendar_widget_set_selected_date(void *calendar, int year, int month, int day);
+void  qt_calendar_widget_set_minimum_date(void *calendar, int year, int month, int day);
+void  qt_calendar_widget_set_maximum_date(void *calendar, int year, int month, int day);
+void  qt_calendar_widget_set_grid_visible(void *calendar, int is_visible);
+
+/* ── QDateEdit ──────────────────────────────────────────────────────── */
+
+void *qt_date_edit_create(void *parent);
+void  qt_date_edit_get_date(void *date_edit, int *year, int *month, int *day);
+void  qt_date_edit_set_date(void *date_edit, int year, int month, int day);
+void  qt_date_edit_set_minimum_date(void *date_edit, int year, int month, int day);
+void  qt_date_edit_set_maximum_date(void *date_edit, int year, int month, int day);
+void  qt_date_edit_set_display_format(void *date_edit, const char *format);
+void  qt_date_edit_set_calendar_popup(void *date_edit, int is_enabled);
+
+/* ── QTimeEdit ──────────────────────────────────────────────────────── */
+
+void *qt_time_edit_create(void *parent);
+void  qt_time_edit_get_time(void *time_edit, int *hour, int *minute, int *second);
+void  qt_time_edit_set_time(void *time_edit, int hour, int minute, int second);
+void  qt_time_edit_set_display_format(void *time_edit, const char *format);
+
+/* ── QDateTimeEdit ──────────────────────────────────────────────────── */
+
+void *qt_date_time_edit_create(void *parent);
+void  qt_date_time_edit_get_date_time(void *dt_edit, int *year, int *month, int *day, int *hour, int *minute, int *second);
+void  qt_date_time_edit_set_date_time(void *dt_edit, int year, int month, int day, int hour, int minute, int second);
+void  qt_date_time_edit_set_display_format(void *dt_edit, const char *format);
+void  qt_date_time_edit_set_calendar_popup(void *dt_edit, int is_enabled);
+
+/* ── QDial ──────────────────────────────────────────────────────────── */
+
+void *qt_dial_create(void *parent);
+void  qt_dial_set_range(void *dial, int min_val, int max_val);
+int   qt_dial_get_value(void *dial);
+void  qt_dial_set_value(void *dial, int value);
+void  qt_dial_set_notch_target(void *dial, double target);
+void  qt_dial_set_notches_visible(void *dial, int is_visible);
+void  qt_dial_set_wrapping(void *dial, int is_wrapping);
+void  qt_dial_set_single_step(void *dial, int step);
+
+/* ── QProgressDialog ────────────────────────────────────────────────── */
+
+void *qt_progress_dialog_create(void *parent, const char *label_text, const char *cancel_button_text, int minimum, int maximum);
+void  qt_progress_dialog_set_value(void *dialog, int progress);
+int   qt_progress_dialog_get_value(void *dialog);
+void  qt_progress_dialog_set_label_text(void *dialog, const char *text);
+void  qt_progress_dialog_set_cancel_button_text(void *dialog, const char *text);
+void  qt_progress_dialog_set_range(void *dialog, int minimum, int maximum);
+void  qt_progress_dialog_set_minimum_duration(void *dialog, int ms);
+void  qt_progress_dialog_set_auto_close(void *dialog, int is_auto_close);
+void  qt_progress_dialog_set_auto_reset(void *dialog, int is_auto_reset);
+int   qt_progress_dialog_was_canceled(void *dialog);
+void  qt_progress_dialog_reset(void *dialog);
+
+/* ── QTextBrowser ───────────────────────────────────────────────────── */
+
+void *qt_text_browser_create(void *parent);
+void  qt_text_browser_set_html(void *browser, const char *html);
+void  qt_text_browser_set_source(void *browser, const char *url);
+void  qt_text_browser_set_open_external_links(void *browser, int is_open);
+void  qt_text_browser_backward(void *browser);
+void  qt_text_browser_forward(void *browser);
+void  qt_text_browser_home(void *browser);
+
+/* ── QHeaderView ────────────────────────────────────────────────────── */
+
+void  qt_header_view_set_section_resize_mode(void *header, int mode);
+void  qt_header_view_set_section_resize_mode_for(void *header, int section, int mode);
+void  qt_header_view_set_stretch_last_section(void *header, int is_stretch);
+void  qt_header_view_set_visible(void *header, int is_visible);
+void  qt_header_view_set_sort_indicator(void *header, int section, int order);
+void  qt_header_view_set_sort_indicator_shown(void *header, int is_shown);
+void *qt_table_widget_get_horizontal_header(void *table);
+void *qt_table_widget_get_vertical_header(void *table);
+void *qt_tree_widget_get_header(void *tree);
+
+/* ── QSystemTrayIcon ────────────────────────────────────────────────── */
+
+void *qt_system_tray_icon_create(void *parent);
+void  qt_system_tray_icon_destroy(void *tray_icon);
+void  qt_system_tray_icon_set_icon(void *tray_icon, void *icon);
+void  qt_system_tray_icon_set_tooltip(void *tray_icon, const char *tooltip);
+void  qt_system_tray_icon_set_context_menu(void *tray_icon, void *menu);
+void  qt_system_tray_icon_show(void *tray_icon);
+void  qt_system_tray_icon_hide(void *tray_icon);
+void  qt_system_tray_icon_show_message(void *tray_icon, const char *title, const char *message, int icon_type, int timeout_ms);
+int   qt_system_tray_icon_is_available(void);
+
 /* ── Clipboard ──────────────────────────────────────────────────────── */
 
 char *qt_clipboard_get_text(void);
@@ -557,6 +707,22 @@ int qt_dock_widget_connect_visibility_changed(void *dock, qt_int_callback_t call
 int qt_dialog_connect_accepted(void *dialog, qt_callback_t callback, void *user_data);
 int qt_dialog_connect_rejected(void *dialog, qt_callback_t callback, void *user_data);
 int qt_dialog_connect_finished(void *dialog, qt_int_callback_t callback, void *user_data);
+
+/* New signals for section 4 */
+int qt_shortcut_connect_activated(void *shortcut, qt_callback_t callback, void *user_data);
+int qt_dialog_button_box_connect_accepted(void *button_box, qt_callback_t callback, void *user_data);
+int qt_dialog_button_box_connect_rejected(void *button_box, qt_callback_t callback, void *user_data);
+int qt_tool_button_connect_clicked(void *button, qt_callback_t callback, void *user_data);
+int qt_button_group_connect_id_clicked(void *group, qt_int_callback_t callback, void *user_data);
+int qt_button_group_connect_id_toggled(void *group, qt_cell_callback_t callback, void *user_data);
+int qt_calendar_widget_connect_selection_changed(void *calendar, qt_callback_t callback, void *user_data);
+int qt_date_edit_connect_date_changed(void *date_edit, qt_callback_t callback, void *user_data);
+int qt_time_edit_connect_time_changed(void *time_edit, qt_callback_t callback, void *user_data);
+int qt_date_time_edit_connect_date_time_changed(void *dt_edit, qt_callback_t callback, void *user_data);
+int qt_dial_connect_value_changed(void *dial, qt_int_callback_t callback, void *user_data);
+int qt_progress_dialog_connect_canceled(void *dialog, qt_callback_t callback, void *user_data);
+int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t callback, void *user_data);
+int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data);
 
 /* ── Signal disconnection ───────────────────────────────────────────── */
 

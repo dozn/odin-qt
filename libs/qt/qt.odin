@@ -91,6 +91,21 @@ Dialog :: distinct rawptr
 Dock_Widget :: distinct rawptr
 Status_Bar :: distinct rawptr
 Timer :: distinct rawptr
+Pixmap :: distinct rawptr
+Icon :: distinct rawptr
+Shortcut :: distinct rawptr
+Dialog_Button_Box :: distinct rawptr
+Tool_Button :: distinct rawptr
+Button_Group :: distinct rawptr
+Calendar_Widget :: distinct rawptr
+Date_Edit :: distinct rawptr
+Time_Edit :: distinct rawptr
+Date_Time_Edit :: distinct rawptr
+Dial :: distinct rawptr
+Progress_Dialog :: distinct rawptr
+Text_Browser :: distinct rawptr
+Header_View :: distinct rawptr
+System_Tray_Icon :: distinct rawptr
 Connection_Id :: distinct c.int
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
@@ -291,6 +306,34 @@ Dock_Widget_Feature :: enum c.int {
 	Vertical_Title_Bar = 0x08,
 	No_Features = 0x00,
 	All_Features = 0x07,
+}
+
+Tool_Button_Popup_Mode :: enum c.int {
+	Delayed_Popup = 0,
+	Menu_Button_Popup = 1,
+	Instant_Popup = 2,
+}
+
+Header_Resize_Mode :: enum c.int {
+	Interactive = 0,
+	Stretch = 1,
+	Fixed = 2,
+	Resize_To_Contents = 3,
+}
+
+System_Tray_Message_Icon :: enum c.int {
+	No_Icon = 0,
+	Information = 1,
+	Warning = 2,
+	Critical = 3,
+}
+
+System_Tray_Activation_Reason :: enum c.int {
+	Unknown = 0,
+	Context = 1,
+	Double_Click = 2,
+	Trigger = 3,
+	Middle_Click = 4,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -746,6 +789,157 @@ foreign qt_lib {
 	@(require_results) timer_get_remaining_time :: proc(timer: Timer) -> c.int ---
 	timer_single_shot :: proc(interval_ms: c.int, callback: Callback, user_data: rawptr) ---
 
+	/* QPixmap */
+
+	@(require_results) pixmap_create_from_file :: proc(file_path: cstring) -> Pixmap ---
+	pixmap_destroy :: proc(pixmap: Pixmap) ---
+	@(require_results) pixmap_get_width :: proc(pixmap: Pixmap) -> c.int ---
+	@(require_results) pixmap_get_height :: proc(pixmap: Pixmap) -> c.int ---
+	@(require_results) pixmap_is_null :: proc(pixmap: Pixmap) -> c.int ---
+
+	/* QIcon */
+
+	@(require_results) icon_create :: proc() -> Icon ---
+	@(require_results) icon_create_from_file :: proc(file_path: cstring) -> Icon ---
+	@(require_results) icon_create_from_pixmap :: proc(pixmap: Pixmap) -> Icon ---
+	icon_destroy :: proc(icon: Icon) ---
+	@(require_results) icon_is_null :: proc(icon: Icon) -> c.int ---
+
+	/* Icon/pixmap setters on existing widgets */
+
+	push_button_set_icon :: proc(button: Push_Button, icon: Icon) ---
+	action_set_icon :: proc(action: Action, icon: Icon) ---
+	widget_set_window_icon :: proc(widget: Widget, icon: Icon) ---
+	tab_widget_set_tab_icon :: proc(tab_widget: Tab_Widget, index: c.int, icon: Icon) ---
+	label_set_pixmap :: proc(label: Label, pixmap: Pixmap) ---
+
+	/* QShortcut */
+
+	@(require_results) shortcut_create :: proc(parent: Widget, key_sequence: cstring) -> Shortcut ---
+	shortcut_destroy :: proc(shortcut: Shortcut) ---
+	shortcut_set_key :: proc(shortcut: Shortcut, key_sequence: cstring) ---
+	shortcut_set_enabled :: proc(shortcut: Shortcut, is_enabled: c.int) ---
+
+	/* QDialogButtonBox */
+
+	@(require_results) dialog_button_box_create :: proc(parent: Widget) -> Dialog_Button_Box ---
+	@(require_results) dialog_button_box_create_with_buttons :: proc(buttons: c.int, parent: Widget) -> Dialog_Button_Box ---
+	@(require_results) dialog_button_box_add_button :: proc(button_box: Dialog_Button_Box, button: Standard_Button) -> Push_Button ---
+	dialog_button_box_set_orientation :: proc(button_box: Dialog_Button_Box, orientation: Orientation) ---
+
+	/* QToolButton */
+
+	@(require_results) tool_button_create :: proc(parent: Widget) -> Tool_Button ---
+	tool_button_set_text :: proc(tool_button: Tool_Button, text: cstring) ---
+	tool_button_set_icon :: proc(tool_button: Tool_Button, icon: Icon) ---
+	tool_button_set_popup_mode :: proc(tool_button: Tool_Button, mode: Tool_Button_Popup_Mode) ---
+	tool_button_set_menu :: proc(tool_button: Tool_Button, menu: Menu) ---
+	tool_button_set_default_action :: proc(tool_button: Tool_Button, action: Action) ---
+	tool_button_set_auto_raise :: proc(tool_button: Tool_Button, is_auto_raise: c.int) ---
+	tool_button_set_tool_button_style :: proc(tool_button: Tool_Button, style: Tool_Button_Style) ---
+
+	/* QButtonGroup */
+
+	@(require_results) button_group_create :: proc(parent: Widget) -> Button_Group ---
+	button_group_destroy :: proc(button_group: Button_Group) ---
+	button_group_add_button :: proc(button_group: Button_Group, button: Widget, id: c.int) ---
+	button_group_remove_button :: proc(button_group: Button_Group, button: Widget) ---
+	button_group_set_exclusive :: proc(button_group: Button_Group, is_exclusive: c.int) ---
+	@(require_results) button_group_get_checked_id :: proc(button_group: Button_Group) -> c.int ---
+
+	/* QCalendarWidget */
+
+	@(require_results) calendar_widget_create :: proc(parent: Widget) -> Calendar_Widget ---
+	calendar_widget_get_selected_date :: proc(calendar: Calendar_Widget, year: ^c.int, month: ^c.int, day: ^c.int) ---
+	calendar_widget_set_selected_date :: proc(calendar: Calendar_Widget, year: c.int, month: c.int, day: c.int) ---
+	calendar_widget_set_minimum_date :: proc(calendar: Calendar_Widget, year: c.int, month: c.int, day: c.int) ---
+	calendar_widget_set_maximum_date :: proc(calendar: Calendar_Widget, year: c.int, month: c.int, day: c.int) ---
+	calendar_widget_set_grid_visible :: proc(calendar: Calendar_Widget, is_visible: c.int) ---
+
+	/* QDateEdit */
+
+	@(require_results) date_edit_create :: proc(parent: Widget) -> Date_Edit ---
+	date_edit_get_date :: proc(date_edit: Date_Edit, year: ^c.int, month: ^c.int, day: ^c.int) ---
+	date_edit_set_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) ---
+	date_edit_set_minimum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) ---
+	date_edit_set_maximum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) ---
+	date_edit_set_display_format :: proc(date_edit: Date_Edit, format: cstring) ---
+	date_edit_set_calendar_popup :: proc(date_edit: Date_Edit, is_enabled: c.int) ---
+
+	/* QTimeEdit */
+
+	@(require_results) time_edit_create :: proc(parent: Widget) -> Time_Edit ---
+	time_edit_get_time :: proc(time_edit: Time_Edit, hour: ^c.int, minute: ^c.int, second: ^c.int) ---
+	time_edit_set_time :: proc(time_edit: Time_Edit, hour: c.int, minute: c.int, second: c.int) ---
+	time_edit_set_display_format :: proc(time_edit: Time_Edit, format: cstring) ---
+
+	/* QDateTimeEdit */
+
+	@(require_results) date_time_edit_create :: proc(parent: Widget) -> Date_Time_Edit ---
+	date_time_edit_get_date_time :: proc(date_time_edit: Date_Time_Edit, year: ^c.int, month: ^c.int, day: ^c.int, hour: ^c.int, minute: ^c.int, second: ^c.int) ---
+	date_time_edit_set_date_time :: proc(date_time_edit: Date_Time_Edit, year: c.int, month: c.int, day: c.int, hour: c.int, minute: c.int, second: c.int) ---
+	date_time_edit_set_display_format :: proc(date_time_edit: Date_Time_Edit, format: cstring) ---
+	date_time_edit_set_calendar_popup :: proc(date_time_edit: Date_Time_Edit, is_enabled: c.int) ---
+
+	/* QDial */
+
+	@(require_results) dial_create :: proc(parent: Widget) -> Dial ---
+	dial_set_range :: proc(dial: Dial, min_val: c.int, max_val: c.int) ---
+	@(require_results) dial_get_value :: proc(dial: Dial) -> c.int ---
+	dial_set_value :: proc(dial: Dial, value: c.int) ---
+	dial_set_notch_target :: proc(dial: Dial, target: c.double) ---
+	dial_set_notches_visible :: proc(dial: Dial, is_visible: c.int) ---
+	dial_set_wrapping :: proc(dial: Dial, is_wrapping: c.int) ---
+	dial_set_single_step :: proc(dial: Dial, step: c.int) ---
+
+	/* QProgressDialog */
+
+	@(require_results) progress_dialog_create :: proc(parent: Widget, label_text: cstring, cancel_button_text: cstring, minimum: c.int, maximum: c.int) -> Progress_Dialog ---
+	progress_dialog_set_value :: proc(progress_dialog: Progress_Dialog, progress: c.int) ---
+	@(require_results) progress_dialog_get_value :: proc(progress_dialog: Progress_Dialog) -> c.int ---
+	progress_dialog_set_label_text :: proc(progress_dialog: Progress_Dialog, text: cstring) ---
+	progress_dialog_set_cancel_button_text :: proc(progress_dialog: Progress_Dialog, text: cstring) ---
+	progress_dialog_set_range :: proc(progress_dialog: Progress_Dialog, minimum: c.int, maximum: c.int) ---
+	progress_dialog_set_minimum_duration :: proc(progress_dialog: Progress_Dialog, ms: c.int) ---
+	progress_dialog_set_auto_close :: proc(progress_dialog: Progress_Dialog, is_auto_close: c.int) ---
+	progress_dialog_set_auto_reset :: proc(progress_dialog: Progress_Dialog, is_auto_reset: c.int) ---
+	@(require_results) progress_dialog_was_canceled :: proc(progress_dialog: Progress_Dialog) -> c.int ---
+	progress_dialog_reset :: proc(progress_dialog: Progress_Dialog) ---
+
+	/* QTextBrowser */
+
+	@(require_results) text_browser_create :: proc(parent: Widget) -> Text_Browser ---
+	text_browser_set_html :: proc(text_browser: Text_Browser, html: cstring) ---
+	text_browser_set_source :: proc(text_browser: Text_Browser, url: cstring) ---
+	text_browser_set_open_external_links :: proc(text_browser: Text_Browser, is_open: c.int) ---
+	text_browser_backward :: proc(text_browser: Text_Browser) ---
+	text_browser_forward :: proc(text_browser: Text_Browser) ---
+	text_browser_home :: proc(text_browser: Text_Browser) ---
+
+	/* QHeaderView */
+
+	header_view_set_section_resize_mode :: proc(header_view: Header_View, mode: Header_Resize_Mode) ---
+	header_view_set_section_resize_mode_for :: proc(header_view: Header_View, section: c.int, mode: Header_Resize_Mode) ---
+	header_view_set_stretch_last_section :: proc(header_view: Header_View, is_stretch: c.int) ---
+	header_view_set_visible :: proc(header_view: Header_View, is_visible: c.int) ---
+	header_view_set_sort_indicator :: proc(header_view: Header_View, section: c.int, order: Sort_Order) ---
+	header_view_set_sort_indicator_shown :: proc(header_view: Header_View, is_shown: c.int) ---
+	@(require_results) table_widget_get_horizontal_header :: proc(table_widget: Table_Widget) -> Header_View ---
+	@(require_results) table_widget_get_vertical_header :: proc(table_widget: Table_Widget) -> Header_View ---
+	@(require_results) tree_widget_get_header :: proc(tree_widget: Tree_Widget) -> Header_View ---
+
+	/* QSystemTrayIcon */
+
+	@(require_results) system_tray_icon_create :: proc(parent: Widget) -> System_Tray_Icon ---
+	system_tray_icon_destroy :: proc(system_tray_icon: System_Tray_Icon) ---
+	system_tray_icon_set_icon :: proc(system_tray_icon: System_Tray_Icon, icon: Icon) ---
+	system_tray_icon_set_tooltip :: proc(system_tray_icon: System_Tray_Icon, tooltip: cstring) ---
+	system_tray_icon_set_context_menu :: proc(system_tray_icon: System_Tray_Icon, menu: Menu) ---
+	system_tray_icon_show :: proc(system_tray_icon: System_Tray_Icon) ---
+	system_tray_icon_hide :: proc(system_tray_icon: System_Tray_Icon) ---
+	system_tray_icon_show_message :: proc(system_tray_icon: System_Tray_Icon, title: cstring, message: cstring, icon_type: System_Tray_Message_Icon, timeout_ms: c.int) ---
+	@(require_results) system_tray_icon_is_available :: proc() -> c.int ---
+
 	/* Clipboard */
 
 	@(require_results) clipboard_get_text :: proc() -> cstring ---
@@ -837,6 +1031,23 @@ foreign qt_lib {
 	dialog_connect_accepted :: proc(dialog: Dialog, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	dialog_connect_rejected :: proc(dialog: Dialog, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	dialog_connect_finished :: proc(dialog: Dialog, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* New signals for section 4 */
+
+	shortcut_connect_activated :: proc(shortcut: Shortcut, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	dialog_button_box_connect_accepted :: proc(button_box: Dialog_Button_Box, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	dialog_button_box_connect_rejected :: proc(button_box: Dialog_Button_Box, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	tool_button_connect_clicked :: proc(tool_button: Tool_Button, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	button_group_connect_id_clicked :: proc(button_group: Button_Group, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	button_group_connect_id_toggled :: proc(button_group: Button_Group, callback: Cell_Callback, user_data: rawptr) -> Connection_Id ---
+	calendar_widget_connect_selection_changed :: proc(calendar: Calendar_Widget, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	date_edit_connect_date_changed :: proc(date_edit: Date_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	time_edit_connect_time_changed :: proc(time_edit: Time_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	date_time_edit_connect_date_time_changed :: proc(date_time_edit: Date_Time_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	dial_connect_value_changed :: proc(dial: Dial, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	progress_dialog_connect_canceled :: proc(progress_dialog: Progress_Dialog, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	text_browser_connect_anchor_clicked :: proc(text_browser: Text_Browser, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	system_tray_icon_connect_activated :: proc(system_tray_icon: System_Tray_Icon, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* Signal disconnection */
 
