@@ -2506,7 +2506,7 @@ build_core_utilities_tab :: proc() -> qt.Widget {
 	return page
 }
 
-build_advanced_models_tab :: proc() -> qt.Widget {
+build_advanced_models_tab :: proc(application: qt.Application) -> qt.Widget {
 	page := qt.widget_create(nil)
 	outer_layout := qt.vbox_layout_create(page)
 	scroll := qt.scroll_area_create(nil)
@@ -2576,26 +2576,19 @@ build_advanced_models_tab :: proc() -> qt.Widget {
 	// QStyle / QStyleFactory
 	style_group := qt.group_box_create(nil, "QStyle / QStyleFactory")
 	style_layout := qt.vbox_layout_create(auto_cast style_group)
-	style_output := qt.label_create(nil, "")
+	style_combo := qt.combo_box_create(nil)
 	{
 		keys_ptr: [^]cstring
 		key_count := qt.style_get_keys(&keys_ptr)
-		buf: [256]u8
-		offset := copy(buf[:], "Available styles: ")
 		for key_idx in 0 ..< key_count {
-			if key_idx > 0 {
-				extra := copy(buf[offset:], ", ")
-				offset += extra
-			}
-			key_text := fmt.bprintf(buf[offset:], "%s", keys_ptr[key_idx])
-			offset += len(key_text)
+			qt.combo_box_add_item(style_combo, keys_ptr[key_idx])
 		}
-		buf[offset] = 0
-		qt.label_set_text(style_output, cstring(raw_data(buf[:])))
 		if key_count > 0 do qt.style_free_keys(keys_ptr, key_count)
 	}
-	qt.label_set_word_wrap(style_output, 1)
-	qt.layout_add_widget(style_layout, auto_cast style_output)
+	_ = qt.combo_box_connect_current_text_changed(style_combo, proc"c"(style_name: cstring, user_data: rawptr) {
+		qt.application_set_style(auto_cast user_data, style_name)
+	}, auto_cast application)
+	qt.layout_add_widget(style_layout, auto_cast style_combo)
 	qt.layout_add_widget(layout, auto_cast style_group)
 
 	// QTimeLine
@@ -2794,7 +2787,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_qtgui_objects_tab(), "QtGui Objects")
 	_ = qt.tab_widget_add_tab(tabs, build_file_data_tab(), "File && Data")
 	_ = qt.tab_widget_add_tab(tabs, build_core_utilities_tab(), "Core Utilities")
-	_ = qt.tab_widget_add_tab(tabs, build_advanced_models_tab(), "Adv. Models")
+	_ = qt.tab_widget_add_tab(tabs, build_advanced_models_tab(application), "Adv. Models")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
