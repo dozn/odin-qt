@@ -14,6 +14,10 @@ slider_sync_value :: proc "c" (value: c.int, user_data: rawptr) {
 	qt.slider_set_value(auto_cast user_data, value)
 }
 
+button_sync_enabled :: proc "c" (value: c.int, user_data: rawptr) {
+	qt.widget_set_enabled(auto_cast user_data, value)
+}
+
 progress_bar_advance_value :: proc "c" (user_data: rawptr) {
 	progress: qt.Progress_Bar = auto_cast user_data
 	current_value := qt.progress_bar_get_value(progress)
@@ -71,6 +75,8 @@ main :: proc() {
 	button := qt.push_button_create(nil, "Click Me")
 	qt.layout_add_widget(button_row_layout, auto_cast button)
 	check := qt.check_box_create(nil, "Enable feature")
+	qt.widget_set_enabled(auto_cast button, 0)
+	qt.check_box_connect_toggled(check, button_sync_enabled, auto_cast button)
 	qt.layout_add_widget(button_row_layout, auto_cast check)
 	qt.layout_add_widget(layout, button_row)
 
