@@ -24,6 +24,14 @@
 #include <QToolBar>
 #include <QTabWidget>
 #include <QGroupBox>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QColorDialog>
+#include <QFontDialog>
+#include <QInputDialog>
+#include <QStringList>
+#include <cstdlib>
+#include <cstring>
 
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 Q_IMPORT_PLUGIN(QModernWindowsStylePlugin)
@@ -410,6 +418,184 @@ void *qt_group_box_create(void *parent, const char *title) {
 
 void qt_group_box_set_title(void *group_box, const char *title) {
     static_cast<QGroupBox *>(group_box)->setTitle(QString::fromUtf8(title));
+}
+
+/* ── Dialog helpers ──────────────────────────────────────────────────── */
+
+static char *qstring_to_heap_utf8(const QString &s) {
+    if (s.isEmpty()) return nullptr;
+    QByteArray utf8 = s.toUtf8();
+    char *result = static_cast<char *>(malloc(utf8.size() + 1));
+    memcpy(result, utf8.constData(), utf8.size() + 1);
+    return result;
+}
+
+void qt_dialog_free_string(char *str) {
+    free(str);
+}
+
+/* ── QFileDialog ────────────────────────────────────────────────────── */
+
+char *qt_file_dialog_get_open_file_name(void *parent, const char *caption, const char *dir, const char *filter) {
+    QString result = QFileDialog::getOpenFileName(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(caption),
+        QString::fromUtf8(dir),
+        QString::fromUtf8(filter)
+    );
+    return qstring_to_heap_utf8(result);
+}
+
+char *qt_file_dialog_get_save_file_name(void *parent, const char *caption, const char *dir, const char *filter) {
+    QString result = QFileDialog::getSaveFileName(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(caption),
+        QString::fromUtf8(dir),
+        QString::fromUtf8(filter)
+    );
+    return qstring_to_heap_utf8(result);
+}
+
+char *qt_file_dialog_get_existing_directory(void *parent, const char *caption, const char *dir) {
+    QString result = QFileDialog::getExistingDirectory(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(caption),
+        QString::fromUtf8(dir)
+    );
+    return qstring_to_heap_utf8(result);
+}
+
+/* ── QMessageBox ────────────────────────────────────────────────────── */
+
+int qt_message_box_show_information(void *parent, const char *title, const char *text) {
+    return static_cast<int>(QMessageBox::information(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(text)
+    ));
+}
+
+int qt_message_box_show_warning(void *parent, const char *title, const char *text) {
+    return static_cast<int>(QMessageBox::warning(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(text)
+    ));
+}
+
+int qt_message_box_show_critical(void *parent, const char *title, const char *text) {
+    return static_cast<int>(QMessageBox::critical(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(text)
+    ));
+}
+
+int qt_message_box_show_question(void *parent, const char *title, const char *text) {
+    return static_cast<int>(QMessageBox::question(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(text)
+    ));
+}
+
+/* ── QColorDialog ───────────────────────────────────────────────────── */
+
+int qt_colour_dialog_get_colour(void *parent,
+                                int initial_r, int initial_g, int initial_b, int initial_a,
+                                int *result_r, int *result_g, int *result_b, int *result_a) {
+    QColor initial(initial_r, initial_g, initial_b, initial_a);
+    QColor colour = QColorDialog::getColor(initial, static_cast<QWidget *>(parent),
+                                           QString(), QColorDialog::ShowAlphaChannel);
+    if (!colour.isValid()) return 0;
+    *result_r = colour.red();
+    *result_g = colour.green();
+    *result_b = colour.blue();
+    *result_a = colour.alpha();
+    return 1;
+}
+
+/* ── QFontDialog ────────────────────────────────────────────────────── */
+
+int qt_font_dialog_get_font(void *parent, char *family_buf, int family_buf_size,
+                            int *point_size, int *weight, int *is_italic) {
+    bool ok = false;
+    QFont font = QFontDialog::getFont(&ok, static_cast<QWidget *>(parent));
+    if (!ok) return 0;
+    QByteArray family_utf8 = font.family().toUtf8();
+    int copy_len = qMin(family_utf8.size(), family_buf_size - 1);
+    memcpy(family_buf, family_utf8.constData(), copy_len);
+    family_buf[copy_len] = '\0';
+    *point_size = font.pointSize();
+    *weight = font.weight();
+    *is_italic = font.italic() ? 1 : 0;
+    return 1;
+}
+
+/* ── QInputDialog ───────────────────────────────────────────────────── */
+
+char *qt_input_dialog_get_text(void *parent, const char *title, const char *label,
+                               const char *default_text, int *is_ok) {
+    bool ok = false;
+    QString result = QInputDialog::getText(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(label),
+        QLineEdit::Normal,
+        QString::fromUtf8(default_text),
+        &ok
+    );
+    *is_ok = ok ? 1 : 0;
+    return ok ? qstring_to_heap_utf8(result) : nullptr;
+}
+
+int qt_input_dialog_get_int(void *parent, const char *title, const char *label,
+                            int value, int min_val, int max_val, int step, int *is_ok) {
+    bool ok = false;
+    int result = QInputDialog::getInt(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(label),
+        value, min_val, max_val, step,
+        &ok
+    );
+    *is_ok = ok ? 1 : 0;
+    return result;
+}
+
+double qt_input_dialog_get_double(void *parent, const char *title, const char *label,
+                                  double value, double min_val, double max_val, int decimals, int *is_ok) {
+    bool ok = false;
+    double result = QInputDialog::getDouble(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(label),
+        value, min_val, max_val, decimals,
+        &ok
+    );
+    *is_ok = ok ? 1 : 0;
+    return result;
+}
+
+char *qt_input_dialog_get_item(void *parent, const char *title, const char *label,
+                               const char **items, int items_count, int current,
+                               int is_editable, int *is_ok) {
+    QStringList item_list;
+    for (int i = 0; i < items_count; ++i) {
+        item_list.append(QString::fromUtf8(items[i]));
+    }
+    bool ok = false;
+    QString result = QInputDialog::getItem(
+        static_cast<QWidget *>(parent),
+        QString::fromUtf8(title),
+        QString::fromUtf8(label),
+        item_list,
+        current,
+        is_editable != 0,
+        &ok
+    );
+    *is_ok = ok ? 1 : 0;
+    return ok ? qstring_to_heap_utf8(result) : nullptr;
 }
 
 /* ── Signal connections ──────────────────────────────────────────────── */

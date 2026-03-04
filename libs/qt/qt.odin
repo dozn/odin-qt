@@ -77,6 +77,15 @@ Tool_Bar :: distinct rawptr
 Tab_Widget :: distinct rawptr
 Group_Box :: distinct rawptr
 
+/* ── Colour struct ─────────────────────────────────────────────────── */
+
+Colour :: struct {
+	r: c.int,
+	g: c.int,
+	b: c.int,
+	a: c.int,
+}
+
 /* ── Callback types ────────────────────────────────────────────────── */
 
 Callback :: #type proc "c" (user_data: rawptr)
@@ -105,6 +114,38 @@ Tool_Bar_Area :: enum c.int {
 	Right = 0x2,
 	Top = 0x4,
 	Bottom = 0x8,
+}
+
+Standard_Button :: enum c.int {
+	None = 0x00000000,
+	Ok = 0x00000400,
+	Save = 0x00000800,
+	Open = 0x00002000,
+	Yes = 0x00004000,
+	Yes_To_All = 0x00008000,
+	No = 0x00010000,
+	No_To_All = 0x00020000,
+	Abort = 0x00040000,
+	Retry = 0x00080000,
+	Ignore = 0x00100000,
+	Close = 0x00200000,
+	Cancel = 0x00400000,
+	Discard = 0x00800000,
+	Help = 0x01000000,
+	Apply = 0x02000000,
+	Reset = 0x04000000,
+}
+
+Font_Weight :: enum c.int {
+	Thin = 100,
+	Extra_Light = 200,
+	Light = 300,
+	Normal = 400,
+	Medium = 500,
+	Demi_Bold = 600,
+	Bold = 700,
+	Extra_Bold = 800,
+	Black = 900,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -251,6 +292,38 @@ foreign qt_lib {
 
 	@(link_name = "qt_group_box_create") @(require_results) group_box_create :: proc(parent: Widget, title: cstring) -> Group_Box ---
 	@(link_name = "qt_group_box_set_title") group_box_set_title :: proc(group_box: Group_Box, title: cstring) ---
+
+	/* Dialog helpers */
+
+	@(link_name = "qt_dialog_free_string") dialog_free_string :: proc(str: cstring) ---
+
+	/* QFileDialog */
+
+	@(link_name = "qt_file_dialog_get_open_file_name") @(require_results) file_dialog_get_open_file_name :: proc(parent: Widget, caption: cstring, dir: cstring, filter: cstring) -> cstring ---
+	@(link_name = "qt_file_dialog_get_save_file_name") @(require_results) file_dialog_get_save_file_name :: proc(parent: Widget, caption: cstring, dir: cstring, filter: cstring) -> cstring ---
+	@(link_name = "qt_file_dialog_get_existing_directory") @(require_results) file_dialog_get_existing_directory :: proc(parent: Widget, caption: cstring, dir: cstring) -> cstring ---
+
+	/* QMessageBox */
+
+	@(link_name = "qt_message_box_show_information") @(require_results) message_box_show_information :: proc(parent: Widget, title: cstring, text: cstring) -> Standard_Button ---
+	@(link_name = "qt_message_box_show_warning") @(require_results) message_box_show_warning :: proc(parent: Widget, title: cstring, text: cstring) -> Standard_Button ---
+	@(link_name = "qt_message_box_show_critical") @(require_results) message_box_show_critical :: proc(parent: Widget, title: cstring, text: cstring) -> Standard_Button ---
+	@(link_name = "qt_message_box_show_question") @(require_results) message_box_show_question :: proc(parent: Widget, title: cstring, text: cstring) -> Standard_Button ---
+
+	/* QColorDialog */
+
+	@(link_name = "qt_colour_dialog_get_colour") @(require_results) colour_dialog_get_colour :: proc(parent: Widget, initial_r: c.int, initial_g: c.int, initial_b: c.int, initial_a: c.int, result_r: ^c.int, result_g: ^c.int, result_b: ^c.int, result_a: ^c.int) -> c.int ---
+
+	/* QFontDialog */
+
+	@(link_name = "qt_font_dialog_get_font") @(require_results) font_dialog_get_font :: proc(parent: Widget, family_buf: [^]u8, family_buf_size: c.int, point_size: ^c.int, weight: ^c.int, is_italic: ^c.int) -> c.int ---
+
+	/* QInputDialog */
+
+	@(link_name = "qt_input_dialog_get_text") @(require_results) input_dialog_get_text :: proc(parent: Widget, title: cstring, label: cstring, default_text: cstring, is_ok: ^c.int) -> cstring ---
+	@(link_name = "qt_input_dialog_get_int") @(require_results) input_dialog_get_int :: proc(parent: Widget, title: cstring, label: cstring, value: c.int, min_val: c.int, max_val: c.int, step: c.int, is_ok: ^c.int) -> c.int ---
+	@(link_name = "qt_input_dialog_get_double") @(require_results) input_dialog_get_double :: proc(parent: Widget, title: cstring, label: cstring, value: c.double, min_val: c.double, max_val: c.double, decimals: c.int, is_ok: ^c.int) -> c.double ---
+	@(link_name = "qt_input_dialog_get_item") @(require_results) input_dialog_get_item :: proc(parent: Widget, title: cstring, label: cstring, items: [^]cstring, items_count: c.int, current: c.int, is_editable: c.int, is_ok: ^c.int) -> cstring ---
 
 	/* Signal connections */
 

@@ -18,6 +18,75 @@ button_sync_enabled :: proc "c" (value: c.int, user_data: rawptr) {
 	qt.widget_set_enabled(auto_cast user_data, value)
 }
 
+open_file_dialog_show :: proc "c" (user_data: rawptr) {
+	window: qt.Main_Window = auto_cast user_data
+	file_path := qt.file_dialog_get_open_file_name(auto_cast window, "Open File", "", "All Files (*)")
+	if file_path != nil {
+		qt.main_window_statusbar_show_message(window, file_path, 5000)
+		qt.dialog_free_string(file_path)
+	} else {
+		qt.main_window_statusbar_show_message(window, "File dialog cancelled", 3000)
+	}
+}
+
+question_message_box_show :: proc "c" (user_data: rawptr) {
+	window: qt.Main_Window = auto_cast user_data
+	result := qt.message_box_show_question(auto_cast window, "Question", "Do you like Odin + Qt?")
+	switch result {
+	case .Yes:
+		qt.main_window_statusbar_show_message(window, "You answered: Yes!", 3000)
+	case .No:
+		qt.main_window_statusbar_show_message(window, "You answered: No", 3000)
+	case .None, .Ok, .Save, .Open, .Yes_To_All, .No_To_All,
+		.Abort, .Retry, .Ignore, .Close, .Cancel, .Discard,
+		.Help, .Apply, .Reset:
+		qt.main_window_statusbar_show_message(window, "Dialog dismissed", 3000)
+	}
+}
+
+colour_dialog_show :: proc "c" (user_data: rawptr) {
+	window: qt.Main_Window = auto_cast user_data
+	result_r, result_g, result_b, result_a: c.int
+	is_accepted := qt.colour_dialog_get_colour(
+		auto_cast window,
+		255, 255, 255, 255,
+		&result_r, &result_g, &result_b, &result_a,
+	)
+	if is_accepted != 0 {
+		qt.main_window_statusbar_show_message(window, "Colour selected!", 3000)
+	} else {
+		qt.main_window_statusbar_show_message(window, "Colour dialog cancelled", 3000)
+	}
+}
+
+font_dialog_show :: proc "c" (user_data: rawptr) {
+	window: qt.Main_Window = auto_cast user_data
+	family_buf: [256]u8
+	point_size, weight, is_italic: c.int
+	is_accepted := qt.font_dialog_get_font(
+		auto_cast window,
+		raw_data(family_buf[:]), 256,
+		&point_size, &weight, &is_italic,
+	)
+	if is_accepted != 0 {
+		qt.main_window_statusbar_show_message(window, "Font selected!", 3000)
+	} else {
+		qt.main_window_statusbar_show_message(window, "Font dialog cancelled", 3000)
+	}
+}
+
+text_input_dialog_show :: proc "c" (user_data: rawptr) {
+	window: qt.Main_Window = auto_cast user_data
+	is_ok: c.int
+	text := qt.input_dialog_get_text(auto_cast window, "Input", "Enter your name:", "", &is_ok)
+	if is_ok != 0 && text != nil {
+		qt.main_window_statusbar_show_message(window, text, 5000)
+		qt.dialog_free_string(text)
+	} else {
+		qt.main_window_statusbar_show_message(window, "Input dialog cancelled", 3000)
+	}
+}
+
 progress_bar_advance_value :: proc "c" (user_data: rawptr) {
 	progress: qt.Progress_Bar = auto_cast user_data
 	current_value := qt.progress_bar_get_value(progress)
@@ -116,6 +185,32 @@ main :: proc() {
 	qt.text_edit_set_plain_text(notes, "Enter notes here...")
 	qt.layout_add_widget(group_layout, auto_cast notes)
 	qt.layout_add_widget(layout, auto_cast group)
+
+	// Dialogs group box
+	dialog_group := qt.group_box_create(nil, "Dialogs")
+	dialog_group_layout := qt.hbox_layout_create(auto_cast dialog_group)
+
+	open_file_btn := qt.push_button_create(nil, "Open File...")
+	qt.push_button_connect_clicked(open_file_btn, open_file_dialog_show, auto_cast window)
+	qt.layout_add_widget(dialog_group_layout, auto_cast open_file_btn)
+
+	message_box_btn := qt.push_button_create(nil, "Question...")
+	qt.push_button_connect_clicked(message_box_btn, question_message_box_show, auto_cast window)
+	qt.layout_add_widget(dialog_group_layout, auto_cast message_box_btn)
+
+	colour_btn := qt.push_button_create(nil, "Pick Colour...")
+	qt.push_button_connect_clicked(colour_btn, colour_dialog_show, auto_cast window)
+	qt.layout_add_widget(dialog_group_layout, auto_cast colour_btn)
+
+	font_btn := qt.push_button_create(nil, "Pick Font...")
+	qt.push_button_connect_clicked(font_btn, font_dialog_show, auto_cast window)
+	qt.layout_add_widget(dialog_group_layout, auto_cast font_btn)
+
+	input_btn := qt.push_button_create(nil, "Text Input...")
+	qt.push_button_connect_clicked(input_btn, text_input_dialog_show, auto_cast window)
+	qt.layout_add_widget(dialog_group_layout, auto_cast input_btn)
+
+	qt.layout_add_widget(layout, auto_cast dialog_group)
 
 	qt.main_window_set_central_widget(window, central)
 	qt.main_window_statusbar_show_message(window, "Ready", 0)

@@ -126,6 +126,40 @@ int   qt_tab_widget_get_count(void *tab_widget);
 void *qt_group_box_create(void *parent, const char *title);
 void  qt_group_box_set_title(void *group_box, const char *title);
 
+/* ── Dialog helpers ─────────────────────────────────────────────────── */
+
+void qt_dialog_free_string(char *str);
+
+/* QFileDialog */
+char *qt_file_dialog_get_open_file_name(void *parent, const char *caption, const char *dir, const char *filter);
+char *qt_file_dialog_get_save_file_name(void *parent, const char *caption, const char *dir, const char *filter);
+char *qt_file_dialog_get_existing_directory(void *parent, const char *caption, const char *dir);
+
+/* QMessageBox — returns Standard_Button value */
+int qt_message_box_show_information(void *parent, const char *title, const char *text);
+int qt_message_box_show_warning(void *parent, const char *title, const char *text);
+int qt_message_box_show_critical(void *parent, const char *title, const char *text);
+int qt_message_box_show_question(void *parent, const char *title, const char *text);
+
+/* QColorDialog — returns 1 if accepted, 0 if cancelled */
+int qt_colour_dialog_get_colour(void *parent,
+                                int initial_r, int initial_g, int initial_b, int initial_a,
+                                int *result_r, int *result_g, int *result_b, int *result_a);
+
+/* QFontDialog — returns 1 if accepted, 0 if cancelled */
+int qt_font_dialog_get_font(void *parent, char *family_buf, int family_buf_size,
+                            int *point_size, int *weight, int *is_italic);
+
+/* QInputDialog */
+char  *qt_input_dialog_get_text(void *parent, const char *title, const char *label,
+                                const char *default_text, int *is_ok);
+int    qt_input_dialog_get_int(void *parent, const char *title, const char *label,
+                               int value, int min_val, int max_val, int step, int *is_ok);
+double qt_input_dialog_get_double(void *parent, const char *title, const char *label,
+                                  double value, double min_val, double max_val, int decimals, int *is_ok);
+char  *qt_input_dialog_get_item(void *parent, const char *title, const char *label,
+                                const char **items, int items_count, int current, int is_editable, int *is_ok);
+
 /* ── Callback types ─────────────────────────────────────────────────── */
 
 typedef void (*qt_callback_t)(void *user_data);

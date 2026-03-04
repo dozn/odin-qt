@@ -1,11 +1,11 @@
 # Future Work
 
-## Dialogs
-- QFileDialog (file picker)
-- QMessageBox (message/confirmation dialogs)
-- QColorDialog (colour picker)
-- QFontDialog (font picker)
-- QInputDialog (simple input prompts)
+## ~~Dialogs~~ (Done)
+- ~~QFileDialog (file picker)~~
+- ~~QMessageBox (message/confirmation dialogs)~~
+- ~~QColorDialog (colour picker)~~
+- ~~QFontDialog (font picker)~~
+- ~~QInputDialog (simple input prompts)~~
 
 ## Build an Actual Application
 - Decide on a use case
