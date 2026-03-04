@@ -2046,6 +2046,478 @@ void  qt_item_selection_model_set_current_index(void *selection_model, void *ind
 int   qt_item_selection_model_connect_selection_changed(void *selection_model, qt_callback_t callback, void *user_data);
 int   qt_item_selection_model_connect_current_changed(void *selection_model, qt_callback_t callback, void *user_data);
 
+/* ── QUndoCommand ───────────────────────────────────────────────────── */
+
+void *qt_undo_command_create(const char *text, void *parent);
+void  qt_undo_command_destroy(void *command);
+char *qt_undo_command_get_text(void *command);
+char *qt_undo_command_get_action_text(void *command);
+void  qt_undo_command_set_obsolete(void *command, int is_obsolete);
+int   qt_undo_command_is_obsolete(void *command);
+int   qt_undo_command_get_child_count(void *command);
+void *qt_undo_command_get_child(void *command, int index);
+
+/* ── QUndoStack ────────────────────────────────────────────────────── */
+
+void *qt_undo_stack_create(void *parent);
+void  qt_undo_stack_destroy(void *stack);
+void  qt_undo_stack_push(void *stack, void *command);
+void  qt_undo_stack_clear(void *stack);
+void  qt_undo_stack_undo(void *stack);
+void  qt_undo_stack_redo(void *stack);
+int   qt_undo_stack_can_undo(void *stack);
+int   qt_undo_stack_can_redo(void *stack);
+char *qt_undo_stack_get_undo_text(void *stack);
+char *qt_undo_stack_get_redo_text(void *stack);
+int   qt_undo_stack_is_clean(void *stack);
+int   qt_undo_stack_get_clean_index(void *stack);
+void  qt_undo_stack_set_clean(void *stack);
+int   qt_undo_stack_get_index(void *stack);
+int   qt_undo_stack_get_count(void *stack);
+void  qt_undo_stack_set_index(void *stack, int index);
+void  qt_undo_stack_set_undo_limit(void *stack, int limit);
+int   qt_undo_stack_get_undo_limit(void *stack);
+void  qt_undo_stack_begin_macro(void *stack, const char *text);
+void  qt_undo_stack_end_macro(void *stack);
+void  qt_undo_stack_set_active(void *stack, int is_active);
+int   qt_undo_stack_is_active(void *stack);
+int   qt_undo_stack_connect_can_undo_changed(void *stack, qt_int_callback_t callback, void *user_data);
+int   qt_undo_stack_connect_can_redo_changed(void *stack, qt_int_callback_t callback, void *user_data);
+int   qt_undo_stack_connect_clean_changed(void *stack, qt_int_callback_t callback, void *user_data);
+int   qt_undo_stack_connect_index_changed(void *stack, qt_int_callback_t callback, void *user_data);
+int   qt_undo_stack_connect_undo_text_changed(void *stack, qt_string_callback_t callback, void *user_data);
+int   qt_undo_stack_connect_redo_text_changed(void *stack, qt_string_callback_t callback, void *user_data);
+
+/* ── QUndoGroup ────────────────────────────────────────────────────── */
+
+void *qt_undo_group_create(void *parent);
+void  qt_undo_group_destroy(void *group);
+void  qt_undo_group_add_stack(void *group, void *stack);
+void  qt_undo_group_remove_stack(void *group, void *stack);
+void  qt_undo_group_set_active_stack(void *group, void *stack);
+void *qt_undo_group_get_active_stack(void *group);
+void  qt_undo_group_undo(void *group);
+void  qt_undo_group_redo(void *group);
+int   qt_undo_group_can_undo(void *group);
+int   qt_undo_group_can_redo(void *group);
+char *qt_undo_group_get_undo_text(void *group);
+char *qt_undo_group_get_redo_text(void *group);
+int   qt_undo_group_is_clean(void *group);
+int   qt_undo_group_connect_active_stack_changed(void *group, qt_callback_t callback, void *user_data);
+int   qt_undo_group_connect_can_undo_changed(void *group, qt_int_callback_t callback, void *user_data);
+int   qt_undo_group_connect_can_redo_changed(void *group, qt_int_callback_t callback, void *user_data);
+int   qt_undo_group_connect_clean_changed(void *group, qt_int_callback_t callback, void *user_data);
+
+/* ── QDataWidgetMapper ─────────────────────────────────────────────── */
+
+void *qt_data_widget_mapper_create(void *parent);
+void  qt_data_widget_mapper_destroy(void *mapper);
+void  qt_data_widget_mapper_set_model(void *mapper, void *model);
+void *qt_data_widget_mapper_get_model(void *mapper);
+void  qt_data_widget_mapper_add_mapping(void *mapper, void *widget, int section);
+void  qt_data_widget_mapper_add_mapping_with_property(void *mapper, void *widget, int section, const char *property_name);
+void  qt_data_widget_mapper_remove_mapping(void *mapper, void *widget);
+void  qt_data_widget_mapper_set_current_index(void *mapper, int index);
+int   qt_data_widget_mapper_get_current_index(void *mapper);
+void  qt_data_widget_mapper_set_root_index(void *mapper, void *index);
+void  qt_data_widget_mapper_to_first(void *mapper);
+void  qt_data_widget_mapper_to_last(void *mapper);
+void  qt_data_widget_mapper_to_next(void *mapper);
+void  qt_data_widget_mapper_to_previous(void *mapper);
+int   qt_data_widget_mapper_submit(void *mapper);
+void  qt_data_widget_mapper_revert(void *mapper);
+void  qt_data_widget_mapper_set_submit_policy(void *mapper, int policy);
+int   qt_data_widget_mapper_get_submit_policy(void *mapper);
+void  qt_data_widget_mapper_set_orientation(void *mapper, int orientation);
+int   qt_data_widget_mapper_get_orientation(void *mapper);
+int   qt_data_widget_mapper_connect_current_index_changed(void *mapper, qt_int_callback_t callback, void *user_data);
+
+/* ── QStyledItemDelegate ───────────────────────────────────────────── */
+
+void *qt_styled_item_delegate_create(void *parent);
+void  qt_styled_item_delegate_destroy(void *delegate);
+
+/* ── QItemDelegate ─────────────────────────────────────────────────── */
+
+void *qt_item_delegate_create(void *parent);
+void  qt_item_delegate_destroy(void *delegate);
+
+/* ── QGraphicsScene ────────────────────────────────────────────────── */
+
+void *qt_graphics_scene_create(void *parent);
+void *qt_graphics_scene_create_with_rect(double x, double y, double width, double height, void *parent);
+void  qt_graphics_scene_destroy(void *scene);
+void  qt_graphics_scene_set_scene_rect(void *scene, double x, double y, double width, double height);
+void  qt_graphics_scene_get_scene_rect(void *scene, double *x, double *y, double *width, double *height);
+void  qt_graphics_scene_set_background_brush(void *scene, void *brush);
+void  qt_graphics_scene_set_foreground_brush(void *scene, void *brush);
+void  qt_graphics_scene_add_item(void *scene, void *item);
+void  qt_graphics_scene_remove_item(void *scene, void *item);
+void  qt_graphics_scene_clear(void *scene);
+void *qt_graphics_scene_add_rect(void *scene, double x, double y, double w, double h, void *pen, void *brush);
+void *qt_graphics_scene_add_ellipse(void *scene, double x, double y, double w, double h, void *pen, void *brush);
+void *qt_graphics_scene_add_text(void *scene, const char *text, void *font);
+void *qt_graphics_scene_add_line(void *scene, double x1, double y1, double x2, double y2, void *pen);
+void *qt_graphics_scene_add_pixmap(void *scene, void *pixmap);
+void *qt_graphics_scene_add_path(void *scene, void *path, void *pen, void *brush);
+void *qt_graphics_scene_add_widget(void *scene, void *widget);
+void *qt_graphics_scene_create_item_group(void *scene, void **items, int count);
+void  qt_graphics_scene_destroy_item_group(void *scene, void *group);
+int   qt_graphics_scene_get_item_count(void *scene);
+void  qt_graphics_scene_set_selection_area(void *scene, void *path);
+void  qt_graphics_scene_clear_selection(void *scene);
+int   qt_graphics_scene_connect_selection_changed(void *scene, qt_callback_t callback, void *user_data);
+
+/* ── QGraphicsView ─────────────────────────────────────────────────── */
+
+void *qt_graphics_view_create(void *parent);
+void *qt_graphics_view_create_with_scene(void *scene, void *parent);
+void  qt_graphics_view_destroy(void *view);
+void  qt_graphics_view_set_scene(void *view, void *scene);
+void *qt_graphics_view_get_scene(void *view);
+void  qt_graphics_view_set_render_hint(void *view, int hint, int is_enabled);
+void  qt_graphics_view_set_drag_mode(void *view, int mode);
+int   qt_graphics_view_get_drag_mode(void *view);
+void  qt_graphics_view_set_interactive(void *view, int is_interactive);
+int   qt_graphics_view_is_interactive(void *view);
+void  qt_graphics_view_set_alignment(void *view, int alignment);
+void  qt_graphics_view_set_viewport_update_mode(void *view, int mode);
+void  qt_graphics_view_fit_in_view(void *view, double x, double y, double w, double h, int aspect_ratio_mode);
+void  qt_graphics_view_center_on(void *view, double x, double y);
+void  qt_graphics_view_scale(void *view, double sx, double sy);
+void  qt_graphics_view_rotate(void *view, double angle);
+void  qt_graphics_view_reset_transform(void *view);
+void  qt_graphics_view_set_scene_rect(void *view, double x, double y, double w, double h);
+void  qt_graphics_view_ensure_visible(void *view, double x, double y, double w, double h, int x_margin, int y_margin);
+void  qt_graphics_view_set_transformation_anchor(void *view, int anchor);
+void  qt_graphics_view_set_resize_anchor(void *view, int anchor);
+
+/* ── QGraphicsItem (base operations) ───────────────────────────────── */
+
+void  qt_graphics_item_set_pos(void *item, double x, double y);
+void  qt_graphics_item_get_pos(void *item, double *x, double *y);
+void  qt_graphics_item_set_z_value(void *item, double z);
+double qt_graphics_item_get_z_value(void *item);
+void  qt_graphics_item_set_rotation(void *item, double angle);
+double qt_graphics_item_get_rotation(void *item);
+void  qt_graphics_item_set_scale(void *item, double scale);
+double qt_graphics_item_get_scale(void *item);
+void  qt_graphics_item_set_opacity(void *item, double opacity);
+double qt_graphics_item_get_opacity(void *item);
+void  qt_graphics_item_set_visible(void *item, int is_visible);
+int   qt_graphics_item_is_visible(void *item);
+void  qt_graphics_item_set_enabled(void *item, int is_enabled);
+int   qt_graphics_item_is_enabled(void *item);
+void  qt_graphics_item_set_selected(void *item, int is_selected);
+int   qt_graphics_item_is_selected(void *item);
+void  qt_graphics_item_set_flag(void *item, int flag, int is_enabled);
+void  qt_graphics_item_set_flags(void *item, int flags);
+int   qt_graphics_item_get_flags(void *item);
+void  qt_graphics_item_set_tool_tip(void *item, const char *tooltip);
+void *qt_graphics_item_get_parent_item(void *item);
+void  qt_graphics_item_set_parent_item(void *item, void *parent);
+void  qt_graphics_item_destroy(void *item);
+void  qt_graphics_item_move_by(void *item, double dx, double dy);
+void  qt_graphics_item_get_bounding_rect(void *item, double *x, double *y, double *w, double *h);
+int   qt_graphics_item_collides_with_item(void *item, void *other);
+void  qt_graphics_item_set_cursor(void *item, int shape);
+void  qt_graphics_item_unset_cursor(void *item);
+
+/* ── QGraphicsRectItem ─────────────────────────────────────────────── */
+
+void *qt_graphics_rect_item_create(double x, double y, double w, double h, void *parent);
+void  qt_graphics_rect_item_set_rect(void *item, double x, double y, double w, double h);
+void  qt_graphics_rect_item_get_rect(void *item, double *x, double *y, double *w, double *h);
+void  qt_graphics_rect_item_set_pen(void *item, void *pen);
+void  qt_graphics_rect_item_set_brush(void *item, void *brush);
+
+/* ── QGraphicsEllipseItem ──────────────────────────────────────────── */
+
+void *qt_graphics_ellipse_item_create(double x, double y, double w, double h, void *parent);
+void  qt_graphics_ellipse_item_set_rect(void *item, double x, double y, double w, double h);
+void  qt_graphics_ellipse_item_get_rect(void *item, double *x, double *y, double *w, double *h);
+void  qt_graphics_ellipse_item_set_pen(void *item, void *pen);
+void  qt_graphics_ellipse_item_set_brush(void *item, void *brush);
+void  qt_graphics_ellipse_item_set_start_angle(void *item, int angle);
+void  qt_graphics_ellipse_item_set_span_angle(void *item, int angle);
+
+/* ── QGraphicsTextItem ─────────────────────────────────────────────── */
+
+void *qt_graphics_text_item_create(const char *text, void *parent);
+void  qt_graphics_text_item_set_text(void *item, const char *text);
+void  qt_graphics_text_item_set_html(void *item, const char *html);
+char *qt_graphics_text_item_get_text(void *item);
+void  qt_graphics_text_item_set_font(void *item, void *font);
+void  qt_graphics_text_item_set_default_text_colour(void *item, int r, int g, int b, int a);
+void  qt_graphics_text_item_set_text_width(void *item, double width);
+double qt_graphics_text_item_get_text_width(void *item);
+void  qt_graphics_text_item_set_text_interaction_flags(void *item, int flags);
+
+/* ── QGraphicsLineItem ─────────────────────────────────────────────── */
+
+void *qt_graphics_line_item_create(double x1, double y1, double x2, double y2, void *parent);
+void  qt_graphics_line_item_set_line(void *item, double x1, double y1, double x2, double y2);
+void  qt_graphics_line_item_set_pen(void *item, void *pen);
+
+/* ── QGraphicsPixmapItem ───────────────────────────────────────────── */
+
+void *qt_graphics_pixmap_item_create(void *pixmap, void *parent);
+void  qt_graphics_pixmap_item_set_pixmap(void *item, void *pixmap);
+void  qt_graphics_pixmap_item_set_offset(void *item, double x, double y);
+void  qt_graphics_pixmap_item_set_transformation_mode(void *item, int mode);
+void  qt_graphics_pixmap_item_set_shape_mode(void *item, int mode);
+
+/* ── QGraphicsPathItem ─────────────────────────────────────────────── */
+
+void *qt_graphics_path_item_create(void *path, void *parent);
+void  qt_graphics_path_item_set_path(void *item, void *path);
+void  qt_graphics_path_item_set_pen(void *item, void *pen);
+void  qt_graphics_path_item_set_brush(void *item, void *brush);
+
+/* ── QGraphicsItemGroup ────────────────────────────────────────────── */
+
+void *qt_graphics_item_group_create(void *parent);
+void  qt_graphics_item_group_add_to_group(void *group, void *item);
+void  qt_graphics_item_group_remove_from_group(void *group, void *item);
+
+/* ── QGraphicsProxyWidget ──────────────────────────────────────────── */
+
+void *qt_graphics_proxy_widget_create(void *parent);
+void  qt_graphics_proxy_widget_set_widget(void *proxy, void *widget);
+void *qt_graphics_proxy_widget_get_widget(void *proxy);
+
+/* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */
+
+void  qt_graphics_effect_set_enabled(void *effect, int is_enabled);
+int   qt_graphics_effect_is_enabled(void *effect);
+
+void *qt_graphics_blur_effect_create(void *parent);
+void  qt_graphics_blur_effect_destroy(void *effect);
+void  qt_graphics_blur_effect_set_blur_radius(void *effect, double radius);
+double qt_graphics_blur_effect_get_blur_radius(void *effect);
+void  qt_graphics_blur_effect_set_blur_hints(void *effect, int hints);
+int   qt_graphics_blur_effect_connect_blur_radius_changed(void *effect, qt_double_callback_t callback, void *user_data);
+
+void *qt_graphics_colourize_effect_create(void *parent);
+void  qt_graphics_colourize_effect_destroy(void *effect);
+void  qt_graphics_colourize_effect_set_colour(void *effect, int r, int g, int b, int a);
+void  qt_graphics_colourize_effect_get_colour(void *effect, int *r, int *g, int *b, int *a);
+void  qt_graphics_colourize_effect_set_strength(void *effect, double strength);
+double qt_graphics_colourize_effect_get_strength(void *effect);
+int   qt_graphics_colourize_effect_connect_colour_changed(void *effect, qt_callback_t callback, void *user_data);
+int   qt_graphics_colourize_effect_connect_strength_changed(void *effect, qt_double_callback_t callback, void *user_data);
+
+void *qt_graphics_drop_shadow_effect_create(void *parent);
+void  qt_graphics_drop_shadow_effect_destroy(void *effect);
+void  qt_graphics_drop_shadow_effect_set_blur_radius(void *effect, double radius);
+double qt_graphics_drop_shadow_effect_get_blur_radius(void *effect);
+void  qt_graphics_drop_shadow_effect_set_colour(void *effect, int r, int g, int b, int a);
+void  qt_graphics_drop_shadow_effect_get_colour(void *effect, int *r, int *g, int *b, int *a);
+void  qt_graphics_drop_shadow_effect_set_offset(void *effect, double dx, double dy);
+void  qt_graphics_drop_shadow_effect_get_offset(void *effect, double *dx, double *dy);
+int   qt_graphics_drop_shadow_effect_connect_blur_radius_changed(void *effect, qt_double_callback_t callback, void *user_data);
+int   qt_graphics_drop_shadow_effect_connect_colour_changed(void *effect, qt_callback_t callback, void *user_data);
+int   qt_graphics_drop_shadow_effect_connect_offset_changed(void *effect, qt_callback_t callback, void *user_data);
+
+void *qt_graphics_opacity_effect_create(void *parent);
+void  qt_graphics_opacity_effect_destroy(void *effect);
+void  qt_graphics_opacity_effect_set_opacity(void *effect, double opacity);
+double qt_graphics_opacity_effect_get_opacity(void *effect);
+void  qt_graphics_opacity_effect_set_opacity_mask(void *effect, void *brush);
+int   qt_graphics_opacity_effect_connect_opacity_changed(void *effect, qt_double_callback_t callback, void *user_data);
+
+/* ── QStyle / QStyleFactory ────────────────────────────────────────── */
+
+int   qt_style_get_keys(char ***keys_out);
+void  qt_style_free_keys(char **keys, int count);
+void *qt_application_get_style(void *app);
+int   qt_style_get_pixel_metric(void *style, int metric, void *widget);
+char *qt_style_get_name(void *style);
+
+/* ── QScroller / QScrollerProperties ───────────────────────────────── */
+
+void *qt_scroller_grab(void *target, int gesture_type);
+void *qt_scroller_get_scroller(void *target);
+void  qt_scroller_set_snap_positions_x(void *scroller, double first, double interval);
+void  qt_scroller_set_snap_positions_y(void *scroller, double first, double interval);
+int   qt_scroller_get_state(void *scroller);
+void  qt_scroller_stop(void *scroller);
+
+void *qt_scroller_properties_create(void *scroller);
+void  qt_scroller_properties_destroy(void *props);
+void  qt_scroller_properties_set_metric(void *props, int metric, double value);
+double qt_scroller_properties_get_metric(void *props, int metric);
+void  qt_scroller_properties_apply(void *props, void *scroller);
+
+/* ── QIdentityProxyModel ───────────────────────────────────────────── */
+
+void *qt_identity_proxy_model_create(void *parent);
+void  qt_identity_proxy_model_destroy(void *model);
+void  qt_identity_proxy_model_set_source_model(void *model, void *source);
+void *qt_identity_proxy_model_get_source_model(void *model);
+void *qt_identity_proxy_model_map_to_source(void *model, void *proxy_index);
+void *qt_identity_proxy_model_map_from_source(void *model, void *source_index);
+
+/* ── QTransposeProxyModel ──────────────────────────────────────────── */
+
+void *qt_transpose_proxy_model_create(void *parent);
+void  qt_transpose_proxy_model_destroy(void *model);
+void  qt_transpose_proxy_model_set_source_model(void *model, void *source);
+void *qt_transpose_proxy_model_get_source_model(void *model);
+
+/* ── QConcatenateTablesProxyModel ──────────────────────────────────── */
+
+void *qt_concatenate_tables_proxy_model_create(void *parent);
+void  qt_concatenate_tables_proxy_model_destroy(void *model);
+void  qt_concatenate_tables_proxy_model_add_source_model(void *model, void *source);
+void  qt_concatenate_tables_proxy_model_remove_source_model(void *model, void *source);
+void *qt_concatenate_tables_proxy_model_map_to_source(void *model, void *proxy_index);
+void *qt_concatenate_tables_proxy_model_map_from_source(void *model, void *source_index, void *source_model);
+
+/* ── QSignalMapper ─────────────────────────────────────────────────── */
+
+void *qt_signal_mapper_create(void *parent);
+void  qt_signal_mapper_destroy(void *mapper);
+void  qt_signal_mapper_set_mapping_int(void *mapper, void *sender, int id);
+void  qt_signal_mapper_set_mapping_string(void *mapper, void *sender, const char *text);
+void  qt_signal_mapper_set_mapping_widget(void *mapper, void *sender, void *widget);
+void  qt_signal_mapper_remove_mappings(void *mapper, void *sender);
+void  qt_signal_mapper_map(void *mapper, void *sender);
+int   qt_signal_mapper_connect_mapped_int(void *mapper, qt_int_callback_t callback, void *user_data);
+int   qt_signal_mapper_connect_mapped_string(void *mapper, qt_string_callback_t callback, void *user_data);
+
+/* ── QLockFile ─────────────────────────────────────────────────────── */
+
+void *qt_lock_file_create(const char *file_path);
+void  qt_lock_file_destroy(void *lock);
+int   qt_lock_file_lock(void *lock);
+int   qt_lock_file_try_lock(void *lock, int timeout_ms);
+void  qt_lock_file_unlock(void *lock);
+int   qt_lock_file_is_locked(void *lock);
+int   qt_lock_file_get_error(void *lock);
+void  qt_lock_file_set_stale_lock_time(void *lock, int msecs);
+int   qt_lock_file_get_stale_lock_time(void *lock);
+int   qt_lock_file_remove_stale_lock_file(void *lock);
+
+/* ── QTimeLine ─────────────────────────────────────────────────────── */
+
+void *qt_time_line_create(int duration_ms, void *parent);
+void  qt_time_line_destroy(void *timeline);
+void  qt_time_line_start(void *timeline);
+void  qt_time_line_stop(void *timeline);
+void  qt_time_line_resume(void *timeline);
+void  qt_time_line_set_paused(void *timeline, int is_paused);
+int   qt_time_line_get_state(void *timeline);
+void  qt_time_line_set_duration(void *timeline, int duration_ms);
+int   qt_time_line_get_duration(void *timeline);
+void  qt_time_line_set_frame_range(void *timeline, int start, int end);
+int   qt_time_line_get_start_frame(void *timeline);
+int   qt_time_line_get_end_frame(void *timeline);
+int   qt_time_line_get_current_frame(void *timeline);
+double qt_time_line_get_current_value(void *timeline);
+void  qt_time_line_set_current_time(void *timeline, int msec);
+int   qt_time_line_get_current_time(void *timeline);
+void  qt_time_line_set_loop_count(void *timeline, int count);
+int   qt_time_line_get_loop_count(void *timeline);
+void  qt_time_line_set_direction(void *timeline, int direction);
+int   qt_time_line_get_direction(void *timeline);
+void  qt_time_line_set_easing_curve(void *timeline, int curve_type);
+void  qt_time_line_set_update_interval(void *timeline, int interval_ms);
+int   qt_time_line_connect_value_changed(void *timeline, qt_double_callback_t callback, void *user_data);
+int   qt_time_line_connect_frame_changed(void *timeline, qt_int_callback_t callback, void *user_data);
+int   qt_time_line_connect_state_changed(void *timeline, qt_int_callback_t callback, void *user_data);
+int   qt_time_line_connect_finished(void *timeline, qt_callback_t callback, void *user_data);
+
+/* ── QCalendar ─────────────────────────────────────────────────────── */
+
+void *qt_calendar_create(void);
+void *qt_calendar_create_with_system(int system);
+void  qt_calendar_destroy(void *calendar);
+int   qt_calendar_is_valid(void *calendar);
+int   qt_calendar_get_days_in_month(void *calendar, int month, int year);
+int   qt_calendar_get_days_in_year(void *calendar, int year);
+int   qt_calendar_get_months_in_year(void *calendar, int year);
+int   qt_calendar_is_date_valid(void *calendar, int year, int month, int day);
+int   qt_calendar_is_gregorian(void *calendar);
+int   qt_calendar_is_leap_year(void *calendar, int year);
+int   qt_calendar_get_maximum_days_in_month(void *calendar);
+int   qt_calendar_get_maximum_months_in_year(void *calendar);
+
+/* ── QRandomGenerator ──────────────────────────────────────────────── */
+
+unsigned int   qt_random_generator_generate(void);
+unsigned int   qt_random_generator_generate_bounded_int(int highest);
+unsigned int   qt_random_generator_generate_bounded_range(int lowest, int highest);
+double         qt_random_generator_generate_double(void);
+
+/* ── QEventLoop ────────────────────────────────────────────────────── */
+
+void *qt_event_loop_create(void *parent);
+void  qt_event_loop_destroy(void *loop);
+int   qt_event_loop_exec(void *loop, int flags);
+void  qt_event_loop_exit(void *loop, int return_code);
+void  qt_event_loop_quit(void *loop);
+int   qt_event_loop_is_running(void *loop);
+void  qt_event_loop_process_events(void *loop, int flags);
+void  qt_event_loop_wake_up(void *loop);
+
+/* ── QSysInfo ──────────────────────────────────────────────────────── */
+
+char *qt_sys_info_get_product_type(void);
+char *qt_sys_info_get_product_version(void);
+char *qt_sys_info_get_pretty_product_name(void);
+char *qt_sys_info_get_kernel_type(void);
+char *qt_sys_info_get_kernel_version(void);
+char *qt_sys_info_get_cpu_architecture(void);
+char *qt_sys_info_get_build_abi(void);
+char *qt_sys_info_get_build_cpu_architecture(void);
+char *qt_sys_info_get_machine_host_name(void);
+char *qt_sys_info_get_machine_unique_id(void);
+char *qt_sys_info_get_boot_unique_id(void);
+
+/* ── QLibrary ──────────────────────────────────────────────────────── */
+
+void *qt_library_create(const char *file_path, void *parent);
+void  qt_library_destroy(void *library);
+int   qt_library_load(void *library);
+int   qt_library_unload(void *library);
+int   qt_library_is_loaded(void *library);
+void *qt_library_resolve(void *library, const char *symbol);
+char *qt_library_get_error_string(void *library);
+void  qt_library_set_file_name(void *library, const char *file_path);
+char *qt_library_get_file_name(void *library);
+void  qt_library_set_load_hints(void *library, int hints);
+int   qt_library_get_load_hints(void *library);
+int   qt_library_is_library(const char *file_path);
+
+/* ── QSharedMemory ─────────────────────────────────────────────────── */
+
+void *qt_shared_memory_create(const char *key, void *parent);
+void  qt_shared_memory_destroy(void *shm);
+int   qt_shared_memory_create_segment(void *shm, int size, int mode);
+int   qt_shared_memory_attach(void *shm, int mode);
+int   qt_shared_memory_detach(void *shm);
+int   qt_shared_memory_is_attached(void *shm);
+void *qt_shared_memory_get_data(void *shm);
+int   qt_shared_memory_get_size(void *shm);
+int   qt_shared_memory_lock(void *shm);
+int   qt_shared_memory_unlock(void *shm);
+char *qt_shared_memory_get_error_string(void *shm);
+int   qt_shared_memory_get_error(void *shm);
+void  qt_shared_memory_set_key(void *shm, const char *key);
+void  qt_shared_memory_set_native_key(void *shm, const char *key);
+char *qt_shared_memory_get_native_key(void *shm);
+
+/* ── QSystemSemaphore ──────────────────────────────────────────────── */
+
+void *qt_system_semaphore_create(const char *key, int initial_value, int mode);
+void  qt_system_semaphore_destroy(void *sem);
+int   qt_system_semaphore_acquire(void *sem);
+int   qt_system_semaphore_release(void *sem, int count);
+char *qt_system_semaphore_get_error_string(void *sem);
+int   qt_system_semaphore_get_error(void *sem);
+void  qt_system_semaphore_set_key(void *sem, const char *key, int initial_value, int mode);
+
 #ifdef __cplusplus
 }
 #endif

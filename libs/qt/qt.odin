@@ -208,6 +208,40 @@ Save_File :: distinct rawptr
 File_System_Watcher :: distinct rawptr
 String_List_Model :: distinct rawptr
 Item_Selection_Model :: distinct rawptr
+Undo_Command :: distinct rawptr
+Data_Widget_Mapper :: distinct rawptr
+Styled_Item_Delegate :: distinct rawptr
+Item_Delegate :: distinct rawptr
+Graphics_Scene :: distinct rawptr
+Graphics_View :: distinct rawptr
+Graphics_Item :: distinct rawptr
+Graphics_Rect_Item :: distinct rawptr
+Graphics_Ellipse_Item :: distinct rawptr
+Graphics_Text_Item :: distinct rawptr
+Graphics_Line_Item :: distinct rawptr
+Graphics_Pixmap_Item :: distinct rawptr
+Graphics_Path_Item :: distinct rawptr
+Graphics_Item_Group :: distinct rawptr
+Graphics_Proxy_Widget :: distinct rawptr
+Graphics_Effect :: distinct rawptr
+Graphics_Blur_Effect :: distinct rawptr
+Graphics_Colourize_Effect :: distinct rawptr
+Graphics_Drop_Shadow_Effect :: distinct rawptr
+Graphics_Opacity_Effect :: distinct rawptr
+Style :: distinct rawptr
+Scroller :: distinct rawptr
+Scroller_Properties :: distinct rawptr
+Identity_Proxy_Model :: distinct rawptr
+Transpose_Proxy_Model :: distinct rawptr
+Concatenate_Tables_Proxy_Model :: distinct rawptr
+Signal_Mapper :: distinct rawptr
+Lock_File :: distinct rawptr
+Time_Line :: distinct rawptr
+Calendar :: distinct rawptr
+Event_Loop :: distinct rawptr
+Library :: distinct rawptr
+Shared_Memory :: distinct rawptr
+System_Semaphore :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1147,6 +1181,246 @@ Item_Selection_Flag :: enum c.int {
 	Select_Current = 0x0012,
 	Toggle_Current = 0x0018,
 	Clear_And_Select = 0x0003,
+}
+
+Data_Widget_Mapper_Submit_Policy :: enum c.int {
+	Auto_Submit = 0,
+	Manual_Submit = 1,
+}
+
+Graphics_View_Drag_Mode :: enum c.int {
+	No_Drag = 0,
+	Scroll_Hand_Drag = 1,
+	Rubber_Band_Drag = 2,
+}
+
+Graphics_View_Viewport_Update_Mode :: enum c.int {
+	Full_Viewport_Update = 0,
+	Minimal_Viewport_Update = 1,
+	Smart_Viewport_Update = 2,
+	No_Viewport_Update = 3,
+	Bounding_Rect_Viewport_Update = 4,
+}
+
+Graphics_View_Viewport_Anchor :: enum c.int {
+	No_Anchor = 0,
+	Anchor_View_Centre = 1,
+	Anchor_Under_Mouse = 2,
+}
+
+Graphics_Item_Flag :: enum c.int {
+	Is_Movable = 0x1,
+	Is_Selectable = 0x2,
+	Is_Focusable = 0x4,
+	Clips_To_Shape = 0x8,
+	Clips_Children_To_Shape = 0x10,
+	Ignores_Transformations = 0x20,
+	Ignores_Parent_Opacity = 0x40,
+	Does_Not_Propagate_Opacity_To_Children = 0x80,
+	Stacks_Behind_Parent = 0x100,
+	Sends_Geometry_Changes = 0x800,
+	Accepts_Input_Method = 0x1000,
+	Is_Panel = 0x4000,
+	Sends_Scene_Position_Changes = 0x10000,
+	Contains_Children_In_Shape = 0x80000,
+}
+
+Graphics_Pixmap_Item_Shape_Mode :: enum c.int {
+	Mask_Shape = 0,
+	Bounding_Rect_Shape = 1,
+	Heuristic_Mask_Shape = 2,
+}
+
+Text_Interaction_Flag :: enum c.int {
+	No_Text_Interaction = 0,
+	Text_Selectable_By_Mouse = 1,
+	Text_Selectable_By_Keyboard = 2,
+	Links_Accessible_By_Mouse = 4,
+	Links_Accessible_By_Keyboard = 8,
+	Text_Editable = 16,
+	Text_Editor_Interaction = 19,
+	Text_Browser_Interaction = 13,
+}
+
+Graphics_Blur_Hint :: enum c.int {
+	Performance_Hint = 0x00,
+	Quality_Hint = 0x01,
+	Animation_Hint = 0x02,
+}
+
+Render_Hint :: enum c.int {
+	Antialiasing = 0x01,
+	Text_Antialiasing = 0x02,
+	Smooth_Pixmap_Transform = 0x04,
+	Lossless_Image_Rendering = 0x40,
+}
+
+Time_Line_State :: enum c.int {
+	Not_Running = 0,
+	Paused = 1,
+	Running = 2,
+}
+
+Time_Line_Direction :: enum c.int {
+	Forward = 0,
+	Backward = 1,
+}
+
+Calendar_System :: enum c.int {
+	Gregorian = 0,
+	Julian = 8,
+	Milankovic = 9,
+}
+
+Event_Loop_Flag :: enum c.int {
+	All_Events = 0x00,
+	Exclude_User_Input_Events = 0x01,
+	Exclude_Socket_Notifiers = 0x02,
+	Wait_For_More_Events = 0x04,
+}
+
+Library_Load_Hint :: enum c.int {
+	Resolve_All_Symbols_Hint = 0x01,
+	Export_External_Symbols_Hint = 0x02,
+	Load_Archive_Member_Hint = 0x04,
+	Prevent_Unload_Hint = 0x08,
+	Deep_Bind_Hint = 0x10,
+}
+
+Shared_Memory_Access_Mode :: enum c.int {
+	Read_Only = 0,
+	Read_Write = 1,
+}
+
+Shared_Memory_Error :: enum c.int {
+	No_Error = 0,
+	Permission_Denied = 1,
+	Invalid_Size = 2,
+	Key_Error = 3,
+	Already_Exists = 4,
+	Not_Found = 5,
+	Lock_Error = 6,
+	Out_Of_Resources = 7,
+	Unknown_Error = 8,
+}
+
+System_Semaphore_Access_Mode :: enum c.int {
+	Open = 0,
+	Create = 1,
+}
+
+System_Semaphore_Error :: enum c.int {
+	No_Error = 0,
+	Permission_Denied = 1,
+	Key_Error = 2,
+	Already_Exists = 3,
+	Not_Found = 4,
+	Out_Of_Resources = 5,
+	Unknown_Error = 6,
+}
+
+Lock_File_Error :: enum c.int {
+	No_Error = 0,
+	Lock_Failed_Error = 1,
+	Permission_Error = 2,
+	Unknown_Error = 3,
+}
+
+Scroller_Gesture_Type :: enum c.int {
+	Touch = 0,
+	Left_Mouse_Button = 1,
+	Middle_Mouse_Button = 2,
+	Right_Mouse_Button = 3,
+}
+
+Scroller_State :: enum c.int {
+	Inactive = 0,
+	Pressed = 1,
+	Dragging = 2,
+	Scrolling = 3,
+}
+
+Scroller_Metric :: enum c.int {
+	Mouse_Press_Event_Delay = 0,
+	Drag_Start_Distance = 1,
+	Drag_Velocity_Smoothing_Factor = 2,
+	Axis_Lock_Threshold = 3,
+	Scrolling_Curve = 4,
+	Deceleration_Factor = 5,
+	Minimum_Velocity = 6,
+	Maximum_Velocity = 7,
+	Maximum_Click_Through_Velocity = 8,
+	Accelerating_Flick_Maximum_Time = 9,
+	Accelerating_Flick_Speed_Up_Factor = 10,
+	Snap_Position_Ratio = 11,
+	Snap_Time = 12,
+	Overshoot_Drag_Resistance_Factor = 13,
+	Overshoot_Drag_Distance_Factor = 14,
+	Overshoot_Scroll_Distance_Factor = 15,
+	Overshoot_Scroll_Time = 16,
+	Horizontal_Overshoot_Policy = 17,
+	Vertical_Overshoot_Policy = 18,
+	Frame_Rate = 19,
+}
+
+Style_Pixel_Metric :: enum c.int {
+	Button_Margin = 0,
+	Dock_Widget_Title_Bar_Button_Margin = 1,
+	Button_Default_Indicator = 2,
+	Menu_Button_Indicator = 3,
+	Button_Shift_Horizontal = 4,
+	Button_Shift_Vertical = 5,
+	Default_Frame_Width = 6,
+	Spin_Box_Frame_Width = 7,
+	Combo_Box_Frame_Width = 8,
+	Max_Popup_Width = 9,
+	Scrollbar_Extent = 10,
+	Scrollbar_Slider_Min = 11,
+	Slider_Thickness = 12,
+	Slider_Control_Thickness = 13,
+	Slider_Length = 14,
+	Slider_Tick_Space_Available = 15,
+	Slider_Space_Available = 16,
+	Dock_Widget_Separator_Extent = 17,
+	Dock_Widget_Handle_Extent = 18,
+	Dock_Widget_Frame_Width = 19,
+	Tab_Bar_Tab_Overlap = 20,
+	Tab_Bar_Tab_Horizontal_Shift = 21,
+	Tab_Bar_Tab_Vertical_Shift = 22,
+	Tab_Bar_Base_Height = 23,
+	Tab_Bar_Base_Overlap = 24,
+	Progress_Bar_Chunk_Width = 25,
+	Splitter_Width = 26,
+	Title_Bar_Height = 27,
+	Menu_Scrollable_Style = 28,
+	Menu_Horizontal_Padding = 29,
+	Menu_Vertical_Padding = 30,
+	Menu_Desktop_Frame_Width = 31,
+	Menu_Tearoff_Height = 32,
+	Header_Margin = 33,
+	Header_Mark_Size = 34,
+	Header_Grip_Margin = 35,
+	Tab_Bar_Tab_Shift_Horizontal = 36,
+	Tab_Bar_Tab_Shift_Vertical = 37,
+	Tab_Bar_Scroll_Button_Width = 38,
+	Tool_Bar_Frame_Width = 39,
+	Tool_Bar_Handle_Extent = 40,
+	Tool_Bar_Item_Spacing = 41,
+	Tool_Bar_Item_Margin = 42,
+	Tool_Bar_Separator_Extent = 43,
+	Tool_Bar_Extension_Extent = 44,
+	Small_Icon_Size = 49,
+	Large_Icon_Size = 50,
+	Focus_Frame_V_Margin = 51,
+	Focus_Frame_H_Margin = 52,
+	Tool_Bar_Icon_Size = 53,
+	Icon_View_Icon_Size = 62,
+	Layout_Left_Margin = 67,
+	Layout_Top_Margin = 68,
+	Layout_Right_Margin = 69,
+	Layout_Bottom_Margin = 70,
+	Layout_Horizontal_Spacing = 71,
+	Layout_Vertical_Spacing = 72,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -3164,4 +3438,476 @@ foreign qt_lib {
 	item_selection_model_set_current_index :: proc(selection_model: Item_Selection_Model, index: Model_Index, flags: Item_Selection_Flag) ---
 	item_selection_model_connect_selection_changed :: proc(selection_model: Item_Selection_Model, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	item_selection_model_connect_current_changed :: proc(selection_model: Item_Selection_Model, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QUndoCommand */
+
+	@(require_results) undo_command_create :: proc(text: cstring, parent: Undo_Command) -> Undo_Command ---
+	undo_command_destroy :: proc(command: Undo_Command) ---
+	@(require_results) undo_command_get_text :: proc(command: Undo_Command) -> cstring ---
+	@(require_results) undo_command_get_action_text :: proc(command: Undo_Command) -> cstring ---
+	undo_command_set_obsolete :: proc(command: Undo_Command, is_obsolete: c.int) ---
+	@(require_results) undo_command_is_obsolete :: proc(command: Undo_Command) -> c.int ---
+	@(require_results) undo_command_get_child_count :: proc(command: Undo_Command) -> c.int ---
+	@(require_results) undo_command_get_child :: proc(command: Undo_Command, index: c.int) -> Undo_Command ---
+
+	/* QUndoStack */
+
+	@(require_results) undo_stack_create :: proc(parent: rawptr) -> Undo_Stack ---
+	undo_stack_destroy :: proc(stack: Undo_Stack) ---
+	undo_stack_push :: proc(stack: Undo_Stack, command: Undo_Command) ---
+	undo_stack_clear :: proc(stack: Undo_Stack) ---
+	undo_stack_undo :: proc(stack: Undo_Stack) ---
+	undo_stack_redo :: proc(stack: Undo_Stack) ---
+	@(require_results) undo_stack_can_undo :: proc(stack: Undo_Stack) -> c.int ---
+	@(require_results) undo_stack_can_redo :: proc(stack: Undo_Stack) -> c.int ---
+	@(require_results) undo_stack_get_undo_text :: proc(stack: Undo_Stack) -> cstring ---
+	@(require_results) undo_stack_get_redo_text :: proc(stack: Undo_Stack) -> cstring ---
+	@(require_results) undo_stack_is_clean :: proc(stack: Undo_Stack) -> c.int ---
+	@(require_results) undo_stack_get_clean_index :: proc(stack: Undo_Stack) -> c.int ---
+	undo_stack_set_clean :: proc(stack: Undo_Stack) ---
+	@(require_results) undo_stack_get_index :: proc(stack: Undo_Stack) -> c.int ---
+	@(require_results) undo_stack_get_count :: proc(stack: Undo_Stack) -> c.int ---
+	undo_stack_set_index :: proc(stack: Undo_Stack, index: c.int) ---
+	undo_stack_set_undo_limit :: proc(stack: Undo_Stack, limit: c.int) ---
+	@(require_results) undo_stack_get_undo_limit :: proc(stack: Undo_Stack) -> c.int ---
+	undo_stack_begin_macro :: proc(stack: Undo_Stack, text: cstring) ---
+	undo_stack_end_macro :: proc(stack: Undo_Stack) ---
+	undo_stack_set_active :: proc(stack: Undo_Stack, is_active: c.int) ---
+	@(require_results) undo_stack_is_active :: proc(stack: Undo_Stack) -> c.int ---
+	undo_stack_connect_can_undo_changed :: proc(stack: Undo_Stack, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_stack_connect_can_redo_changed :: proc(stack: Undo_Stack, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_stack_connect_clean_changed :: proc(stack: Undo_Stack, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_stack_connect_index_changed :: proc(stack: Undo_Stack, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_stack_connect_undo_text_changed :: proc(stack: Undo_Stack, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_stack_connect_redo_text_changed :: proc(stack: Undo_Stack, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QUndoGroup */
+
+	@(require_results) undo_group_create :: proc(parent: rawptr) -> Undo_Group ---
+	undo_group_destroy :: proc(group: Undo_Group) ---
+	undo_group_add_stack :: proc(group: Undo_Group, stack: Undo_Stack) ---
+	undo_group_remove_stack :: proc(group: Undo_Group, stack: Undo_Stack) ---
+	undo_group_set_active_stack :: proc(group: Undo_Group, stack: Undo_Stack) ---
+	@(require_results) undo_group_get_active_stack :: proc(group: Undo_Group) -> Undo_Stack ---
+	undo_group_undo :: proc(group: Undo_Group) ---
+	undo_group_redo :: proc(group: Undo_Group) ---
+	@(require_results) undo_group_can_undo :: proc(group: Undo_Group) -> c.int ---
+	@(require_results) undo_group_can_redo :: proc(group: Undo_Group) -> c.int ---
+	@(require_results) undo_group_get_undo_text :: proc(group: Undo_Group) -> cstring ---
+	@(require_results) undo_group_get_redo_text :: proc(group: Undo_Group) -> cstring ---
+	@(require_results) undo_group_is_clean :: proc(group: Undo_Group) -> c.int ---
+	undo_group_connect_active_stack_changed :: proc(group: Undo_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	undo_group_connect_can_undo_changed :: proc(group: Undo_Group, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_group_connect_can_redo_changed :: proc(group: Undo_Group, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	undo_group_connect_clean_changed :: proc(group: Undo_Group, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QDataWidgetMapper */
+
+	@(require_results) data_widget_mapper_create :: proc(parent: rawptr) -> Data_Widget_Mapper ---
+	data_widget_mapper_destroy :: proc(mapper: Data_Widget_Mapper) ---
+	data_widget_mapper_set_model :: proc(mapper: Data_Widget_Mapper, model: rawptr) ---
+	@(require_results) data_widget_mapper_get_model :: proc(mapper: Data_Widget_Mapper) -> rawptr ---
+	data_widget_mapper_add_mapping :: proc(mapper: Data_Widget_Mapper, widget: Widget, section: c.int) ---
+	data_widget_mapper_add_mapping_with_property :: proc(mapper: Data_Widget_Mapper, widget: Widget, section: c.int, property_name: cstring) ---
+	data_widget_mapper_remove_mapping :: proc(mapper: Data_Widget_Mapper, widget: Widget) ---
+	data_widget_mapper_set_current_index :: proc(mapper: Data_Widget_Mapper, index: c.int) ---
+	@(require_results) data_widget_mapper_get_current_index :: proc(mapper: Data_Widget_Mapper) -> c.int ---
+	data_widget_mapper_set_root_index :: proc(mapper: Data_Widget_Mapper, index: Model_Index) ---
+	data_widget_mapper_to_first :: proc(mapper: Data_Widget_Mapper) ---
+	data_widget_mapper_to_last :: proc(mapper: Data_Widget_Mapper) ---
+	data_widget_mapper_to_next :: proc(mapper: Data_Widget_Mapper) ---
+	data_widget_mapper_to_previous :: proc(mapper: Data_Widget_Mapper) ---
+	@(require_results) data_widget_mapper_submit :: proc(mapper: Data_Widget_Mapper) -> c.int ---
+	data_widget_mapper_revert :: proc(mapper: Data_Widget_Mapper) ---
+	data_widget_mapper_set_submit_policy :: proc(mapper: Data_Widget_Mapper, policy: Data_Widget_Mapper_Submit_Policy) ---
+	@(require_results) data_widget_mapper_get_submit_policy :: proc(mapper: Data_Widget_Mapper) -> Data_Widget_Mapper_Submit_Policy ---
+	data_widget_mapper_set_orientation :: proc(mapper: Data_Widget_Mapper, orientation: Orientation) ---
+	@(require_results) data_widget_mapper_get_orientation :: proc(mapper: Data_Widget_Mapper) -> Orientation ---
+	data_widget_mapper_connect_current_index_changed :: proc(mapper: Data_Widget_Mapper, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QStyledItemDelegate */
+
+	@(require_results) styled_item_delegate_create :: proc(parent: rawptr) -> Styled_Item_Delegate ---
+	styled_item_delegate_destroy :: proc(delegate: Styled_Item_Delegate) ---
+
+	/* QItemDelegate */
+
+	@(require_results) item_delegate_create :: proc(parent: rawptr) -> Item_Delegate ---
+	item_delegate_destroy :: proc(delegate: Item_Delegate) ---
+
+	/* QGraphicsScene */
+
+	@(require_results) graphics_scene_create :: proc(parent: rawptr) -> Graphics_Scene ---
+	@(require_results) graphics_scene_create_with_rect :: proc(x: c.double, y: c.double, width: c.double, height: c.double, parent: rawptr) -> Graphics_Scene ---
+	graphics_scene_destroy :: proc(scene: Graphics_Scene) ---
+	graphics_scene_set_scene_rect :: proc(scene: Graphics_Scene, x: c.double, y: c.double, width: c.double, height: c.double) ---
+	graphics_scene_get_scene_rect :: proc(scene: Graphics_Scene, x: ^c.double, y: ^c.double, width: ^c.double, height: ^c.double) ---
+	graphics_scene_set_background_brush :: proc(scene: Graphics_Scene, brush: Brush) ---
+	graphics_scene_set_foreground_brush :: proc(scene: Graphics_Scene, brush: Brush) ---
+	graphics_scene_add_item :: proc(scene: Graphics_Scene, item: Graphics_Item) ---
+	graphics_scene_remove_item :: proc(scene: Graphics_Scene, item: Graphics_Item) ---
+	graphics_scene_clear :: proc(scene: Graphics_Scene) ---
+	@(require_results) graphics_scene_add_rect :: proc(scene: Graphics_Scene, x: c.double, y: c.double, w: c.double, h: c.double, pen: Pen, brush: Brush) -> Graphics_Rect_Item ---
+	@(require_results) graphics_scene_add_ellipse :: proc(scene: Graphics_Scene, x: c.double, y: c.double, w: c.double, h: c.double, pen: Pen, brush: Brush) -> Graphics_Ellipse_Item ---
+	@(require_results) graphics_scene_add_text :: proc(scene: Graphics_Scene, text: cstring, font: Font_Handle) -> Graphics_Text_Item ---
+	@(require_results) graphics_scene_add_line :: proc(scene: Graphics_Scene, x1: c.double, y1: c.double, x2: c.double, y2: c.double, pen: Pen) -> Graphics_Line_Item ---
+	@(require_results) graphics_scene_add_pixmap :: proc(scene: Graphics_Scene, pixmap: Pixmap) -> Graphics_Pixmap_Item ---
+	@(require_results) graphics_scene_add_path :: proc(scene: Graphics_Scene, path: Painter_Path, pen: Pen, brush: Brush) -> Graphics_Path_Item ---
+	@(require_results) graphics_scene_add_widget :: proc(scene: Graphics_Scene, widget: Widget) -> Graphics_Proxy_Widget ---
+	@(require_results) graphics_scene_create_item_group :: proc(scene: Graphics_Scene, items: [^]Graphics_Item, count: c.int) -> Graphics_Item_Group ---
+	graphics_scene_destroy_item_group :: proc(scene: Graphics_Scene, group: Graphics_Item_Group) ---
+	@(require_results) graphics_scene_get_item_count :: proc(scene: Graphics_Scene) -> c.int ---
+	graphics_scene_set_selection_area :: proc(scene: Graphics_Scene, path: Painter_Path) ---
+	graphics_scene_clear_selection :: proc(scene: Graphics_Scene) ---
+	graphics_scene_connect_selection_changed :: proc(scene: Graphics_Scene, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QGraphicsView */
+
+	@(require_results) graphics_view_create :: proc(parent: Widget) -> Graphics_View ---
+	@(require_results) graphics_view_create_with_scene :: proc(scene: Graphics_Scene, parent: Widget) -> Graphics_View ---
+	graphics_view_destroy :: proc(view: Graphics_View) ---
+	graphics_view_set_scene :: proc(view: Graphics_View, scene: Graphics_Scene) ---
+	@(require_results) graphics_view_get_scene :: proc(view: Graphics_View) -> Graphics_Scene ---
+	graphics_view_set_render_hint :: proc(view: Graphics_View, hint: Render_Hint, is_enabled: c.int) ---
+	graphics_view_set_drag_mode :: proc(view: Graphics_View, mode: Graphics_View_Drag_Mode) ---
+	@(require_results) graphics_view_get_drag_mode :: proc(view: Graphics_View) -> Graphics_View_Drag_Mode ---
+	graphics_view_set_interactive :: proc(view: Graphics_View, is_interactive: c.int) ---
+	@(require_results) graphics_view_is_interactive :: proc(view: Graphics_View) -> c.int ---
+	graphics_view_set_alignment :: proc(view: Graphics_View, alignment: Alignment) ---
+	graphics_view_set_viewport_update_mode :: proc(view: Graphics_View, mode: Graphics_View_Viewport_Update_Mode) ---
+	graphics_view_fit_in_view :: proc(view: Graphics_View, x: c.double, y: c.double, w: c.double, h: c.double, aspect_ratio_mode: Aspect_Ratio_Mode) ---
+	graphics_view_center_on :: proc(view: Graphics_View, x: c.double, y: c.double) ---
+	graphics_view_scale :: proc(view: Graphics_View, sx: c.double, sy: c.double) ---
+	graphics_view_rotate :: proc(view: Graphics_View, angle: c.double) ---
+	graphics_view_reset_transform :: proc(view: Graphics_View) ---
+	graphics_view_set_scene_rect :: proc(view: Graphics_View, x: c.double, y: c.double, w: c.double, h: c.double) ---
+	graphics_view_ensure_visible :: proc(view: Graphics_View, x: c.double, y: c.double, w: c.double, h: c.double, x_margin: c.int, y_margin: c.int) ---
+	graphics_view_set_transformation_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) ---
+	graphics_view_set_resize_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) ---
+
+	/* QGraphicsItem (base operations) */
+
+	graphics_item_set_pos :: proc(item: Graphics_Item, x: c.double, y: c.double) ---
+	graphics_item_get_pos :: proc(item: Graphics_Item, x: ^c.double, y: ^c.double) ---
+	graphics_item_set_z_value :: proc(item: Graphics_Item, z: c.double) ---
+	@(require_results) graphics_item_get_z_value :: proc(item: Graphics_Item) -> c.double ---
+	graphics_item_set_rotation :: proc(item: Graphics_Item, angle: c.double) ---
+	@(require_results) graphics_item_get_rotation :: proc(item: Graphics_Item) -> c.double ---
+	graphics_item_set_scale :: proc(item: Graphics_Item, scale: c.double) ---
+	@(require_results) graphics_item_get_scale :: proc(item: Graphics_Item) -> c.double ---
+	graphics_item_set_opacity :: proc(item: Graphics_Item, opacity: c.double) ---
+	@(require_results) graphics_item_get_opacity :: proc(item: Graphics_Item) -> c.double ---
+	graphics_item_set_visible :: proc(item: Graphics_Item, is_visible: c.int) ---
+	@(require_results) graphics_item_is_visible :: proc(item: Graphics_Item) -> c.int ---
+	graphics_item_set_enabled :: proc(item: Graphics_Item, is_enabled: c.int) ---
+	@(require_results) graphics_item_is_enabled :: proc(item: Graphics_Item) -> c.int ---
+	graphics_item_set_selected :: proc(item: Graphics_Item, is_selected: c.int) ---
+	@(require_results) graphics_item_is_selected :: proc(item: Graphics_Item) -> c.int ---
+	graphics_item_set_flag :: proc(item: Graphics_Item, flag: Graphics_Item_Flag, is_enabled: c.int) ---
+	graphics_item_set_flags :: proc(item: Graphics_Item, flags: c.int) ---
+	@(require_results) graphics_item_get_flags :: proc(item: Graphics_Item) -> c.int ---
+	graphics_item_set_tool_tip :: proc(item: Graphics_Item, tooltip: cstring) ---
+	@(require_results) graphics_item_get_parent_item :: proc(item: Graphics_Item) -> Graphics_Item ---
+	graphics_item_set_parent_item :: proc(item: Graphics_Item, parent: Graphics_Item) ---
+	graphics_item_destroy :: proc(item: Graphics_Item) ---
+	graphics_item_move_by :: proc(item: Graphics_Item, dx: c.double, dy: c.double) ---
+	graphics_item_get_bounding_rect :: proc(item: Graphics_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	@(require_results) graphics_item_collides_with_item :: proc(item: Graphics_Item, other: Graphics_Item) -> c.int ---
+	graphics_item_set_cursor :: proc(item: Graphics_Item, shape: Cursor_Shape) ---
+	graphics_item_unset_cursor :: proc(item: Graphics_Item) ---
+
+	/* QGraphicsRectItem */
+
+	@(require_results) graphics_rect_item_create :: proc(x: c.double, y: c.double, w: c.double, h: c.double, parent: Graphics_Item) -> Graphics_Rect_Item ---
+	graphics_rect_item_set_rect :: proc(item: Graphics_Rect_Item, x: c.double, y: c.double, w: c.double, h: c.double) ---
+	graphics_rect_item_get_rect :: proc(item: Graphics_Rect_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	graphics_rect_item_set_pen :: proc(item: Graphics_Rect_Item, pen: Pen) ---
+	graphics_rect_item_set_brush :: proc(item: Graphics_Rect_Item, brush: Brush) ---
+
+	/* QGraphicsEllipseItem */
+
+	@(require_results) graphics_ellipse_item_create :: proc(x: c.double, y: c.double, w: c.double, h: c.double, parent: Graphics_Item) -> Graphics_Ellipse_Item ---
+	graphics_ellipse_item_set_rect :: proc(item: Graphics_Ellipse_Item, x: c.double, y: c.double, w: c.double, h: c.double) ---
+	graphics_ellipse_item_get_rect :: proc(item: Graphics_Ellipse_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	graphics_ellipse_item_set_pen :: proc(item: Graphics_Ellipse_Item, pen: Pen) ---
+	graphics_ellipse_item_set_brush :: proc(item: Graphics_Ellipse_Item, brush: Brush) ---
+	graphics_ellipse_item_set_start_angle :: proc(item: Graphics_Ellipse_Item, angle: c.int) ---
+	graphics_ellipse_item_set_span_angle :: proc(item: Graphics_Ellipse_Item, angle: c.int) ---
+
+	/* QGraphicsTextItem */
+
+	@(require_results) graphics_text_item_create :: proc(text: cstring, parent: Graphics_Item) -> Graphics_Text_Item ---
+	graphics_text_item_set_text :: proc(item: Graphics_Text_Item, text: cstring) ---
+	graphics_text_item_set_html :: proc(item: Graphics_Text_Item, html: cstring) ---
+	@(require_results) graphics_text_item_get_text :: proc(item: Graphics_Text_Item) -> cstring ---
+	graphics_text_item_set_font :: proc(item: Graphics_Text_Item, font: Font_Handle) ---
+	graphics_text_item_set_default_text_colour :: proc(item: Graphics_Text_Item, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	graphics_text_item_set_text_width :: proc(item: Graphics_Text_Item, width: c.double) ---
+	@(require_results) graphics_text_item_get_text_width :: proc(item: Graphics_Text_Item) -> c.double ---
+	graphics_text_item_set_text_interaction_flags :: proc(item: Graphics_Text_Item, flags: Text_Interaction_Flag) ---
+
+	/* QGraphicsLineItem */
+
+	@(require_results) graphics_line_item_create :: proc(x1: c.double, y1: c.double, x2: c.double, y2: c.double, parent: Graphics_Item) -> Graphics_Line_Item ---
+	graphics_line_item_set_line :: proc(item: Graphics_Line_Item, x1: c.double, y1: c.double, x2: c.double, y2: c.double) ---
+	graphics_line_item_set_pen :: proc(item: Graphics_Line_Item, pen: Pen) ---
+
+	/* QGraphicsPixmapItem */
+
+	@(require_results) graphics_pixmap_item_create :: proc(pixmap: Pixmap, parent: Graphics_Item) -> Graphics_Pixmap_Item ---
+	graphics_pixmap_item_set_pixmap :: proc(item: Graphics_Pixmap_Item, pixmap: Pixmap) ---
+	graphics_pixmap_item_set_offset :: proc(item: Graphics_Pixmap_Item, x: c.double, y: c.double) ---
+	graphics_pixmap_item_set_transformation_mode :: proc(item: Graphics_Pixmap_Item, mode: Transformation_Mode) ---
+	graphics_pixmap_item_set_shape_mode :: proc(item: Graphics_Pixmap_Item, mode: Graphics_Pixmap_Item_Shape_Mode) ---
+
+	/* QGraphicsPathItem */
+
+	@(require_results) graphics_path_item_create :: proc(path: Painter_Path, parent: Graphics_Item) -> Graphics_Path_Item ---
+	graphics_path_item_set_path :: proc(item: Graphics_Path_Item, path: Painter_Path) ---
+	graphics_path_item_set_pen :: proc(item: Graphics_Path_Item, pen: Pen) ---
+	graphics_path_item_set_brush :: proc(item: Graphics_Path_Item, brush: Brush) ---
+
+	/* QGraphicsItemGroup */
+
+	@(require_results) graphics_item_group_create :: proc(parent: Graphics_Item) -> Graphics_Item_Group ---
+	graphics_item_group_add_to_group :: proc(group: Graphics_Item_Group, item: Graphics_Item) ---
+	graphics_item_group_remove_from_group :: proc(group: Graphics_Item_Group, item: Graphics_Item) ---
+
+	/* QGraphicsProxyWidget */
+
+	@(require_results) graphics_proxy_widget_create :: proc(parent: Graphics_Item) -> Graphics_Proxy_Widget ---
+	graphics_proxy_widget_set_widget :: proc(proxy: Graphics_Proxy_Widget, widget: Widget) ---
+	@(require_results) graphics_proxy_widget_get_widget :: proc(proxy: Graphics_Proxy_Widget) -> Widget ---
+
+	/* QGraphicsEffect (base + subclasses) */
+
+	graphics_effect_set_enabled :: proc(effect: Graphics_Effect, is_enabled: c.int) ---
+	@(require_results) graphics_effect_is_enabled :: proc(effect: Graphics_Effect) -> c.int ---
+
+	@(require_results) graphics_blur_effect_create :: proc(parent: rawptr) -> Graphics_Blur_Effect ---
+	graphics_blur_effect_destroy :: proc(effect: Graphics_Blur_Effect) ---
+	graphics_blur_effect_set_blur_radius :: proc(effect: Graphics_Blur_Effect, radius: c.double) ---
+	@(require_results) graphics_blur_effect_get_blur_radius :: proc(effect: Graphics_Blur_Effect) -> c.double ---
+	graphics_blur_effect_set_blur_hints :: proc(effect: Graphics_Blur_Effect, hints: Graphics_Blur_Hint) ---
+	graphics_blur_effect_connect_blur_radius_changed :: proc(effect: Graphics_Blur_Effect, callback: Double_Callback, user_data: rawptr) -> Connection_Id ---
+
+	@(require_results) graphics_colourize_effect_create :: proc(parent: rawptr) -> Graphics_Colourize_Effect ---
+	graphics_colourize_effect_destroy :: proc(effect: Graphics_Colourize_Effect) ---
+	graphics_colourize_effect_set_colour :: proc(effect: Graphics_Colourize_Effect, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	graphics_colourize_effect_get_colour :: proc(effect: Graphics_Colourize_Effect, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	graphics_colourize_effect_set_strength :: proc(effect: Graphics_Colourize_Effect, strength: c.double) ---
+	@(require_results) graphics_colourize_effect_get_strength :: proc(effect: Graphics_Colourize_Effect) -> c.double ---
+	graphics_colourize_effect_connect_colour_changed :: proc(effect: Graphics_Colourize_Effect, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	graphics_colourize_effect_connect_strength_changed :: proc(effect: Graphics_Colourize_Effect, callback: Double_Callback, user_data: rawptr) -> Connection_Id ---
+
+	@(require_results) graphics_drop_shadow_effect_create :: proc(parent: rawptr) -> Graphics_Drop_Shadow_Effect ---
+	graphics_drop_shadow_effect_destroy :: proc(effect: Graphics_Drop_Shadow_Effect) ---
+	graphics_drop_shadow_effect_set_blur_radius :: proc(effect: Graphics_Drop_Shadow_Effect, radius: c.double) ---
+	@(require_results) graphics_drop_shadow_effect_get_blur_radius :: proc(effect: Graphics_Drop_Shadow_Effect) -> c.double ---
+	graphics_drop_shadow_effect_set_colour :: proc(effect: Graphics_Drop_Shadow_Effect, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	graphics_drop_shadow_effect_get_colour :: proc(effect: Graphics_Drop_Shadow_Effect, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	graphics_drop_shadow_effect_set_offset :: proc(effect: Graphics_Drop_Shadow_Effect, dx: c.double, dy: c.double) ---
+	graphics_drop_shadow_effect_get_offset :: proc(effect: Graphics_Drop_Shadow_Effect, dx: ^c.double, dy: ^c.double) ---
+	graphics_drop_shadow_effect_connect_blur_radius_changed :: proc(effect: Graphics_Drop_Shadow_Effect, callback: Double_Callback, user_data: rawptr) -> Connection_Id ---
+	graphics_drop_shadow_effect_connect_colour_changed :: proc(effect: Graphics_Drop_Shadow_Effect, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	graphics_drop_shadow_effect_connect_offset_changed :: proc(effect: Graphics_Drop_Shadow_Effect, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	@(require_results) graphics_opacity_effect_create :: proc(parent: rawptr) -> Graphics_Opacity_Effect ---
+	graphics_opacity_effect_destroy :: proc(effect: Graphics_Opacity_Effect) ---
+	graphics_opacity_effect_set_opacity :: proc(effect: Graphics_Opacity_Effect, opacity: c.double) ---
+	@(require_results) graphics_opacity_effect_get_opacity :: proc(effect: Graphics_Opacity_Effect) -> c.double ---
+	graphics_opacity_effect_set_opacity_mask :: proc(effect: Graphics_Opacity_Effect, brush: Brush) ---
+	graphics_opacity_effect_connect_opacity_changed :: proc(effect: Graphics_Opacity_Effect, callback: Double_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QStyle / QStyleFactory */
+
+	@(require_results) style_get_keys :: proc(keys_out: ^[^]cstring) -> c.int ---
+	style_free_keys :: proc(keys: [^]cstring, count: c.int) ---
+	@(require_results) application_get_style :: proc(app: Application) -> Style ---
+	@(require_results) style_get_pixel_metric :: proc(style: Style, metric: Style_Pixel_Metric, widget: Widget) -> c.int ---
+	@(require_results) style_get_name :: proc(style: Style) -> cstring ---
+
+	/* QScroller / QScrollerProperties */
+
+	@(require_results) scroller_grab :: proc(target: rawptr, gesture_type: Scroller_Gesture_Type) -> Scroller ---
+	@(require_results) scroller_get_scroller :: proc(target: rawptr) -> Scroller ---
+	scroller_set_snap_positions_x :: proc(scroller: Scroller, first: c.double, interval: c.double) ---
+	scroller_set_snap_positions_y :: proc(scroller: Scroller, first: c.double, interval: c.double) ---
+	@(require_results) scroller_get_state :: proc(scroller: Scroller) -> Scroller_State ---
+	scroller_stop :: proc(scroller: Scroller) ---
+
+	@(require_results) scroller_properties_create :: proc(scroller: Scroller) -> Scroller_Properties ---
+	scroller_properties_destroy :: proc(props: Scroller_Properties) ---
+	scroller_properties_set_metric :: proc(props: Scroller_Properties, metric: Scroller_Metric, value: c.double) ---
+	@(require_results) scroller_properties_get_metric :: proc(props: Scroller_Properties, metric: Scroller_Metric) -> c.double ---
+	scroller_properties_apply :: proc(props: Scroller_Properties, scroller: Scroller) ---
+
+	/* QIdentityProxyModel */
+
+	@(require_results) identity_proxy_model_create :: proc(parent: rawptr) -> Identity_Proxy_Model ---
+	identity_proxy_model_destroy :: proc(model: Identity_Proxy_Model) ---
+	identity_proxy_model_set_source_model :: proc(model: Identity_Proxy_Model, source: rawptr) ---
+	@(require_results) identity_proxy_model_get_source_model :: proc(model: Identity_Proxy_Model) -> rawptr ---
+	@(require_results) identity_proxy_model_map_to_source :: proc(model: Identity_Proxy_Model, proxy_index: Model_Index) -> Model_Index ---
+	@(require_results) identity_proxy_model_map_from_source :: proc(model: Identity_Proxy_Model, source_index: Model_Index) -> Model_Index ---
+
+	/* QTransposeProxyModel */
+
+	@(require_results) transpose_proxy_model_create :: proc(parent: rawptr) -> Transpose_Proxy_Model ---
+	transpose_proxy_model_destroy :: proc(model: Transpose_Proxy_Model) ---
+	transpose_proxy_model_set_source_model :: proc(model: Transpose_Proxy_Model, source: rawptr) ---
+	@(require_results) transpose_proxy_model_get_source_model :: proc(model: Transpose_Proxy_Model) -> rawptr ---
+
+	/* QConcatenateTablesProxyModel */
+
+	@(require_results) concatenate_tables_proxy_model_create :: proc(parent: rawptr) -> Concatenate_Tables_Proxy_Model ---
+	concatenate_tables_proxy_model_destroy :: proc(model: Concatenate_Tables_Proxy_Model) ---
+	concatenate_tables_proxy_model_add_source_model :: proc(model: Concatenate_Tables_Proxy_Model, source: rawptr) ---
+	concatenate_tables_proxy_model_remove_source_model :: proc(model: Concatenate_Tables_Proxy_Model, source: rawptr) ---
+	@(require_results) concatenate_tables_proxy_model_map_to_source :: proc(model: Concatenate_Tables_Proxy_Model, proxy_index: Model_Index) -> Model_Index ---
+	@(require_results) concatenate_tables_proxy_model_map_from_source :: proc(model: Concatenate_Tables_Proxy_Model, source_index: Model_Index, source_model: rawptr) -> Model_Index ---
+
+	/* QSignalMapper */
+
+	@(require_results) signal_mapper_create :: proc(parent: rawptr) -> Signal_Mapper ---
+	signal_mapper_destroy :: proc(mapper: Signal_Mapper) ---
+	signal_mapper_set_mapping_int :: proc(mapper: Signal_Mapper, sender: rawptr, id: c.int) ---
+	signal_mapper_set_mapping_string :: proc(mapper: Signal_Mapper, sender: rawptr, text: cstring) ---
+	signal_mapper_set_mapping_widget :: proc(mapper: Signal_Mapper, sender: rawptr, widget: Widget) ---
+	signal_mapper_remove_mappings :: proc(mapper: Signal_Mapper, sender: rawptr) ---
+	signal_mapper_map :: proc(mapper: Signal_Mapper, sender: rawptr) ---
+	signal_mapper_connect_mapped_int :: proc(mapper: Signal_Mapper, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	signal_mapper_connect_mapped_string :: proc(mapper: Signal_Mapper, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QLockFile */
+
+	@(require_results) lock_file_create :: proc(file_path: cstring) -> Lock_File ---
+	lock_file_destroy :: proc(lock: Lock_File) ---
+	@(require_results) lock_file_lock :: proc(lock: Lock_File) -> c.int ---
+	@(require_results) lock_file_try_lock :: proc(lock: Lock_File, timeout_ms: c.int) -> c.int ---
+	lock_file_unlock :: proc(lock: Lock_File) ---
+	@(require_results) lock_file_is_locked :: proc(lock: Lock_File) -> c.int ---
+	@(require_results) lock_file_get_error :: proc(lock: Lock_File) -> Lock_File_Error ---
+	lock_file_set_stale_lock_time :: proc(lock: Lock_File, msecs: c.int) ---
+	@(require_results) lock_file_get_stale_lock_time :: proc(lock: Lock_File) -> c.int ---
+	@(require_results) lock_file_remove_stale_lock_file :: proc(lock: Lock_File) -> c.int ---
+
+	/* QTimeLine */
+
+	@(require_results) time_line_create :: proc(duration_ms: c.int, parent: rawptr) -> Time_Line ---
+	time_line_destroy :: proc(timeline: Time_Line) ---
+	time_line_start :: proc(timeline: Time_Line) ---
+	time_line_stop :: proc(timeline: Time_Line) ---
+	time_line_resume :: proc(timeline: Time_Line) ---
+	time_line_set_paused :: proc(timeline: Time_Line, is_paused: c.int) ---
+	@(require_results) time_line_get_state :: proc(timeline: Time_Line) -> Time_Line_State ---
+	time_line_set_duration :: proc(timeline: Time_Line, duration_ms: c.int) ---
+	@(require_results) time_line_get_duration :: proc(timeline: Time_Line) -> c.int ---
+	time_line_set_frame_range :: proc(timeline: Time_Line, start: c.int, end: c.int) ---
+	@(require_results) time_line_get_start_frame :: proc(timeline: Time_Line) -> c.int ---
+	@(require_results) time_line_get_end_frame :: proc(timeline: Time_Line) -> c.int ---
+	@(require_results) time_line_get_current_frame :: proc(timeline: Time_Line) -> c.int ---
+	@(require_results) time_line_get_current_value :: proc(timeline: Time_Line) -> c.double ---
+	time_line_set_current_time :: proc(timeline: Time_Line, msec: c.int) ---
+	@(require_results) time_line_get_current_time :: proc(timeline: Time_Line) -> c.int ---
+	time_line_set_loop_count :: proc(timeline: Time_Line, count: c.int) ---
+	@(require_results) time_line_get_loop_count :: proc(timeline: Time_Line) -> c.int ---
+	time_line_set_direction :: proc(timeline: Time_Line, direction: Time_Line_Direction) ---
+	@(require_results) time_line_get_direction :: proc(timeline: Time_Line) -> Time_Line_Direction ---
+	time_line_set_easing_curve :: proc(timeline: Time_Line, curve_type: Easing_Curve) ---
+	time_line_set_update_interval :: proc(timeline: Time_Line, interval_ms: c.int) ---
+	time_line_connect_value_changed :: proc(timeline: Time_Line, callback: Double_Callback, user_data: rawptr) -> Connection_Id ---
+	time_line_connect_frame_changed :: proc(timeline: Time_Line, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	time_line_connect_state_changed :: proc(timeline: Time_Line, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	time_line_connect_finished :: proc(timeline: Time_Line, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QCalendar */
+
+	@(require_results) calendar_create :: proc() -> Calendar ---
+	@(require_results) calendar_create_with_system :: proc(system: Calendar_System) -> Calendar ---
+	calendar_destroy :: proc(calendar: Calendar) ---
+	@(require_results) calendar_is_valid :: proc(calendar: Calendar) -> c.int ---
+	@(require_results) calendar_get_days_in_month :: proc(calendar: Calendar, month: c.int, year: c.int) -> c.int ---
+	@(require_results) calendar_get_days_in_year :: proc(calendar: Calendar, year: c.int) -> c.int ---
+	@(require_results) calendar_get_months_in_year :: proc(calendar: Calendar, year: c.int) -> c.int ---
+	@(require_results) calendar_is_date_valid :: proc(calendar: Calendar, year: c.int, month: c.int, day: c.int) -> c.int ---
+	@(require_results) calendar_is_gregorian :: proc(calendar: Calendar) -> c.int ---
+	@(require_results) calendar_is_leap_year :: proc(calendar: Calendar, year: c.int) -> c.int ---
+	@(require_results) calendar_get_maximum_days_in_month :: proc(calendar: Calendar) -> c.int ---
+	@(require_results) calendar_get_maximum_months_in_year :: proc(calendar: Calendar) -> c.int ---
+
+	/* QRandomGenerator */
+
+	@(require_results) random_generator_generate :: proc() -> c.uint ---
+	@(require_results) random_generator_generate_bounded_int :: proc(highest: c.int) -> c.uint ---
+	@(require_results) random_generator_generate_bounded_range :: proc(lowest: c.int, highest: c.int) -> c.uint ---
+	@(require_results) random_generator_generate_double :: proc() -> c.double ---
+
+	/* QEventLoop */
+
+	@(require_results) event_loop_create :: proc(parent: rawptr) -> Event_Loop ---
+	event_loop_destroy :: proc(loop: Event_Loop) ---
+	@(require_results) event_loop_exec :: proc(loop: Event_Loop, flags: Event_Loop_Flag) -> c.int ---
+	event_loop_exit :: proc(loop: Event_Loop, return_code: c.int) ---
+	event_loop_quit :: proc(loop: Event_Loop) ---
+	@(require_results) event_loop_is_running :: proc(loop: Event_Loop) -> c.int ---
+	event_loop_process_events :: proc(loop: Event_Loop, flags: Event_Loop_Flag) ---
+	event_loop_wake_up :: proc(loop: Event_Loop) ---
+
+	/* QSysInfo */
+
+	@(require_results) sys_info_get_product_type :: proc() -> cstring ---
+	@(require_results) sys_info_get_product_version :: proc() -> cstring ---
+	@(require_results) sys_info_get_pretty_product_name :: proc() -> cstring ---
+	@(require_results) sys_info_get_kernel_type :: proc() -> cstring ---
+	@(require_results) sys_info_get_kernel_version :: proc() -> cstring ---
+	@(require_results) sys_info_get_cpu_architecture :: proc() -> cstring ---
+	@(require_results) sys_info_get_build_abi :: proc() -> cstring ---
+	@(require_results) sys_info_get_build_cpu_architecture :: proc() -> cstring ---
+	@(require_results) sys_info_get_machine_host_name :: proc() -> cstring ---
+	@(require_results) sys_info_get_machine_unique_id :: proc() -> cstring ---
+	@(require_results) sys_info_get_boot_unique_id :: proc() -> cstring ---
+
+	/* QLibrary */
+
+	@(require_results) library_create :: proc(file_path: cstring, parent: rawptr) -> Library ---
+	library_destroy :: proc(library: Library) ---
+	@(require_results) library_load :: proc(library: Library) -> c.int ---
+	@(require_results) library_unload :: proc(library: Library) -> c.int ---
+	@(require_results) library_is_loaded :: proc(library: Library) -> c.int ---
+	@(require_results) library_resolve :: proc(library: Library, symbol: cstring) -> rawptr ---
+	@(require_results) library_get_error_string :: proc(library: Library) -> cstring ---
+	library_set_file_name :: proc(library: Library, file_path: cstring) ---
+	@(require_results) library_get_file_name :: proc(library: Library) -> cstring ---
+	library_set_load_hints :: proc(library: Library, hints: Library_Load_Hint) ---
+	@(require_results) library_get_load_hints :: proc(library: Library) -> c.int ---
+	@(require_results) library_is_library :: proc(file_path: cstring) -> c.int ---
+
+	/* QSharedMemory */
+
+	@(require_results) shared_memory_create :: proc(key: cstring, parent: rawptr) -> Shared_Memory ---
+	shared_memory_destroy :: proc(shm: Shared_Memory) ---
+	@(require_results) shared_memory_create_segment :: proc(shm: Shared_Memory, size: c.int, mode: Shared_Memory_Access_Mode) -> c.int ---
+	@(require_results) shared_memory_attach :: proc(shm: Shared_Memory, mode: Shared_Memory_Access_Mode) -> c.int ---
+	@(require_results) shared_memory_detach :: proc(shm: Shared_Memory) -> c.int ---
+	@(require_results) shared_memory_is_attached :: proc(shm: Shared_Memory) -> c.int ---
+	@(require_results) shared_memory_get_data :: proc(shm: Shared_Memory) -> rawptr ---
+	@(require_results) shared_memory_get_size :: proc(shm: Shared_Memory) -> c.int ---
+	@(require_results) shared_memory_lock :: proc(shm: Shared_Memory) -> c.int ---
+	@(require_results) shared_memory_unlock :: proc(shm: Shared_Memory) -> c.int ---
+	@(require_results) shared_memory_get_error_string :: proc(shm: Shared_Memory) -> cstring ---
+	@(require_results) shared_memory_get_error :: proc(shm: Shared_Memory) -> Shared_Memory_Error ---
+	shared_memory_set_key :: proc(shm: Shared_Memory, key: cstring) ---
+	shared_memory_set_native_key :: proc(shm: Shared_Memory, key: cstring) ---
+	@(require_results) shared_memory_get_native_key :: proc(shm: Shared_Memory) -> cstring ---
+
+	/* QSystemSemaphore */
+
+	@(require_results) system_semaphore_create :: proc(key: cstring, initial_value: c.int, mode: System_Semaphore_Access_Mode) -> System_Semaphore ---
+	system_semaphore_destroy :: proc(sem: System_Semaphore) ---
+	@(require_results) system_semaphore_acquire :: proc(sem: System_Semaphore) -> c.int ---
+	@(require_results) system_semaphore_release :: proc(sem: System_Semaphore, count: c.int) -> c.int ---
+	@(require_results) system_semaphore_get_error_string :: proc(sem: System_Semaphore) -> cstring ---
+	@(require_results) system_semaphore_get_error :: proc(sem: System_Semaphore) -> System_Semaphore_Error ---
+	system_semaphore_set_key :: proc(sem: System_Semaphore, key: cstring, initial_value: c.int, mode: System_Semaphore_Access_Mode) ---
 }

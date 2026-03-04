@@ -45,7 +45,18 @@ QXmlStreamReader, QXmlStreamWriter, QDateTime, QDate, QTime,
 QLocale, QRegularExpression, QUrl, QUuid, QElapsedTimer,
 QCryptographicHash, QMimeDatabase, QStorageInfo, QVersionNumber,
 QTranslator, QCommandLineParser, QTemporaryFile, QTemporaryDir,
-QSaveFile, QFileSystemWatcher, QStringListModel, QItemSelectionModel
+QSaveFile, QFileSystemWatcher, QStringListModel, QItemSelectionModel,
+QUndoCommand, QUndoStack, QUndoGroup, QDataWidgetMapper,
+QStyledItemDelegate, QItemDelegate,
+QGraphicsScene, QGraphicsView, QGraphicsItem,
+QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem,
+QGraphicsLineItem, QGraphicsPixmapItem, QGraphicsPathItem,
+QGraphicsItemGroup, QGraphicsProxyWidget,
+QGraphicsBlurEffect, QGraphicsColorizeEffect, QGraphicsDropShadowEffect, QGraphicsOpacityEffect,
+QStyle, QStyleFactory, QScroller, QScrollerProperties,
+QIdentityProxyModel, QTransposeProxyModel, QConcatenateTablesProxyModel,
+QSignalMapper, QLockFile, QTimeLine, QCalendar, QRandomGenerator,
+QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ---
 
@@ -134,30 +145,30 @@ QSaveFile, QFileSystemWatcher, QStringListModel, QItemSelectionModel
 - [x] QItemSelectionModel
 - Deferred: QWaitCondition, QTextStream, QDataStream, QUrlQuery (low value for typical GUI use)
 
-## Batch 4: Advanced Features
-- [ ] QUndoStack / QUndoCommand / QUndoGroup
-- [ ] QDataWidgetMapper
-- [ ] QStyledItemDelegate / QItemDelegate
-- [ ] QGraphicsScene
-- [ ] QGraphicsView
-- [ ] QGraphicsItem (base + all item types)
-- [ ] QGraphicsItemGroup
-- [ ] QGraphicsProxyWidget
-- [ ] QGraphicsEffect (Blur, Colorize, DropShadow, Opacity)
-- [ ] QStyle / QStyleFactory
-- [ ] QScroller / QScrollerProperties
-- [ ] QIdentityProxyModel
-- [ ] QTransposeProxyModel
-- [ ] QConcatenateTablesProxyModel
-- [ ] QSignalMapper
-- [ ] QLockFile
-- [ ] QTimeLine
-- [ ] QCalendar
-- [ ] QRandomGenerator
-- [ ] QEventLoop
-- [ ] QSysInfo
-- [ ] QLibrary
-- [ ] QSharedMemory
-- [ ] QSystemSemaphore
+## Batch 4: Advanced Features ✅
+- [x] QUndoStack / QUndoCommand / QUndoGroup
+- [x] QDataWidgetMapper
+- [x] QStyledItemDelegate / QItemDelegate
+- [x] QGraphicsScene
+- [x] QGraphicsView
+- [x] QGraphicsItem (base + all item types)
+- [x] QGraphicsItemGroup
+- [x] QGraphicsProxyWidget
+- [x] QGraphicsEffect (Blur, Colorize, DropShadow, Opacity)
+- [x] QStyle / QStyleFactory
+- [x] QScroller / QScrollerProperties
+- [x] QIdentityProxyModel
+- [x] QTransposeProxyModel
+- [x] QConcatenateTablesProxyModel
+- [x] QSignalMapper
+- [x] QLockFile
+- [x] QTimeLine
+- [x] QCalendar
+- [x] QRandomGenerator
+- [x] QEventLoop
+- [x] QSysInfo
+- [x] QLibrary
+- [x] QSharedMemory
+- [x] QSystemSemaphore
 
 ## Batch 5: Add demos for each item to the application
