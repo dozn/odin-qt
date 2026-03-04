@@ -85,12 +85,12 @@
 - [x] Mouse event handling
 
 ## 7. Layout Extras
-- [ ] QGridLayout::addLayout() (nest layouts in grid cells)
-- [ ] QFormLayout::addRow(widget, widget) variant
-- [ ] QLayout::count(), itemAt(), takeAt()
-- [ ] QBoxLayout::insertWidget() (insert at position)
-- [ ] QSpacerItem (explicit spacers)
-- [ ] QLayout::setAlignment() per widget
+- [x] QGridLayout::addLayout() (nest layouts in grid cells)
+- [x] QFormLayout::addRow(widget, widget) variant
+- [x] QLayout::count(), itemAt(), takeAt()
+- [x] QBoxLayout::insertWidget() (insert at position)
+- [x] QSpacerItem (explicit spacers)
+- [x] QLayout::setAlignment() per widget
 
 ## 8. Lower Priority
 - [ ] Model/View framework (QFileSystemModel, QStandardItemModel, QSortFilterProxyModel)
@@ -100,3 +100,5 @@
 - [ ] QPropertyAnimation / QParallelAnimationGroup
 - [ ] QObject::deleteLater()
 - [ ] Dynamic properties (setProperty/property)
+
+## 9. Add the completed todos to our demo application

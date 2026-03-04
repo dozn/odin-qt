@@ -247,6 +247,18 @@ void  qt_layout_set_contents_margins(void *layout, int left, int top, int right,
 void  qt_layout_remove_widget(void *layout, void *widget);
 void  qt_grid_layout_set_row_stretch(void *layout, int row, int stretch);
 void  qt_grid_layout_set_column_stretch(void *layout, int column, int stretch);
+void  qt_grid_layout_add_layout(void *layout, void *child_layout, int row, int col, int row_span, int col_span);
+void  qt_form_layout_add_row_widgets(void *layout, void *label_widget, void *field_widget);
+int   qt_layout_get_count(void *layout);
+void *qt_layout_item_at(void *layout, int index);
+void *qt_layout_take_at(void *layout, int index);
+void *qt_layout_item_get_widget(void *item);
+void  qt_layout_item_destroy(void *item);
+void  qt_box_layout_insert_widget(void *layout, int index, void *widget, int stretch, int alignment);
+void *qt_spacer_item_create(int width, int height, int horizontal_policy, int vertical_policy);
+void  qt_box_layout_add_spacer_item(void *layout, void *spacer);
+void  qt_grid_layout_add_spacer_item(void *layout, void *spacer, int row, int col, int row_span, int col_span);
+int   qt_layout_set_widget_alignment(void *layout, void *widget, int alignment);
 
 /* ── QListWidget ────────────────────────────────────────────────────── */
 

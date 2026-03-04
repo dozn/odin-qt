@@ -111,6 +111,8 @@ Font_Metrics :: distinct rawptr
 Completer :: distinct rawptr
 Validator :: distinct rawptr
 Event_Filter :: distinct rawptr
+Layout_Item :: distinct rawptr
+Spacer_Item :: distinct rawptr
 Connection_Id :: distinct c.int
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
@@ -742,6 +744,18 @@ foreign qt_lib {
 	layout_remove_widget :: proc(layout: Layout, widget: Widget) ---
 	grid_layout_set_row_stretch :: proc(layout: Layout, row: c.int, stretch: c.int) ---
 	grid_layout_set_column_stretch :: proc(layout: Layout, column: c.int, stretch: c.int) ---
+	grid_layout_add_layout :: proc(layout: Layout, child_layout: Layout, row: c.int, col: c.int, row_span: c.int, col_span: c.int) ---
+	form_layout_add_row_widgets :: proc(layout: Layout, label_widget: Widget, field_widget: Widget) ---
+	@(require_results) layout_get_count :: proc(layout: Layout) -> c.int ---
+	@(require_results) layout_item_at :: proc(layout: Layout, index: c.int) -> Layout_Item ---
+	@(require_results) layout_take_at :: proc(layout: Layout, index: c.int) -> Layout_Item ---
+	@(require_results) layout_item_get_widget :: proc(item: Layout_Item) -> Widget ---
+	layout_item_destroy :: proc(item: Layout_Item) ---
+	box_layout_insert_widget :: proc(layout: Layout, index: c.int, widget: Widget, stretch: c.int, alignment: Alignment) ---
+	@(require_results) spacer_item_create :: proc(width: c.int, height: c.int, horizontal_policy: Size_Policy, vertical_policy: Size_Policy) -> Spacer_Item ---
+	box_layout_add_spacer_item :: proc(layout: Layout, spacer: Spacer_Item) ---
+	grid_layout_add_spacer_item :: proc(layout: Layout, spacer: Spacer_Item, row: c.int, col: c.int, row_span: c.int, col_span: c.int) ---
+	@(require_results) layout_set_widget_alignment :: proc(layout: Layout, widget: Widget, alignment: Alignment) -> c.int ---
 
 	/* QListWidget */
 

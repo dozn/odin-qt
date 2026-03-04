@@ -82,6 +82,7 @@
 #include <QToolTip>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QSpacerItem>
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -994,6 +995,72 @@ void qt_grid_layout_set_row_stretch(void *layout, int row, int stretch) {
 
 void qt_grid_layout_set_column_stretch(void *layout, int column, int stretch) {
     static_cast<QGridLayout *>(layout)->setColumnStretch(column, stretch);
+}
+
+void qt_grid_layout_add_layout(void *layout, void *child_layout, int row, int col, int row_span, int col_span) {
+    static_cast<QGridLayout *>(layout)->addLayout(
+        static_cast<QLayout *>(child_layout), row, col, row_span, col_span
+    );
+}
+
+void qt_form_layout_add_row_widgets(void *layout, void *label_widget, void *field_widget) {
+    static_cast<QFormLayout *>(layout)->addRow(
+        static_cast<QWidget *>(label_widget),
+        static_cast<QWidget *>(field_widget)
+    );
+}
+
+int qt_layout_get_count(void *layout) {
+    return static_cast<QLayout *>(layout)->count();
+}
+
+void *qt_layout_item_at(void *layout, int index) {
+    return static_cast<void *>(static_cast<QLayout *>(layout)->itemAt(index));
+}
+
+void *qt_layout_take_at(void *layout, int index) {
+    return static_cast<void *>(static_cast<QLayout *>(layout)->takeAt(index));
+}
+
+void *qt_layout_item_get_widget(void *item) {
+    if (!item) return nullptr;
+    return static_cast<void *>(static_cast<QLayoutItem *>(item)->widget());
+}
+
+void qt_layout_item_destroy(void *item) {
+    delete static_cast<QLayoutItem *>(item);
+}
+
+void qt_box_layout_insert_widget(void *layout, int index, void *widget, int stretch, int alignment) {
+    static_cast<QBoxLayout *>(layout)->insertWidget(
+        index, static_cast<QWidget *>(widget), stretch, static_cast<Qt::Alignment>(alignment)
+    );
+}
+
+void *qt_spacer_item_create(int width, int height, int horizontal_policy, int vertical_policy) {
+    return static_cast<void *>(new QSpacerItem(
+        width, height,
+        static_cast<QSizePolicy::Policy>(horizontal_policy),
+        static_cast<QSizePolicy::Policy>(vertical_policy)
+    ));
+}
+
+void qt_box_layout_add_spacer_item(void *layout, void *spacer) {
+    static_cast<QBoxLayout *>(layout)->addSpacerItem(
+        static_cast<QSpacerItem *>(spacer)
+    );
+}
+
+void qt_grid_layout_add_spacer_item(void *layout, void *spacer, int row, int col, int row_span, int col_span) {
+    static_cast<QGridLayout *>(layout)->addItem(
+        static_cast<QSpacerItem *>(spacer), row, col, row_span, col_span
+    );
+}
+
+int qt_layout_set_widget_alignment(void *layout, void *widget, int alignment) {
+    return static_cast<QLayout *>(layout)->setAlignment(
+        static_cast<QWidget *>(widget), static_cast<Qt::Alignment>(alignment)
+    ) ? 1 : 0;
 }
 
 /* ── QListWidget ────────────────────────────────────────────────────── */
