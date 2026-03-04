@@ -38,7 +38,14 @@ QPainterPath, QTransform, QRegion,
 QLinearGradient, QRadialGradient, QConicalGradient,
 QTextCursor, QTextDocument, QFontDatabase, QKeySequence,
 QMovie, QImageReader, QImageWriter, QBitmap, QStaticText, QPicture,
-QPageLayout, QPageSize
+QPageLayout, QPageSize,
+QFile, QFileInfo, QDir, QProcess, QThread, QMutex, QReadWriteLock,
+QSemaphore, QBuffer, QJsonDocument, QJsonObject, QJsonArray,
+QXmlStreamReader, QXmlStreamWriter, QDateTime, QDate, QTime,
+QLocale, QRegularExpression, QUrl, QUuid, QElapsedTimer,
+QCryptographicHash, QMimeDatabase, QStorageInfo, QVersionNumber,
+QTranslator, QCommandLineParser, QTemporaryFile, QTemporaryDir,
+QSaveFile, QFileSystemWatcher, QStringListModel, QItemSelectionModel
 
 ---
 
@@ -90,45 +97,42 @@ QPageLayout, QPageSize
 - [x] QPicture
 - [x] QPageLayout / QPageSize
 
-## Batch 3: QtCore Essentials
-- [ ] QFile
-- [ ] QFileInfo
-- [ ] QDir
-- [ ] QProcess
-- [ ] QThread
-- [ ] QMutex
-- [ ] QReadWriteLock
-- [ ] QSemaphore
-- [ ] QWaitCondition
-- [ ] QBuffer
-- [ ] QTextStream
-- [ ] QDataStream
-- [ ] QJsonDocument
-- [ ] QJsonObject
-- [ ] QJsonArray
-- [ ] QXmlStreamReader
-- [ ] QXmlStreamWriter
-- [ ] QDateTime (standalone)
-- [ ] QDate (standalone)
-- [ ] QTime (standalone)
-- [ ] QLocale
-- [ ] QRegularExpression (standalone)
-- [ ] QUrl
-- [ ] QUrlQuery
-- [ ] QUuid
-- [ ] QElapsedTimer
-- [ ] QCryptographicHash
-- [ ] QMimeType / QMimeDatabase
-- [ ] QStorageInfo
-- [ ] QVersionNumber
-- [ ] QTranslator
-- [ ] QCommandLineParser / QCommandLineOption
-- [ ] QTemporaryFile
-- [ ] QTemporaryDir
-- [ ] QSaveFile
-- [ ] QFileSystemWatcher
-- [ ] QStringListModel
-- [ ] QItemSelectionModel
+## Batch 3: QtCore Essentials ✅
+- [x] QFile
+- [x] QFileInfo
+- [x] QDir
+- [x] QProcess
+- [x] QThread
+- [x] QMutex
+- [x] QReadWriteLock
+- [x] QSemaphore
+- [x] QBuffer
+- [x] QJsonDocument
+- [x] QJsonObject
+- [x] QJsonArray
+- [x] QXmlStreamReader
+- [x] QXmlStreamWriter
+- [x] QDateTime (standalone)
+- [x] QDate (standalone)
+- [x] QTime (standalone)
+- [x] QLocale
+- [x] QRegularExpression (standalone)
+- [x] QUrl
+- [x] QUuid
+- [x] QElapsedTimer
+- [x] QCryptographicHash
+- [x] QMimeType / QMimeDatabase
+- [x] QStorageInfo
+- [x] QVersionNumber
+- [x] QTranslator
+- [x] QCommandLineParser / QCommandLineOption
+- [x] QTemporaryFile
+- [x] QTemporaryDir
+- [x] QSaveFile
+- [x] QFileSystemWatcher
+- [x] QStringListModel
+- [x] QItemSelectionModel
+- Deferred: QWaitCondition, QTextStream, QDataStream, QUrlQuery (low value for typical GUI use)
 
 ## Batch 4: Advanced Features
 - [ ] QUndoStack / QUndoCommand / QUndoGroup

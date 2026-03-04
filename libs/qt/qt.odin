@@ -175,6 +175,39 @@ Static_Text :: distinct rawptr
 Picture :: distinct rawptr
 Page_Size :: distinct rawptr
 Page_Layout :: distinct rawptr
+File :: distinct rawptr
+File_Info :: distinct rawptr
+Dir :: distinct rawptr
+Process :: distinct rawptr
+Mutex :: distinct rawptr
+Read_Write_Lock :: distinct rawptr
+Semaphore :: distinct rawptr
+Buffer :: distinct rawptr
+Json_Document :: distinct rawptr
+Json_Object :: distinct rawptr
+Json_Array :: distinct rawptr
+Xml_Stream_Reader :: distinct rawptr
+Xml_Stream_Writer :: distinct rawptr
+Date_Time :: distinct rawptr
+Date :: distinct rawptr
+Time_Handle :: distinct rawptr
+Locale :: distinct rawptr
+Regex :: distinct rawptr
+Url :: distinct rawptr
+Uuid :: distinct rawptr
+Elapsed_Timer :: distinct rawptr
+Crypto_Hash :: distinct rawptr
+Mime_Database :: distinct rawptr
+Storage_Info :: distinct rawptr
+Version_Number :: distinct rawptr
+Translator :: distinct rawptr
+Command_Line_Parser :: distinct rawptr
+Temporary_File :: distinct rawptr
+Temporary_Dir :: distinct rawptr
+Save_File :: distinct rawptr
+File_System_Watcher :: distinct rawptr
+String_List_Model :: distinct rawptr
+Item_Selection_Model :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1007,6 +1040,113 @@ Page_Size_Unit :: enum c.int {
 Page_Layout_Orientation :: enum c.int {
 	Portrait = 0,
 	Landscape = 1,
+}
+
+File_Open_Mode :: enum c.int {
+	Not_Open = 0x0000,
+	Read_Only = 0x0001,
+	Write_Only = 0x0002,
+	Read_Write = 0x0003,
+	Append = 0x0004,
+	Truncate = 0x0008,
+	Text = 0x0010,
+	Unbuffered = 0x0020,
+	New_Only = 0x0040,
+	Existing_Only = 0x0080,
+}
+
+Dir_Filter :: enum c.int {
+	Dirs = 0x001,
+	Files = 0x002,
+	Drives = 0x004,
+	No_Sym_Links = 0x008,
+	All_Entries = 0x007,
+	No_Dot_And_Dot_Dot = 0x1000,
+	No_Dot = 0x2000,
+	No_Dot_Dot = 0x4000,
+	Hidden = 0x100,
+	System = 0x200,
+}
+
+Process_State :: enum c.int {
+	Not_Running = 0,
+	Starting = 1,
+	Running = 2,
+}
+
+Process_Exit_Status :: enum c.int {
+	Normal_Exit = 0,
+	Crash_Exit = 1,
+}
+
+Process_Error :: enum c.int {
+	Failed_To_Start = 0,
+	Crashed = 1,
+	Timed_Out = 2,
+	Read_Error = 3,
+	Write_Error = 4,
+	Unknown_Error = 5,
+}
+
+Crypto_Hash_Algorithm :: enum c.int {
+	Md4 = 0,
+	Md5 = 1,
+	Sha1 = 2,
+	Sha224 = 3,
+	Sha256 = 4,
+	Sha384 = 5,
+	Sha512 = 6,
+	Sha3_224 = 7,
+	Sha3_256 = 8,
+	Sha3_384 = 9,
+	Sha3_512 = 10,
+	Blake2b_160 = 15,
+	Blake2b_256 = 16,
+	Blake2b_384 = 17,
+	Blake2b_512 = 18,
+	Blake2s_128 = 19,
+	Blake2s_160 = 20,
+	Blake2s_224 = 21,
+	Blake2s_256 = 22,
+}
+
+Regex_Pattern_Option :: enum c.int {
+	No_Pattern_Option = 0x0000,
+	Case_Insensitive = 0x0001,
+	Dot_Matches_Everything = 0x0002,
+	Multiline = 0x0004,
+	Extended_Pattern_Syntax = 0x0008,
+	Inverted_Greediness = 0x0010,
+	Dont_Capture = 0x0020,
+	Use_Unicode_Properties = 0x0040,
+}
+
+Xml_Token_Type :: enum c.int {
+	No_Token = 0,
+	Invalid = 1,
+	Start_Document = 2,
+	End_Document = 3,
+	Start_Element = 4,
+	End_Element = 5,
+	Characters = 6,
+	Comment = 7,
+	DTD = 8,
+	Entity_Reference = 9,
+	Processing_Instruction = 10,
+}
+
+Item_Selection_Flag :: enum c.int {
+	No_Update = 0x0000,
+	Clear = 0x0001,
+	Select = 0x0002,
+	Deselect = 0x0004,
+	Toggle = 0x0008,
+	Current = 0x0010,
+	Rows = 0x0020,
+	Columns = 0x0040,
+	Select_Current = 0x0012,
+	Toggle_Current = 0x0018,
+	Clear_And_Select = 0x0003,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -2587,4 +2727,441 @@ foreign qt_lib {
 	@(require_results) page_layout_get_orientation :: proc(page_layout: Page_Layout) -> Page_Layout_Orientation ---
 	page_layout_set_orientation :: proc(page_layout: Page_Layout, orientation: Page_Layout_Orientation) ---
 	@(require_results) page_layout_is_valid :: proc(page_layout: Page_Layout) -> c.int ---
+
+	/* QFile */
+
+	@(require_results) file_create :: proc(file_path: cstring) -> File ---
+	file_destroy :: proc(file: File) ---
+	@(require_results) file_open :: proc(file: File, mode: File_Open_Mode) -> c.int ---
+	file_close :: proc(file: File) ---
+	@(require_results) file_is_open :: proc(file: File) -> c.int ---
+	@(require_results) file_size :: proc(file: File) -> c.longlong ---
+	@(require_results) file_pos :: proc(file: File) -> c.longlong ---
+	@(require_results) file_seek :: proc(file: File, pos: c.longlong) -> c.int ---
+	@(require_results) file_at_end :: proc(file: File) -> c.int ---
+	@(require_results) file_read :: proc(file: File, data: [^]u8, max_size: c.longlong) -> c.longlong ---
+	@(require_results) file_write :: proc(file: File, data: [^]u8, size: c.longlong) -> c.longlong ---
+	@(require_results) file_read_all :: proc(file: File) -> cstring ---
+	@(require_results) file_exists :: proc(file_path: cstring) -> c.int ---
+	@(require_results) file_remove :: proc(file_path: cstring) -> c.int ---
+	@(require_results) file_copy :: proc(source: cstring, destination: cstring) -> c.int ---
+	@(require_results) file_rename :: proc(old_name: cstring, new_name: cstring) -> c.int ---
+	@(require_results) file_get_error_string :: proc(file: File) -> cstring ---
+
+	/* QFileInfo */
+
+	@(require_results) file_info_create :: proc(file_path: cstring) -> File_Info ---
+	file_info_destroy :: proc(info: File_Info) ---
+	@(require_results) file_info_exists :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_get_file_name :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_file_path :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_absolute_file_path :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_absolute_path :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_suffix :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_complete_suffix :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_base_name :: proc(info: File_Info) -> cstring ---
+	@(require_results) file_info_get_size :: proc(info: File_Info) -> c.longlong ---
+	@(require_results) file_info_is_file :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_dir :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_symlink :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_readable :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_writable :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_executable :: proc(info: File_Info) -> c.int ---
+	@(require_results) file_info_is_hidden :: proc(info: File_Info) -> c.int ---
+
+	/* QDir */
+
+	@(require_results) dir_create :: proc(path: cstring) -> Dir ---
+	dir_destroy :: proc(dir: Dir) ---
+	@(require_results) dir_get_path :: proc(dir: Dir) -> cstring ---
+	@(require_results) dir_get_absolute_path :: proc(dir: Dir) -> cstring ---
+	@(require_results) dir_exists :: proc(dir: Dir) -> c.int ---
+	@(require_results) dir_mkdir :: proc(dir: Dir, name: cstring) -> c.int ---
+	@(require_results) dir_mkpath :: proc(dir: Dir, path: cstring) -> c.int ---
+	@(require_results) dir_rmdir :: proc(dir: Dir, name: cstring) -> c.int ---
+	@(require_results) dir_rmpath :: proc(dir: Dir, path: cstring) -> c.int ---
+	@(require_results) dir_remove :: proc(dir: Dir, file_name: cstring) -> c.int ---
+	@(require_results) dir_rename :: proc(dir: Dir, old_name: cstring, new_name: cstring) -> c.int ---
+	@(require_results) dir_cd :: proc(dir: Dir, dir_name: cstring) -> c.int ---
+	@(require_results) dir_cd_up :: proc(dir: Dir) -> c.int ---
+	@(require_results) dir_get_entry_count :: proc(dir: Dir, filters: Dir_Filter) -> c.int ---
+	@(require_results) dir_get_entry_list :: proc(dir: Dir, filters: Dir_Filter, entries_out: ^[^]cstring) -> c.int ---
+	dir_free_entry_list :: proc(entries: [^]cstring, count: c.int) ---
+	@(require_results) dir_home_path :: proc() -> cstring ---
+	@(require_results) dir_temp_path :: proc() -> cstring ---
+	@(require_results) dir_root_path :: proc() -> cstring ---
+	@(require_results) dir_current_path :: proc() -> cstring ---
+
+	/* QProcess */
+
+	@(require_results) process_create :: proc(parent: Widget) -> Process ---
+	process_destroy :: proc(process: Process) ---
+	process_start :: proc(process: Process, program: cstring, arguments: [^]cstring, arg_count: c.int) ---
+	process_start_command :: proc(process: Process, command: cstring) ---
+	@(require_results) process_wait_for_started :: proc(process: Process, timeout_ms: c.int) -> c.int ---
+	@(require_results) process_wait_for_finished :: proc(process: Process, timeout_ms: c.int) -> c.int ---
+	process_kill :: proc(process: Process) ---
+	process_terminate :: proc(process: Process) ---
+	@(require_results) process_get_state :: proc(process: Process) -> Process_State ---
+	@(require_results) process_get_exit_code :: proc(process: Process) -> c.int ---
+	@(require_results) process_get_exit_status :: proc(process: Process) -> Process_Exit_Status ---
+	@(require_results) process_read_all_standard_output :: proc(process: Process) -> cstring ---
+	@(require_results) process_read_all_standard_error :: proc(process: Process) -> cstring ---
+	process_write :: proc(process: Process, data: [^]u8, size: c.int) ---
+	process_close_write_channel :: proc(process: Process) ---
+	process_set_working_directory :: proc(process: Process, dir: cstring) ---
+	process_connect_finished :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	process_connect_error_occurred :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	process_connect_started :: proc(process: Process, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QThread */
+
+	thread_sleep :: proc(ms: c.ulong) ---
+	thread_msleep :: proc(ms: c.ulong) ---
+	thread_usleep :: proc(us: c.ulong) ---
+
+	/* QMutex */
+
+	@(require_results) mutex_create :: proc() -> Mutex ---
+	mutex_destroy :: proc(mutex: Mutex) ---
+	mutex_lock :: proc(mutex: Mutex) ---
+	mutex_unlock :: proc(mutex: Mutex) ---
+	@(require_results) mutex_try_lock :: proc(mutex: Mutex) -> c.int ---
+
+	/* QReadWriteLock */
+
+	@(require_results) read_write_lock_create :: proc() -> Read_Write_Lock ---
+	read_write_lock_destroy :: proc(lock: Read_Write_Lock) ---
+	read_write_lock_lock_for_read :: proc(lock: Read_Write_Lock) ---
+	read_write_lock_lock_for_write :: proc(lock: Read_Write_Lock) ---
+	read_write_lock_unlock :: proc(lock: Read_Write_Lock) ---
+	@(require_results) read_write_lock_try_lock_for_read :: proc(lock: Read_Write_Lock) -> c.int ---
+	@(require_results) read_write_lock_try_lock_for_write :: proc(lock: Read_Write_Lock) -> c.int ---
+
+	/* QSemaphore */
+
+	@(require_results) semaphore_create :: proc(n: c.int) -> Semaphore ---
+	semaphore_destroy :: proc(semaphore: Semaphore) ---
+	semaphore_acquire :: proc(semaphore: Semaphore, n: c.int) ---
+	semaphore_release :: proc(semaphore: Semaphore, n: c.int) ---
+	@(require_results) semaphore_available :: proc(semaphore: Semaphore) -> c.int ---
+	@(require_results) semaphore_try_acquire :: proc(semaphore: Semaphore, n: c.int) -> c.int ---
+
+	/* QBuffer */
+
+	@(require_results) buffer_create :: proc() -> Buffer ---
+	buffer_destroy :: proc(buffer: Buffer) ---
+	@(require_results) buffer_open :: proc(buffer: Buffer, mode: File_Open_Mode) -> c.int ---
+	buffer_close :: proc(buffer: Buffer) ---
+	buffer_set_data :: proc(buffer: Buffer, data: [^]u8, size: c.int) ---
+	@(require_results) buffer_get_data :: proc(buffer: Buffer, size: ^c.int) -> [^]u8 ---
+	@(require_results) buffer_size :: proc(buffer: Buffer) -> c.longlong ---
+
+	/* QJsonDocument / QJsonObject / QJsonArray */
+
+	@(require_results) json_document_from_json :: proc(json: cstring, size: c.int, error_out: ^cstring) -> Json_Document ---
+	@(require_results) json_document_from_object :: proc(object: Json_Object) -> Json_Document ---
+	@(require_results) json_document_from_array :: proc(array: Json_Array) -> Json_Document ---
+	json_document_destroy :: proc(doc: Json_Document) ---
+	@(require_results) json_document_to_json :: proc(doc: Json_Document, is_compact: c.int) -> cstring ---
+	@(require_results) json_document_is_object :: proc(doc: Json_Document) -> c.int ---
+	@(require_results) json_document_is_array :: proc(doc: Json_Document) -> c.int ---
+	@(require_results) json_document_get_object :: proc(doc: Json_Document) -> Json_Object ---
+	@(require_results) json_document_get_array :: proc(doc: Json_Document) -> Json_Array ---
+
+	@(require_results) json_object_create :: proc() -> Json_Object ---
+	json_object_destroy :: proc(obj: Json_Object) ---
+	@(require_results) json_object_get_count :: proc(obj: Json_Object) -> c.int ---
+	@(require_results) json_object_contains :: proc(obj: Json_Object, key: cstring) -> c.int ---
+	json_object_set_string :: proc(obj: Json_Object, key: cstring, value: cstring) ---
+	json_object_set_int :: proc(obj: Json_Object, key: cstring, value: c.int) ---
+	json_object_set_double :: proc(obj: Json_Object, key: cstring, value: c.double) ---
+	json_object_set_bool :: proc(obj: Json_Object, key: cstring, value: c.int) ---
+	json_object_set_object :: proc(obj: Json_Object, key: cstring, child: Json_Object) ---
+	json_object_set_array :: proc(obj: Json_Object, key: cstring, array: Json_Array) ---
+	json_object_set_null :: proc(obj: Json_Object, key: cstring) ---
+	@(require_results) json_object_get_string :: proc(obj: Json_Object, key: cstring) -> cstring ---
+	@(require_results) json_object_get_int :: proc(obj: Json_Object, key: cstring, default_val: c.int) -> c.int ---
+	@(require_results) json_object_get_double :: proc(obj: Json_Object, key: cstring, default_val: c.double) -> c.double ---
+	@(require_results) json_object_get_bool :: proc(obj: Json_Object, key: cstring, default_val: c.int) -> c.int ---
+	@(require_results) json_object_get_object :: proc(obj: Json_Object, key: cstring) -> Json_Object ---
+	@(require_results) json_object_get_array :: proc(obj: Json_Object, key: cstring) -> Json_Array ---
+	json_object_remove :: proc(obj: Json_Object, key: cstring) ---
+	@(require_results) json_object_get_keys :: proc(obj: Json_Object, keys_out: ^[^]cstring) -> c.int ---
+	json_object_free_keys :: proc(keys: [^]cstring, count: c.int) ---
+
+	@(require_results) json_array_create :: proc() -> Json_Array ---
+	json_array_destroy :: proc(arr: Json_Array) ---
+	@(require_results) json_array_get_count :: proc(arr: Json_Array) -> c.int ---
+	json_array_append_string :: proc(arr: Json_Array, value: cstring) ---
+	json_array_append_int :: proc(arr: Json_Array, value: c.int) ---
+	json_array_append_double :: proc(arr: Json_Array, value: c.double) ---
+	json_array_append_bool :: proc(arr: Json_Array, value: c.int) ---
+	json_array_append_object :: proc(arr: Json_Array, object: Json_Object) ---
+	json_array_append_array :: proc(arr: Json_Array, other: Json_Array) ---
+	json_array_append_null :: proc(arr: Json_Array) ---
+	@(require_results) json_array_get_string :: proc(arr: Json_Array, index: c.int) -> cstring ---
+	@(require_results) json_array_get_int :: proc(arr: Json_Array, index: c.int, default_val: c.int) -> c.int ---
+	@(require_results) json_array_get_double :: proc(arr: Json_Array, index: c.int, default_val: c.double) -> c.double ---
+	@(require_results) json_array_get_bool :: proc(arr: Json_Array, index: c.int, default_val: c.int) -> c.int ---
+	@(require_results) json_array_get_object :: proc(arr: Json_Array, index: c.int) -> Json_Object ---
+	@(require_results) json_array_get_array :: proc(arr: Json_Array, index: c.int) -> Json_Array ---
+	json_array_remove_at :: proc(arr: Json_Array, index: c.int) ---
+
+	/* QXmlStreamReader / QXmlStreamWriter */
+
+	@(require_results) xml_stream_reader_create :: proc(data: cstring, size: c.int) -> Xml_Stream_Reader ---
+	xml_stream_reader_destroy :: proc(reader: Xml_Stream_Reader) ---
+	@(require_results) xml_stream_reader_read_next :: proc(reader: Xml_Stream_Reader) -> Xml_Token_Type ---
+	@(require_results) xml_stream_reader_get_token_type :: proc(reader: Xml_Stream_Reader) -> Xml_Token_Type ---
+	@(require_results) xml_stream_reader_get_name :: proc(reader: Xml_Stream_Reader) -> cstring ---
+	@(require_results) xml_stream_reader_get_text :: proc(reader: Xml_Stream_Reader) -> cstring ---
+	@(require_results) xml_stream_reader_at_end :: proc(reader: Xml_Stream_Reader) -> c.int ---
+	@(require_results) xml_stream_reader_has_error :: proc(reader: Xml_Stream_Reader) -> c.int ---
+	@(require_results) xml_stream_reader_get_error_string :: proc(reader: Xml_Stream_Reader) -> cstring ---
+	@(require_results) xml_stream_reader_get_attribute :: proc(reader: Xml_Stream_Reader, name: cstring) -> cstring ---
+	@(require_results) xml_stream_reader_is_start_element :: proc(reader: Xml_Stream_Reader) -> c.int ---
+	@(require_results) xml_stream_reader_is_end_element :: proc(reader: Xml_Stream_Reader) -> c.int ---
+
+	@(require_results) xml_stream_writer_create :: proc() -> Xml_Stream_Writer ---
+	xml_stream_writer_destroy :: proc(writer: Xml_Stream_Writer) ---
+	xml_stream_writer_set_auto_formatting :: proc(writer: Xml_Stream_Writer, is_enabled: c.int) ---
+	xml_stream_writer_write_start_document :: proc(writer: Xml_Stream_Writer) ---
+	xml_stream_writer_write_end_document :: proc(writer: Xml_Stream_Writer) ---
+	xml_stream_writer_write_start_element :: proc(writer: Xml_Stream_Writer, name: cstring) ---
+	xml_stream_writer_write_end_element :: proc(writer: Xml_Stream_Writer) ---
+	xml_stream_writer_write_attribute :: proc(writer: Xml_Stream_Writer, name: cstring, value: cstring) ---
+	xml_stream_writer_write_text_element :: proc(writer: Xml_Stream_Writer, name: cstring, text: cstring) ---
+	xml_stream_writer_write_characters :: proc(writer: Xml_Stream_Writer, text: cstring) ---
+	@(require_results) xml_stream_writer_get_output :: proc(writer: Xml_Stream_Writer) -> cstring ---
+
+	/* QDateTime / QDate / QTime */
+
+	@(require_results) date_time_create :: proc() -> Date_Time ---
+	@(require_results) date_time_create_from_components :: proc(year: c.int, month: c.int, day: c.int, hour: c.int, minute: c.int, second: c.int) -> Date_Time ---
+	@(require_results) date_time_current :: proc() -> Date_Time ---
+	@(require_results) date_time_current_utc :: proc() -> Date_Time ---
+	date_time_destroy :: proc(dt: Date_Time) ---
+	@(require_results) date_time_to_string :: proc(dt: Date_Time, format: cstring) -> cstring ---
+	@(require_results) date_time_to_msecs_since_epoch :: proc(dt: Date_Time) -> c.longlong ---
+	@(require_results) date_time_from_msecs_since_epoch :: proc(msecs: c.longlong) -> Date_Time ---
+	@(require_results) date_time_is_valid :: proc(dt: Date_Time) -> c.int ---
+	date_time_get_date :: proc(dt: Date_Time, year: ^c.int, month: ^c.int, day: ^c.int) ---
+	date_time_get_time :: proc(dt: Date_Time, hour: ^c.int, minute: ^c.int, second: ^c.int) ---
+	@(require_results) date_time_secs_to :: proc(dt: Date_Time, other: Date_Time) -> c.longlong ---
+	@(require_results) date_time_days_to :: proc(dt: Date_Time, other: Date_Time) -> c.longlong ---
+	@(require_results) date_time_add_days :: proc(dt: Date_Time, days: c.longlong) -> Date_Time ---
+	@(require_results) date_time_add_secs :: proc(dt: Date_Time, seconds: c.longlong) -> Date_Time ---
+
+	@(require_results) date_create :: proc(year: c.int, month: c.int, day: c.int) -> Date ---
+	@(require_results) date_current :: proc() -> Date ---
+	date_destroy :: proc(date: Date) ---
+	@(require_results) date_to_string :: proc(date: Date, format: cstring) -> cstring ---
+	@(require_results) date_is_valid :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_year :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_month :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_day :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_day_of_week :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_day_of_year :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_days_in_month :: proc(date: Date) -> c.int ---
+	@(require_results) date_get_days_in_year :: proc(date: Date) -> c.int ---
+
+	@(require_results) time_create :: proc(hour: c.int, minute: c.int, second: c.int, ms: c.int) -> Time_Handle ---
+	@(require_results) time_current :: proc() -> Time_Handle ---
+	time_destroy :: proc(time_obj: Time_Handle) ---
+	@(require_results) time_to_string :: proc(time_obj: Time_Handle, format: cstring) -> cstring ---
+	@(require_results) time_is_valid :: proc(time_obj: Time_Handle) -> c.int ---
+	@(require_results) time_get_hour :: proc(time_obj: Time_Handle) -> c.int ---
+	@(require_results) time_get_minute :: proc(time_obj: Time_Handle) -> c.int ---
+	@(require_results) time_get_second :: proc(time_obj: Time_Handle) -> c.int ---
+	@(require_results) time_get_msec :: proc(time_obj: Time_Handle) -> c.int ---
+	@(require_results) time_msecs_since_start_of_day :: proc(time_obj: Time_Handle) -> c.int ---
+
+	/* QLocale */
+
+	@(require_results) locale_create :: proc() -> Locale ---
+	@(require_results) locale_create_from_name :: proc(name: cstring) -> Locale ---
+	locale_destroy :: proc(locale: Locale) ---
+	@(require_results) locale_get_name :: proc(locale: Locale) -> cstring ---
+	@(require_results) locale_get_language_name :: proc(locale: Locale) -> cstring ---
+	@(require_results) locale_get_country_name :: proc(locale: Locale) -> cstring ---
+	@(require_results) locale_get_decimal_point :: proc(locale: Locale) -> cstring ---
+	@(require_results) locale_to_string_int :: proc(locale: Locale, value: c.int) -> cstring ---
+	@(require_results) locale_to_string_double :: proc(locale: Locale, value: c.double, precision: c.int) -> cstring ---
+	@(require_results) locale_format_date_time :: proc(locale: Locale, dt: Date_Time, format: cstring) -> cstring ---
+
+	/* QRegularExpression (standalone) */
+
+	@(require_results) regex_create :: proc(pattern: cstring) -> Regex ---
+	@(require_results) regex_create_with_options :: proc(pattern: cstring, options: Regex_Pattern_Option) -> Regex ---
+	regex_destroy :: proc(regex: Regex) ---
+	@(require_results) regex_get_pattern :: proc(regex: Regex) -> cstring ---
+	@(require_results) regex_is_valid :: proc(regex: Regex) -> c.int ---
+	@(require_results) regex_get_error_string :: proc(regex: Regex) -> cstring ---
+	@(require_results) regex_has_match :: proc(regex: Regex, subject: cstring) -> c.int ---
+	@(require_results) regex_get_match :: proc(regex: Regex, subject: cstring, capture_group: c.int) -> cstring ---
+	@(require_results) regex_get_match_start :: proc(regex: Regex, subject: cstring, capture_group: c.int) -> c.int ---
+	@(require_results) regex_get_match_end :: proc(regex: Regex, subject: cstring, capture_group: c.int) -> c.int ---
+
+	/* QUrl */
+
+	@(require_results) url_create :: proc(url: cstring) -> Url ---
+	@(require_results) url_create_from_local_file :: proc(file_path: cstring) -> Url ---
+	url_destroy :: proc(url: Url) ---
+	@(require_results) url_to_string :: proc(url: Url) -> cstring ---
+	@(require_results) url_to_local_file :: proc(url: Url) -> cstring ---
+	@(require_results) url_get_scheme :: proc(url: Url) -> cstring ---
+	@(require_results) url_get_host :: proc(url: Url) -> cstring ---
+	@(require_results) url_get_port :: proc(url: Url) -> c.int ---
+	@(require_results) url_get_path :: proc(url: Url) -> cstring ---
+	@(require_results) url_get_query :: proc(url: Url) -> cstring ---
+	@(require_results) url_get_fragment :: proc(url: Url) -> cstring ---
+	@(require_results) url_is_valid :: proc(url: Url) -> c.int ---
+	@(require_results) url_is_local_file :: proc(url: Url) -> c.int ---
+	@(require_results) url_get_file_name :: proc(url: Url) -> cstring ---
+
+	/* QUuid */
+
+	@(require_results) uuid_create :: proc() -> Uuid ---
+	@(require_results) uuid_create_from_string :: proc(text: cstring) -> Uuid ---
+	uuid_destroy :: proc(uuid: Uuid) ---
+	@(require_results) uuid_to_string :: proc(uuid: Uuid) -> cstring ---
+	@(require_results) uuid_is_null :: proc(uuid: Uuid) -> c.int ---
+
+	/* QElapsedTimer */
+
+	@(require_results) elapsed_timer_create :: proc() -> Elapsed_Timer ---
+	elapsed_timer_destroy :: proc(timer: Elapsed_Timer) ---
+	elapsed_timer_start :: proc(timer: Elapsed_Timer) ---
+	@(require_results) elapsed_timer_elapsed :: proc(timer: Elapsed_Timer) -> c.longlong ---
+	@(require_results) elapsed_timer_restart :: proc(timer: Elapsed_Timer) -> c.longlong ---
+	@(require_results) elapsed_timer_is_valid :: proc(timer: Elapsed_Timer) -> c.int ---
+	@(require_results) elapsed_timer_has_expired :: proc(timer: Elapsed_Timer, timeout: c.longlong) -> c.int ---
+
+	/* QCryptographicHash */
+
+	@(require_results) crypto_hash_create :: proc(algorithm: Crypto_Hash_Algorithm) -> Crypto_Hash ---
+	crypto_hash_destroy :: proc(hash: Crypto_Hash) ---
+	crypto_hash_add_data :: proc(hash: Crypto_Hash, data: [^]u8, size: c.int) ---
+	crypto_hash_reset :: proc(hash: Crypto_Hash) ---
+	@(require_results) crypto_hash_get_result :: proc(hash: Crypto_Hash, out: [^]u8, max_size: c.int) -> c.int ---
+	@(require_results) crypto_hash_static :: proc(algorithm: Crypto_Hash_Algorithm, data: [^]u8, size: c.int, out: [^]u8, max_size: c.int) -> c.int ---
+
+	/* QMimeDatabase */
+
+	@(require_results) mime_database_create :: proc() -> Mime_Database ---
+	mime_database_destroy :: proc(db: Mime_Database) ---
+	@(require_results) mime_database_mime_type_for_file :: proc(db: Mime_Database, file_path: cstring) -> cstring ---
+	@(require_results) mime_database_mime_type_for_data :: proc(db: Mime_Database, data: [^]u8, size: c.int) -> cstring ---
+	@(require_results) mime_database_suffix_for_mime_type :: proc(db: Mime_Database, mime_type: cstring) -> cstring ---
+
+	/* QStorageInfo */
+
+	@(require_results) storage_info_create :: proc(path: cstring) -> Storage_Info ---
+	storage_info_destroy :: proc(info: Storage_Info) ---
+	@(require_results) storage_info_get_root_path :: proc(info: Storage_Info) -> cstring ---
+	@(require_results) storage_info_get_device :: proc(info: Storage_Info) -> cstring ---
+	@(require_results) storage_info_get_display_name :: proc(info: Storage_Info) -> cstring ---
+	@(require_results) storage_info_get_file_system_type :: proc(info: Storage_Info) -> cstring ---
+	@(require_results) storage_info_get_bytes_total :: proc(info: Storage_Info) -> c.longlong ---
+	@(require_results) storage_info_get_bytes_free :: proc(info: Storage_Info) -> c.longlong ---
+	@(require_results) storage_info_get_bytes_available :: proc(info: Storage_Info) -> c.longlong ---
+	@(require_results) storage_info_is_valid :: proc(info: Storage_Info) -> c.int ---
+	@(require_results) storage_info_is_ready :: proc(info: Storage_Info) -> c.int ---
+	@(require_results) storage_info_is_read_only :: proc(info: Storage_Info) -> c.int ---
+
+	/* QVersionNumber */
+
+	@(require_results) version_number_create :: proc(major: c.int, minor: c.int, micro: c.int) -> Version_Number ---
+	version_number_destroy :: proc(version: Version_Number) ---
+	@(require_results) version_number_get_major :: proc(version: Version_Number) -> c.int ---
+	@(require_results) version_number_get_minor :: proc(version: Version_Number) -> c.int ---
+	@(require_results) version_number_get_micro :: proc(version: Version_Number) -> c.int ---
+	@(require_results) version_number_to_string :: proc(version: Version_Number) -> cstring ---
+	@(require_results) version_number_compare :: proc(v1: Version_Number, v2: Version_Number) -> c.int ---
+	@(require_results) version_number_is_null :: proc(version: Version_Number) -> c.int ---
+
+	/* QTranslator */
+
+	@(require_results) translator_create :: proc(parent: Widget) -> Translator ---
+	translator_destroy :: proc(translator: Translator) ---
+	@(require_results) translator_load :: proc(translator: Translator, filename: cstring, directory: cstring) -> c.int ---
+	@(require_results) translator_is_empty :: proc(translator: Translator) -> c.int ---
+	application_install_translator :: proc(app: Application, translator: Translator) ---
+	application_remove_translator :: proc(app: Application, translator: Translator) ---
+
+	/* QCommandLineParser */
+
+	@(require_results) command_line_parser_create :: proc() -> Command_Line_Parser ---
+	command_line_parser_destroy :: proc(parser: Command_Line_Parser) ---
+	command_line_parser_set_application_description :: proc(parser: Command_Line_Parser, description: cstring) ---
+	command_line_parser_add_help_option :: proc(parser: Command_Line_Parser) ---
+	command_line_parser_add_version_option :: proc(parser: Command_Line_Parser) ---
+	command_line_parser_add_option :: proc(parser: Command_Line_Parser, name: cstring, description: cstring, value_name: cstring, default_value: cstring) ---
+	command_line_parser_add_positional_argument :: proc(parser: Command_Line_Parser, name: cstring, description: cstring, syntax: cstring) ---
+	command_line_parser_process :: proc(parser: Command_Line_Parser, app: Application) ---
+	@(require_results) command_line_parser_is_set :: proc(parser: Command_Line_Parser, name: cstring) -> c.int ---
+	@(require_results) command_line_parser_get_value :: proc(parser: Command_Line_Parser, name: cstring) -> cstring ---
+
+	/* QTemporaryFile */
+
+	@(require_results) temporary_file_create :: proc() -> Temporary_File ---
+	@(require_results) temporary_file_create_with_template :: proc(template_name: cstring) -> Temporary_File ---
+	temporary_file_destroy :: proc(file: Temporary_File) ---
+	@(require_results) temporary_file_open :: proc(file: Temporary_File) -> c.int ---
+	@(require_results) temporary_file_get_file_name :: proc(file: Temporary_File) -> cstring ---
+	@(require_results) temporary_file_auto_remove :: proc(file: Temporary_File) -> c.int ---
+	temporary_file_set_auto_remove :: proc(file: Temporary_File, is_auto_remove: c.int) ---
+
+	/* QTemporaryDir */
+
+	@(require_results) temporary_dir_create :: proc() -> Temporary_Dir ---
+	@(require_results) temporary_dir_create_with_template :: proc(template_name: cstring) -> Temporary_Dir ---
+	temporary_dir_destroy :: proc(dir: Temporary_Dir) ---
+	@(require_results) temporary_dir_is_valid :: proc(dir: Temporary_Dir) -> c.int ---
+	@(require_results) temporary_dir_get_path :: proc(dir: Temporary_Dir) -> cstring ---
+	@(require_results) temporary_dir_auto_remove :: proc(dir: Temporary_Dir) -> c.int ---
+	temporary_dir_set_auto_remove :: proc(dir: Temporary_Dir, is_auto_remove: c.int) ---
+	@(require_results) temporary_dir_remove :: proc(dir: Temporary_Dir) -> c.int ---
+
+	/* QSaveFile */
+
+	@(require_results) save_file_create :: proc(file_path: cstring) -> Save_File ---
+	save_file_destroy :: proc(file: Save_File) ---
+	@(require_results) save_file_open :: proc(file: Save_File, mode: File_Open_Mode) -> c.int ---
+	@(require_results) save_file_write :: proc(file: Save_File, data: [^]u8, size: c.longlong) -> c.longlong ---
+	@(require_results) save_file_commit :: proc(file: Save_File) -> c.int ---
+	save_file_cancel_writing :: proc(file: Save_File) ---
+	@(require_results) save_file_get_error_string :: proc(file: Save_File) -> cstring ---
+
+	/* QFileSystemWatcher */
+
+	@(require_results) file_system_watcher_create :: proc(parent: Widget) -> File_System_Watcher ---
+	file_system_watcher_destroy :: proc(watcher: File_System_Watcher) ---
+	@(require_results) file_system_watcher_add_path :: proc(watcher: File_System_Watcher, path: cstring) -> c.int ---
+	@(require_results) file_system_watcher_remove_path :: proc(watcher: File_System_Watcher, path: cstring) -> c.int ---
+	file_system_watcher_connect_file_changed :: proc(watcher: File_System_Watcher, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	file_system_watcher_connect_directory_changed :: proc(watcher: File_System_Watcher, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QStringListModel */
+
+	@(require_results) string_list_model_create :: proc(parent: Widget) -> String_List_Model ---
+	string_list_model_destroy :: proc(model: String_List_Model) ---
+	string_list_model_set_string_list :: proc(model: String_List_Model, strings: [^]cstring, count: c.int) ---
+	@(require_results) string_list_model_get_string_list :: proc(model: String_List_Model, strings_out: ^[^]cstring) -> c.int ---
+	string_list_model_free_string_list :: proc(strings: [^]cstring, count: c.int) ---
+
+	/* QItemSelectionModel */
+
+	@(require_results) item_selection_model_create :: proc(model: rawptr, parent: Widget) -> Item_Selection_Model ---
+	item_selection_model_destroy :: proc(selection_model: Item_Selection_Model) ---
+	item_selection_model_select_index :: proc(selection_model: Item_Selection_Model, index: Model_Index, flags: Item_Selection_Flag) ---
+	item_selection_model_clear :: proc(selection_model: Item_Selection_Model) ---
+	item_selection_model_clear_selection :: proc(selection_model: Item_Selection_Model) ---
+	@(require_results) item_selection_model_is_selected :: proc(selection_model: Item_Selection_Model, index: Model_Index) -> c.int ---
+	@(require_results) item_selection_model_has_selection :: proc(selection_model: Item_Selection_Model) -> c.int ---
+	@(require_results) item_selection_model_get_current_index :: proc(selection_model: Item_Selection_Model) -> Model_Index ---
+	item_selection_model_set_current_index :: proc(selection_model: Item_Selection_Model, index: Model_Index, flags: Item_Selection_Flag) ---
+	item_selection_model_connect_selection_changed :: proc(selection_model: Item_Selection_Model, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	item_selection_model_connect_current_changed :: proc(selection_model: Item_Selection_Model, callback: Callback, user_data: rawptr) -> Connection_Id ---
 }

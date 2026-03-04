@@ -1609,6 +1609,443 @@ int   qt_page_layout_get_orientation(void *page_layout);
 void  qt_page_layout_set_orientation(void *page_layout, int orientation);
 int   qt_page_layout_is_valid(void *page_layout);
 
+/* ── QFile ───────────────────────────────────────────────────────────── */
+
+void *qt_file_create(const char *file_path);
+void  qt_file_destroy(void *file);
+int   qt_file_open(void *file, int mode);
+void  qt_file_close(void *file);
+int   qt_file_is_open(void *file);
+long long qt_file_size(void *file);
+long long qt_file_pos(void *file);
+int   qt_file_seek(void *file, long long pos);
+int   qt_file_at_end(void *file);
+long long qt_file_read(void *file, char *data, long long max_size);
+long long qt_file_write(void *file, const char *data, long long size);
+char *qt_file_read_all(void *file);
+int   qt_file_exists(const char *file_path);
+int   qt_file_remove(const char *file_path);
+int   qt_file_copy(const char *source, const char *destination);
+int   qt_file_rename(const char *old_name, const char *new_name);
+char *qt_file_get_error_string(void *file);
+
+/* ── QFileInfo ──────────────────────────────────────────────────────── */
+
+void *qt_file_info_create(const char *file_path);
+void  qt_file_info_destroy(void *info);
+int   qt_file_info_exists(void *info);
+char *qt_file_info_get_file_name(void *info);
+char *qt_file_info_get_file_path(void *info);
+char *qt_file_info_get_absolute_file_path(void *info);
+char *qt_file_info_get_absolute_path(void *info);
+char *qt_file_info_get_suffix(void *info);
+char *qt_file_info_get_complete_suffix(void *info);
+char *qt_file_info_get_base_name(void *info);
+long long qt_file_info_get_size(void *info);
+int   qt_file_info_is_file(void *info);
+int   qt_file_info_is_dir(void *info);
+int   qt_file_info_is_symlink(void *info);
+int   qt_file_info_is_readable(void *info);
+int   qt_file_info_is_writable(void *info);
+int   qt_file_info_is_executable(void *info);
+int   qt_file_info_is_hidden(void *info);
+
+/* ── QDir ───────────────────────────────────────────────────────────── */
+
+void *qt_dir_create(const char *path);
+void  qt_dir_destroy(void *dir);
+char *qt_dir_get_path(void *dir);
+char *qt_dir_get_absolute_path(void *dir);
+int   qt_dir_exists(void *dir);
+int   qt_dir_mkdir(void *dir, const char *name);
+int   qt_dir_mkpath(void *dir, const char *path);
+int   qt_dir_rmdir(void *dir, const char *name);
+int   qt_dir_rmpath(void *dir, const char *path);
+int   qt_dir_remove(void *dir, const char *file_name);
+int   qt_dir_rename(void *dir, const char *old_name, const char *new_name);
+int   qt_dir_cd(void *dir, const char *dir_name);
+int   qt_dir_cd_up(void *dir);
+int   qt_dir_get_entry_count(void *dir, int filters);
+int   qt_dir_get_entry_list(void *dir, int filters, char ***entries_out);
+void  qt_dir_free_entry_list(char **entries, int count);
+char *qt_dir_home_path(void);
+char *qt_dir_temp_path(void);
+char *qt_dir_root_path(void);
+char *qt_dir_current_path(void);
+
+/* ── QProcess ───────────────────────────────────────────────────────── */
+
+void *qt_process_create(void *parent);
+void  qt_process_destroy(void *process);
+void  qt_process_start(void *process, const char *program, const char **arguments, int arg_count);
+void  qt_process_start_command(void *process, const char *command);
+int   qt_process_wait_for_started(void *process, int timeout_ms);
+int   qt_process_wait_for_finished(void *process, int timeout_ms);
+void  qt_process_kill(void *process);
+void  qt_process_terminate(void *process);
+int   qt_process_get_state(void *process);
+int   qt_process_get_exit_code(void *process);
+int   qt_process_get_exit_status(void *process);
+char *qt_process_read_all_standard_output(void *process);
+char *qt_process_read_all_standard_error(void *process);
+void  qt_process_write(void *process, const char *data, int size);
+void  qt_process_close_write_channel(void *process);
+void  qt_process_set_working_directory(void *process, const char *dir);
+int   qt_process_connect_finished(void *process, qt_int_callback_t callback, void *user_data);
+int   qt_process_connect_error_occurred(void *process, qt_int_callback_t callback, void *user_data);
+int   qt_process_connect_started(void *process, qt_callback_t callback, void *user_data);
+
+/* ── QThread ────────────────────────────────────────────────────────── */
+
+void  qt_thread_sleep(unsigned long ms);
+void  qt_thread_msleep(unsigned long ms);
+void  qt_thread_usleep(unsigned long us);
+
+/* ── QMutex ─────────────────────────────────────────────────────────── */
+
+void *qt_mutex_create(void);
+void  qt_mutex_destroy(void *mutex);
+void  qt_mutex_lock(void *mutex);
+void  qt_mutex_unlock(void *mutex);
+int   qt_mutex_try_lock(void *mutex);
+
+/* ── QReadWriteLock ─────────────────────────────────────────────────── */
+
+void *qt_read_write_lock_create(void);
+void  qt_read_write_lock_destroy(void *lock);
+void  qt_read_write_lock_lock_for_read(void *lock);
+void  qt_read_write_lock_lock_for_write(void *lock);
+void  qt_read_write_lock_unlock(void *lock);
+int   qt_read_write_lock_try_lock_for_read(void *lock);
+int   qt_read_write_lock_try_lock_for_write(void *lock);
+
+/* ── QSemaphore ─────────────────────────────────────────────────────── */
+
+void *qt_semaphore_create(int n);
+void  qt_semaphore_destroy(void *semaphore);
+void  qt_semaphore_acquire(void *semaphore, int n);
+void  qt_semaphore_release(void *semaphore, int n);
+int   qt_semaphore_available(void *semaphore);
+int   qt_semaphore_try_acquire(void *semaphore, int n);
+
+/* ── QBuffer ────────────────────────────────────────────────────────── */
+
+void *qt_buffer_create(void);
+void  qt_buffer_destroy(void *buffer);
+int   qt_buffer_open(void *buffer, int mode);
+void  qt_buffer_close(void *buffer);
+void  qt_buffer_set_data(void *buffer, const char *data, int size);
+char *qt_buffer_get_data(void *buffer, int *size);
+long long qt_buffer_size(void *buffer);
+
+/* ── QJsonDocument / QJsonObject / QJsonArray ───────────────────────── */
+
+void *qt_json_document_from_json(const char *json, int size, char **error_out);
+void *qt_json_document_from_object(void *object);
+void *qt_json_document_from_array(void *array);
+void  qt_json_document_destroy(void *doc);
+char *qt_json_document_to_json(void *doc, int is_compact);
+int   qt_json_document_is_object(void *doc);
+int   qt_json_document_is_array(void *doc);
+void *qt_json_document_get_object(void *doc);
+void *qt_json_document_get_array(void *doc);
+
+void *qt_json_object_create(void);
+void  qt_json_object_destroy(void *obj);
+int   qt_json_object_get_count(void *obj);
+int   qt_json_object_contains(void *obj, const char *key);
+void  qt_json_object_set_string(void *obj, const char *key, const char *value);
+void  qt_json_object_set_int(void *obj, const char *key, int value);
+void  qt_json_object_set_double(void *obj, const char *key, double value);
+void  qt_json_object_set_bool(void *obj, const char *key, int value);
+void  qt_json_object_set_object(void *obj, const char *key, void *child);
+void  qt_json_object_set_array(void *obj, const char *key, void *array);
+void  qt_json_object_set_null(void *obj, const char *key);
+char *qt_json_object_get_string(void *obj, const char *key);
+int   qt_json_object_get_int(void *obj, const char *key, int default_val);
+double qt_json_object_get_double(void *obj, const char *key, double default_val);
+int   qt_json_object_get_bool(void *obj, const char *key, int default_val);
+void *qt_json_object_get_object(void *obj, const char *key);
+void *qt_json_object_get_array(void *obj, const char *key);
+void  qt_json_object_remove(void *obj, const char *key);
+int   qt_json_object_get_keys(void *obj, char ***keys_out);
+void  qt_json_object_free_keys(char **keys, int count);
+
+void *qt_json_array_create(void);
+void  qt_json_array_destroy(void *arr);
+int   qt_json_array_get_count(void *arr);
+void  qt_json_array_append_string(void *arr, const char *value);
+void  qt_json_array_append_int(void *arr, int value);
+void  qt_json_array_append_double(void *arr, double value);
+void  qt_json_array_append_bool(void *arr, int value);
+void  qt_json_array_append_object(void *arr, void *object);
+void  qt_json_array_append_array(void *arr, void *other);
+void  qt_json_array_append_null(void *arr);
+char *qt_json_array_get_string(void *arr, int index);
+int   qt_json_array_get_int(void *arr, int index, int default_val);
+double qt_json_array_get_double(void *arr, int index, double default_val);
+int   qt_json_array_get_bool(void *arr, int index, int default_val);
+void *qt_json_array_get_object(void *arr, int index);
+void *qt_json_array_get_array(void *arr, int index);
+void  qt_json_array_remove_at(void *arr, int index);
+
+/* ── QXmlStreamReader / QXmlStreamWriter ────────────────────────────── */
+
+void *qt_xml_stream_reader_create(const char *data, int size);
+void  qt_xml_stream_reader_destroy(void *reader);
+int   qt_xml_stream_reader_read_next(void *reader);
+int   qt_xml_stream_reader_get_token_type(void *reader);
+char *qt_xml_stream_reader_get_name(void *reader);
+char *qt_xml_stream_reader_get_text(void *reader);
+int   qt_xml_stream_reader_at_end(void *reader);
+int   qt_xml_stream_reader_has_error(void *reader);
+char *qt_xml_stream_reader_get_error_string(void *reader);
+char *qt_xml_stream_reader_get_attribute(void *reader, const char *name);
+int   qt_xml_stream_reader_is_start_element(void *reader);
+int   qt_xml_stream_reader_is_end_element(void *reader);
+
+void *qt_xml_stream_writer_create(void);
+void  qt_xml_stream_writer_destroy(void *writer);
+void  qt_xml_stream_writer_set_auto_formatting(void *writer, int is_enabled);
+void  qt_xml_stream_writer_write_start_document(void *writer);
+void  qt_xml_stream_writer_write_end_document(void *writer);
+void  qt_xml_stream_writer_write_start_element(void *writer, const char *name);
+void  qt_xml_stream_writer_write_end_element(void *writer);
+void  qt_xml_stream_writer_write_attribute(void *writer, const char *name, const char *value);
+void  qt_xml_stream_writer_write_text_element(void *writer, const char *name, const char *text);
+void  qt_xml_stream_writer_write_characters(void *writer, const char *text);
+char *qt_xml_stream_writer_get_output(void *writer);
+
+/* ── QDateTime / QDate / QTime (standalone) ─────────────────────────── */
+
+void *qt_date_time_create(void);
+void *qt_date_time_create_from_components(int year, int month, int day, int hour, int minute, int second);
+void *qt_date_time_current(void);
+void *qt_date_time_current_utc(void);
+void  qt_date_time_destroy(void *dt);
+char *qt_date_time_to_string(void *dt, const char *format);
+long long qt_date_time_to_msecs_since_epoch(void *dt);
+void *qt_date_time_from_msecs_since_epoch(long long msecs);
+int   qt_date_time_is_valid(void *dt);
+void  qt_date_time_get_date(void *dt, int *year, int *month, int *day);
+void  qt_date_time_get_time(void *dt, int *hour, int *minute, int *second);
+long long qt_date_time_secs_to(void *dt, void *other);
+long long qt_date_time_days_to(void *dt, void *other);
+void *qt_date_time_add_days(void *dt, long long days);
+void *qt_date_time_add_secs(void *dt, long long seconds);
+
+void *qt_date_create(int year, int month, int day);
+void *qt_date_current(void);
+void  qt_date_destroy(void *date);
+char *qt_date_to_string(void *date, const char *format);
+int   qt_date_is_valid(void *date);
+int   qt_date_get_year(void *date);
+int   qt_date_get_month(void *date);
+int   qt_date_get_day(void *date);
+int   qt_date_get_day_of_week(void *date);
+int   qt_date_get_day_of_year(void *date);
+int   qt_date_get_days_in_month(void *date);
+int   qt_date_get_days_in_year(void *date);
+
+void *qt_time_create(int hour, int minute, int second, int ms);
+void *qt_time_current(void);
+void  qt_time_destroy(void *time_obj);
+char *qt_time_to_string(void *time_obj, const char *format);
+int   qt_time_is_valid(void *time_obj);
+int   qt_time_get_hour(void *time_obj);
+int   qt_time_get_minute(void *time_obj);
+int   qt_time_get_second(void *time_obj);
+int   qt_time_get_msec(void *time_obj);
+int   qt_time_msecs_since_start_of_day(void *time_obj);
+
+/* ── QLocale ────────────────────────────────────────────────────────── */
+
+void *qt_locale_create(void);
+void *qt_locale_create_from_name(const char *name);
+void  qt_locale_destroy(void *locale);
+char *qt_locale_get_name(void *locale);
+char *qt_locale_get_language_name(void *locale);
+char *qt_locale_get_country_name(void *locale);
+char *qt_locale_get_decimal_point(void *locale);
+char *qt_locale_to_string_int(void *locale, int value);
+char *qt_locale_to_string_double(void *locale, double value, int precision);
+char *qt_locale_format_date_time(void *locale, void *dt, const char *format);
+
+/* ── QRegularExpression (standalone) ────────────────────────────────── */
+
+void *qt_regex_create(const char *pattern);
+void *qt_regex_create_with_options(const char *pattern, int options);
+void  qt_regex_destroy(void *regex);
+char *qt_regex_get_pattern(void *regex);
+int   qt_regex_is_valid(void *regex);
+char *qt_regex_get_error_string(void *regex);
+int   qt_regex_has_match(void *regex, const char *subject);
+char *qt_regex_get_match(void *regex, const char *subject, int capture_group);
+int   qt_regex_get_match_start(void *regex, const char *subject, int capture_group);
+int   qt_regex_get_match_end(void *regex, const char *subject, int capture_group);
+
+/* ── QUrl ───────────────────────────────────────────────────────────── */
+
+void *qt_url_create(const char *url);
+void *qt_url_create_from_local_file(const char *file_path);
+void  qt_url_destroy(void *url);
+char *qt_url_to_string(void *url);
+char *qt_url_to_local_file(void *url);
+char *qt_url_get_scheme(void *url);
+char *qt_url_get_host(void *url);
+int   qt_url_get_port(void *url);
+char *qt_url_get_path(void *url);
+char *qt_url_get_query(void *url);
+char *qt_url_get_fragment(void *url);
+int   qt_url_is_valid(void *url);
+int   qt_url_is_local_file(void *url);
+char *qt_url_get_file_name(void *url);
+
+/* ── QUuid ──────────────────────────────────────────────────────────── */
+
+void *qt_uuid_create(void);
+void *qt_uuid_create_from_string(const char *text);
+void  qt_uuid_destroy(void *uuid);
+char *qt_uuid_to_string(void *uuid);
+int   qt_uuid_is_null(void *uuid);
+
+/* ── QElapsedTimer ──────────────────────────────────────────────────── */
+
+void *qt_elapsed_timer_create(void);
+void  qt_elapsed_timer_destroy(void *timer);
+void  qt_elapsed_timer_start(void *timer);
+long long qt_elapsed_timer_elapsed(void *timer);
+long long qt_elapsed_timer_restart(void *timer);
+int   qt_elapsed_timer_is_valid(void *timer);
+int   qt_elapsed_timer_has_expired(void *timer, long long timeout);
+
+/* ── QCryptographicHash ─────────────────────────────────────────────── */
+
+void *qt_crypto_hash_create(int algorithm);
+void  qt_crypto_hash_destroy(void *hash);
+void  qt_crypto_hash_add_data(void *hash, const unsigned char *data, int size);
+void  qt_crypto_hash_reset(void *hash);
+int   qt_crypto_hash_get_result(void *hash, unsigned char *out, int max_size);
+int   qt_crypto_hash_static(int algorithm, const unsigned char *data, int size, unsigned char *out, int max_size);
+
+/* ── QMimeType / QMimeDatabase ──────────────────────────────────────── */
+
+void *qt_mime_database_create(void);
+void  qt_mime_database_destroy(void *db);
+char *qt_mime_database_mime_type_for_file(void *db, const char *file_path);
+char *qt_mime_database_mime_type_for_data(void *db, const unsigned char *data, int size);
+char *qt_mime_database_suffix_for_mime_type(void *db, const char *mime_type);
+
+/* ── QStorageInfo ───────────────────────────────────────────────────── */
+
+void *qt_storage_info_create(const char *path);
+void  qt_storage_info_destroy(void *info);
+char *qt_storage_info_get_root_path(void *info);
+char *qt_storage_info_get_device(void *info);
+char *qt_storage_info_get_display_name(void *info);
+char *qt_storage_info_get_file_system_type(void *info);
+long long qt_storage_info_get_bytes_total(void *info);
+long long qt_storage_info_get_bytes_free(void *info);
+long long qt_storage_info_get_bytes_available(void *info);
+int   qt_storage_info_is_valid(void *info);
+int   qt_storage_info_is_ready(void *info);
+int   qt_storage_info_is_read_only(void *info);
+
+/* ── QVersionNumber ─────────────────────────────────────────────────── */
+
+void *qt_version_number_create(int major, int minor, int micro);
+void  qt_version_number_destroy(void *version);
+int   qt_version_number_get_major(void *version);
+int   qt_version_number_get_minor(void *version);
+int   qt_version_number_get_micro(void *version);
+char *qt_version_number_to_string(void *version);
+int   qt_version_number_compare(void *v1, void *v2);
+int   qt_version_number_is_null(void *version);
+
+/* ── QTranslator ────────────────────────────────────────────────────── */
+
+void *qt_translator_create(void *parent);
+void  qt_translator_destroy(void *translator);
+int   qt_translator_load(void *translator, const char *filename, const char *directory);
+int   qt_translator_is_empty(void *translator);
+void  qt_application_install_translator(void *app, void *translator);
+void  qt_application_remove_translator(void *app, void *translator);
+
+/* ── QCommandLineParser / QCommandLineOption ────────────────────────── */
+
+void *qt_command_line_parser_create(void);
+void  qt_command_line_parser_destroy(void *parser);
+void  qt_command_line_parser_set_application_description(void *parser, const char *description);
+void  qt_command_line_parser_add_help_option(void *parser);
+void  qt_command_line_parser_add_version_option(void *parser);
+void  qt_command_line_parser_add_option(void *parser, const char *name, const char *description, const char *value_name, const char *default_value);
+void  qt_command_line_parser_add_positional_argument(void *parser, const char *name, const char *description, const char *syntax);
+void  qt_command_line_parser_process(void *parser, void *app);
+int   qt_command_line_parser_is_set(void *parser, const char *name);
+char *qt_command_line_parser_get_value(void *parser, const char *name);
+
+/* ── QTemporaryFile ─────────────────────────────────────────────────── */
+
+void *qt_temporary_file_create(void);
+void *qt_temporary_file_create_with_template(const char *template_name);
+void  qt_temporary_file_destroy(void *file);
+int   qt_temporary_file_open(void *file);
+char *qt_temporary_file_get_file_name(void *file);
+int   qt_temporary_file_auto_remove(void *file);
+void  qt_temporary_file_set_auto_remove(void *file, int is_auto_remove);
+
+/* ── QTemporaryDir ──────────────────────────────────────────────────── */
+
+void *qt_temporary_dir_create(void);
+void *qt_temporary_dir_create_with_template(const char *template_name);
+void  qt_temporary_dir_destroy(void *dir);
+int   qt_temporary_dir_is_valid(void *dir);
+char *qt_temporary_dir_get_path(void *dir);
+int   qt_temporary_dir_auto_remove(void *dir);
+void  qt_temporary_dir_set_auto_remove(void *dir, int is_auto_remove);
+int   qt_temporary_dir_remove(void *dir);
+
+/* ── QSaveFile ──────────────────────────────────────────────────────── */
+
+void *qt_save_file_create(const char *file_path);
+void  qt_save_file_destroy(void *file);
+int   qt_save_file_open(void *file, int mode);
+long long qt_save_file_write(void *file, const char *data, long long size);
+int   qt_save_file_commit(void *file);
+void  qt_save_file_cancel_writing(void *file);
+char *qt_save_file_get_error_string(void *file);
+
+/* ── QFileSystemWatcher ─────────────────────────────────────────────── */
+
+void *qt_file_system_watcher_create(void *parent);
+void  qt_file_system_watcher_destroy(void *watcher);
+int   qt_file_system_watcher_add_path(void *watcher, const char *path);
+int   qt_file_system_watcher_remove_path(void *watcher, const char *path);
+int   qt_file_system_watcher_connect_file_changed(void *watcher, qt_string_callback_t callback, void *user_data);
+int   qt_file_system_watcher_connect_directory_changed(void *watcher, qt_string_callback_t callback, void *user_data);
+
+/* ── QStringListModel ───────────────────────────────────────────────── */
+
+void *qt_string_list_model_create(void *parent);
+void  qt_string_list_model_destroy(void *model);
+void  qt_string_list_model_set_string_list(void *model, const char **strings, int count);
+int   qt_string_list_model_get_string_list(void *model, char ***strings_out);
+void  qt_string_list_model_free_string_list(char **strings, int count);
+
+/* ── QItemSelectionModel ────────────────────────────────────────────── */
+
+void *qt_item_selection_model_create(void *model, void *parent);
+void  qt_item_selection_model_destroy(void *selection_model);
+void  qt_item_selection_model_select_index(void *selection_model, void *index, int flags);
+void  qt_item_selection_model_clear(void *selection_model);
+void  qt_item_selection_model_clear_selection(void *selection_model);
+int   qt_item_selection_model_is_selected(void *selection_model, void *index);
+int   qt_item_selection_model_has_selection(void *selection_model);
+void *qt_item_selection_model_get_current_index(void *selection_model);
+void  qt_item_selection_model_set_current_index(void *selection_model, void *index, int flags);
+int   qt_item_selection_model_connect_selection_changed(void *selection_model, qt_callback_t callback, void *user_data);
+int   qt_item_selection_model_connect_current_changed(void *selection_model, qt_callback_t callback, void *user_data);
+
 #ifdef __cplusplus
 }
 #endif

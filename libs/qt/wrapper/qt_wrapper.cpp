@@ -153,6 +153,40 @@
 #include <QPicture>
 #include <QPageLayout>
 #include <QPageSize>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QProcess>
+#include <QThread>
+#include <QMutex>
+#include <QReadWriteLock>
+#include <QSemaphore>
+#include <QBuffer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
+#include <QLocale>
+#include <QUuid>
+#include <QElapsedTimer>
+#include <QCryptographicHash>
+#include <QMimeDatabase>
+#include <QMimeType>
+#include <QStorageInfo>
+#include <QVersionNumber>
+#include <QTranslator>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
+#include <QTemporaryFile>
+#include <QTemporaryDir>
+#include <QSaveFile>
+#include <QFileSystemWatcher>
+#include <QItemSelectionModel>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -6132,6 +6166,1539 @@ void qt_page_layout_set_orientation(void *page_layout, int orientation) {
 
 int qt_page_layout_is_valid(void *page_layout) {
     return static_cast<QPageLayout *>(page_layout)->isValid() ? 1 : 0;
+}
+
+/* ── QFile ───────────────────────────────────────────────────────────── */
+
+void *qt_file_create(const char *file_path) {
+    return static_cast<void *>(new QFile(QString::fromUtf8(file_path)));
+}
+
+void qt_file_destroy(void *file) {
+    delete static_cast<QFile *>(file);
+}
+
+int qt_file_open(void *file, int mode) {
+    return static_cast<QFile *>(file)->open(static_cast<QIODevice::OpenMode>(mode)) ? 1 : 0;
+}
+
+void qt_file_close(void *file) {
+    static_cast<QFile *>(file)->close();
+}
+
+int qt_file_is_open(void *file) {
+    return static_cast<QFile *>(file)->isOpen() ? 1 : 0;
+}
+
+long long qt_file_size(void *file) {
+    return static_cast<QFile *>(file)->size();
+}
+
+long long qt_file_pos(void *file) {
+    return static_cast<QFile *>(file)->pos();
+}
+
+int qt_file_seek(void *file, long long pos) {
+    return static_cast<QFile *>(file)->seek(pos) ? 1 : 0;
+}
+
+int qt_file_at_end(void *file) {
+    return static_cast<QFile *>(file)->atEnd() ? 1 : 0;
+}
+
+long long qt_file_read(void *file, char *data, long long max_size) {
+    return static_cast<QFile *>(file)->read(data, max_size);
+}
+
+long long qt_file_write(void *file, const char *data, long long size) {
+    return static_cast<QFile *>(file)->write(data, size);
+}
+
+char *qt_file_read_all(void *file) {
+    QByteArray data = static_cast<QFile *>(file)->readAll();
+    return qstring_to_heap_utf8(QString::fromUtf8(data));
+}
+
+int qt_file_exists(const char *file_path) {
+    return QFile::exists(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+int qt_file_remove(const char *file_path) {
+    return QFile::remove(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+int qt_file_copy(const char *source, const char *destination) {
+    return QFile::copy(QString::fromUtf8(source), QString::fromUtf8(destination)) ? 1 : 0;
+}
+
+int qt_file_rename(const char *old_name, const char *new_name) {
+    return QFile::rename(QString::fromUtf8(old_name), QString::fromUtf8(new_name)) ? 1 : 0;
+}
+
+char *qt_file_get_error_string(void *file) {
+    return qstring_to_heap_utf8(static_cast<QFile *>(file)->errorString());
+}
+
+/* ── QFileInfo ──────────────────────────────────────────────────────── */
+
+void *qt_file_info_create(const char *file_path) {
+    return static_cast<void *>(new QFileInfo(QString::fromUtf8(file_path)));
+}
+
+void qt_file_info_destroy(void *info) {
+    delete static_cast<QFileInfo *>(info);
+}
+
+int qt_file_info_exists(void *info) {
+    return static_cast<QFileInfo *>(info)->exists() ? 1 : 0;
+}
+
+char *qt_file_info_get_file_name(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->fileName());
+}
+
+char *qt_file_info_get_file_path(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->filePath());
+}
+
+char *qt_file_info_get_absolute_file_path(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->absoluteFilePath());
+}
+
+char *qt_file_info_get_absolute_path(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->absolutePath());
+}
+
+char *qt_file_info_get_suffix(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->suffix());
+}
+
+char *qt_file_info_get_complete_suffix(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->completeSuffix());
+}
+
+char *qt_file_info_get_base_name(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFileInfo *>(info)->baseName());
+}
+
+long long qt_file_info_get_size(void *info) {
+    return static_cast<QFileInfo *>(info)->size();
+}
+
+int qt_file_info_is_file(void *info) {
+    return static_cast<QFileInfo *>(info)->isFile() ? 1 : 0;
+}
+
+int qt_file_info_is_dir(void *info) {
+    return static_cast<QFileInfo *>(info)->isDir() ? 1 : 0;
+}
+
+int qt_file_info_is_symlink(void *info) {
+    return static_cast<QFileInfo *>(info)->isSymLink() ? 1 : 0;
+}
+
+int qt_file_info_is_readable(void *info) {
+    return static_cast<QFileInfo *>(info)->isReadable() ? 1 : 0;
+}
+
+int qt_file_info_is_writable(void *info) {
+    return static_cast<QFileInfo *>(info)->isWritable() ? 1 : 0;
+}
+
+int qt_file_info_is_executable(void *info) {
+    return static_cast<QFileInfo *>(info)->isExecutable() ? 1 : 0;
+}
+
+int qt_file_info_is_hidden(void *info) {
+    return static_cast<QFileInfo *>(info)->isHidden() ? 1 : 0;
+}
+
+/* ── QDir ───────────────────────────────────────────────────────────── */
+
+void *qt_dir_create(const char *path) {
+    return static_cast<void *>(new QDir(QString::fromUtf8(path)));
+}
+
+void qt_dir_destroy(void *dir) {
+    delete static_cast<QDir *>(dir);
+}
+
+char *qt_dir_get_path(void *dir) {
+    return qstring_to_heap_utf8(static_cast<QDir *>(dir)->path());
+}
+
+char *qt_dir_get_absolute_path(void *dir) {
+    return qstring_to_heap_utf8(static_cast<QDir *>(dir)->absolutePath());
+}
+
+int qt_dir_exists(void *dir) {
+    return static_cast<QDir *>(dir)->exists() ? 1 : 0;
+}
+
+int qt_dir_mkdir(void *dir, const char *name) {
+    return static_cast<QDir *>(dir)->mkdir(QString::fromUtf8(name)) ? 1 : 0;
+}
+
+int qt_dir_mkpath(void *dir, const char *path) {
+    return static_cast<QDir *>(dir)->mkpath(QString::fromUtf8(path)) ? 1 : 0;
+}
+
+int qt_dir_rmdir(void *dir, const char *name) {
+    return static_cast<QDir *>(dir)->rmdir(QString::fromUtf8(name)) ? 1 : 0;
+}
+
+int qt_dir_rmpath(void *dir, const char *path) {
+    return static_cast<QDir *>(dir)->rmpath(QString::fromUtf8(path)) ? 1 : 0;
+}
+
+int qt_dir_remove(void *dir, const char *file_name) {
+    return static_cast<QDir *>(dir)->remove(QString::fromUtf8(file_name)) ? 1 : 0;
+}
+
+int qt_dir_rename(void *dir, const char *old_name, const char *new_name) {
+    return static_cast<QDir *>(dir)->rename(QString::fromUtf8(old_name), QString::fromUtf8(new_name)) ? 1 : 0;
+}
+
+int qt_dir_cd(void *dir, const char *dir_name) {
+    return static_cast<QDir *>(dir)->cd(QString::fromUtf8(dir_name)) ? 1 : 0;
+}
+
+int qt_dir_cd_up(void *dir) {
+    return static_cast<QDir *>(dir)->cdUp() ? 1 : 0;
+}
+
+int qt_dir_get_entry_count(void *dir, int filters) {
+    return static_cast<QDir *>(dir)->entryList(static_cast<QDir::Filters>(filters)).count();
+}
+
+int qt_dir_get_entry_list(void *dir, int filters, char ***entries_out) {
+    QStringList entries = static_cast<QDir *>(dir)->entryList(static_cast<QDir::Filters>(filters));
+    int count = entries.size();
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; i++) {
+        arr[i] = qstring_to_heap_utf8(entries[i]);
+    }
+    *entries_out = arr;
+    return count;
+}
+
+void qt_dir_free_entry_list(char **entries, int count) {
+    for (int i = 0; i < count; i++) {
+        free(entries[i]);
+    }
+    free(entries);
+}
+
+char *qt_dir_home_path(void) {
+    return qstring_to_heap_utf8(QDir::homePath());
+}
+
+char *qt_dir_temp_path(void) {
+    return qstring_to_heap_utf8(QDir::tempPath());
+}
+
+char *qt_dir_root_path(void) {
+    return qstring_to_heap_utf8(QDir::rootPath());
+}
+
+char *qt_dir_current_path(void) {
+    return qstring_to_heap_utf8(QDir::currentPath());
+}
+
+/* ── QProcess ───────────────────────────────────────────────────────── */
+
+void *qt_process_create(void *parent) {
+    return static_cast<void *>(new QProcess(static_cast<QObject *>(parent)));
+}
+
+void qt_process_destroy(void *process) {
+    delete static_cast<QProcess *>(process);
+}
+
+void qt_process_start(void *process, const char *program, const char **arguments, int arg_count) {
+    QStringList args;
+    for (int i = 0; i < arg_count; i++) {
+        args.append(QString::fromUtf8(arguments[i]));
+    }
+    static_cast<QProcess *>(process)->start(QString::fromUtf8(program), args);
+}
+
+void qt_process_start_command(void *process, const char *command) {
+    static_cast<QProcess *>(process)->startCommand(QString::fromUtf8(command));
+}
+
+int qt_process_wait_for_started(void *process, int timeout_ms) {
+    return static_cast<QProcess *>(process)->waitForStarted(timeout_ms) ? 1 : 0;
+}
+
+int qt_process_wait_for_finished(void *process, int timeout_ms) {
+    return static_cast<QProcess *>(process)->waitForFinished(timeout_ms) ? 1 : 0;
+}
+
+void qt_process_kill(void *process) {
+    static_cast<QProcess *>(process)->kill();
+}
+
+void qt_process_terminate(void *process) {
+    static_cast<QProcess *>(process)->terminate();
+}
+
+int qt_process_get_state(void *process) {
+    return static_cast<int>(static_cast<QProcess *>(process)->state());
+}
+
+int qt_process_get_exit_code(void *process) {
+    return static_cast<QProcess *>(process)->exitCode();
+}
+
+int qt_process_get_exit_status(void *process) {
+    return static_cast<int>(static_cast<QProcess *>(process)->exitStatus());
+}
+
+char *qt_process_read_all_standard_output(void *process) {
+    QByteArray data = static_cast<QProcess *>(process)->readAllStandardOutput();
+    return qstring_to_heap_utf8(QString::fromUtf8(data));
+}
+
+char *qt_process_read_all_standard_error(void *process) {
+    QByteArray data = static_cast<QProcess *>(process)->readAllStandardError();
+    return qstring_to_heap_utf8(QString::fromUtf8(data));
+}
+
+void qt_process_write(void *process, const char *data, int size) {
+    static_cast<QProcess *>(process)->write(data, size);
+}
+
+void qt_process_close_write_channel(void *process) {
+    static_cast<QProcess *>(process)->closeWriteChannel();
+}
+
+void qt_process_set_working_directory(void *process, const char *dir) {
+    static_cast<QProcess *>(process)->setWorkingDirectory(QString::fromUtf8(dir));
+}
+
+int qt_process_connect_finished(void *process, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::finished, [callback, user_data](int exit_code) {
+        callback(exit_code, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_process_connect_error_occurred(void *process, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::errorOccurred, [callback, user_data](QProcess::ProcessError error) {
+        callback(static_cast<int>(error), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_process_connect_started(void *process, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::started, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+/* ── QThread ────────────────────────────────────────────────────────── */
+
+void qt_thread_sleep(unsigned long ms) {
+    QThread::sleep(ms);
+}
+
+void qt_thread_msleep(unsigned long ms) {
+    QThread::msleep(ms);
+}
+
+void qt_thread_usleep(unsigned long us) {
+    QThread::usleep(us);
+}
+
+/* ── QMutex ─────────────────────────────────────────────────────────── */
+
+void *qt_mutex_create(void) {
+    return static_cast<void *>(new QMutex());
+}
+
+void qt_mutex_destroy(void *mutex) {
+    delete static_cast<QMutex *>(mutex);
+}
+
+void qt_mutex_lock(void *mutex) {
+    static_cast<QMutex *>(mutex)->lock();
+}
+
+void qt_mutex_unlock(void *mutex) {
+    static_cast<QMutex *>(mutex)->unlock();
+}
+
+int qt_mutex_try_lock(void *mutex) {
+    return static_cast<QMutex *>(mutex)->tryLock() ? 1 : 0;
+}
+
+/* ── QReadWriteLock ─────────────────────────────────────────────────── */
+
+void *qt_read_write_lock_create(void) {
+    return static_cast<void *>(new QReadWriteLock());
+}
+
+void qt_read_write_lock_destroy(void *lock) {
+    delete static_cast<QReadWriteLock *>(lock);
+}
+
+void qt_read_write_lock_lock_for_read(void *lock) {
+    static_cast<QReadWriteLock *>(lock)->lockForRead();
+}
+
+void qt_read_write_lock_lock_for_write(void *lock) {
+    static_cast<QReadWriteLock *>(lock)->lockForWrite();
+}
+
+void qt_read_write_lock_unlock(void *lock) {
+    static_cast<QReadWriteLock *>(lock)->unlock();
+}
+
+int qt_read_write_lock_try_lock_for_read(void *lock) {
+    return static_cast<QReadWriteLock *>(lock)->tryLockForRead() ? 1 : 0;
+}
+
+int qt_read_write_lock_try_lock_for_write(void *lock) {
+    return static_cast<QReadWriteLock *>(lock)->tryLockForWrite() ? 1 : 0;
+}
+
+/* ── QSemaphore ─────────────────────────────────────────────────────── */
+
+void *qt_semaphore_create(int n) {
+    return static_cast<void *>(new QSemaphore(n));
+}
+
+void qt_semaphore_destroy(void *semaphore) {
+    delete static_cast<QSemaphore *>(semaphore);
+}
+
+void qt_semaphore_acquire(void *semaphore, int n) {
+    static_cast<QSemaphore *>(semaphore)->acquire(n);
+}
+
+void qt_semaphore_release(void *semaphore, int n) {
+    static_cast<QSemaphore *>(semaphore)->release(n);
+}
+
+int qt_semaphore_available(void *semaphore) {
+    return static_cast<QSemaphore *>(semaphore)->available();
+}
+
+int qt_semaphore_try_acquire(void *semaphore, int n) {
+    return static_cast<QSemaphore *>(semaphore)->tryAcquire(n) ? 1 : 0;
+}
+
+/* ── QBuffer ────────────────────────────────────────────────────────── */
+
+void *qt_buffer_create(void) {
+    return static_cast<void *>(new QBuffer());
+}
+
+void qt_buffer_destroy(void *buffer) {
+    delete static_cast<QBuffer *>(buffer);
+}
+
+int qt_buffer_open(void *buffer, int mode) {
+    return static_cast<QBuffer *>(buffer)->open(static_cast<QIODevice::OpenMode>(mode)) ? 1 : 0;
+}
+
+void qt_buffer_close(void *buffer) {
+    static_cast<QBuffer *>(buffer)->close();
+}
+
+void qt_buffer_set_data(void *buffer, const char *data, int size) {
+    static_cast<QBuffer *>(buffer)->setData(data, size);
+}
+
+char *qt_buffer_get_data(void *buffer, int *size) {
+    const QByteArray &data = static_cast<QBuffer *>(buffer)->data();
+    *size = data.size();
+    char *result = static_cast<char *>(malloc(data.size()));
+    memcpy(result, data.constData(), data.size());
+    return result;
+}
+
+long long qt_buffer_size(void *buffer) {
+    return static_cast<QBuffer *>(buffer)->size();
+}
+
+/* ── QJsonDocument / QJsonObject / QJsonArray ───────────────────────── */
+
+void *qt_json_document_from_json(const char *json, int size, char **error_out) {
+    QJsonParseError error;
+    QJsonDocument *doc = new QJsonDocument(QJsonDocument::fromJson(QByteArray(json, size), &error));
+    if (error.error != QJsonParseError::NoError) {
+        if (error_out) *error_out = qstring_to_heap_utf8(error.errorString());
+        delete doc;
+        return nullptr;
+    }
+    if (error_out) *error_out = nullptr;
+    return static_cast<void *>(doc);
+}
+
+void *qt_json_document_from_object(void *object) {
+    return static_cast<void *>(new QJsonDocument(*static_cast<QJsonObject *>(object)));
+}
+
+void *qt_json_document_from_array(void *array) {
+    return static_cast<void *>(new QJsonDocument(*static_cast<QJsonArray *>(array)));
+}
+
+void qt_json_document_destroy(void *doc) {
+    delete static_cast<QJsonDocument *>(doc);
+}
+
+char *qt_json_document_to_json(void *doc, int is_compact) {
+    QByteArray data = static_cast<QJsonDocument *>(doc)->toJson(
+        is_compact ? QJsonDocument::Compact : QJsonDocument::Indented);
+    return qstring_to_heap_utf8(QString::fromUtf8(data));
+}
+
+int qt_json_document_is_object(void *doc) {
+    return static_cast<QJsonDocument *>(doc)->isObject() ? 1 : 0;
+}
+
+int qt_json_document_is_array(void *doc) {
+    return static_cast<QJsonDocument *>(doc)->isArray() ? 1 : 0;
+}
+
+void *qt_json_document_get_object(void *doc) {
+    return static_cast<void *>(new QJsonObject(static_cast<QJsonDocument *>(doc)->object()));
+}
+
+void *qt_json_document_get_array(void *doc) {
+    return static_cast<void *>(new QJsonArray(static_cast<QJsonDocument *>(doc)->array()));
+}
+
+void *qt_json_object_create(void) {
+    return static_cast<void *>(new QJsonObject());
+}
+
+void qt_json_object_destroy(void *obj) {
+    delete static_cast<QJsonObject *>(obj);
+}
+
+int qt_json_object_get_count(void *obj) {
+    return static_cast<QJsonObject *>(obj)->count();
+}
+
+int qt_json_object_contains(void *obj, const char *key) {
+    return static_cast<QJsonObject *>(obj)->contains(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+void qt_json_object_set_string(void *obj, const char *key, const char *value) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), QString::fromUtf8(value));
+}
+
+void qt_json_object_set_int(void *obj, const char *key, int value) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), value);
+}
+
+void qt_json_object_set_double(void *obj, const char *key, double value) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), value);
+}
+
+void qt_json_object_set_bool(void *obj, const char *key, int value) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), value != 0);
+}
+
+void qt_json_object_set_object(void *obj, const char *key, void *child) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), *static_cast<QJsonObject *>(child));
+}
+
+void qt_json_object_set_array(void *obj, const char *key, void *array) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), *static_cast<QJsonArray *>(array));
+}
+
+void qt_json_object_set_null(void *obj, const char *key) {
+    static_cast<QJsonObject *>(obj)->insert(QString::fromUtf8(key), QJsonValue::Null);
+}
+
+char *qt_json_object_get_string(void *obj, const char *key) {
+    QJsonValue v = static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key));
+    if (!v.isString()) return nullptr;
+    return qstring_to_heap_utf8(v.toString());
+}
+
+int qt_json_object_get_int(void *obj, const char *key, int default_val) {
+    return static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key)).toInt(default_val);
+}
+
+double qt_json_object_get_double(void *obj, const char *key, double default_val) {
+    return static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key)).toDouble(default_val);
+}
+
+int qt_json_object_get_bool(void *obj, const char *key, int default_val) {
+    QJsonValue v = static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key));
+    if (!v.isBool()) return default_val;
+    return v.toBool() ? 1 : 0;
+}
+
+void *qt_json_object_get_object(void *obj, const char *key) {
+    QJsonValue v = static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key));
+    if (!v.isObject()) return nullptr;
+    return static_cast<void *>(new QJsonObject(v.toObject()));
+}
+
+void *qt_json_object_get_array(void *obj, const char *key) {
+    QJsonValue v = static_cast<QJsonObject *>(obj)->value(QString::fromUtf8(key));
+    if (!v.isArray()) return nullptr;
+    return static_cast<void *>(new QJsonArray(v.toArray()));
+}
+
+void qt_json_object_remove(void *obj, const char *key) {
+    static_cast<QJsonObject *>(obj)->remove(QString::fromUtf8(key));
+}
+
+int qt_json_object_get_keys(void *obj, char ***keys_out) {
+    QStringList keys = static_cast<QJsonObject *>(obj)->keys();
+    int count = keys.size();
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; i++) {
+        arr[i] = qstring_to_heap_utf8(keys[i]);
+    }
+    *keys_out = arr;
+    return count;
+}
+
+void qt_json_object_free_keys(char **keys, int count) {
+    for (int i = 0; i < count; i++) {
+        free(keys[i]);
+    }
+    free(keys);
+}
+
+void *qt_json_array_create(void) {
+    return static_cast<void *>(new QJsonArray());
+}
+
+void qt_json_array_destroy(void *arr) {
+    delete static_cast<QJsonArray *>(arr);
+}
+
+int qt_json_array_get_count(void *arr) {
+    return static_cast<QJsonArray *>(arr)->count();
+}
+
+void qt_json_array_append_string(void *arr, const char *value) {
+    static_cast<QJsonArray *>(arr)->append(QString::fromUtf8(value));
+}
+
+void qt_json_array_append_int(void *arr, int value) {
+    static_cast<QJsonArray *>(arr)->append(value);
+}
+
+void qt_json_array_append_double(void *arr, double value) {
+    static_cast<QJsonArray *>(arr)->append(value);
+}
+
+void qt_json_array_append_bool(void *arr, int value) {
+    static_cast<QJsonArray *>(arr)->append(value != 0);
+}
+
+void qt_json_array_append_object(void *arr, void *object) {
+    static_cast<QJsonArray *>(arr)->append(*static_cast<QJsonObject *>(object));
+}
+
+void qt_json_array_append_array(void *arr, void *other) {
+    static_cast<QJsonArray *>(arr)->append(*static_cast<QJsonArray *>(other));
+}
+
+void qt_json_array_append_null(void *arr) {
+    static_cast<QJsonArray *>(arr)->append(QJsonValue::Null);
+}
+
+char *qt_json_array_get_string(void *arr, int index) {
+    QJsonValue v = static_cast<QJsonArray *>(arr)->at(index);
+    if (!v.isString()) return nullptr;
+    return qstring_to_heap_utf8(v.toString());
+}
+
+int qt_json_array_get_int(void *arr, int index, int default_val) {
+    return static_cast<QJsonArray *>(arr)->at(index).toInt(default_val);
+}
+
+double qt_json_array_get_double(void *arr, int index, double default_val) {
+    return static_cast<QJsonArray *>(arr)->at(index).toDouble(default_val);
+}
+
+int qt_json_array_get_bool(void *arr, int index, int default_val) {
+    QJsonValue v = static_cast<QJsonArray *>(arr)->at(index);
+    if (!v.isBool()) return default_val;
+    return v.toBool() ? 1 : 0;
+}
+
+void *qt_json_array_get_object(void *arr, int index) {
+    QJsonValue v = static_cast<QJsonArray *>(arr)->at(index);
+    if (!v.isObject()) return nullptr;
+    return static_cast<void *>(new QJsonObject(v.toObject()));
+}
+
+void *qt_json_array_get_array(void *arr, int index) {
+    QJsonValue v = static_cast<QJsonArray *>(arr)->at(index);
+    if (!v.isArray()) return nullptr;
+    return static_cast<void *>(new QJsonArray(v.toArray()));
+}
+
+void qt_json_array_remove_at(void *arr, int index) {
+    static_cast<QJsonArray *>(arr)->removeAt(index);
+}
+
+/* ── QXmlStreamReader / QXmlStreamWriter ────────────────────────────── */
+
+void *qt_xml_stream_reader_create(const char *data, int size) {
+    return static_cast<void *>(new QXmlStreamReader(QByteArray(data, size)));
+}
+
+void qt_xml_stream_reader_destroy(void *reader) {
+    delete static_cast<QXmlStreamReader *>(reader);
+}
+
+int qt_xml_stream_reader_read_next(void *reader) {
+    return static_cast<int>(static_cast<QXmlStreamReader *>(reader)->readNext());
+}
+
+int qt_xml_stream_reader_get_token_type(void *reader) {
+    return static_cast<int>(static_cast<QXmlStreamReader *>(reader)->tokenType());
+}
+
+char *qt_xml_stream_reader_get_name(void *reader) {
+    return qstring_to_heap_utf8(static_cast<QXmlStreamReader *>(reader)->name().toString());
+}
+
+char *qt_xml_stream_reader_get_text(void *reader) {
+    return qstring_to_heap_utf8(static_cast<QXmlStreamReader *>(reader)->text().toString());
+}
+
+int qt_xml_stream_reader_at_end(void *reader) {
+    return static_cast<QXmlStreamReader *>(reader)->atEnd() ? 1 : 0;
+}
+
+int qt_xml_stream_reader_has_error(void *reader) {
+    return static_cast<QXmlStreamReader *>(reader)->hasError() ? 1 : 0;
+}
+
+char *qt_xml_stream_reader_get_error_string(void *reader) {
+    return qstring_to_heap_utf8(static_cast<QXmlStreamReader *>(reader)->errorString());
+}
+
+char *qt_xml_stream_reader_get_attribute(void *reader, const char *name) {
+    QStringView val = static_cast<QXmlStreamReader *>(reader)->attributes().value(QString::fromUtf8(name));
+    if (val.isNull()) return nullptr;
+    return qstring_to_heap_utf8(val.toString());
+}
+
+int qt_xml_stream_reader_is_start_element(void *reader) {
+    return static_cast<QXmlStreamReader *>(reader)->isStartElement() ? 1 : 0;
+}
+
+int qt_xml_stream_reader_is_end_element(void *reader) {
+    return static_cast<QXmlStreamReader *>(reader)->isEndElement() ? 1 : 0;
+}
+
+static QByteArray s_xml_writer_output;
+
+void *qt_xml_stream_writer_create(void) {
+    s_xml_writer_output.clear();
+    return static_cast<void *>(new QXmlStreamWriter(&s_xml_writer_output));
+}
+
+void qt_xml_stream_writer_destroy(void *writer) {
+    delete static_cast<QXmlStreamWriter *>(writer);
+}
+
+void qt_xml_stream_writer_set_auto_formatting(void *writer, int is_enabled) {
+    static_cast<QXmlStreamWriter *>(writer)->setAutoFormatting(is_enabled != 0);
+}
+
+void qt_xml_stream_writer_write_start_document(void *writer) {
+    static_cast<QXmlStreamWriter *>(writer)->writeStartDocument();
+}
+
+void qt_xml_stream_writer_write_end_document(void *writer) {
+    static_cast<QXmlStreamWriter *>(writer)->writeEndDocument();
+}
+
+void qt_xml_stream_writer_write_start_element(void *writer, const char *name) {
+    static_cast<QXmlStreamWriter *>(writer)->writeStartElement(QString::fromUtf8(name));
+}
+
+void qt_xml_stream_writer_write_end_element(void *writer) {
+    static_cast<QXmlStreamWriter *>(writer)->writeEndElement();
+}
+
+void qt_xml_stream_writer_write_attribute(void *writer, const char *name, const char *value) {
+    static_cast<QXmlStreamWriter *>(writer)->writeAttribute(QString::fromUtf8(name), QString::fromUtf8(value));
+}
+
+void qt_xml_stream_writer_write_text_element(void *writer, const char *name, const char *text) {
+    static_cast<QXmlStreamWriter *>(writer)->writeTextElement(QString::fromUtf8(name), QString::fromUtf8(text));
+}
+
+void qt_xml_stream_writer_write_characters(void *writer, const char *text) {
+    static_cast<QXmlStreamWriter *>(writer)->writeCharacters(QString::fromUtf8(text));
+}
+
+char *qt_xml_stream_writer_get_output(void *) {
+    return qstring_to_heap_utf8(QString::fromUtf8(s_xml_writer_output));
+}
+
+/* ── QDateTime / QDate / QTime (standalone) ─────────────────────────── */
+
+void *qt_date_time_create(void) {
+    return static_cast<void *>(new QDateTime());
+}
+
+void *qt_date_time_create_from_components(int year, int month, int day, int hour, int minute, int second) {
+    return static_cast<void *>(new QDateTime(QDate(year, month, day), QTime(hour, minute, second)));
+}
+
+void *qt_date_time_current(void) {
+    return static_cast<void *>(new QDateTime(QDateTime::currentDateTime()));
+}
+
+void *qt_date_time_current_utc(void) {
+    return static_cast<void *>(new QDateTime(QDateTime::currentDateTimeUtc()));
+}
+
+void qt_date_time_destroy(void *dt) {
+    delete static_cast<QDateTime *>(dt);
+}
+
+char *qt_date_time_to_string(void *dt, const char *format) {
+    return qstring_to_heap_utf8(static_cast<QDateTime *>(dt)->toString(QString::fromUtf8(format)));
+}
+
+long long qt_date_time_to_msecs_since_epoch(void *dt) {
+    return static_cast<QDateTime *>(dt)->toMSecsSinceEpoch();
+}
+
+void *qt_date_time_from_msecs_since_epoch(long long msecs) {
+    return static_cast<void *>(new QDateTime(QDateTime::fromMSecsSinceEpoch(msecs)));
+}
+
+int qt_date_time_is_valid(void *dt) {
+    return static_cast<QDateTime *>(dt)->isValid() ? 1 : 0;
+}
+
+void qt_date_time_get_date(void *dt, int *year, int *month, int *day) {
+    QDate d = static_cast<QDateTime *>(dt)->date();
+    *year = d.year(); *month = d.month(); *day = d.day();
+}
+
+void qt_date_time_get_time(void *dt, int *hour, int *minute, int *second) {
+    QTime t = static_cast<QDateTime *>(dt)->time();
+    *hour = t.hour(); *minute = t.minute(); *second = t.second();
+}
+
+long long qt_date_time_secs_to(void *dt, void *other) {
+    return static_cast<QDateTime *>(dt)->secsTo(*static_cast<QDateTime *>(other));
+}
+
+long long qt_date_time_days_to(void *dt, void *other) {
+    return static_cast<QDateTime *>(dt)->daysTo(*static_cast<QDateTime *>(other));
+}
+
+void *qt_date_time_add_days(void *dt, long long days) {
+    return static_cast<void *>(new QDateTime(static_cast<QDateTime *>(dt)->addDays(days)));
+}
+
+void *qt_date_time_add_secs(void *dt, long long seconds) {
+    return static_cast<void *>(new QDateTime(static_cast<QDateTime *>(dt)->addSecs(seconds)));
+}
+
+void *qt_date_create(int year, int month, int day) {
+    return static_cast<void *>(new QDate(year, month, day));
+}
+
+void *qt_date_current(void) {
+    return static_cast<void *>(new QDate(QDate::currentDate()));
+}
+
+void qt_date_destroy(void *date) {
+    delete static_cast<QDate *>(date);
+}
+
+char *qt_date_to_string(void *date, const char *format) {
+    return qstring_to_heap_utf8(static_cast<QDate *>(date)->toString(QString::fromUtf8(format)));
+}
+
+int qt_date_is_valid(void *date) {
+    return static_cast<QDate *>(date)->isValid() ? 1 : 0;
+}
+
+int qt_date_get_year(void *date) { return static_cast<QDate *>(date)->year(); }
+int qt_date_get_month(void *date) { return static_cast<QDate *>(date)->month(); }
+int qt_date_get_day(void *date) { return static_cast<QDate *>(date)->day(); }
+int qt_date_get_day_of_week(void *date) { return static_cast<QDate *>(date)->dayOfWeek(); }
+int qt_date_get_day_of_year(void *date) { return static_cast<QDate *>(date)->dayOfYear(); }
+int qt_date_get_days_in_month(void *date) { return static_cast<QDate *>(date)->daysInMonth(); }
+int qt_date_get_days_in_year(void *date) { return static_cast<QDate *>(date)->daysInYear(); }
+
+void *qt_time_create(int hour, int minute, int second, int ms) {
+    return static_cast<void *>(new QTime(hour, minute, second, ms));
+}
+
+void *qt_time_current(void) {
+    return static_cast<void *>(new QTime(QTime::currentTime()));
+}
+
+void qt_time_destroy(void *time_obj) {
+    delete static_cast<QTime *>(time_obj);
+}
+
+char *qt_time_to_string(void *time_obj, const char *format) {
+    return qstring_to_heap_utf8(static_cast<QTime *>(time_obj)->toString(QString::fromUtf8(format)));
+}
+
+int qt_time_is_valid(void *time_obj) { return static_cast<QTime *>(time_obj)->isValid() ? 1 : 0; }
+int qt_time_get_hour(void *time_obj) { return static_cast<QTime *>(time_obj)->hour(); }
+int qt_time_get_minute(void *time_obj) { return static_cast<QTime *>(time_obj)->minute(); }
+int qt_time_get_second(void *time_obj) { return static_cast<QTime *>(time_obj)->second(); }
+int qt_time_get_msec(void *time_obj) { return static_cast<QTime *>(time_obj)->msec(); }
+int qt_time_msecs_since_start_of_day(void *time_obj) { return static_cast<QTime *>(time_obj)->msecsSinceStartOfDay(); }
+
+/* ── QLocale ────────────────────────────────────────────────────────── */
+
+void *qt_locale_create(void) {
+    return static_cast<void *>(new QLocale());
+}
+
+void *qt_locale_create_from_name(const char *name) {
+    return static_cast<void *>(new QLocale(QString::fromUtf8(name)));
+}
+
+void qt_locale_destroy(void *locale) {
+    delete static_cast<QLocale *>(locale);
+}
+
+char *qt_locale_get_name(void *locale) {
+    return qstring_to_heap_utf8(static_cast<QLocale *>(locale)->name());
+}
+
+char *qt_locale_get_language_name(void *locale) {
+    return qstring_to_heap_utf8(QLocale::languageToString(static_cast<QLocale *>(locale)->language()));
+}
+
+char *qt_locale_get_country_name(void *locale) {
+    return qstring_to_heap_utf8(QLocale::territoryToString(static_cast<QLocale *>(locale)->territory()));
+}
+
+char *qt_locale_get_decimal_point(void *locale) {
+    return qstring_to_heap_utf8(static_cast<QLocale *>(locale)->decimalPoint());
+}
+
+char *qt_locale_to_string_int(void *locale, int value) {
+    return qstring_to_heap_utf8(static_cast<QLocale *>(locale)->toString(value));
+}
+
+char *qt_locale_to_string_double(void *locale, double value, int precision) {
+    return qstring_to_heap_utf8(static_cast<QLocale *>(locale)->toString(value, 'g', precision));
+}
+
+char *qt_locale_format_date_time(void *locale, void *dt, const char *format) {
+    return qstring_to_heap_utf8(static_cast<QLocale *>(locale)->toString(
+        *static_cast<QDateTime *>(dt), QString::fromUtf8(format)));
+}
+
+/* ── QRegularExpression (standalone) ────────────────────────────────── */
+
+void *qt_regex_create(const char *pattern) {
+    return static_cast<void *>(new QRegularExpression(QString::fromUtf8(pattern)));
+}
+
+void *qt_regex_create_with_options(const char *pattern, int options) {
+    return static_cast<void *>(new QRegularExpression(
+        QString::fromUtf8(pattern), static_cast<QRegularExpression::PatternOptions>(options)));
+}
+
+void qt_regex_destroy(void *regex) {
+    delete static_cast<QRegularExpression *>(regex);
+}
+
+char *qt_regex_get_pattern(void *regex) {
+    return qstring_to_heap_utf8(static_cast<QRegularExpression *>(regex)->pattern());
+}
+
+int qt_regex_is_valid(void *regex) {
+    return static_cast<QRegularExpression *>(regex)->isValid() ? 1 : 0;
+}
+
+char *qt_regex_get_error_string(void *regex) {
+    return qstring_to_heap_utf8(static_cast<QRegularExpression *>(regex)->errorString());
+}
+
+int qt_regex_has_match(void *regex, const char *subject) {
+    return static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject)).hasMatch() ? 1 : 0;
+}
+
+char *qt_regex_get_match(void *regex, const char *subject, int capture_group) {
+    QRegularExpressionMatch m = static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject));
+    if (!m.hasMatch()) return nullptr;
+    return qstring_to_heap_utf8(m.captured(capture_group));
+}
+
+int qt_regex_get_match_start(void *regex, const char *subject, int capture_group) {
+    QRegularExpressionMatch m = static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject));
+    if (!m.hasMatch()) return -1;
+    return static_cast<int>(m.capturedStart(capture_group));
+}
+
+int qt_regex_get_match_end(void *regex, const char *subject, int capture_group) {
+    QRegularExpressionMatch m = static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject));
+    if (!m.hasMatch()) return -1;
+    return static_cast<int>(m.capturedEnd(capture_group));
+}
+
+/* ── QUrl ───────────────────────────────────────────────────────────── */
+
+void *qt_url_create(const char *url) {
+    return static_cast<void *>(new QUrl(QString::fromUtf8(url)));
+}
+
+void *qt_url_create_from_local_file(const char *file_path) {
+    return static_cast<void *>(new QUrl(QUrl::fromLocalFile(QString::fromUtf8(file_path))));
+}
+
+void qt_url_destroy(void *url) {
+    delete static_cast<QUrl *>(url);
+}
+
+char *qt_url_to_string(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->toString());
+}
+
+char *qt_url_to_local_file(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->toLocalFile());
+}
+
+char *qt_url_get_scheme(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->scheme());
+}
+
+char *qt_url_get_host(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->host());
+}
+
+int qt_url_get_port(void *url) {
+    return static_cast<QUrl *>(url)->port();
+}
+
+char *qt_url_get_path(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->path());
+}
+
+char *qt_url_get_query(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->query());
+}
+
+char *qt_url_get_fragment(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->fragment());
+}
+
+int qt_url_is_valid(void *url) {
+    return static_cast<QUrl *>(url)->isValid() ? 1 : 0;
+}
+
+int qt_url_is_local_file(void *url) {
+    return static_cast<QUrl *>(url)->isLocalFile() ? 1 : 0;
+}
+
+char *qt_url_get_file_name(void *url) {
+    return qstring_to_heap_utf8(static_cast<QUrl *>(url)->fileName());
+}
+
+/* ── QUuid ──────────────────────────────────────────────────────────── */
+
+void *qt_uuid_create(void) {
+    return static_cast<void *>(new QUuid(QUuid::createUuid()));
+}
+
+void *qt_uuid_create_from_string(const char *text) {
+    return static_cast<void *>(new QUuid(QUuid::fromString(QString::fromUtf8(text))));
+}
+
+void qt_uuid_destroy(void *uuid) {
+    delete static_cast<QUuid *>(uuid);
+}
+
+char *qt_uuid_to_string(void *uuid) {
+    return qstring_to_heap_utf8(static_cast<QUuid *>(uuid)->toString());
+}
+
+int qt_uuid_is_null(void *uuid) {
+    return static_cast<QUuid *>(uuid)->isNull() ? 1 : 0;
+}
+
+/* ── QElapsedTimer ──────────────────────────────────────────────────── */
+
+void *qt_elapsed_timer_create(void) {
+    return static_cast<void *>(new QElapsedTimer());
+}
+
+void qt_elapsed_timer_destroy(void *timer) {
+    delete static_cast<QElapsedTimer *>(timer);
+}
+
+void qt_elapsed_timer_start(void *timer) {
+    static_cast<QElapsedTimer *>(timer)->start();
+}
+
+long long qt_elapsed_timer_elapsed(void *timer) {
+    return static_cast<QElapsedTimer *>(timer)->elapsed();
+}
+
+long long qt_elapsed_timer_restart(void *timer) {
+    return static_cast<QElapsedTimer *>(timer)->restart();
+}
+
+int qt_elapsed_timer_is_valid(void *timer) {
+    return static_cast<QElapsedTimer *>(timer)->isValid() ? 1 : 0;
+}
+
+int qt_elapsed_timer_has_expired(void *timer, long long timeout) {
+    return static_cast<QElapsedTimer *>(timer)->hasExpired(timeout) ? 1 : 0;
+}
+
+/* ── QCryptographicHash ─────────────────────────────────────────────── */
+
+void *qt_crypto_hash_create(int algorithm) {
+    return static_cast<void *>(new QCryptographicHash(static_cast<QCryptographicHash::Algorithm>(algorithm)));
+}
+
+void qt_crypto_hash_destroy(void *hash) {
+    delete static_cast<QCryptographicHash *>(hash);
+}
+
+void qt_crypto_hash_add_data(void *hash, const unsigned char *data, int size) {
+    static_cast<QCryptographicHash *>(hash)->addData(reinterpret_cast<const char *>(data), size);
+}
+
+void qt_crypto_hash_reset(void *hash) {
+    static_cast<QCryptographicHash *>(hash)->reset();
+}
+
+int qt_crypto_hash_get_result(void *hash, unsigned char *out, int max_size) {
+    QByteArray result = static_cast<QCryptographicHash *>(hash)->result();
+    int copy_size = qMin(result.size(), max_size);
+    memcpy(out, result.constData(), copy_size);
+    return copy_size;
+}
+
+int qt_crypto_hash_static(int algorithm, const unsigned char *data, int size, unsigned char *out, int max_size) {
+    QByteArray result = QCryptographicHash::hash(QByteArray(reinterpret_cast<const char *>(data), size),
+        static_cast<QCryptographicHash::Algorithm>(algorithm));
+    int copy_size = qMin(result.size(), max_size);
+    memcpy(out, result.constData(), copy_size);
+    return copy_size;
+}
+
+/* ── QMimeType / QMimeDatabase ──────────────────────────────────────── */
+
+void *qt_mime_database_create(void) {
+    return static_cast<void *>(new QMimeDatabase());
+}
+
+void qt_mime_database_destroy(void *db) {
+    delete static_cast<QMimeDatabase *>(db);
+}
+
+char *qt_mime_database_mime_type_for_file(void *db, const char *file_path) {
+    QMimeType mt = static_cast<QMimeDatabase *>(db)->mimeTypeForFile(QString::fromUtf8(file_path));
+    return qstring_to_heap_utf8(mt.name());
+}
+
+char *qt_mime_database_mime_type_for_data(void *db, const unsigned char *data, int size) {
+    QMimeType mt = static_cast<QMimeDatabase *>(db)->mimeTypeForData(QByteArray(reinterpret_cast<const char *>(data), size));
+    return qstring_to_heap_utf8(mt.name());
+}
+
+char *qt_mime_database_suffix_for_mime_type(void *db, const char *mime_type) {
+    QMimeType mt = static_cast<QMimeDatabase *>(db)->mimeTypeForName(QString::fromUtf8(mime_type));
+    return qstring_to_heap_utf8(mt.preferredSuffix());
+}
+
+/* ── QStorageInfo ───────────────────────────────────────────────────── */
+
+void *qt_storage_info_create(const char *path) {
+    return static_cast<void *>(new QStorageInfo(QString::fromUtf8(path)));
+}
+
+void qt_storage_info_destroy(void *info) {
+    delete static_cast<QStorageInfo *>(info);
+}
+
+char *qt_storage_info_get_root_path(void *info) {
+    return qstring_to_heap_utf8(static_cast<QStorageInfo *>(info)->rootPath());
+}
+
+char *qt_storage_info_get_device(void *info) {
+    return qstring_to_heap_utf8(QString::fromUtf8(static_cast<QStorageInfo *>(info)->device()));
+}
+
+char *qt_storage_info_get_display_name(void *info) {
+    return qstring_to_heap_utf8(static_cast<QStorageInfo *>(info)->displayName());
+}
+
+char *qt_storage_info_get_file_system_type(void *info) {
+    return qstring_to_heap_utf8(QString::fromUtf8(static_cast<QStorageInfo *>(info)->fileSystemType()));
+}
+
+long long qt_storage_info_get_bytes_total(void *info) {
+    return static_cast<QStorageInfo *>(info)->bytesTotal();
+}
+
+long long qt_storage_info_get_bytes_free(void *info) {
+    return static_cast<QStorageInfo *>(info)->bytesFree();
+}
+
+long long qt_storage_info_get_bytes_available(void *info) {
+    return static_cast<QStorageInfo *>(info)->bytesAvailable();
+}
+
+int qt_storage_info_is_valid(void *info) {
+    return static_cast<QStorageInfo *>(info)->isValid() ? 1 : 0;
+}
+
+int qt_storage_info_is_ready(void *info) {
+    return static_cast<QStorageInfo *>(info)->isReady() ? 1 : 0;
+}
+
+int qt_storage_info_is_read_only(void *info) {
+    return static_cast<QStorageInfo *>(info)->isReadOnly() ? 1 : 0;
+}
+
+/* ── QVersionNumber ─────────────────────────────────────────────────── */
+
+void *qt_version_number_create(int major, int minor, int micro) {
+    return static_cast<void *>(new QVersionNumber(major, minor, micro));
+}
+
+void qt_version_number_destroy(void *version) {
+    delete static_cast<QVersionNumber *>(version);
+}
+
+int qt_version_number_get_major(void *version) {
+    return static_cast<QVersionNumber *>(version)->majorVersion();
+}
+
+int qt_version_number_get_minor(void *version) {
+    return static_cast<QVersionNumber *>(version)->minorVersion();
+}
+
+int qt_version_number_get_micro(void *version) {
+    return static_cast<QVersionNumber *>(version)->microVersion();
+}
+
+char *qt_version_number_to_string(void *version) {
+    return qstring_to_heap_utf8(static_cast<QVersionNumber *>(version)->toString());
+}
+
+int qt_version_number_compare(void *v1, void *v2) {
+    return QVersionNumber::compare(*static_cast<QVersionNumber *>(v1), *static_cast<QVersionNumber *>(v2));
+}
+
+int qt_version_number_is_null(void *version) {
+    return static_cast<QVersionNumber *>(version)->isNull() ? 1 : 0;
+}
+
+/* ── QTranslator ────────────────────────────────────────────────────── */
+
+void *qt_translator_create(void *parent) {
+    return static_cast<void *>(new QTranslator(static_cast<QObject *>(parent)));
+}
+
+void qt_translator_destroy(void *translator) {
+    delete static_cast<QTranslator *>(translator);
+}
+
+int qt_translator_load(void *translator, const char *filename, const char *directory) {
+    return static_cast<QTranslator *>(translator)->load(
+        QString::fromUtf8(filename), QString::fromUtf8(directory)) ? 1 : 0;
+}
+
+int qt_translator_is_empty(void *translator) {
+    return static_cast<QTranslator *>(translator)->isEmpty() ? 1 : 0;
+}
+
+void qt_application_install_translator(void *app, void *translator) {
+    (void)app;
+    QCoreApplication::installTranslator(static_cast<QTranslator *>(translator));
+}
+
+void qt_application_remove_translator(void *app, void *translator) {
+    (void)app;
+    QCoreApplication::removeTranslator(static_cast<QTranslator *>(translator));
+}
+
+/* ── QCommandLineParser / QCommandLineOption ────────────────────────── */
+
+void *qt_command_line_parser_create(void) {
+    return static_cast<void *>(new QCommandLineParser());
+}
+
+void qt_command_line_parser_destroy(void *parser) {
+    delete static_cast<QCommandLineParser *>(parser);
+}
+
+void qt_command_line_parser_set_application_description(void *parser, const char *description) {
+    static_cast<QCommandLineParser *>(parser)->setApplicationDescription(QString::fromUtf8(description));
+}
+
+void qt_command_line_parser_add_help_option(void *parser) {
+    static_cast<QCommandLineParser *>(parser)->addHelpOption();
+}
+
+void qt_command_line_parser_add_version_option(void *parser) {
+    static_cast<QCommandLineParser *>(parser)->addVersionOption();
+}
+
+void qt_command_line_parser_add_option(void *parser, const char *name, const char *description, const char *value_name, const char *default_value) {
+    QCommandLineOption opt(QString::fromUtf8(name), QString::fromUtf8(description),
+        value_name ? QString::fromUtf8(value_name) : QString(),
+        default_value ? QString::fromUtf8(default_value) : QString());
+    static_cast<QCommandLineParser *>(parser)->addOption(opt);
+}
+
+void qt_command_line_parser_add_positional_argument(void *parser, const char *name, const char *description, const char *syntax) {
+    static_cast<QCommandLineParser *>(parser)->addPositionalArgument(
+        QString::fromUtf8(name), QString::fromUtf8(description),
+        syntax ? QString::fromUtf8(syntax) : QString());
+}
+
+void qt_command_line_parser_process(void *parser, void *app) {
+    static_cast<QCommandLineParser *>(parser)->process(*static_cast<QCoreApplication *>(app));
+}
+
+int qt_command_line_parser_is_set(void *parser, const char *name) {
+    return static_cast<QCommandLineParser *>(parser)->isSet(QString::fromUtf8(name)) ? 1 : 0;
+}
+
+char *qt_command_line_parser_get_value(void *parser, const char *name) {
+    return qstring_to_heap_utf8(static_cast<QCommandLineParser *>(parser)->value(QString::fromUtf8(name)));
+}
+
+/* ── QTemporaryFile ─────────────────────────────────────────────────── */
+
+void *qt_temporary_file_create(void) {
+    return static_cast<void *>(new QTemporaryFile());
+}
+
+void *qt_temporary_file_create_with_template(const char *template_name) {
+    return static_cast<void *>(new QTemporaryFile(QString::fromUtf8(template_name)));
+}
+
+void qt_temporary_file_destroy(void *file) {
+    delete static_cast<QTemporaryFile *>(file);
+}
+
+int qt_temporary_file_open(void *file) {
+    return static_cast<QTemporaryFile *>(file)->open() ? 1 : 0;
+}
+
+char *qt_temporary_file_get_file_name(void *file) {
+    return qstring_to_heap_utf8(static_cast<QTemporaryFile *>(file)->fileName());
+}
+
+int qt_temporary_file_auto_remove(void *file) {
+    return static_cast<QTemporaryFile *>(file)->autoRemove() ? 1 : 0;
+}
+
+void qt_temporary_file_set_auto_remove(void *file, int is_auto_remove) {
+    static_cast<QTemporaryFile *>(file)->setAutoRemove(is_auto_remove != 0);
+}
+
+/* ── QTemporaryDir ──────────────────────────────────────────────────── */
+
+void *qt_temporary_dir_create(void) {
+    return static_cast<void *>(new QTemporaryDir());
+}
+
+void *qt_temporary_dir_create_with_template(const char *template_name) {
+    return static_cast<void *>(new QTemporaryDir(QString::fromUtf8(template_name)));
+}
+
+void qt_temporary_dir_destroy(void *dir) {
+    delete static_cast<QTemporaryDir *>(dir);
+}
+
+int qt_temporary_dir_is_valid(void *dir) {
+    return static_cast<QTemporaryDir *>(dir)->isValid() ? 1 : 0;
+}
+
+char *qt_temporary_dir_get_path(void *dir) {
+    return qstring_to_heap_utf8(static_cast<QTemporaryDir *>(dir)->path());
+}
+
+int qt_temporary_dir_auto_remove(void *dir) {
+    return static_cast<QTemporaryDir *>(dir)->autoRemove() ? 1 : 0;
+}
+
+void qt_temporary_dir_set_auto_remove(void *dir, int is_auto_remove) {
+    static_cast<QTemporaryDir *>(dir)->setAutoRemove(is_auto_remove != 0);
+}
+
+int qt_temporary_dir_remove(void *dir) {
+    return static_cast<QTemporaryDir *>(dir)->remove() ? 1 : 0;
+}
+
+/* ── QSaveFile ──────────────────────────────────────────────────────── */
+
+void *qt_save_file_create(const char *file_path) {
+    return static_cast<void *>(new QSaveFile(QString::fromUtf8(file_path)));
+}
+
+void qt_save_file_destroy(void *file) {
+    delete static_cast<QSaveFile *>(file);
+}
+
+int qt_save_file_open(void *file, int mode) {
+    return static_cast<QSaveFile *>(file)->open(static_cast<QIODevice::OpenMode>(mode)) ? 1 : 0;
+}
+
+long long qt_save_file_write(void *file, const char *data, long long size) {
+    return static_cast<QSaveFile *>(file)->write(data, size);
+}
+
+int qt_save_file_commit(void *file) {
+    return static_cast<QSaveFile *>(file)->commit() ? 1 : 0;
+}
+
+void qt_save_file_cancel_writing(void *file) {
+    static_cast<QSaveFile *>(file)->cancelWriting();
+}
+
+char *qt_save_file_get_error_string(void *file) {
+    return qstring_to_heap_utf8(static_cast<QSaveFile *>(file)->errorString());
+}
+
+/* ── QFileSystemWatcher ─────────────────────────────────────────────── */
+
+void *qt_file_system_watcher_create(void *parent) {
+    return static_cast<void *>(new QFileSystemWatcher(static_cast<QObject *>(parent)));
+}
+
+void qt_file_system_watcher_destroy(void *watcher) {
+    delete static_cast<QFileSystemWatcher *>(watcher);
+}
+
+int qt_file_system_watcher_add_path(void *watcher, const char *path) {
+    return static_cast<QFileSystemWatcher *>(watcher)->addPath(QString::fromUtf8(path)) ? 1 : 0;
+}
+
+int qt_file_system_watcher_remove_path(void *watcher, const char *path) {
+    return static_cast<QFileSystemWatcher *>(watcher)->removePath(QString::fromUtf8(path)) ? 1 : 0;
+}
+
+int qt_file_system_watcher_connect_file_changed(void *watcher, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QFileSystemWatcher *>(watcher), &QFileSystemWatcher::fileChanged, [callback, user_data](const QString &path) {
+        QByteArray utf8 = path.toUtf8();
+        callback(utf8.constData(), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_file_system_watcher_connect_directory_changed(void *watcher, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QFileSystemWatcher *>(watcher), &QFileSystemWatcher::directoryChanged, [callback, user_data](const QString &path) {
+        QByteArray utf8 = path.toUtf8();
+        callback(utf8.constData(), user_data);
+    });
+    return store_connection(conn);
+}
+
+/* ── QStringListModel ───────────────────────────────────────────────── */
+
+void *qt_string_list_model_create(void *parent) {
+    return static_cast<void *>(new QStringListModel(static_cast<QObject *>(parent)));
+}
+
+void qt_string_list_model_destroy(void *model) {
+    delete static_cast<QStringListModel *>(model);
+}
+
+void qt_string_list_model_set_string_list(void *model, const char **strings, int count) {
+    QStringList list;
+    for (int i = 0; i < count; i++) {
+        list.append(QString::fromUtf8(strings[i]));
+    }
+    static_cast<QStringListModel *>(model)->setStringList(list);
+}
+
+int qt_string_list_model_get_string_list(void *model, char ***strings_out) {
+    QStringList list = static_cast<QStringListModel *>(model)->stringList();
+    int count = list.size();
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; i++) {
+        arr[i] = qstring_to_heap_utf8(list[i]);
+    }
+    *strings_out = arr;
+    return count;
+}
+
+void qt_string_list_model_free_string_list(char **strings, int count) {
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+/* ── QItemSelectionModel ────────────────────────────────────────────── */
+
+void *qt_item_selection_model_create(void *model, void *parent) {
+    return static_cast<void *>(new QItemSelectionModel(
+        static_cast<QAbstractItemModel *>(model), static_cast<QObject *>(parent)));
+}
+
+void qt_item_selection_model_destroy(void *selection_model) {
+    delete static_cast<QItemSelectionModel *>(selection_model);
+}
+
+void qt_item_selection_model_select_index(void *selection_model, void *index, int flags) {
+    static_cast<QItemSelectionModel *>(selection_model)->select(
+        *static_cast<QModelIndex *>(index), static_cast<QItemSelectionModel::SelectionFlags>(flags));
+}
+
+void qt_item_selection_model_clear(void *selection_model) {
+    static_cast<QItemSelectionModel *>(selection_model)->clear();
+}
+
+void qt_item_selection_model_clear_selection(void *selection_model) {
+    static_cast<QItemSelectionModel *>(selection_model)->clearSelection();
+}
+
+int qt_item_selection_model_is_selected(void *selection_model, void *index) {
+    return static_cast<QItemSelectionModel *>(selection_model)->isSelected(
+        *static_cast<QModelIndex *>(index)) ? 1 : 0;
+}
+
+int qt_item_selection_model_has_selection(void *selection_model) {
+    return static_cast<QItemSelectionModel *>(selection_model)->hasSelection() ? 1 : 0;
+}
+
+void *qt_item_selection_model_get_current_index(void *selection_model) {
+    QModelIndex idx = static_cast<QItemSelectionModel *>(selection_model)->currentIndex();
+    return static_cast<void *>(new QPersistentModelIndex(idx));
+}
+
+void qt_item_selection_model_set_current_index(void *selection_model, void *index, int flags) {
+    static_cast<QItemSelectionModel *>(selection_model)->setCurrentIndex(
+        *static_cast<QModelIndex *>(index), static_cast<QItemSelectionModel::SelectionFlags>(flags));
+}
+
+int qt_item_selection_model_connect_selection_changed(void *selection_model, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QItemSelectionModel *>(selection_model), &QItemSelectionModel::selectionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_item_selection_model_connect_current_changed(void *selection_model, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QItemSelectionModel *>(selection_model), &QItemSelectionModel::currentChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
 }
 
 } /* extern "C" */
