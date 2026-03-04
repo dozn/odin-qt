@@ -93,12 +93,12 @@
 - [x] QLayout::setAlignment() per widget
 
 ## 8. Lower Priority
-- [ ] Model/View framework (QFileSystemModel, QStandardItemModel, QSortFilterProxyModel)
-- [ ] QPainter / custom drawing
-- [ ] Drag and drop support
-- [ ] QSyntaxHighlighter
-- [ ] QPropertyAnimation / QParallelAnimationGroup
-- [ ] QObject::deleteLater()
-- [ ] Dynamic properties (setProperty/property)
+- [x] Model/View framework (QFileSystemModel, QStandardItemModel, QSortFilterProxyModel)
+- [x] QPainter / custom drawing
+- [x] Drag and drop support
+- [x] QSyntaxHighlighter
+- [x] QPropertyAnimation / QParallelAnimationGroup
+- [x] QObject::deleteLater()
+- [x] Dynamic properties (setProperty/property)
 
 ## 9. Add the completed todos to our demo application

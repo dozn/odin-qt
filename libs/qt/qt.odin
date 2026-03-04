@@ -114,6 +114,22 @@ Event_Filter :: distinct rawptr
 Layout_Item :: distinct rawptr
 Spacer_Item :: distinct rawptr
 Connection_Id :: distinct c.int
+Standard_Item :: distinct rawptr
+Standard_Item_Model :: distinct rawptr
+Model_Index :: distinct rawptr
+File_System_Model :: distinct rawptr
+Sort_Filter_Proxy_Model :: distinct rawptr
+Tree_View :: distinct rawptr
+Table_View :: distinct rawptr
+List_View :: distinct rawptr
+Paintable_Widget :: distinct rawptr
+Painter :: distinct rawptr
+Text_Char_Format :: distinct rawptr
+Syntax_Highlighter :: distinct rawptr
+Property_Animation :: distinct rawptr
+Parallel_Animation_Group :: distinct rawptr
+Sequential_Animation_Group :: distinct rawptr
+Drag_Drop_Filter :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -137,6 +153,9 @@ Event_Filter_Callback :: #type proc"c"(event_type: c.int, user_data: rawptr) -> 
 Close_Event_Callback :: #type proc"c"(user_data: rawptr) -> c.int
 Key_Event_Callback :: #type proc"c"(event_type: c.int, key: c.int, modifiers: c.int, is_auto_repeat: c.int, text: cstring, user_data: rawptr) -> c.int
 Mouse_Event_Callback :: #type proc"c"(event_type: c.int, button: c.int, x: c.int, y: c.int, global_x: c.int, global_y: c.int, modifiers: c.int, user_data: rawptr) -> c.int
+Paint_Callback :: #type proc"c"(painter: Painter, width: c.int, height: c.int, user_data: rawptr)
+Drag_Enter_Callback :: #type proc"c"(mime_text: cstring, user_data: rawptr) -> c.int
+Drop_Callback :: #type proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr)
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -411,6 +430,49 @@ Mouse_Button :: enum c.int {
 	Middle = 4,
 	Back = 8,
 	Forward = 16,
+}
+
+Easing_Curve :: enum c.int {
+	Linear = 0,
+	In_Quad = 1,
+	Out_Quad = 2,
+	In_Out_Quad = 3,
+	Out_In_Quad = 4,
+	In_Cubic = 5,
+	Out_Cubic = 6,
+	In_Out_Cubic = 7,
+	Out_In_Cubic = 8,
+	In_Quart = 9,
+	Out_Quart = 10,
+	In_Out_Quart = 11,
+	Out_In_Quart = 12,
+	In_Quint = 13,
+	Out_Quint = 14,
+	In_Out_Quint = 15,
+	Out_In_Quint = 16,
+	In_Sine = 17,
+	Out_Sine = 18,
+	In_Out_Sine = 19,
+	Out_In_Sine = 20,
+	In_Expo = 21,
+	Out_Expo = 22,
+	In_Out_Expo = 23,
+	Out_In_Expo = 24,
+	In_Circ = 25,
+	Out_Circ = 26,
+	In_Out_Circ = 27,
+	Out_In_Circ = 28,
+	In_Elastic = 29,
+	Out_Elastic = 30,
+	In_Out_Elastic = 31,
+	Out_In_Elastic = 32,
+	In_Back = 33,
+	Out_Back = 34,
+	In_Out_Back = 35,
+	Out_In_Back = 36,
+	In_Bounce = 37,
+	Out_Bounce = 38,
+	In_Out_Bounce = 39,
 }
 
 Keyboard_Modifier :: enum c.int {
@@ -1328,4 +1390,197 @@ foreign qt_lib {
 	@(require_results) mouse_event_filter_create :: proc(callback: Mouse_Event_Callback, user_data: rawptr) -> Event_Filter ---
 	widget_set_mouse_tracking :: proc(widget: Widget, is_enabled: c.int) ---
 	@(require_results) widget_has_mouse_tracking :: proc(widget: Widget) -> c.int ---
+
+	/* QObject utilities */
+
+	object_delete_later :: proc(object: Widget) ---
+
+	/* Dynamic properties */
+
+	object_set_property_int :: proc(object: Widget, name: cstring, value: c.int) ---
+	@(require_results) object_get_property_int :: proc(object: Widget, name: cstring, default_value: c.int) -> c.int ---
+	object_set_property_string :: proc(object: Widget, name: cstring, value: cstring) ---
+	@(require_results) object_get_property_string :: proc(object: Widget, name: cstring, default_value: cstring) -> cstring ---
+	object_set_property_bool :: proc(object: Widget, name: cstring, value: c.int) ---
+	@(require_results) object_get_property_bool :: proc(object: Widget, name: cstring, default_value: c.int) -> c.int ---
+	object_set_property_double :: proc(object: Widget, name: cstring, value: c.double) ---
+	@(require_results) object_get_property_double :: proc(object: Widget, name: cstring, default_value: c.double) -> c.double ---
+
+	/* QStandardItem */
+
+	@(require_results) standard_item_create :: proc(text: cstring) -> Standard_Item ---
+	standard_item_set_text :: proc(item: Standard_Item, text: cstring) ---
+	@(require_results) standard_item_get_text :: proc(item: Standard_Item) -> cstring ---
+	standard_item_set_editable :: proc(item: Standard_Item, is_editable: c.int) ---
+	@(require_results) standard_item_is_editable :: proc(item: Standard_Item) -> c.int ---
+	standard_item_set_checkable :: proc(item: Standard_Item, is_checkable: c.int) ---
+	@(require_results) standard_item_is_checkable :: proc(item: Standard_Item) -> c.int ---
+	standard_item_set_check_state :: proc(item: Standard_Item, state: c.int) ---
+	@(require_results) standard_item_get_check_state :: proc(item: Standard_Item) -> c.int ---
+	standard_item_set_icon :: proc(item: Standard_Item, icon: Icon) ---
+	standard_item_set_selectable :: proc(item: Standard_Item, is_selectable: c.int) ---
+	standard_item_set_enabled :: proc(item: Standard_Item, is_enabled: c.int) ---
+	standard_item_append_row :: proc(parent: Standard_Item, items: [^]Standard_Item, count: c.int) ---
+	standard_item_append_child :: proc(parent: Standard_Item, child: Standard_Item) ---
+	@(require_results) standard_item_row_count :: proc(item: Standard_Item) -> c.int ---
+	@(require_results) standard_item_get_child :: proc(item: Standard_Item, row: c.int, column: c.int) -> Standard_Item ---
+
+	/* QStandardItemModel */
+
+	@(require_results) standard_item_model_create :: proc(rows: c.int, columns: c.int, parent: Widget) -> Standard_Item_Model ---
+	standard_item_model_destroy :: proc(model: Standard_Item_Model) ---
+	standard_item_model_set_item :: proc(model: Standard_Item_Model, row: c.int, column: c.int, item: Standard_Item) ---
+	@(require_results) standard_item_model_get_item :: proc(model: Standard_Item_Model, row: c.int, column: c.int) -> Standard_Item ---
+	standard_item_model_set_horizontal_header_labels :: proc(model: Standard_Item_Model, labels: [^]cstring, count: c.int) ---
+	standard_item_model_set_vertical_header_labels :: proc(model: Standard_Item_Model, labels: [^]cstring, count: c.int) ---
+	@(require_results) standard_item_model_get_row_count :: proc(model: Standard_Item_Model) -> c.int ---
+	@(require_results) standard_item_model_get_column_count :: proc(model: Standard_Item_Model) -> c.int ---
+	standard_item_model_clear :: proc(model: Standard_Item_Model) ---
+	standard_item_model_append_row :: proc(model: Standard_Item_Model, items: [^]Standard_Item, count: c.int) ---
+	standard_item_model_insert_row :: proc(model: Standard_Item_Model, row: c.int, items: [^]Standard_Item, count: c.int) ---
+	standard_item_model_remove_row :: proc(model: Standard_Item_Model, row: c.int) ---
+	standard_item_model_remove_column :: proc(model: Standard_Item_Model, column: c.int) ---
+	@(require_results) standard_item_model_get_invisible_root_item :: proc(model: Standard_Item_Model) -> Standard_Item ---
+
+	/* Model Index */
+
+	model_index_destroy :: proc(index: Model_Index) ---
+	@(require_results) model_index_get_row :: proc(index: Model_Index) -> c.int ---
+	@(require_results) model_index_get_column :: proc(index: Model_Index) -> c.int ---
+	@(require_results) model_index_is_valid :: proc(index: Model_Index) -> c.int ---
+
+	/* QFileSystemModel */
+
+	@(require_results) file_system_model_create :: proc(parent: Widget) -> File_System_Model ---
+	file_system_model_destroy :: proc(model: File_System_Model) ---
+	@(require_results) file_system_model_set_root_path :: proc(model: File_System_Model, path: cstring) -> Model_Index ---
+	file_system_model_set_name_filters :: proc(model: File_System_Model, filters: [^]cstring, count: c.int) ---
+	file_system_model_set_name_filter_disables :: proc(model: File_System_Model, is_disables: c.int) ---
+	file_system_model_set_read_only :: proc(model: File_System_Model, is_read_only: c.int) ---
+	@(require_results) file_system_model_is_read_only :: proc(model: File_System_Model) -> c.int ---
+	@(require_results) file_system_model_get_file_path :: proc(model: File_System_Model, index: Model_Index) -> cstring ---
+
+	/* QSortFilterProxyModel */
+
+	@(require_results) sort_filter_proxy_model_create :: proc(parent: Widget) -> Sort_Filter_Proxy_Model ---
+	sort_filter_proxy_model_destroy :: proc(proxy: Sort_Filter_Proxy_Model) ---
+	sort_filter_proxy_model_set_source_model :: proc(proxy: Sort_Filter_Proxy_Model, source: Standard_Item_Model) ---
+	sort_filter_proxy_model_set_filter_key_column :: proc(proxy: Sort_Filter_Proxy_Model, column: c.int) ---
+	sort_filter_proxy_model_set_filter_regular_expression :: proc(proxy: Sort_Filter_Proxy_Model, pattern: cstring) ---
+	sort_filter_proxy_model_set_filter_case_sensitivity :: proc(proxy: Sort_Filter_Proxy_Model, case_sensitivity: c.int) ---
+	sort_filter_proxy_model_set_sort_case_sensitivity :: proc(proxy: Sort_Filter_Proxy_Model, case_sensitivity: c.int) ---
+	sort_filter_proxy_model_invalidate :: proc(proxy: Sort_Filter_Proxy_Model) ---
+	sort_filter_proxy_model_sort :: proc(proxy: Sort_Filter_Proxy_Model, column: c.int, order: c.int) ---
+
+	/* Model/View — Views */
+
+	@(require_results) tree_view_create :: proc(parent: Widget) -> Tree_View ---
+	tree_view_set_model :: proc(view: Tree_View, model: File_System_Model) ---
+	tree_view_set_root_index :: proc(view: Tree_View, index: Model_Index) ---
+	tree_view_expand_all :: proc(view: Tree_View) ---
+	tree_view_collapse_all :: proc(view: Tree_View) ---
+	tree_view_set_sorting_enabled :: proc(view: Tree_View, is_enabled: c.int) ---
+	tree_view_set_header_hidden :: proc(view: Tree_View, is_hidden: c.int) ---
+
+	@(require_results) table_view_create :: proc(parent: Widget) -> Table_View ---
+	table_view_set_model :: proc(view: Table_View, model: Standard_Item_Model) ---
+	table_view_set_sorting_enabled :: proc(view: Table_View, is_enabled: c.int) ---
+	table_view_resize_columns_to_contents :: proc(view: Table_View) ---
+	table_view_resize_rows_to_contents :: proc(view: Table_View) ---
+	table_view_set_selection_behaviour :: proc(view: Table_View, behaviour: c.int) ---
+	table_view_set_selection_mode :: proc(view: Table_View, mode: c.int) ---
+	table_view_set_alternating_row_colours :: proc(view: Table_View, is_alternating: c.int) ---
+
+	@(require_results) list_view_create :: proc(parent: Widget) -> List_View ---
+	list_view_set_model :: proc(view: List_View, model: Standard_Item_Model) ---
+	list_view_set_selection_mode :: proc(view: List_View, mode: c.int) ---
+
+	/* QPainter / Custom drawing */
+
+	@(require_results) paintable_widget_create :: proc(parent: Widget, callback: Paint_Callback, user_data: rawptr) -> Paintable_Widget ---
+
+	painter_set_pen_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	painter_set_pen_width :: proc(painter: Painter, width: c.int) ---
+	painter_set_no_pen :: proc(painter: Painter) ---
+	painter_set_brush_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	painter_set_no_brush :: proc(painter: Painter) ---
+	painter_set_font :: proc(painter: Painter, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) ---
+	painter_set_antialiasing :: proc(painter: Painter, is_enabled: c.int) ---
+	painter_set_opacity :: proc(painter: Painter, opacity: c.double) ---
+	painter_draw_line :: proc(painter: Painter, x1: c.int, y1: c.int, x2: c.int, y2: c.int) ---
+	painter_draw_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int) ---
+	painter_fill_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	painter_draw_ellipse :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int) ---
+	painter_draw_arc :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, start_angle: c.int, span_angle: c.int) ---
+	painter_draw_pie :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, start_angle: c.int, span_angle: c.int) ---
+	painter_draw_rounded_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, x_radius: c.double, y_radius: c.double) ---
+	painter_draw_text :: proc(painter: Painter, x: c.int, y: c.int, text: cstring) ---
+	painter_draw_text_in_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, flags: c.int, text: cstring) ---
+	painter_draw_pixmap :: proc(painter: Painter, x: c.int, y: c.int, pixmap: Pixmap) ---
+	painter_draw_polygon :: proc(painter: Painter, points: [^]c.int, point_count: c.int) ---
+	painter_save :: proc(painter: Painter) ---
+	painter_restore :: proc(painter: Painter) ---
+	painter_translate :: proc(painter: Painter, dx: c.double, dy: c.double) ---
+	painter_rotate :: proc(painter: Painter, angle: c.double) ---
+	painter_scale :: proc(painter: Painter, sx: c.double, sy: c.double) ---
+
+	/* Drag and Drop */
+
+	widget_set_accept_drops :: proc(widget: Widget, is_accept: c.int) ---
+	@(require_results) drag_drop_filter_create :: proc(enter_cb: Drag_Enter_Callback, drop_cb: Drop_Callback, user_data: rawptr) -> Drag_Drop_Filter ---
+	widget_start_drag :: proc(widget: Widget, mime_text: cstring) ---
+
+	/* QSyntaxHighlighter */
+
+	@(require_results) text_char_format_create :: proc() -> Text_Char_Format ---
+	text_char_format_destroy :: proc(format: Text_Char_Format) ---
+	text_char_format_set_foreground :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	text_char_format_set_background :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	text_char_format_set_font_weight :: proc(format: Text_Char_Format, weight: c.int) ---
+	text_char_format_set_font_italic :: proc(format: Text_Char_Format, is_italic: c.int) ---
+	text_char_format_set_font_underline :: proc(format: Text_Char_Format, is_underline: c.int) ---
+
+	@(require_results) syntax_highlighter_create_for_text_edit :: proc(text_edit: Text_Edit) -> Syntax_Highlighter ---
+	@(require_results) syntax_highlighter_create_for_plain_text_edit :: proc(plain_text_edit: Plain_Text_Edit) -> Syntax_Highlighter ---
+	syntax_highlighter_destroy :: proc(highlighter: Syntax_Highlighter) ---
+	syntax_highlighter_add_rule :: proc(highlighter: Syntax_Highlighter, pattern: cstring, format: Text_Char_Format) ---
+	syntax_highlighter_clear_rules :: proc(highlighter: Syntax_Highlighter) ---
+	syntax_highlighter_rehighlight :: proc(highlighter: Syntax_Highlighter) ---
+
+	/* QPropertyAnimation / Animation groups */
+
+	@(require_results) property_animation_create :: proc(target: Widget, property_name: cstring) -> Property_Animation ---
+	property_animation_destroy :: proc(animation: Property_Animation) ---
+	property_animation_set_duration :: proc(animation: Property_Animation, ms: c.int) ---
+	property_animation_set_start_value_int :: proc(animation: Property_Animation, value: c.int) ---
+	property_animation_set_end_value_int :: proc(animation: Property_Animation, value: c.int) ---
+	property_animation_set_start_value_double :: proc(animation: Property_Animation, value: c.double) ---
+	property_animation_set_end_value_double :: proc(animation: Property_Animation, value: c.double) ---
+	property_animation_set_start_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	property_animation_set_end_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	property_animation_set_start_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) ---
+	property_animation_set_end_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) ---
+	property_animation_set_start_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) ---
+	property_animation_set_end_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) ---
+	property_animation_set_easing_curve :: proc(animation: Property_Animation, curve_type: Easing_Curve) ---
+	property_animation_start :: proc(animation: Property_Animation) ---
+	property_animation_stop :: proc(animation: Property_Animation) ---
+	property_animation_pause :: proc(animation: Property_Animation) ---
+	property_animation_resume :: proc(animation: Property_Animation) ---
+	property_animation_set_loop_count :: proc(animation: Property_Animation, count: c.int) ---
+	property_animation_connect_finished :: proc(animation: Property_Animation, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	@(require_results) parallel_animation_group_create :: proc(parent: Widget) -> Parallel_Animation_Group ---
+	parallel_animation_group_destroy :: proc(group: Parallel_Animation_Group) ---
+	parallel_animation_group_add_animation :: proc(group: Parallel_Animation_Group, animation: Property_Animation) ---
+	parallel_animation_group_start :: proc(group: Parallel_Animation_Group) ---
+	parallel_animation_group_stop :: proc(group: Parallel_Animation_Group) ---
+	parallel_animation_group_connect_finished :: proc(group: Parallel_Animation_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	@(require_results) sequential_animation_group_create :: proc(parent: Widget) -> Sequential_Animation_Group ---
+	sequential_animation_group_destroy :: proc(group: Sequential_Animation_Group) ---
+	sequential_animation_group_add_animation :: proc(group: Sequential_Animation_Group, animation: Property_Animation) ---
+	sequential_animation_group_start :: proc(group: Sequential_Animation_Group) ---
+	sequential_animation_group_stop :: proc(group: Sequential_Animation_Group) ---
+	sequential_animation_group_connect_finished :: proc(group: Sequential_Animation_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
 }

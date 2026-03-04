@@ -842,6 +842,207 @@ void *qt_mouse_event_filter_create(qt_mouse_event_callback_t callback, void *use
 void  qt_widget_set_mouse_tracking(void *widget, int is_enabled);
 int   qt_widget_has_mouse_tracking(void *widget);
 
+/* ── Section 8: Lower Priority Features ────────────────────────────── */
+
+/* ── New callback types ────────────────────────────────────────────── */
+
+typedef void (*qt_paint_callback_t)(void *painter, int width, int height, void *user_data);
+typedef int  (*qt_drag_enter_callback_t)(const char *mime_text, void *user_data);
+typedef void (*qt_drop_callback_t)(const char *mime_text, int x, int y, void *user_data);
+
+/* ── QObject utilities ─────────────────────────────────────────────── */
+
+void qt_object_delete_later(void *object);
+
+/* ── Dynamic properties ────────────────────────────────────────────── */
+
+void   qt_object_set_property_int(void *object, const char *name, int value);
+int    qt_object_get_property_int(void *object, const char *name, int default_value);
+void   qt_object_set_property_string(void *object, const char *name, const char *value);
+char  *qt_object_get_property_string(void *object, const char *name, const char *default_value);
+void   qt_object_set_property_bool(void *object, const char *name, int value);
+int    qt_object_get_property_bool(void *object, const char *name, int default_value);
+void   qt_object_set_property_double(void *object, const char *name, double value);
+double qt_object_get_property_double(void *object, const char *name, double default_value);
+
+/* ── Model/View — QStandardItem ────────────────────────────────────── */
+
+void *qt_standard_item_create(const char *text);
+void  qt_standard_item_set_text(void *item, const char *text);
+char *qt_standard_item_get_text(void *item);
+void  qt_standard_item_set_editable(void *item, int is_editable);
+int   qt_standard_item_is_editable(void *item);
+void  qt_standard_item_set_checkable(void *item, int is_checkable);
+int   qt_standard_item_is_checkable(void *item);
+void  qt_standard_item_set_check_state(void *item, int state);
+int   qt_standard_item_get_check_state(void *item);
+void  qt_standard_item_set_icon(void *item, void *icon);
+void  qt_standard_item_set_selectable(void *item, int is_selectable);
+void  qt_standard_item_set_enabled(void *item, int is_enabled);
+void  qt_standard_item_append_row(void *parent, void **items, int count);
+void  qt_standard_item_append_child(void *parent, void *child);
+int   qt_standard_item_row_count(void *item);
+void *qt_standard_item_get_child(void *item, int row, int column);
+
+/* ── Model/View — QStandardItemModel ───────────────────────────────── */
+
+void *qt_standard_item_model_create(int rows, int columns, void *parent);
+void  qt_standard_item_model_destroy(void *model);
+void  qt_standard_item_model_set_item(void *model, int row, int column, void *item);
+void *qt_standard_item_model_get_item(void *model, int row, int column);
+void  qt_standard_item_model_set_horizontal_header_labels(void *model, const char **labels, int count);
+void  qt_standard_item_model_set_vertical_header_labels(void *model, const char **labels, int count);
+int   qt_standard_item_model_get_row_count(void *model);
+int   qt_standard_item_model_get_column_count(void *model);
+void  qt_standard_item_model_clear(void *model);
+void  qt_standard_item_model_append_row(void *model, void **items, int count);
+void  qt_standard_item_model_insert_row(void *model, int row, void **items, int count);
+void  qt_standard_item_model_remove_row(void *model, int row);
+void  qt_standard_item_model_remove_column(void *model, int column);
+void *qt_standard_item_model_get_invisible_root_item(void *model);
+
+/* ── Model/View — Model Index ──────────────────────────────────────── */
+
+void qt_model_index_destroy(void *index);
+int  qt_model_index_get_row(void *index);
+int  qt_model_index_get_column(void *index);
+int  qt_model_index_is_valid(void *index);
+
+/* ── Model/View — QFileSystemModel ─────────────────────────────────── */
+
+void *qt_file_system_model_create(void *parent);
+void  qt_file_system_model_destroy(void *model);
+void *qt_file_system_model_set_root_path(void *model, const char *path);
+void  qt_file_system_model_set_name_filters(void *model, const char **filters, int count);
+void  qt_file_system_model_set_name_filter_disables(void *model, int is_disables);
+void  qt_file_system_model_set_read_only(void *model, int is_read_only);
+int   qt_file_system_model_is_read_only(void *model);
+char *qt_file_system_model_get_file_path(void *model, void *index);
+
+/* ── Model/View — QSortFilterProxyModel ────────────────────────────── */
+
+void *qt_sort_filter_proxy_model_create(void *parent);
+void  qt_sort_filter_proxy_model_destroy(void *proxy);
+void  qt_sort_filter_proxy_model_set_source_model(void *proxy, void *source);
+void  qt_sort_filter_proxy_model_set_filter_key_column(void *proxy, int column);
+void  qt_sort_filter_proxy_model_set_filter_regular_expression(void *proxy, const char *pattern);
+void  qt_sort_filter_proxy_model_set_filter_case_sensitivity(void *proxy, int case_sensitivity);
+void  qt_sort_filter_proxy_model_set_sort_case_sensitivity(void *proxy, int case_sensitivity);
+void  qt_sort_filter_proxy_model_invalidate(void *proxy);
+void  qt_sort_filter_proxy_model_sort(void *proxy, int column, int order);
+
+/* ── Model/View — Views ────────────────────────────────────────────── */
+
+void *qt_tree_view_create(void *parent);
+void  qt_tree_view_set_model(void *view, void *model);
+void  qt_tree_view_set_root_index(void *view, void *index);
+void  qt_tree_view_expand_all(void *view);
+void  qt_tree_view_collapse_all(void *view);
+void  qt_tree_view_set_sorting_enabled(void *view, int is_enabled);
+void  qt_tree_view_set_header_hidden(void *view, int is_hidden);
+
+void *qt_table_view_create(void *parent);
+void  qt_table_view_set_model(void *view, void *model);
+void  qt_table_view_set_sorting_enabled(void *view, int is_enabled);
+void  qt_table_view_resize_columns_to_contents(void *view);
+void  qt_table_view_resize_rows_to_contents(void *view);
+void  qt_table_view_set_selection_behaviour(void *view, int behaviour);
+void  qt_table_view_set_selection_mode(void *view, int mode);
+void  qt_table_view_set_alternating_row_colours(void *view, int is_alternating);
+
+void *qt_list_view_create(void *parent);
+void  qt_list_view_set_model(void *view, void *model);
+void  qt_list_view_set_selection_mode(void *view, int mode);
+
+/* ── QPainter / Custom drawing ─────────────────────────────────────── */
+
+void *qt_paintable_widget_create(void *parent, qt_paint_callback_t callback, void *user_data);
+
+void qt_painter_set_pen_colour(void *painter, int r, int g, int b, int a);
+void qt_painter_set_pen_width(void *painter, int width);
+void qt_painter_set_no_pen(void *painter);
+void qt_painter_set_brush_colour(void *painter, int r, int g, int b, int a);
+void qt_painter_set_no_brush(void *painter);
+void qt_painter_set_font(void *painter, const char *family, int point_size, int weight, int is_italic);
+void qt_painter_set_antialiasing(void *painter, int is_enabled);
+void qt_painter_set_opacity(void *painter, double opacity);
+void qt_painter_draw_line(void *painter, int x1, int y1, int x2, int y2);
+void qt_painter_draw_rect(void *painter, int x, int y, int width, int height);
+void qt_painter_fill_rect(void *painter, int x, int y, int width, int height, int r, int g, int b, int a);
+void qt_painter_draw_ellipse(void *painter, int x, int y, int width, int height);
+void qt_painter_draw_arc(void *painter, int x, int y, int width, int height, int start_angle, int span_angle);
+void qt_painter_draw_pie(void *painter, int x, int y, int width, int height, int start_angle, int span_angle);
+void qt_painter_draw_rounded_rect(void *painter, int x, int y, int width, int height, double x_radius, double y_radius);
+void qt_painter_draw_text(void *painter, int x, int y, const char *text);
+void qt_painter_draw_text_in_rect(void *painter, int x, int y, int width, int height, int flags, const char *text);
+void qt_painter_draw_pixmap(void *painter, int x, int y, void *pixmap);
+void qt_painter_draw_polygon(void *painter, const int *points, int point_count);
+void qt_painter_save(void *painter);
+void qt_painter_restore(void *painter);
+void qt_painter_translate(void *painter, double dx, double dy);
+void qt_painter_rotate(void *painter, double angle);
+void qt_painter_scale(void *painter, double sx, double sy);
+
+/* ── Drag and Drop ─────────────────────────────────────────────────── */
+
+void  qt_widget_set_accept_drops(void *widget, int is_accept);
+void *qt_drag_drop_filter_create(qt_drag_enter_callback_t enter_cb, qt_drop_callback_t drop_cb, void *user_data);
+void  qt_widget_start_drag(void *widget, const char *mime_text);
+
+/* ── QSyntaxHighlighter ────────────────────────────────────────────── */
+
+void *qt_text_char_format_create(void);
+void  qt_text_char_format_destroy(void *format);
+void  qt_text_char_format_set_foreground(void *format, int r, int g, int b, int a);
+void  qt_text_char_format_set_background(void *format, int r, int g, int b, int a);
+void  qt_text_char_format_set_font_weight(void *format, int weight);
+void  qt_text_char_format_set_font_italic(void *format, int is_italic);
+void  qt_text_char_format_set_font_underline(void *format, int is_underline);
+
+void *qt_syntax_highlighter_create_for_text_edit(void *text_edit);
+void *qt_syntax_highlighter_create_for_plain_text_edit(void *plain_text_edit);
+void  qt_syntax_highlighter_destroy(void *highlighter);
+void  qt_syntax_highlighter_add_rule(void *highlighter, const char *pattern, void *format);
+void  qt_syntax_highlighter_clear_rules(void *highlighter);
+void  qt_syntax_highlighter_rehighlight(void *highlighter);
+
+/* ── QPropertyAnimation / Animation groups ─────────────────────────── */
+
+void *qt_property_animation_create(void *target, const char *property_name);
+void  qt_property_animation_destroy(void *animation);
+void  qt_property_animation_set_duration(void *animation, int ms);
+void  qt_property_animation_set_start_value_int(void *animation, int value);
+void  qt_property_animation_set_end_value_int(void *animation, int value);
+void  qt_property_animation_set_start_value_double(void *animation, double value);
+void  qt_property_animation_set_end_value_double(void *animation, double value);
+void  qt_property_animation_set_start_value_rect(void *animation, int x, int y, int w, int h);
+void  qt_property_animation_set_end_value_rect(void *animation, int x, int y, int w, int h);
+void  qt_property_animation_set_start_value_size(void *animation, int w, int h);
+void  qt_property_animation_set_end_value_size(void *animation, int w, int h);
+void  qt_property_animation_set_start_value_point(void *animation, int x, int y);
+void  qt_property_animation_set_end_value_point(void *animation, int x, int y);
+void  qt_property_animation_set_easing_curve(void *animation, int curve_type);
+void  qt_property_animation_start(void *animation);
+void  qt_property_animation_stop(void *animation);
+void  qt_property_animation_pause(void *animation);
+void  qt_property_animation_resume(void *animation);
+void  qt_property_animation_set_loop_count(void *animation, int count);
+int   qt_property_animation_connect_finished(void *animation, qt_callback_t callback, void *user_data);
+
+void *qt_parallel_animation_group_create(void *parent);
+void  qt_parallel_animation_group_destroy(void *group);
+void  qt_parallel_animation_group_add_animation(void *group, void *animation);
+void  qt_parallel_animation_group_start(void *group);
+void  qt_parallel_animation_group_stop(void *group);
+int   qt_parallel_animation_group_connect_finished(void *group, qt_callback_t callback, void *user_data);
+
+void *qt_sequential_animation_group_create(void *parent);
+void  qt_sequential_animation_group_destroy(void *group);
+void  qt_sequential_animation_group_add_animation(void *group, void *animation);
+void  qt_sequential_animation_group_start(void *group);
+void  qt_sequential_animation_group_stop(void *group);
+int   qt_sequential_animation_group_connect_finished(void *group, qt_callback_t callback, void *user_data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -86,6 +86,30 @@
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QFileSystemModel>
+#include <QSortFilterProxyModel>
+#include <QTreeView>
+#include <QTableView>
+#include <QListView>
+#include <QPersistentModelIndex>
+#include <QPainter>
+#include <QPen>
+#include <QBrush>
+#include <QDrag>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
+#include <QSyntaxHighlighter>
+#include <QTextCharFormat>
+#include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
+#include <QSequentialAnimationGroup>
+#include <QEasingCurve>
+#include <QPolygon>
+#include <QPaintEvent>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -190,6 +214,107 @@ public:
 
 private:
     qt_mouse_event_callback_t m_callback;
+    void *m_user_data;
+};
+
+class CPaintableWidget : public QWidget {
+public:
+    CPaintableWidget(QWidget *parent, qt_paint_callback_t callback, void *user_data)
+        : QWidget(parent), m_callback(callback), m_user_data(user_data) {}
+
+protected:
+    void paintEvent(QPaintEvent *) override {
+        QPainter painter(this);
+        m_callback(static_cast<void *>(&painter), width(), height(), m_user_data);
+    }
+
+private:
+    qt_paint_callback_t m_callback;
+    void *m_user_data;
+};
+
+class CSyntaxHighlighter : public QSyntaxHighlighter {
+public:
+    struct Rule {
+        QRegularExpression pattern;
+        QTextCharFormat format;
+    };
+
+    CSyntaxHighlighter(QTextDocument *document)
+        : QSyntaxHighlighter(document) {}
+
+    void addRule(const QRegularExpression &pattern, const QTextCharFormat &format) {
+        Rule rule;
+        rule.pattern = pattern;
+        rule.format = format;
+        m_rules.append(rule);
+    }
+
+    void clearRules() {
+        m_rules.clear();
+    }
+
+protected:
+    void highlightBlock(const QString &text) override {
+        for (const auto &rule : m_rules) {
+            auto it = rule.pattern.globalMatch(text);
+            while (it.hasNext()) {
+                auto match = it.next();
+                setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+            }
+        }
+    }
+
+private:
+    QList<Rule> m_rules;
+};
+
+class CDragDropFilter : public QObject {
+public:
+    CDragDropFilter(qt_drag_enter_callback_t enter_cb, qt_drop_callback_t drop_cb, void *user_data)
+        : m_enter_cb(enter_cb), m_drop_cb(drop_cb), m_user_data(user_data) {}
+
+    bool eventFilter(QObject *, QEvent *event) override {
+        switch (event->type()) {
+        case QEvent::DragEnter: {
+            auto *de = static_cast<QDragEnterEvent *>(event);
+            if (de->mimeData()->hasText()) {
+                QByteArray utf8 = de->mimeData()->text().toUtf8();
+                int is_accepted = m_enter_cb(utf8.constData(), m_user_data);
+                if (is_accepted) {
+                    de->acceptProposedAction();
+                    return true;
+                }
+            }
+            return false;
+        }
+        case QEvent::DragMove: {
+            auto *dm = static_cast<QDragMoveEvent *>(event);
+            if (dm->mimeData()->hasText()) {
+                dm->acceptProposedAction();
+                return true;
+            }
+            return false;
+        }
+        case QEvent::Drop: {
+            auto *drop = static_cast<QDropEvent *>(event);
+            if (drop->mimeData()->hasText()) {
+                QByteArray utf8 = drop->mimeData()->text().toUtf8();
+                QPointF pos = drop->position();
+                m_drop_cb(utf8.constData(), static_cast<int>(pos.x()), static_cast<int>(pos.y()), m_user_data);
+                drop->acceptProposedAction();
+                return true;
+            }
+            return false;
+        }
+        default:
+            return false;
+        }
+    }
+
+private:
+    qt_drag_enter_callback_t m_enter_cb;
+    qt_drop_callback_t m_drop_cb;
     void *m_user_data;
 };
 
@@ -3322,6 +3447,724 @@ void qt_widget_set_mouse_tracking(void *widget, int is_enabled) {
 
 int qt_widget_has_mouse_tracking(void *widget) {
     return static_cast<QWidget *>(widget)->hasMouseTracking() ? 1 : 0;
+}
+
+/* ── Section 8: Lower Priority Features ────────────────────────────── */
+
+/* ── QObject utilities ─────────────────────────────────────────────── */
+
+void qt_object_delete_later(void *object) {
+    static_cast<QObject *>(object)->deleteLater();
+}
+
+/* ── Dynamic properties ────────────────────────────────────────────── */
+
+void qt_object_set_property_int(void *object, const char *name, int value) {
+    static_cast<QObject *>(object)->setProperty(name, value);
+}
+
+int qt_object_get_property_int(void *object, const char *name, int default_value) {
+    QVariant v = static_cast<QObject *>(object)->property(name);
+    return v.isValid() ? v.toInt() : default_value;
+}
+
+void qt_object_set_property_string(void *object, const char *name, const char *value) {
+    static_cast<QObject *>(object)->setProperty(name, QString::fromUtf8(value));
+}
+
+char *qt_object_get_property_string(void *object, const char *name, const char *default_value) {
+    QVariant v = static_cast<QObject *>(object)->property(name);
+    if (!v.isValid()) return qstring_to_heap_utf8(QString::fromUtf8(default_value));
+    return qstring_to_heap_utf8(v.toString());
+}
+
+void qt_object_set_property_bool(void *object, const char *name, int value) {
+    static_cast<QObject *>(object)->setProperty(name, value != 0);
+}
+
+int qt_object_get_property_bool(void *object, const char *name, int default_value) {
+    QVariant v = static_cast<QObject *>(object)->property(name);
+    return v.isValid() ? (v.toBool() ? 1 : 0) : default_value;
+}
+
+void qt_object_set_property_double(void *object, const char *name, double value) {
+    static_cast<QObject *>(object)->setProperty(name, value);
+}
+
+double qt_object_get_property_double(void *object, const char *name, double default_value) {
+    QVariant v = static_cast<QObject *>(object)->property(name);
+    return v.isValid() ? v.toDouble() : default_value;
+}
+
+/* ── Model/View — QStandardItem ────────────────────────────────────── */
+
+void *qt_standard_item_create(const char *text) {
+    return static_cast<void *>(new QStandardItem(QString::fromUtf8(text)));
+}
+
+void qt_standard_item_set_text(void *item, const char *text) {
+    static_cast<QStandardItem *>(item)->setText(QString::fromUtf8(text));
+}
+
+char *qt_standard_item_get_text(void *item) {
+    return qstring_to_heap_utf8(static_cast<QStandardItem *>(item)->text());
+}
+
+void qt_standard_item_set_editable(void *item, int is_editable) {
+    static_cast<QStandardItem *>(item)->setEditable(is_editable != 0);
+}
+
+int qt_standard_item_is_editable(void *item) {
+    return static_cast<QStandardItem *>(item)->isEditable() ? 1 : 0;
+}
+
+void qt_standard_item_set_checkable(void *item, int is_checkable) {
+    static_cast<QStandardItem *>(item)->setCheckable(is_checkable != 0);
+}
+
+int qt_standard_item_is_checkable(void *item) {
+    return static_cast<QStandardItem *>(item)->isCheckable() ? 1 : 0;
+}
+
+void qt_standard_item_set_check_state(void *item, int state) {
+    static_cast<QStandardItem *>(item)->setCheckState(static_cast<Qt::CheckState>(state));
+}
+
+int qt_standard_item_get_check_state(void *item) {
+    return static_cast<int>(static_cast<QStandardItem *>(item)->checkState());
+}
+
+void qt_standard_item_set_icon(void *item, void *icon) {
+    static_cast<QStandardItem *>(item)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_standard_item_set_selectable(void *item, int is_selectable) {
+    static_cast<QStandardItem *>(item)->setSelectable(is_selectable != 0);
+}
+
+void qt_standard_item_set_enabled(void *item, int is_enabled) {
+    static_cast<QStandardItem *>(item)->setEnabled(is_enabled != 0);
+}
+
+void qt_standard_item_append_row(void *parent, void **items, int count) {
+    QList<QStandardItem *> row;
+    for (int i = 0; i < count; ++i) {
+        row.append(static_cast<QStandardItem *>(items[i]));
+    }
+    static_cast<QStandardItem *>(parent)->appendRow(row);
+}
+
+void qt_standard_item_append_child(void *parent, void *child) {
+    static_cast<QStandardItem *>(parent)->appendRow(static_cast<QStandardItem *>(child));
+}
+
+int qt_standard_item_row_count(void *item) {
+    return static_cast<QStandardItem *>(item)->rowCount();
+}
+
+void *qt_standard_item_get_child(void *item, int row, int column) {
+    return static_cast<void *>(static_cast<QStandardItem *>(item)->child(row, column));
+}
+
+/* ── Model/View — QStandardItemModel ───────────────────────────────── */
+
+void *qt_standard_item_model_create(int rows, int columns, void *parent) {
+    return static_cast<void *>(new QStandardItemModel(rows, columns, static_cast<QObject *>(parent)));
+}
+
+void qt_standard_item_model_destroy(void *model) {
+    delete static_cast<QStandardItemModel *>(model);
+}
+
+void qt_standard_item_model_set_item(void *model, int row, int column, void *item) {
+    static_cast<QStandardItemModel *>(model)->setItem(row, column, static_cast<QStandardItem *>(item));
+}
+
+void *qt_standard_item_model_get_item(void *model, int row, int column) {
+    return static_cast<void *>(static_cast<QStandardItemModel *>(model)->item(row, column));
+}
+
+void qt_standard_item_model_set_horizontal_header_labels(void *model, const char **labels, int count) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(labels[i]));
+    }
+    static_cast<QStandardItemModel *>(model)->setHorizontalHeaderLabels(sl);
+}
+
+void qt_standard_item_model_set_vertical_header_labels(void *model, const char **labels, int count) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(labels[i]));
+    }
+    static_cast<QStandardItemModel *>(model)->setVerticalHeaderLabels(sl);
+}
+
+int qt_standard_item_model_get_row_count(void *model) {
+    return static_cast<QStandardItemModel *>(model)->rowCount();
+}
+
+int qt_standard_item_model_get_column_count(void *model) {
+    return static_cast<QStandardItemModel *>(model)->columnCount();
+}
+
+void qt_standard_item_model_clear(void *model) {
+    static_cast<QStandardItemModel *>(model)->clear();
+}
+
+void qt_standard_item_model_append_row(void *model, void **items, int count) {
+    QList<QStandardItem *> row;
+    for (int i = 0; i < count; ++i) {
+        row.append(static_cast<QStandardItem *>(items[i]));
+    }
+    static_cast<QStandardItemModel *>(model)->appendRow(row);
+}
+
+void qt_standard_item_model_insert_row(void *model, int row, void **items, int count) {
+    QList<QStandardItem *> item_list;
+    for (int i = 0; i < count; ++i) {
+        item_list.append(static_cast<QStandardItem *>(items[i]));
+    }
+    static_cast<QStandardItemModel *>(model)->insertRow(row, item_list);
+}
+
+void qt_standard_item_model_remove_row(void *model, int row) {
+    static_cast<QStandardItemModel *>(model)->removeRow(row);
+}
+
+void qt_standard_item_model_remove_column(void *model, int column) {
+    static_cast<QStandardItemModel *>(model)->removeColumn(column);
+}
+
+void *qt_standard_item_model_get_invisible_root_item(void *model) {
+    return static_cast<void *>(static_cast<QStandardItemModel *>(model)->invisibleRootItem());
+}
+
+/* ── Model/View — Model Index ──────────────────────────────────────── */
+
+void qt_model_index_destroy(void *index) {
+    delete static_cast<QPersistentModelIndex *>(index);
+}
+
+int qt_model_index_get_row(void *index) {
+    return static_cast<QPersistentModelIndex *>(index)->row();
+}
+
+int qt_model_index_get_column(void *index) {
+    return static_cast<QPersistentModelIndex *>(index)->column();
+}
+
+int qt_model_index_is_valid(void *index) {
+    return static_cast<QPersistentModelIndex *>(index)->isValid() ? 1 : 0;
+}
+
+/* ── Model/View — QFileSystemModel ─────────────────────────────────── */
+
+void *qt_file_system_model_create(void *parent) {
+    return static_cast<void *>(new QFileSystemModel(static_cast<QObject *>(parent)));
+}
+
+void qt_file_system_model_destroy(void *model) {
+    delete static_cast<QFileSystemModel *>(model);
+}
+
+void *qt_file_system_model_set_root_path(void *model, const char *path) {
+    QModelIndex idx = static_cast<QFileSystemModel *>(model)->setRootPath(QString::fromUtf8(path));
+    return static_cast<void *>(new QPersistentModelIndex(idx));
+}
+
+void qt_file_system_model_set_name_filters(void *model, const char **filters, int count) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(filters[i]));
+    }
+    static_cast<QFileSystemModel *>(model)->setNameFilters(sl);
+}
+
+void qt_file_system_model_set_name_filter_disables(void *model, int is_disables) {
+    static_cast<QFileSystemModel *>(model)->setNameFilterDisables(is_disables != 0);
+}
+
+void qt_file_system_model_set_read_only(void *model, int is_read_only) {
+    static_cast<QFileSystemModel *>(model)->setReadOnly(is_read_only != 0);
+}
+
+int qt_file_system_model_is_read_only(void *model) {
+    return static_cast<QFileSystemModel *>(model)->isReadOnly() ? 1 : 0;
+}
+
+char *qt_file_system_model_get_file_path(void *model, void *index) {
+    return qstring_to_heap_utf8(
+        static_cast<QFileSystemModel *>(model)->filePath(
+            *static_cast<QPersistentModelIndex *>(index)
+        )
+    );
+}
+
+/* ── Model/View — QSortFilterProxyModel ────────────────────────────── */
+
+void *qt_sort_filter_proxy_model_create(void *parent) {
+    return static_cast<void *>(new QSortFilterProxyModel(static_cast<QObject *>(parent)));
+}
+
+void qt_sort_filter_proxy_model_destroy(void *proxy) {
+    delete static_cast<QSortFilterProxyModel *>(proxy);
+}
+
+void qt_sort_filter_proxy_model_set_source_model(void *proxy, void *source) {
+    static_cast<QSortFilterProxyModel *>(proxy)->setSourceModel(
+        static_cast<QAbstractItemModel *>(source)
+    );
+}
+
+void qt_sort_filter_proxy_model_set_filter_key_column(void *proxy, int column) {
+    static_cast<QSortFilterProxyModel *>(proxy)->setFilterKeyColumn(column);
+}
+
+void qt_sort_filter_proxy_model_set_filter_regular_expression(void *proxy, const char *pattern) {
+    static_cast<QSortFilterProxyModel *>(proxy)->setFilterRegularExpression(
+        QString::fromUtf8(pattern)
+    );
+}
+
+void qt_sort_filter_proxy_model_set_filter_case_sensitivity(void *proxy, int case_sensitivity) {
+    static_cast<QSortFilterProxyModel *>(proxy)->setFilterCaseSensitivity(
+        static_cast<Qt::CaseSensitivity>(case_sensitivity)
+    );
+}
+
+void qt_sort_filter_proxy_model_set_sort_case_sensitivity(void *proxy, int case_sensitivity) {
+    static_cast<QSortFilterProxyModel *>(proxy)->setSortCaseSensitivity(
+        static_cast<Qt::CaseSensitivity>(case_sensitivity)
+    );
+}
+
+void qt_sort_filter_proxy_model_invalidate(void *proxy) {
+    static_cast<QSortFilterProxyModel *>(proxy)->invalidate();
+}
+
+void qt_sort_filter_proxy_model_sort(void *proxy, int column, int order) {
+    static_cast<QSortFilterProxyModel *>(proxy)->sort(
+        column, static_cast<Qt::SortOrder>(order)
+    );
+}
+
+/* ── Model/View — Views ────────────────────────────────────────────── */
+
+void *qt_tree_view_create(void *parent) {
+    return static_cast<void *>(new QTreeView(static_cast<QWidget *>(parent)));
+}
+
+void qt_tree_view_set_model(void *view, void *model) {
+    static_cast<QTreeView *>(view)->setModel(static_cast<QAbstractItemModel *>(model));
+}
+
+void qt_tree_view_set_root_index(void *view, void *index) {
+    static_cast<QTreeView *>(view)->setRootIndex(
+        *static_cast<QPersistentModelIndex *>(index)
+    );
+}
+
+void qt_tree_view_expand_all(void *view) {
+    static_cast<QTreeView *>(view)->expandAll();
+}
+
+void qt_tree_view_collapse_all(void *view) {
+    static_cast<QTreeView *>(view)->collapseAll();
+}
+
+void qt_tree_view_set_sorting_enabled(void *view, int is_enabled) {
+    static_cast<QTreeView *>(view)->setSortingEnabled(is_enabled != 0);
+}
+
+void qt_tree_view_set_header_hidden(void *view, int is_hidden) {
+    static_cast<QTreeView *>(view)->setHeaderHidden(is_hidden != 0);
+}
+
+void *qt_table_view_create(void *parent) {
+    return static_cast<void *>(new QTableView(static_cast<QWidget *>(parent)));
+}
+
+void qt_table_view_set_model(void *view, void *model) {
+    static_cast<QTableView *>(view)->setModel(static_cast<QAbstractItemModel *>(model));
+}
+
+void qt_table_view_set_sorting_enabled(void *view, int is_enabled) {
+    static_cast<QTableView *>(view)->setSortingEnabled(is_enabled != 0);
+}
+
+void qt_table_view_resize_columns_to_contents(void *view) {
+    static_cast<QTableView *>(view)->resizeColumnsToContents();
+}
+
+void qt_table_view_resize_rows_to_contents(void *view) {
+    static_cast<QTableView *>(view)->resizeRowsToContents();
+}
+
+void qt_table_view_set_selection_behaviour(void *view, int behaviour) {
+    static_cast<QTableView *>(view)->setSelectionBehavior(
+        static_cast<QAbstractItemView::SelectionBehavior>(behaviour)
+    );
+}
+
+void qt_table_view_set_selection_mode(void *view, int mode) {
+    static_cast<QTableView *>(view)->setSelectionMode(
+        static_cast<QAbstractItemView::SelectionMode>(mode)
+    );
+}
+
+void qt_table_view_set_alternating_row_colours(void *view, int is_alternating) {
+    static_cast<QTableView *>(view)->setAlternatingRowColors(is_alternating != 0);
+}
+
+void *qt_list_view_create(void *parent) {
+    return static_cast<void *>(new QListView(static_cast<QWidget *>(parent)));
+}
+
+void qt_list_view_set_model(void *view, void *model) {
+    static_cast<QListView *>(view)->setModel(static_cast<QAbstractItemModel *>(model));
+}
+
+void qt_list_view_set_selection_mode(void *view, int mode) {
+    static_cast<QListView *>(view)->setSelectionMode(
+        static_cast<QAbstractItemView::SelectionMode>(mode)
+    );
+}
+
+/* ── QPainter / Custom drawing ─────────────────────────────────────── */
+
+void *qt_paintable_widget_create(void *parent, qt_paint_callback_t callback, void *user_data) {
+    return static_cast<void *>(new CPaintableWidget(static_cast<QWidget *>(parent), callback, user_data));
+}
+
+void qt_painter_set_pen_colour(void *painter, int r, int g, int b, int a) {
+    static_cast<QPainter *>(painter)->setPen(QPen(QColor(r, g, b, a)));
+}
+
+void qt_painter_set_pen_width(void *painter, int width) {
+    QPen pen = static_cast<QPainter *>(painter)->pen();
+    pen.setWidth(width);
+    static_cast<QPainter *>(painter)->setPen(pen);
+}
+
+void qt_painter_set_no_pen(void *painter) {
+    static_cast<QPainter *>(painter)->setPen(Qt::NoPen);
+}
+
+void qt_painter_set_brush_colour(void *painter, int r, int g, int b, int a) {
+    static_cast<QPainter *>(painter)->setBrush(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_painter_set_no_brush(void *painter) {
+    static_cast<QPainter *>(painter)->setBrush(Qt::NoBrush);
+}
+
+void qt_painter_set_font(void *painter, const char *family, int point_size, int weight, int is_italic) {
+    static_cast<QPainter *>(painter)->setFont(
+        QFont(QString::fromUtf8(family), point_size, weight, is_italic != 0)
+    );
+}
+
+void qt_painter_set_antialiasing(void *painter, int is_enabled) {
+    static_cast<QPainter *>(painter)->setRenderHint(QPainter::Antialiasing, is_enabled != 0);
+}
+
+void qt_painter_set_opacity(void *painter, double opacity) {
+    static_cast<QPainter *>(painter)->setOpacity(opacity);
+}
+
+void qt_painter_draw_line(void *painter, int x1, int y1, int x2, int y2) {
+    static_cast<QPainter *>(painter)->drawLine(x1, y1, x2, y2);
+}
+
+void qt_painter_draw_rect(void *painter, int x, int y, int width, int height) {
+    static_cast<QPainter *>(painter)->drawRect(x, y, width, height);
+}
+
+void qt_painter_fill_rect(void *painter, int x, int y, int width, int height, int r, int g, int b, int a) {
+    static_cast<QPainter *>(painter)->fillRect(x, y, width, height, QColor(r, g, b, a));
+}
+
+void qt_painter_draw_ellipse(void *painter, int x, int y, int width, int height) {
+    static_cast<QPainter *>(painter)->drawEllipse(x, y, width, height);
+}
+
+void qt_painter_draw_arc(void *painter, int x, int y, int width, int height, int start_angle, int span_angle) {
+    static_cast<QPainter *>(painter)->drawArc(x, y, width, height, start_angle, span_angle);
+}
+
+void qt_painter_draw_pie(void *painter, int x, int y, int width, int height, int start_angle, int span_angle) {
+    static_cast<QPainter *>(painter)->drawPie(x, y, width, height, start_angle, span_angle);
+}
+
+void qt_painter_draw_rounded_rect(void *painter, int x, int y, int width, int height, double x_radius, double y_radius) {
+    static_cast<QPainter *>(painter)->drawRoundedRect(x, y, width, height, x_radius, y_radius);
+}
+
+void qt_painter_draw_text(void *painter, int x, int y, const char *text) {
+    static_cast<QPainter *>(painter)->drawText(x, y, QString::fromUtf8(text));
+}
+
+void qt_painter_draw_text_in_rect(void *painter, int x, int y, int width, int height, int flags, const char *text) {
+    static_cast<QPainter *>(painter)->drawText(QRect(x, y, width, height), flags, QString::fromUtf8(text));
+}
+
+void qt_painter_draw_pixmap(void *painter, int x, int y, void *pixmap) {
+    static_cast<QPainter *>(painter)->drawPixmap(x, y, *static_cast<QPixmap *>(pixmap));
+}
+
+void qt_painter_draw_polygon(void *painter, const int *points, int point_count) {
+    QPolygon polygon;
+    for (int i = 0; i < point_count; ++i) {
+        polygon.append(QPoint(points[i * 2], points[i * 2 + 1]));
+    }
+    static_cast<QPainter *>(painter)->drawPolygon(polygon);
+}
+
+void qt_painter_save(void *painter) {
+    static_cast<QPainter *>(painter)->save();
+}
+
+void qt_painter_restore(void *painter) {
+    static_cast<QPainter *>(painter)->restore();
+}
+
+void qt_painter_translate(void *painter, double dx, double dy) {
+    static_cast<QPainter *>(painter)->translate(dx, dy);
+}
+
+void qt_painter_rotate(void *painter, double angle) {
+    static_cast<QPainter *>(painter)->rotate(angle);
+}
+
+void qt_painter_scale(void *painter, double sx, double sy) {
+    static_cast<QPainter *>(painter)->scale(sx, sy);
+}
+
+/* ── Drag and Drop ─────────────────────────────────────────────────── */
+
+void qt_widget_set_accept_drops(void *widget, int is_accept) {
+    static_cast<QWidget *>(widget)->setAcceptDrops(is_accept != 0);
+}
+
+void *qt_drag_drop_filter_create(qt_drag_enter_callback_t enter_cb, qt_drop_callback_t drop_cb, void *user_data) {
+    return static_cast<void *>(new CDragDropFilter(enter_cb, drop_cb, user_data));
+}
+
+void qt_widget_start_drag(void *widget, const char *mime_text) {
+    auto *drag = new QDrag(static_cast<QWidget *>(widget));
+    auto *mime = new QMimeData();
+    mime->setText(QString::fromUtf8(mime_text));
+    drag->setMimeData(mime);
+    drag->exec(Qt::CopyAction);
+}
+
+/* ── QSyntaxHighlighter ────────────────────────────────────────────── */
+
+void *qt_text_char_format_create(void) {
+    return static_cast<void *>(new QTextCharFormat());
+}
+
+void qt_text_char_format_destroy(void *format) {
+    delete static_cast<QTextCharFormat *>(format);
+}
+
+void qt_text_char_format_set_foreground(void *format, int r, int g, int b, int a) {
+    static_cast<QTextCharFormat *>(format)->setForeground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_text_char_format_set_background(void *format, int r, int g, int b, int a) {
+    static_cast<QTextCharFormat *>(format)->setBackground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_text_char_format_set_font_weight(void *format, int weight) {
+    static_cast<QTextCharFormat *>(format)->setFontWeight(weight);
+}
+
+void qt_text_char_format_set_font_italic(void *format, int is_italic) {
+    static_cast<QTextCharFormat *>(format)->setFontItalic(is_italic != 0);
+}
+
+void qt_text_char_format_set_font_underline(void *format, int is_underline) {
+    static_cast<QTextCharFormat *>(format)->setFontUnderline(is_underline != 0);
+}
+
+void *qt_syntax_highlighter_create_for_text_edit(void *text_edit) {
+    return static_cast<void *>(
+        new CSyntaxHighlighter(static_cast<QTextEdit *>(text_edit)->document())
+    );
+}
+
+void *qt_syntax_highlighter_create_for_plain_text_edit(void *plain_text_edit) {
+    return static_cast<void *>(
+        new CSyntaxHighlighter(static_cast<QPlainTextEdit *>(plain_text_edit)->document())
+    );
+}
+
+void qt_syntax_highlighter_destroy(void *highlighter) {
+    delete static_cast<CSyntaxHighlighter *>(highlighter);
+}
+
+void qt_syntax_highlighter_add_rule(void *highlighter, const char *pattern, void *format) {
+    static_cast<CSyntaxHighlighter *>(highlighter)->addRule(
+        QRegularExpression(QString::fromUtf8(pattern)),
+        *static_cast<QTextCharFormat *>(format)
+    );
+}
+
+void qt_syntax_highlighter_clear_rules(void *highlighter) {
+    static_cast<CSyntaxHighlighter *>(highlighter)->clearRules();
+}
+
+void qt_syntax_highlighter_rehighlight(void *highlighter) {
+    static_cast<CSyntaxHighlighter *>(highlighter)->rehighlight();
+}
+
+/* ── QPropertyAnimation / Animation groups ─────────────────────────── */
+
+void *qt_property_animation_create(void *target, const char *property_name) {
+    return static_cast<void *>(
+        new QPropertyAnimation(static_cast<QObject *>(target), QByteArray(property_name))
+    );
+}
+
+void qt_property_animation_destroy(void *animation) {
+    delete static_cast<QPropertyAnimation *>(animation);
+}
+
+void qt_property_animation_set_duration(void *animation, int ms) {
+    static_cast<QPropertyAnimation *>(animation)->setDuration(ms);
+}
+
+void qt_property_animation_set_start_value_int(void *animation, int value) {
+    static_cast<QPropertyAnimation *>(animation)->setStartValue(value);
+}
+
+void qt_property_animation_set_end_value_int(void *animation, int value) {
+    static_cast<QPropertyAnimation *>(animation)->setEndValue(value);
+}
+
+void qt_property_animation_set_start_value_double(void *animation, double value) {
+    static_cast<QPropertyAnimation *>(animation)->setStartValue(value);
+}
+
+void qt_property_animation_set_end_value_double(void *animation, double value) {
+    static_cast<QPropertyAnimation *>(animation)->setEndValue(value);
+}
+
+void qt_property_animation_set_start_value_rect(void *animation, int x, int y, int w, int h) {
+    static_cast<QPropertyAnimation *>(animation)->setStartValue(QRect(x, y, w, h));
+}
+
+void qt_property_animation_set_end_value_rect(void *animation, int x, int y, int w, int h) {
+    static_cast<QPropertyAnimation *>(animation)->setEndValue(QRect(x, y, w, h));
+}
+
+void qt_property_animation_set_start_value_size(void *animation, int w, int h) {
+    static_cast<QPropertyAnimation *>(animation)->setStartValue(QSize(w, h));
+}
+
+void qt_property_animation_set_end_value_size(void *animation, int w, int h) {
+    static_cast<QPropertyAnimation *>(animation)->setEndValue(QSize(w, h));
+}
+
+void qt_property_animation_set_start_value_point(void *animation, int x, int y) {
+    static_cast<QPropertyAnimation *>(animation)->setStartValue(QPoint(x, y));
+}
+
+void qt_property_animation_set_end_value_point(void *animation, int x, int y) {
+    static_cast<QPropertyAnimation *>(animation)->setEndValue(QPoint(x, y));
+}
+
+void qt_property_animation_set_easing_curve(void *animation, int curve_type) {
+    static_cast<QPropertyAnimation *>(animation)->setEasingCurve(
+        static_cast<QEasingCurve::Type>(curve_type)
+    );
+}
+
+void qt_property_animation_start(void *animation) {
+    static_cast<QPropertyAnimation *>(animation)->start();
+}
+
+void qt_property_animation_stop(void *animation) {
+    static_cast<QPropertyAnimation *>(animation)->stop();
+}
+
+void qt_property_animation_pause(void *animation) {
+    static_cast<QPropertyAnimation *>(animation)->pause();
+}
+
+void qt_property_animation_resume(void *animation) {
+    static_cast<QPropertyAnimation *>(animation)->resume();
+}
+
+void qt_property_animation_set_loop_count(void *animation, int count) {
+    static_cast<QPropertyAnimation *>(animation)->setLoopCount(count);
+}
+
+int qt_property_animation_connect_finished(void *animation, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPropertyAnimation *>(animation), &QPropertyAnimation::finished, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+void *qt_parallel_animation_group_create(void *parent) {
+    return static_cast<void *>(new QParallelAnimationGroup(static_cast<QObject *>(parent)));
+}
+
+void qt_parallel_animation_group_destroy(void *group) {
+    delete static_cast<QParallelAnimationGroup *>(group);
+}
+
+void qt_parallel_animation_group_add_animation(void *group, void *animation) {
+    static_cast<QParallelAnimationGroup *>(group)->addAnimation(
+        static_cast<QAbstractAnimation *>(animation)
+    );
+}
+
+void qt_parallel_animation_group_start(void *group) {
+    static_cast<QParallelAnimationGroup *>(group)->start();
+}
+
+void qt_parallel_animation_group_stop(void *group) {
+    static_cast<QParallelAnimationGroup *>(group)->stop();
+}
+
+int qt_parallel_animation_group_connect_finished(void *group, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QParallelAnimationGroup *>(group), &QParallelAnimationGroup::finished, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+void *qt_sequential_animation_group_create(void *parent) {
+    return static_cast<void *>(new QSequentialAnimationGroup(static_cast<QObject *>(parent)));
+}
+
+void qt_sequential_animation_group_destroy(void *group) {
+    delete static_cast<QSequentialAnimationGroup *>(group);
+}
+
+void qt_sequential_animation_group_add_animation(void *group, void *animation) {
+    static_cast<QSequentialAnimationGroup *>(group)->addAnimation(
+        static_cast<QAbstractAnimation *>(animation)
+    );
+}
+
+void qt_sequential_animation_group_start(void *group) {
+    static_cast<QSequentialAnimationGroup *>(group)->start();
+}
+
+void qt_sequential_animation_group_stop(void *group) {
+    static_cast<QSequentialAnimationGroup *>(group)->stop();
+}
+
+int qt_sequential_animation_group_connect_finished(void *group, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSequentialAnimationGroup *>(group), &QSequentialAnimationGroup::finished, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
 }
 
 } /* extern "C" */
