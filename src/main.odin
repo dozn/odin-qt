@@ -391,6 +391,101 @@ clipboard_paste :: proc"c"(user_data: rawptr) {
 	}
 }
 
+/* ── Custom drawing callback ───────────────────────────────────────── */
+
+paint_demo :: proc"c"(painter: qt.Painter, width: c.int, height: c.int, user_data: rawptr) {
+	qt.painter_set_antialiasing(painter, 1)
+
+	// Background gradient (simulated with filled rects)
+	qt.painter_fill_rect(painter, 0, 0, width, height, 240, 240, 255, 255)
+
+	// Draw a grid
+	qt.painter_set_pen_colour(painter, 200, 200, 220, 255)
+	qt.painter_set_pen_width(painter, 1)
+	grid_step: c.int = 30
+	x: c.int = 0
+	for x < width {
+		qt.painter_draw_line(painter, x, 0, x, height)
+		x += grid_step
+	}
+	y: c.int = 0
+	for y < height {
+		qt.painter_draw_line(painter, 0, y, width, y)
+		y += grid_step
+	}
+
+	// Filled ellipse
+	qt.painter_set_brush_colour(painter, 70, 130, 180, 180)
+	qt.painter_set_pen_colour(painter, 30, 60, 100, 255)
+	qt.painter_set_pen_width(painter, 2)
+	qt.painter_draw_ellipse(painter, 30, 30, 120, 80)
+
+	// Rounded rectangle
+	qt.painter_set_brush_colour(painter, 255, 165, 0, 160)
+	qt.painter_set_pen_colour(painter, 180, 100, 0, 255)
+	qt.painter_draw_rounded_rect(painter, 180, 30, 140, 80, 15.0, 15.0)
+
+	// Lines with different widths
+	qt.painter_set_no_brush(painter)
+	qt.painter_set_pen_colour(painter, 220, 50, 50, 255)
+	qt.painter_set_pen_width(painter, 3)
+	qt.painter_draw_line(painter, 30, 140, 300, 140)
+	qt.painter_set_pen_colour(painter, 50, 180, 50, 255)
+	qt.painter_set_pen_width(painter, 2)
+	qt.painter_draw_line(painter, 30, 155, 300, 155)
+	qt.painter_set_pen_colour(painter, 50, 50, 220, 255)
+	qt.painter_set_pen_width(painter, 1)
+	qt.painter_draw_line(painter, 30, 170, 300, 170)
+
+	// Text
+	qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+	qt.painter_set_font(painter, "Segoe UI", 12, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.painter_draw_text(painter, 30, 210, "QPainter drawing from Odin!")
+
+	qt.painter_set_font(painter, "Segoe UI", 9, cast(c.int)qt.Font_Weight.Normal, 1)
+	qt.painter_draw_text(painter, 30, 230, "Italic text with shapes above")
+
+	// Pie chart slice
+	qt.painter_set_brush_colour(painter, 180, 100, 220, 180)
+	qt.painter_set_pen_colour(painter, 100, 40, 140, 255)
+	qt.painter_set_pen_width(painter, 2)
+	qt.painter_draw_pie(painter, 350, 30, 120, 120, 30 * 16, 120 * 16)
+
+	qt.painter_set_brush_colour(painter, 100, 200, 100, 180)
+	qt.painter_draw_pie(painter, 350, 30, 120, 120, 150 * 16, 90 * 16)
+
+	qt.painter_set_brush_colour(painter, 200, 200, 80, 180)
+	qt.painter_draw_pie(painter, 350, 30, 120, 120, 240 * 16, 120 * 16)
+
+	// Polygon (triangle)
+	triangle_points := [?]c.int{400, 200, 350, 280, 450, 280}
+	qt.painter_set_brush_colour(painter, 100, 180, 220, 180)
+	qt.painter_set_pen_colour(painter, 40, 80, 120, 255)
+	qt.painter_draw_polygon(painter, raw_data(triangle_points[:]), 3)
+}
+
+/* ── Animation callbacks ───────────────────────────────────────────── */
+
+animation_finished :: proc"c"(user_data: rawptr) {
+	statusbar_show("Animation finished!")
+}
+
+/* ── Drag and drop callbacks ───────────────────────────────────────── */
+
+drag_enter_accept :: proc"c"(mime_text: cstring, user_data: rawptr) -> c.int {
+	return 1 // Accept all drag enters
+}
+
+drop_handle :: proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr) {
+	label: qt.Label = auto_cast user_data
+	if mime_text != nil {
+		qt.label_set_text(label, mime_text)
+	} else {
+		qt.label_set_text(label, "(dropped with no text)")
+	}
+	statusbar_show("Drop received!")
+}
+
 /* ── Menu action callbacks ─────────────────────────────────────────── */
 
 menu_exit :: proc"c"(user_data: rawptr) {
@@ -943,6 +1038,360 @@ build_timer_utility_tab :: proc(application: qt.Application) -> qt.Widget {
 	return page
 }
 
+build_model_view_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Model/View Framework Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	splitter := qt.splitter_create(.Horizontal, nil)
+
+	// Left: QStandardItemModel in a QTableView
+	left_group := qt.group_box_create(nil, "QStandardItemModel + QTableView")
+	left_layout := qt.vbox_layout_create(auto_cast left_group)
+
+	model := qt.standard_item_model_create(0, 3, nil)
+	model_headers := [?]cstring{"Name", "Language", "Rating"}
+	qt.standard_item_model_set_horizontal_header_labels(model, raw_data(model_headers[:]), 3)
+
+	// Add rows via QStandardItem
+	row1 := [?]qt.Standard_Item{
+		qt.standard_item_create("Odin"),
+		qt.standard_item_create("Systems"),
+		qt.standard_item_create("5/5"),
+	}
+	qt.standard_item_model_append_row(model, raw_data(row1[:]), 3)
+
+	row2 := [?]qt.Standard_Item{
+		qt.standard_item_create("Zig"),
+		qt.standard_item_create("Systems"),
+		qt.standard_item_create("4/5"),
+	}
+	qt.standard_item_model_append_row(model, raw_data(row2[:]), 3)
+
+	row3 := [?]qt.Standard_Item{
+		qt.standard_item_create("Rust"),
+		qt.standard_item_create("Systems"),
+		qt.standard_item_create("4/5"),
+	}
+	qt.standard_item_model_append_row(model, raw_data(row3[:]), 3)
+
+	row4 := [?]qt.Standard_Item{
+		qt.standard_item_create("Python"),
+		qt.standard_item_create("Scripting"),
+		qt.standard_item_create("3/5"),
+	}
+	qt.standard_item_model_append_row(model, raw_data(row4[:]), 3)
+
+	table_view := qt.table_view_create(nil)
+	qt.table_view_set_model(table_view, model)
+	qt.table_view_set_alternating_row_colours(table_view, 1)
+	qt.table_view_set_sorting_enabled(table_view, 1)
+	qt.table_view_resize_columns_to_contents(table_view)
+	qt.layout_add_widget(left_layout, auto_cast table_view)
+	qt.splitter_add_widget(splitter, auto_cast left_group)
+
+	// Right: QFileSystemModel in a QTreeView
+	right_group := qt.group_box_create(nil, "QFileSystemModel + QTreeView")
+	right_layout := qt.vbox_layout_create(auto_cast right_group)
+
+	fs_model := qt.file_system_model_create(nil)
+	root_index := qt.file_system_model_set_root_path(fs_model, "C:/")
+	qt.file_system_model_set_read_only(fs_model, 1)
+
+	tree_view := qt.tree_view_create(nil)
+	tree_view_set_model_fs :: proc"c"(view: qt.Tree_View, model: qt.File_System_Model) {
+		qt.tree_view_set_model(view, model)
+	}
+	tree_view_set_model_fs(tree_view, fs_model)
+	qt.tree_view_set_root_index(tree_view, root_index)
+	qt.tree_view_set_sorting_enabled(tree_view, 1)
+	qt.layout_add_widget(right_layout, auto_cast tree_view)
+	qt.splitter_add_widget(splitter, auto_cast right_group)
+
+	qt.layout_add_widget(layout, auto_cast splitter)
+	return page
+}
+
+build_custom_drawing_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Custom Drawing (QPainter) Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "The widget below uses QPainter in a paint callback to draw shapes, text, and a pie chart.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	canvas := qt.paintable_widget_create(nil, paint_demo, nil)
+	qt.widget_set_minimum_size(auto_cast canvas, 500, 300)
+	qt.layout_add_widget(layout, auto_cast canvas)
+
+	repaint_btn := qt.push_button_create(nil, "Trigger Repaint")
+	qt.push_button_connect_clicked(repaint_btn, proc"c"(user_data: rawptr) {
+		qt.widget_update(auto_cast user_data)
+		statusbar_show("Repaint triggered")
+	}, auto_cast canvas)
+	qt.layout_add_widget(layout, auto_cast repaint_btn)
+
+	qt.box_layout_add_stretch(layout, 1)
+	return page
+}
+
+build_syntax_highlighting_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Syntax Highlighting Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "The text editor below has regex-based syntax highlighting for C-like keywords, strings, and comments.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	editor := qt.text_edit_create(nil)
+	qt.widget_set_font(auto_cast editor, "Consolas", 11, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.text_edit_set_plain_text(editor, `// Example C code with syntax highlighting
+#include <stdio.h>
+
+int main(void) {
+    // Print a greeting
+    printf("Hello, world!\n");
+    for (int i = 0; i < 10; i++) {
+        if (i % 2 == 0) {
+            printf("Even: %d\n", i);
+        }
+    }
+    return 0;
+}`)
+	qt.layout_add_widget(layout, auto_cast editor)
+
+	// Create highlighter and add rules
+	highlighter := qt.syntax_highlighter_create_for_text_edit(editor)
+
+	// Keywords (bold blue)
+	keyword_format := qt.text_char_format_create()
+	qt.text_char_format_set_foreground(keyword_format, 0, 0, 180, 255)
+	qt.text_char_format_set_font_weight(keyword_format, cast(c.int)qt.Font_Weight.Bold)
+	qt.syntax_highlighter_add_rule(highlighter, "\\b(int|void|return|if|else|for|while|do|switch|case|break|continue|char|float|double|struct|typedef|enum|const|static|include)\\b", keyword_format)
+
+	// Strings (dark red)
+	string_format := qt.text_char_format_create()
+	qt.text_char_format_set_foreground(string_format, 180, 0, 0, 255)
+	qt.syntax_highlighter_add_rule(highlighter, "\"[^\"]*\"", string_format)
+
+	// Single-line comments (green italic)
+	comment_format := qt.text_char_format_create()
+	qt.text_char_format_set_foreground(comment_format, 0, 128, 0, 255)
+	qt.text_char_format_set_font_italic(comment_format, 1)
+	qt.syntax_highlighter_add_rule(highlighter, "//[^\n]*", comment_format)
+
+	// Preprocessor directives (purple)
+	preproc_format := qt.text_char_format_create()
+	qt.text_char_format_set_foreground(preproc_format, 128, 0, 128, 255)
+	qt.syntax_highlighter_add_rule(highlighter, "#\\w+", preproc_format)
+
+	// Numbers (dark cyan)
+	number_format := qt.text_char_format_create()
+	qt.text_char_format_set_foreground(number_format, 0, 128, 128, 255)
+	qt.syntax_highlighter_add_rule(highlighter, "\\b[0-9]+\\b", number_format)
+
+	qt.syntax_highlighter_rehighlight(highlighter)
+
+	return page
+}
+
+build_animations_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Animations Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "Click the buttons below to animate widget properties using QPropertyAnimation.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	// Animated button - moves across the screen
+	anim_group := qt.group_box_create(nil, "Property Animation")
+	anim_layout := qt.vbox_layout_create(auto_cast anim_group)
+
+	// Target widget to animate
+	target_btn := qt.push_button_create(nil, "Animate Me!")
+	qt.widget_set_minimum_size(auto_cast target_btn, 100, 40)
+	qt.layout_add_widget(anim_layout, auto_cast target_btn)
+
+	btn_row := qt.widget_create(nil)
+	btn_layout := qt.hbox_layout_create(btn_row)
+
+	// Geometry animation
+	move_btn := qt.push_button_create(nil, "Animate Size")
+	qt.push_button_connect_clicked(move_btn, proc"c"(user_data: rawptr) {
+		target: qt.Widget = auto_cast user_data
+		anim := qt.property_animation_create(target, "minimumWidth")
+		qt.property_animation_set_duration(anim, 1000)
+		qt.property_animation_set_start_value_int(anim, 100)
+		qt.property_animation_set_end_value_int(anim, 300)
+		qt.property_animation_set_easing_curve(anim, .Out_Bounce)
+		qt.property_animation_connect_finished(anim, animation_finished, nil)
+		qt.property_animation_start(anim)
+	}, auto_cast target_btn)
+	qt.layout_add_widget(btn_layout, auto_cast move_btn)
+
+	// Opacity animation (via windowOpacity - only works on top-level windows, so we animate size instead)
+	shrink_btn := qt.push_button_create(nil, "Animate Shrink")
+	qt.push_button_connect_clicked(shrink_btn, proc"c"(user_data: rawptr) {
+		target: qt.Widget = auto_cast user_data
+		anim := qt.property_animation_create(target, "minimumWidth")
+		qt.property_animation_set_duration(anim, 800)
+		qt.property_animation_set_start_value_int(anim, 300)
+		qt.property_animation_set_end_value_int(anim, 100)
+		qt.property_animation_set_easing_curve(anim, .In_Out_Cubic)
+		qt.property_animation_start(anim)
+	}, auto_cast target_btn)
+	qt.layout_add_widget(btn_layout, auto_cast shrink_btn)
+
+	// Elastic animation
+	elastic_btn := qt.push_button_create(nil, "Elastic")
+	qt.push_button_connect_clicked(elastic_btn, proc"c"(user_data: rawptr) {
+		target: qt.Widget = auto_cast user_data
+		anim := qt.property_animation_create(target, "minimumHeight")
+		qt.property_animation_set_duration(anim, 1500)
+		qt.property_animation_set_start_value_int(anim, 40)
+		qt.property_animation_set_end_value_int(anim, 100)
+		qt.property_animation_set_easing_curve(anim, .Out_Elastic)
+		qt.property_animation_start(anim)
+	}, auto_cast target_btn)
+	qt.layout_add_widget(btn_layout, auto_cast elastic_btn)
+
+	// Reset
+	reset_btn := qt.push_button_create(nil, "Reset")
+	qt.push_button_connect_clicked(reset_btn, proc"c"(user_data: rawptr) {
+		target: qt.Widget = auto_cast user_data
+		qt.widget_set_minimum_size(target, 100, 40)
+		statusbar_show("Animation target reset")
+	}, auto_cast target_btn)
+	qt.layout_add_widget(btn_layout, auto_cast reset_btn)
+
+	qt.layout_add_widget(anim_layout, btn_row)
+	qt.layout_add_widget(layout, auto_cast anim_group)
+
+	// Easing curve info
+	easing_group := qt.group_box_create(nil, "Available Easing Curves")
+	easing_layout := qt.vbox_layout_create(auto_cast easing_group)
+	easing_label := qt.label_create(nil, "Linear, InQuad, OutQuad, InOutQuad, InCubic, OutCubic, InOutCubic, InElastic, OutElastic, InBounce, OutBounce, InOutBounce, InBack, OutBack, InSine, OutSine, InExpo, OutExpo, and more...")
+	qt.label_set_word_wrap(easing_label, 1)
+	qt.layout_add_widget(easing_layout, auto_cast easing_label)
+	qt.layout_add_widget(layout, auto_cast easing_group)
+
+	qt.box_layout_add_stretch(layout, 1)
+	return page
+}
+
+build_drag_drop_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Drag & Drop Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "Type text in the source field and click 'Start Drag' to initiate a drag. The drop zone accepts text drops from any source.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	splitter := qt.splitter_create(.Horizontal, nil)
+
+	// Drag source
+	source_group := qt.group_box_create(nil, "Drag Source")
+	source_layout := qt.vbox_layout_create(auto_cast source_group)
+	drag_input := qt.line_edit_create(nil)
+	qt.line_edit_set_text(drag_input, "Drag this text!")
+	qt.layout_add_widget(source_layout, auto_cast drag_input)
+	drag_btn := qt.push_button_create(nil, "Start Drag")
+	qt.push_button_connect_clicked(drag_btn, proc"c"(user_data: rawptr) {
+		input: qt.Line_Edit = auto_cast user_data
+		text := qt.line_edit_get_text(input)
+		if text != nil {
+			qt.widget_start_drag(auto_cast input, text)
+			qt.free_string(text)
+		}
+	}, auto_cast drag_input)
+	qt.layout_add_widget(source_layout, auto_cast drag_btn)
+	qt.splitter_add_widget(splitter, auto_cast source_group)
+
+	// Drop target
+	target_group := qt.group_box_create(nil, "Drop Zone")
+	target_layout := qt.vbox_layout_create(auto_cast target_group)
+	drop_label := qt.label_create(nil, "Drop text here!")
+	qt.label_set_alignment(drop_label, .Centre)
+	qt.widget_set_minimum_size(auto_cast drop_label, 200, 100)
+	qt.widget_set_style_sheet(auto_cast drop_label, "QLabel { background-color: #f0f0f0; border: 2px dashed #999; border-radius: 8px; padding: 20px; font-size: 14px; }")
+	qt.layout_add_widget(target_layout, auto_cast drop_label)
+
+	// Enable drops on the drop zone
+	qt.widget_set_accept_drops(auto_cast target_group, 1)
+	drop_filter := qt.drag_drop_filter_create(drag_enter_accept, drop_handle, auto_cast drop_label)
+	qt.widget_install_event_filter(auto_cast target_group, auto_cast drop_filter)
+
+	qt.splitter_add_widget(splitter, auto_cast target_group)
+
+	qt.layout_add_widget(layout, auto_cast splitter)
+
+	// Dynamic properties demo
+	props_group := qt.group_box_create(nil, "Dynamic Properties & deleteLater()")
+	props_layout := qt.vbox_layout_create(auto_cast props_group)
+
+	props_label := qt.label_create(nil, "Dynamic properties let you attach arbitrary key-value data to any QObject at runtime.")
+	qt.label_set_word_wrap(props_label, 1)
+	qt.layout_add_widget(props_layout, auto_cast props_label)
+
+	props_btn_row := qt.widget_create(nil)
+	props_btn_layout := qt.hbox_layout_create(props_btn_row)
+
+	set_prop_btn := qt.push_button_create(nil, "Set Property")
+	qt.push_button_connect_clicked(set_prop_btn, proc"c"(user_data: rawptr) {
+		widget: qt.Widget = auto_cast user_data
+		qt.object_set_property_string(widget, "demo_tag", "Hello from Odin!")
+		qt.object_set_property_int(widget, "demo_counter", 42)
+		statusbar_show("Properties set: demo_tag, demo_counter")
+	}, auto_cast drop_label)
+	qt.layout_add_widget(props_btn_layout, auto_cast set_prop_btn)
+
+	get_prop_btn := qt.push_button_create(nil, "Get Property")
+	qt.push_button_connect_clicked(get_prop_btn, proc"c"(user_data: rawptr) {
+		widget: qt.Widget = auto_cast user_data
+		tag := qt.object_get_property_string(widget, "demo_tag", "(not set)")
+		if tag != nil {
+			statusbar_show(tag, 5000)
+			qt.free_string(cast(cstring)tag)
+		}
+	}, auto_cast drop_label)
+	qt.layout_add_widget(props_btn_layout, auto_cast get_prop_btn)
+
+	qt.layout_add_widget(props_layout, props_btn_row)
+	qt.layout_add_widget(layout, auto_cast props_group)
+
+	qt.box_layout_add_stretch(layout, 1)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -1033,6 +1482,11 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_layouts_tab(), "Layouts")
 	_ = qt.tab_widget_add_tab(tabs, build_dialogs_tab(), "Dialogs")
 	_ = qt.tab_widget_add_tab(tabs, build_timer_utility_tab(application), "Timer & Utility")
+	_ = qt.tab_widget_add_tab(tabs, build_model_view_tab(), "Model/View")
+	_ = qt.tab_widget_add_tab(tabs, build_custom_drawing_tab(), "Drawing")
+	_ = qt.tab_widget_add_tab(tabs, build_syntax_highlighting_tab(), "Syntax HL")
+	_ = qt.tab_widget_add_tab(tabs, build_animations_tab(), "Animations")
+	_ = qt.tab_widget_add_tab(tabs, build_drag_drop_tab(), "Drag & Drop")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 

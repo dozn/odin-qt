@@ -102,3 +102,8 @@
 - [x] Dynamic properties (setProperty/property)
 
 ## 9. Add the completed todos to our demo application
+- [x] Model/View tab (QStandardItemModel + QTableView, QFileSystemModel + QTreeView)
+- [x] Custom Drawing tab (QPainter shapes, text, pie chart, polygon)
+- [x] Syntax Highlighting tab (QSyntaxHighlighter with C-like rules)
+- [x] Animations tab (QPropertyAnimation with easing curves)
+- [x] Drag & Drop tab (drag source, drop zone, dynamic properties)
