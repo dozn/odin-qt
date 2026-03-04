@@ -22,36 +22,36 @@
 - [ ] QPushButton: `set_icon` (deferred to QIcon/QPixmap section)
 
 ## 3. Missing Common Operations on Existing Widgets
-- [ ] QTabWidget: `remove_tab`, `insert_tab`, `set_tab_enabled`/`is_tab_enabled`, `set_tabs_closable`, `set_movable`, `get_widget`, `index_of`
-- [ ] QTabWidget signals: `tab_close_requested`
-- [ ] QTableWidget: `insert_row`, `insert_column`, `remove_row`, `remove_column`, `set_selection_mode`, `set_selection_behaviour`, `set_alternating_row_colours`, `set_sorting_enabled`, `set_column_width`, `set_row_height`, `resize_columns_to_contents`, `resize_rows_to_contents`
-- [ ] QTableWidget signals: `cell_double_clicked`, `cell_changed`, `item_selection_changed`
-- [ ] QTreeWidget: `remove_top_level_item`, `set_current_item`, `expand_all`, `collapse_all`, `expand_item`, `collapse_item`, `set_selection_mode`, `set_sorting_enabled`
-- [ ] QTreeWidgetItem: `child_count`, `get_child`, `get_parent`, `remove_child`, `set_expanded`/`is_expanded`
-- [ ] QTreeWidget signals: `item_double_clicked`, `item_expanded`, `item_collapsed`, `current_item_changed`
-- [ ] QListWidget: `insert_item`, `sort_items`, `set_selection_mode`
-- [ ] QListWidget signals: `item_clicked`, `item_double_clicked`, `item_selection_changed`
-- [ ] QComboBox: `insert_item`, `set_item_text`, `get_item_text`, `find_text`, `set_current_text`
-- [ ] QComboBox signals: `current_text_changed`
-- [ ] QProgressBar: `reset`, `set_orientation`
-- [ ] QProgressBar signals: `value_changed`
-- [ ] QSpinBox/QDoubleSpinBox: `set_read_only`, `is_read_only`, `set_wrapping`
-- [ ] QSlider: `set_tick_position`, `set_tick_interval`, `set_single_step`, `set_page_step`
-- [ ] QSlider signals: `slider_pressed`, `slider_released`
-- [ ] QMenu: `popup`, `clear`
-- [ ] QMenuBar: `clear`
-- [ ] QDockWidget: `set_allowed_areas`, `set_features`, `is_floating`, `set_floating`, `toggle_view_action`
-- [ ] QDockWidget signals: `visibility_changed`
-- [ ] QToolBar: `set_movable`/`is_movable`, `set_icon_size`, `set_tool_button_style`
-- [ ] QDialog signals: `accepted`, `rejected`, `finished`
-- [ ] QStatusBar: `add_widget`, `remove_widget`
-- [ ] QScrollArea: `get_widget`, `set_horizontal_scroll_bar_policy`, `set_vertical_scroll_bar_policy`
-- [ ] QSplitter: `set_sizes`, `get_sizes`, `set_stretch_factor`, `get_count`, `set_collapsible`
-- [ ] QStackedWidget: `remove_widget`, `get_widget`, `index_of`, `set_current_widget`
-- [ ] QMessageBox: version with custom `Standard_Buttons` bitmask
-- [ ] QFileDialog: `get_open_file_names` (multi-select)
-- [ ] QTimer: `get_interval`, `get_remaining_time`, `single_shot` (static convenience)
-- [ ] Signal disconnection mechanism
+- [x] QTabWidget: `remove_tab`, `insert_tab`, `set_tab_enabled`/`is_tab_enabled`, `set_tabs_closable`, `set_movable`, `get_widget`, `index_of`
+- [x] QTabWidget signals: `tab_close_requested`
+- [x] QTableWidget: `insert_row`, `insert_column`, `remove_row`, `remove_column`, `set_selection_mode`, `set_selection_behaviour`, `set_alternating_row_colours`, `set_sorting_enabled`, `set_column_width`, `set_row_height`, `resize_columns_to_contents`, `resize_rows_to_contents`
+- [x] QTableWidget signals: `cell_double_clicked`, `cell_changed`, `item_selection_changed`
+- [x] QTreeWidget: `remove_top_level_item`, `set_current_item`, `expand_all`, `collapse_all`, `expand_item`, `collapse_item`, `set_selection_mode`, `set_sorting_enabled`
+- [x] QTreeWidgetItem: `child_count`, `get_child`, `get_parent`, `remove_child`, `set_expanded`/`is_expanded`
+- [x] QTreeWidget signals: `item_double_clicked`, `item_expanded`, `item_collapsed`, `current_item_changed`
+- [x] QListWidget: `insert_item`, `sort_items`, `set_selection_mode`
+- [x] QListWidget signals: `item_clicked`, `item_double_clicked`, `item_selection_changed`
+- [x] QComboBox: `insert_item`, `set_item_text`, `get_item_text`, `find_text`, `set_current_text`
+- [x] QComboBox signals: `current_text_changed`
+- [x] QProgressBar: `reset`, `set_orientation`
+- [x] QProgressBar signals: `value_changed`
+- [x] QSpinBox/QDoubleSpinBox: `set_read_only`, `is_read_only`, `set_wrapping`
+- [x] QSlider: `set_tick_position`, `set_tick_interval`, `set_single_step`, `set_page_step`
+- [x] QSlider signals: `slider_pressed`, `slider_released`
+- [x] QMenu: `popup`, `clear`
+- [x] QMenuBar: `clear`
+- [x] QDockWidget: `set_allowed_areas`, `set_features`, `is_floating`, `set_floating`, `toggle_view_action`
+- [x] QDockWidget signals: `visibility_changed`
+- [x] QToolBar: `set_movable`/`is_movable`, `set_icon_size`, `set_tool_button_style`
+- [x] QDialog signals: `accepted`, `rejected`, `finished`
+- [x] QStatusBar: `add_widget`, `remove_widget`
+- [x] QScrollArea: `get_widget`, `set_horizontal_scroll_bar_policy`, `set_vertical_scroll_bar_policy`
+- [x] QSplitter: `set_sizes`, `get_sizes`, `set_stretch_factor`, `get_count`, `set_collapsible`
+- [x] QStackedWidget: `remove_widget`, `get_widget`, `index_of`, `set_current_widget`
+- [x] QMessageBox: version with custom `Standard_Buttons` bitmask
+- [x] QFileDialog: `get_open_file_names` (multi-select)
+- [x] QTimer: `get_interval`, `get_remaining_time`, `single_shot` (static convenience)
+- [x] Signal disconnection mechanism
 
 ## 4. New Widget Types
 - [ ] QIcon / QPixmap (load from file, set on buttons/actions/windows/tabs/labels)
