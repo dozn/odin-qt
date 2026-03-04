@@ -106,6 +106,10 @@ Progress_Dialog :: distinct rawptr
 Text_Browser :: distinct rawptr
 Header_View :: distinct rawptr
 System_Tray_Icon :: distinct rawptr
+Settings :: distinct rawptr
+Font_Metrics :: distinct rawptr
+Completer :: distinct rawptr
+Validator :: distinct rawptr
 Connection_Id :: distinct c.int
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
@@ -334,6 +338,41 @@ System_Tray_Activation_Reason :: enum c.int {
 	Double_Click = 2,
 	Trigger = 3,
 	Middle_Click = 4,
+}
+
+Standard_Location :: enum c.int {
+	Desktop = 0,
+	Documents = 1,
+	Fonts = 2,
+	Applications = 3,
+	Music = 4,
+	Movies = 5,
+	Pictures = 6,
+	Temp = 7,
+	Home = 8,
+	App_Local_Data = 9,
+	Cache = 10,
+	Generic_Data = 11,
+	Runtime = 12,
+	Config = 13,
+	Download = 14,
+	Generic_Cache = 15,
+	Generic_Config = 16,
+	App_Data = 17,
+	App_Config = 18,
+	Public_Share = 19,
+	Templates = 20,
+}
+
+Case_Sensitivity :: enum c.int {
+	Insensitive = 0,
+	Sensitive = 1,
+}
+
+Match_Flag :: enum c.int {
+	Contains = 1,
+	Starts_With = 2,
+	Ends_With = 3,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -983,6 +1022,83 @@ foreign qt_lib {
 	@(require_results) input_dialog_get_int :: proc(parent: Widget, title: cstring, label: cstring, value: c.int, min_val: c.int, max_val: c.int, step: c.int, is_ok: ^c.int) -> c.int ---
 	@(require_results) input_dialog_get_double :: proc(parent: Widget, title: cstring, label: cstring, value: c.double, min_val: c.double, max_val: c.double, decimals: c.int, is_ok: ^c.int) -> c.double ---
 	@(require_results) input_dialog_get_item :: proc(parent: Widget, title: cstring, label: cstring, items: [^]cstring, items_count: c.int, current: c.int, is_editable: c.int, is_ok: ^c.int) -> cstring ---
+
+	/* QSettings */
+
+	@(require_results) settings_create :: proc(parent: Widget) -> Settings ---
+	settings_destroy :: proc(settings: Settings) ---
+	settings_set_value_int :: proc(settings: Settings, key: cstring, value: c.int) ---
+	@(require_results) settings_get_value_int :: proc(settings: Settings, key: cstring, default_value: c.int) -> c.int ---
+	settings_set_value_string :: proc(settings: Settings, key: cstring, value: cstring) ---
+	@(require_results) settings_get_value_string :: proc(settings: Settings, key: cstring, default_value: cstring) -> cstring ---
+	settings_set_value_bool :: proc(settings: Settings, key: cstring, value: c.int) ---
+	@(require_results) settings_get_value_bool :: proc(settings: Settings, key: cstring, default_value: c.int) -> c.int ---
+	settings_set_value_double :: proc(settings: Settings, key: cstring, value: c.double) ---
+	@(require_results) settings_get_value_double :: proc(settings: Settings, key: cstring, default_value: c.double) -> c.double ---
+	settings_remove :: proc(settings: Settings, key: cstring) ---
+	@(require_results) settings_contains :: proc(settings: Settings, key: cstring) -> c.int ---
+	settings_sync :: proc(settings: Settings) ---
+	settings_begin_group :: proc(settings: Settings, prefix: cstring) ---
+	settings_end_group :: proc(settings: Settings) ---
+
+	/* QDesktopServices */
+
+	@(require_results) desktop_services_open_url :: proc(url: cstring) -> c.int ---
+
+	/* QStandardPaths */
+
+	@(require_results) standard_paths_writable_location :: proc(type: Standard_Location) -> cstring ---
+	@(require_results) standard_paths_display_name :: proc(type: Standard_Location) -> cstring ---
+
+	/* QScreen */
+
+	screen_get_geometry :: proc(x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+	@(require_results) screen_get_device_pixel_ratio :: proc() -> c.double ---
+	@(require_results) screen_get_logical_dpi_x :: proc() -> c.double ---
+	@(require_results) screen_get_logical_dpi_y :: proc() -> c.double ---
+	@(require_results) screen_get_name :: proc() -> cstring ---
+
+	/* QFontMetrics */
+
+	@(require_results) font_metrics_create :: proc(family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) -> Font_Metrics ---
+	font_metrics_destroy :: proc(font_metrics: Font_Metrics) ---
+	@(require_results) font_metrics_get_horizontal_advance :: proc(font_metrics: Font_Metrics, text: cstring) -> c.int ---
+	@(require_results) font_metrics_get_height :: proc(font_metrics: Font_Metrics) -> c.int ---
+	@(require_results) font_metrics_get_ascent :: proc(font_metrics: Font_Metrics) -> c.int ---
+	@(require_results) font_metrics_get_descent :: proc(font_metrics: Font_Metrics) -> c.int ---
+	@(require_results) font_metrics_get_leading :: proc(font_metrics: Font_Metrics) -> c.int ---
+	@(require_results) font_metrics_get_average_char_width :: proc(font_metrics: Font_Metrics) -> c.int ---
+	font_metrics_get_bounding_rect :: proc(font_metrics: Font_Metrics, text: cstring, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+
+	/* QApplication extras */
+
+	application_set_style :: proc(application: Application, style_name: cstring) ---
+	application_set_style_sheet :: proc(application: Application, style_sheet: cstring) ---
+	application_set_font :: proc(application: Application, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) ---
+	application_set_window_icon :: proc(application: Application, icon: Icon) ---
+	application_set_application_version :: proc(application: Application, version: cstring) ---
+
+	/* QCompleter */
+
+	@(require_results) completer_create :: proc(items: [^]cstring, count: c.int, parent: Widget) -> Completer ---
+	completer_destroy :: proc(completer: Completer) ---
+	completer_set_case_sensitivity :: proc(completer: Completer, case_sensitivity: Case_Sensitivity) ---
+	completer_set_filter_mode :: proc(completer: Completer, filter_mode: Match_Flag) ---
+	line_edit_set_completer :: proc(line_edit: Line_Edit, completer: Completer) ---
+	combo_box_set_completer :: proc(combo_box: Combo_Box, completer: Completer) ---
+
+	/* QValidator */
+
+	@(require_results) int_validator_create :: proc(minimum: c.int, maximum: c.int, parent: Widget) -> Validator ---
+	@(require_results) double_validator_create :: proc(minimum: c.double, maximum: c.double, decimals: c.int, parent: Widget) -> Validator ---
+	@(require_results) regex_validator_create :: proc(pattern: cstring, parent: Widget) -> Validator ---
+	validator_destroy :: proc(validator: Validator) ---
+	line_edit_set_validator :: proc(line_edit: Line_Edit, validator: Validator) ---
+
+	/* QToolTip */
+
+	tooltip_show_text :: proc(global_x: c.int, global_y: c.int, text: cstring, widget: Widget) ---
+	tooltip_hide_text :: proc() ---
 
 	/* Signal connections (all return Connection_Id for disconnect) */
 

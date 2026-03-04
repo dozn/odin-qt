@@ -724,6 +724,83 @@ int qt_progress_dialog_connect_canceled(void *dialog, qt_callback_t callback, vo
 int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t callback, void *user_data);
 int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data);
 
+/* ── QSettings ──────────────────────────────────────────────────────── */
+
+void *qt_settings_create(void *parent);
+void  qt_settings_destroy(void *settings);
+void  qt_settings_set_value_int(void *settings, const char *key, int value);
+int   qt_settings_get_value_int(void *settings, const char *key, int default_value);
+void  qt_settings_set_value_string(void *settings, const char *key, const char *value);
+char *qt_settings_get_value_string(void *settings, const char *key, const char *default_value);
+void  qt_settings_set_value_bool(void *settings, const char *key, int value);
+int   qt_settings_get_value_bool(void *settings, const char *key, int default_value);
+void  qt_settings_set_value_double(void *settings, const char *key, double value);
+double qt_settings_get_value_double(void *settings, const char *key, double default_value);
+void  qt_settings_remove(void *settings, const char *key);
+int   qt_settings_contains(void *settings, const char *key);
+void  qt_settings_sync(void *settings);
+void  qt_settings_begin_group(void *settings, const char *prefix);
+void  qt_settings_end_group(void *settings);
+
+/* ── QDesktopServices ───────────────────────────────────────────────── */
+
+int qt_desktop_services_open_url(const char *url);
+
+/* ── QStandardPaths ─────────────────────────────────────────────────── */
+
+char *qt_standard_paths_writable_location(int type);
+char *qt_standard_paths_display_name(int type);
+
+/* ── QScreen ────────────────────────────────────────────────────────── */
+
+void   qt_screen_get_geometry(int *x, int *y, int *width, int *height);
+double qt_screen_get_device_pixel_ratio(void);
+double qt_screen_get_logical_dpi_x(void);
+double qt_screen_get_logical_dpi_y(void);
+char  *qt_screen_get_name(void);
+
+/* ── QFontMetrics ───────────────────────────────────────────────────── */
+
+void *qt_font_metrics_create(const char *family, int point_size, int weight, int is_italic);
+void  qt_font_metrics_destroy(void *metrics);
+int   qt_font_metrics_get_horizontal_advance(void *metrics, const char *text);
+int   qt_font_metrics_get_height(void *metrics);
+int   qt_font_metrics_get_ascent(void *metrics);
+int   qt_font_metrics_get_descent(void *metrics);
+int   qt_font_metrics_get_leading(void *metrics);
+int   qt_font_metrics_get_average_char_width(void *metrics);
+void  qt_font_metrics_get_bounding_rect(void *metrics, const char *text, int *x, int *y, int *width, int *height);
+
+/* ── QApplication extras ────────────────────────────────────────────── */
+
+void qt_application_set_style(void *app, const char *style_name);
+void qt_application_set_style_sheet(void *app, const char *style_sheet);
+void qt_application_set_font(void *app, const char *family, int point_size, int weight, int is_italic);
+void qt_application_set_window_icon(void *app, void *icon);
+void qt_application_set_application_version(void *app, const char *version);
+
+/* ── QCompleter ─────────────────────────────────────────────────────── */
+
+void *qt_completer_create(const char **items, int count, void *parent);
+void  qt_completer_destroy(void *completer);
+void  qt_completer_set_case_sensitivity(void *completer, int case_sensitivity);
+void  qt_completer_set_filter_mode(void *completer, int filter_mode);
+void  qt_line_edit_set_completer(void *line_edit, void *completer);
+void  qt_combo_box_set_completer(void *combo_box, void *completer);
+
+/* ── QValidator ─────────────────────────────────────────────────────── */
+
+void *qt_int_validator_create(int minimum, int maximum, void *parent);
+void *qt_double_validator_create(double minimum, double maximum, int decimals, void *parent);
+void *qt_regex_validator_create(const char *pattern, void *parent);
+void  qt_validator_destroy(void *validator);
+void  qt_line_edit_set_validator(void *line_edit, void *validator);
+
+/* ── QToolTip ───────────────────────────────────────────────────────── */
+
+void qt_tooltip_show_text(int global_x, int global_y, const char *text, void *widget);
+void qt_tooltip_hide_text(void);
+
 /* ── Signal disconnection ───────────────────────────────────────────── */
 
 void qt_disconnect(int connection_id);

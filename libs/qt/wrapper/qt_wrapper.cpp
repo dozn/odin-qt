@@ -68,6 +68,20 @@
 #include <QSystemTrayIcon>
 #include <QUrl>
 #include <QAbstractButton>
+#include <QSettings>
+#include <QDesktopServices>
+#include <QStandardPaths>
+#include <QScreen>
+#include <QFontMetrics>
+#include <QCompleter>
+#include <QStringListModel>
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include <QRegularExpressionValidator>
+#include <QRegularExpression>
+#include <QToolTip>
+#include <QStyle>
+#include <QStyleFactory>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -2401,6 +2415,292 @@ char *qt_input_dialog_get_item(void *parent, const char *title, const char *labe
     );
     *is_ok = ok ? 1 : 0;
     return ok ? qstring_to_heap_utf8(result) : nullptr;
+}
+
+/* ── QSettings ──────────────────────────────────────────────────────── */
+
+void *qt_settings_create(void *parent) {
+    (void)parent;
+    return static_cast<void *>(new QSettings());
+}
+
+void qt_settings_destroy(void *settings) {
+    delete static_cast<QSettings *>(settings);
+}
+
+void qt_settings_set_value_int(void *settings, const char *key, int value) {
+    static_cast<QSettings *>(settings)->setValue(QString::fromUtf8(key), value);
+}
+
+int qt_settings_get_value_int(void *settings, const char *key, int default_value) {
+    return static_cast<QSettings *>(settings)->value(QString::fromUtf8(key), default_value).toInt();
+}
+
+void qt_settings_set_value_string(void *settings, const char *key, const char *value) {
+    static_cast<QSettings *>(settings)->setValue(QString::fromUtf8(key), QString::fromUtf8(value));
+}
+
+char *qt_settings_get_value_string(void *settings, const char *key, const char *default_value) {
+    QString result = static_cast<QSettings *>(settings)->value(
+        QString::fromUtf8(key), QString::fromUtf8(default_value)
+    ).toString();
+    return qstring_to_heap_utf8(result);
+}
+
+void qt_settings_set_value_bool(void *settings, const char *key, int value) {
+    static_cast<QSettings *>(settings)->setValue(QString::fromUtf8(key), value != 0);
+}
+
+int qt_settings_get_value_bool(void *settings, const char *key, int default_value) {
+    return static_cast<QSettings *>(settings)->value(
+        QString::fromUtf8(key), default_value != 0
+    ).toBool() ? 1 : 0;
+}
+
+void qt_settings_set_value_double(void *settings, const char *key, double value) {
+    static_cast<QSettings *>(settings)->setValue(QString::fromUtf8(key), value);
+}
+
+double qt_settings_get_value_double(void *settings, const char *key, double default_value) {
+    return static_cast<QSettings *>(settings)->value(QString::fromUtf8(key), default_value).toDouble();
+}
+
+void qt_settings_remove(void *settings, const char *key) {
+    static_cast<QSettings *>(settings)->remove(QString::fromUtf8(key));
+}
+
+int qt_settings_contains(void *settings, const char *key) {
+    return static_cast<QSettings *>(settings)->contains(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+void qt_settings_sync(void *settings) {
+    static_cast<QSettings *>(settings)->sync();
+}
+
+void qt_settings_begin_group(void *settings, const char *prefix) {
+    static_cast<QSettings *>(settings)->beginGroup(QString::fromUtf8(prefix));
+}
+
+void qt_settings_end_group(void *settings) {
+    static_cast<QSettings *>(settings)->endGroup();
+}
+
+/* ── QDesktopServices ───────────────────────────────────────────────── */
+
+int qt_desktop_services_open_url(const char *url) {
+    return QDesktopServices::openUrl(QUrl(QString::fromUtf8(url))) ? 1 : 0;
+}
+
+/* ── QStandardPaths ─────────────────────────────────────────────────── */
+
+char *qt_standard_paths_writable_location(int type) {
+    QString path = QStandardPaths::writableLocation(
+        static_cast<QStandardPaths::StandardLocation>(type)
+    );
+    return qstring_to_heap_utf8(path);
+}
+
+char *qt_standard_paths_display_name(int type) {
+    QString name = QStandardPaths::displayName(
+        static_cast<QStandardPaths::StandardLocation>(type)
+    );
+    return qstring_to_heap_utf8(name);
+}
+
+/* ── QScreen ────────────────────────────────────────────────────────── */
+
+void qt_screen_get_geometry(int *x, int *y, int *width, int *height) {
+    QScreen *screen = QApplication::primaryScreen();
+    if (!screen) {
+        *x = 0; *y = 0; *width = 0; *height = 0;
+        return;
+    }
+    QRect geom = screen->geometry();
+    *x = geom.x();
+    *y = geom.y();
+    *width = geom.width();
+    *height = geom.height();
+}
+
+double qt_screen_get_device_pixel_ratio(void) {
+    QScreen *screen = QApplication::primaryScreen();
+    if (!screen) return 1.0;
+    return screen->devicePixelRatio();
+}
+
+double qt_screen_get_logical_dpi_x(void) {
+    QScreen *screen = QApplication::primaryScreen();
+    if (!screen) return 96.0;
+    return screen->logicalDotsPerInchX();
+}
+
+double qt_screen_get_logical_dpi_y(void) {
+    QScreen *screen = QApplication::primaryScreen();
+    if (!screen) return 96.0;
+    return screen->logicalDotsPerInchY();
+}
+
+char *qt_screen_get_name(void) {
+    QScreen *screen = QApplication::primaryScreen();
+    if (!screen) return nullptr;
+    return qstring_to_heap_utf8(screen->name());
+}
+
+/* ── QFontMetrics ───────────────────────────────────────────────────── */
+
+void *qt_font_metrics_create(const char *family, int point_size, int weight, int is_italic) {
+    QFont font(QString::fromUtf8(family), point_size, weight, is_italic != 0);
+    return static_cast<void *>(new QFontMetrics(font));
+}
+
+void qt_font_metrics_destroy(void *metrics) {
+    delete static_cast<QFontMetrics *>(metrics);
+}
+
+int qt_font_metrics_get_horizontal_advance(void *metrics, const char *text) {
+    return static_cast<QFontMetrics *>(metrics)->horizontalAdvance(QString::fromUtf8(text));
+}
+
+int qt_font_metrics_get_height(void *metrics) {
+    return static_cast<QFontMetrics *>(metrics)->height();
+}
+
+int qt_font_metrics_get_ascent(void *metrics) {
+    return static_cast<QFontMetrics *>(metrics)->ascent();
+}
+
+int qt_font_metrics_get_descent(void *metrics) {
+    return static_cast<QFontMetrics *>(metrics)->descent();
+}
+
+int qt_font_metrics_get_leading(void *metrics) {
+    return static_cast<QFontMetrics *>(metrics)->leading();
+}
+
+int qt_font_metrics_get_average_char_width(void *metrics) {
+    return static_cast<QFontMetrics *>(metrics)->averageCharWidth();
+}
+
+void qt_font_metrics_get_bounding_rect(void *metrics, const char *text,
+                                       int *x, int *y, int *width, int *height) {
+    QRect rect = static_cast<QFontMetrics *>(metrics)->boundingRect(QString::fromUtf8(text));
+    *x = rect.x();
+    *y = rect.y();
+    *width = rect.width();
+    *height = rect.height();
+}
+
+/* ── QApplication extras ────────────────────────────────────────────── */
+
+void qt_application_set_style(void *app, const char *style_name) {
+    (void)app;
+    QApplication::setStyle(QStyleFactory::create(QString::fromUtf8(style_name)));
+}
+
+void qt_application_set_style_sheet(void *app, const char *style_sheet) {
+    static_cast<QApplication *>(app)->setStyleSheet(QString::fromUtf8(style_sheet));
+}
+
+void qt_application_set_font(void *app, const char *family, int point_size, int weight, int is_italic) {
+    (void)app;
+    QFont font(QString::fromUtf8(family), point_size, weight, is_italic != 0);
+    QApplication::setFont(font);
+}
+
+void qt_application_set_window_icon(void *app, void *icon) {
+    (void)app;
+    QApplication::setWindowIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_application_set_application_version(void *app, const char *version) {
+    (void)app;
+    QApplication::setApplicationVersion(QString::fromUtf8(version));
+}
+
+/* ── QCompleter ─────────────────────────────────────────────────────── */
+
+void *qt_completer_create(const char **items, int count, void *parent) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(items[i]));
+    }
+    auto *completer = new QCompleter(sl, static_cast<QObject *>(parent));
+    return static_cast<void *>(completer);
+}
+
+void qt_completer_destroy(void *completer) {
+    delete static_cast<QCompleter *>(completer);
+}
+
+void qt_completer_set_case_sensitivity(void *completer, int case_sensitivity) {
+    static_cast<QCompleter *>(completer)->setCaseSensitivity(
+        static_cast<Qt::CaseSensitivity>(case_sensitivity)
+    );
+}
+
+void qt_completer_set_filter_mode(void *completer, int filter_mode) {
+    static_cast<QCompleter *>(completer)->setFilterMode(
+        static_cast<Qt::MatchFlags>(filter_mode)
+    );
+}
+
+void qt_line_edit_set_completer(void *line_edit, void *completer) {
+    static_cast<QLineEdit *>(line_edit)->setCompleter(
+        static_cast<QCompleter *>(completer)
+    );
+}
+
+void qt_combo_box_set_completer(void *combo_box, void *completer) {
+    static_cast<QComboBox *>(combo_box)->setCompleter(
+        static_cast<QCompleter *>(completer)
+    );
+}
+
+/* ── QValidator ─────────────────────────────────────────────────────── */
+
+void *qt_int_validator_create(int minimum, int maximum, void *parent) {
+    return static_cast<void *>(
+        new QIntValidator(minimum, maximum, static_cast<QObject *>(parent))
+    );
+}
+
+void *qt_double_validator_create(double minimum, double maximum, int decimals, void *parent) {
+    return static_cast<void *>(
+        new QDoubleValidator(minimum, maximum, decimals, static_cast<QObject *>(parent))
+    );
+}
+
+void *qt_regex_validator_create(const char *pattern, void *parent) {
+    return static_cast<void *>(
+        new QRegularExpressionValidator(
+            QRegularExpression(QString::fromUtf8(pattern)),
+            static_cast<QObject *>(parent)
+        )
+    );
+}
+
+void qt_validator_destroy(void *validator) {
+    delete static_cast<QValidator *>(validator);
+}
+
+void qt_line_edit_set_validator(void *line_edit, void *validator) {
+    static_cast<QLineEdit *>(line_edit)->setValidator(
+        static_cast<const QValidator *>(validator)
+    );
+}
+
+/* ── QToolTip ───────────────────────────────────────────────────────── */
+
+void qt_tooltip_show_text(int global_x, int global_y, const char *text, void *widget) {
+    QToolTip::showText(
+        QPoint(global_x, global_y),
+        QString::fromUtf8(text),
+        static_cast<QWidget *>(widget)
+    );
+}
+
+void qt_tooltip_hide_text(void) {
+    QToolTip::hideText();
 }
 
 /* ── Signal connections ──────────────────────────────────────────────── */

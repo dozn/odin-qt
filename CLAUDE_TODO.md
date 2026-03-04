@@ -68,15 +68,15 @@
 - [x] QSystemTrayIcon (tray icon with context menu)
 
 ## 5. Application & Utility Features
-- [ ] QSettings (persistent app settings)
-- [ ] QDesktopServices::openUrl() (open links in browser)
-- [ ] QStandardPaths (platform-specific directories)
-- [ ] QScreen (geometry, DPI)
-- [ ] QFontMetrics (text measurement)
-- [ ] QApplication: `set_style`, `set_style_sheet`, `set_font`, `set_window_icon`, `set_application_version`
-- [ ] QCompleter (auto-completion for line edits/combo boxes)
-- [ ] QValidator (QIntValidator, QDoubleValidator, QRegularExpressionValidator)
-- [ ] QToolTip::showText() (tooltip at arbitrary position)
+- [x] QSettings (persistent app settings)
+- [x] QDesktopServices::openUrl() (open links in browser)
+- [x] QStandardPaths (platform-specific directories)
+- [x] QScreen (geometry, DPI)
+- [x] QFontMetrics (text measurement)
+- [x] QApplication: `set_style`, `set_style_sheet`, `set_font`, `set_window_icon`, `set_application_version`
+- [x] QCompleter (auto-completion for line edits/combo boxes)
+- [x] QValidator (QIntValidator, QDoubleValidator, QRegularExpressionValidator)
+- [x] QToolTip::showText() (tooltip at arbitrary position)
 
 ## 6. Event System
 - [ ] Event filters (installEventFilter/removeEventFilter)
