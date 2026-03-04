@@ -1058,6 +1058,43 @@ build_timer_utility_tab :: proc(application: qt.Application) -> qt.Widget {
 	qt.layout_add_widget(clip_layout, auto_cast paste_btn)
 	qt.layout_add_widget(layout, auto_cast clip_group)
 
+	// Dynamic properties
+	props_group := qt.group_box_create(nil, "Dynamic Properties")
+	props_layout := qt.vbox_layout_create(auto_cast props_group)
+
+	props_description := qt.label_create(nil, "Attach arbitrary key-value data to any QObject at runtime.")
+	qt.layout_add_widget(props_layout, auto_cast props_description)
+
+	props_target := qt.label_create(nil, "(no properties set)")
+	qt.widget_set_style_sheet(auto_cast props_target, "QLabel { padding: 4px; background: #f0f0f0; border: 1px solid #ccc; }")
+	qt.layout_add_widget(props_layout, auto_cast props_target)
+
+	props_btn_row := qt.widget_create(nil)
+	props_btn_layout := qt.hbox_layout_create(props_btn_row)
+
+	set_prop_btn := qt.push_button_create(nil, "Set Property")
+	qt.push_button_connect_clicked(set_prop_btn, proc"c"(user_data: rawptr) {
+		widget: qt.Widget = auto_cast user_data
+		qt.object_set_property_string(widget, "demo_tag", "Hello from Odin!")
+		qt.object_set_property_int(widget, "demo_counter", 42)
+		statusbar_show("Properties set: demo_tag=Hello from Odin!, demo_counter=42")
+	}, auto_cast props_target)
+	qt.layout_add_widget(props_btn_layout, auto_cast set_prop_btn)
+
+	get_prop_btn := qt.push_button_create(nil, "Get Property")
+	qt.push_button_connect_clicked(get_prop_btn, proc"c"(user_data: rawptr) {
+		widget: qt.Widget = auto_cast user_data
+		tag := qt.object_get_property_string(widget, "demo_tag", "(not set)")
+		if tag != nil {
+			statusbar_show(tag, 5000)
+			qt.free_string(cast(cstring)tag)
+		}
+	}, auto_cast props_target)
+	qt.layout_add_widget(props_btn_layout, auto_cast get_prop_btn)
+
+	qt.layout_add_widget(props_layout, props_btn_row)
+	qt.layout_add_widget(layout, auto_cast props_group)
+
 	// Application utility
 	app_group := qt.group_box_create(nil, "Application")
 	app_layout := qt.hbox_layout_create(auto_cast app_group)
@@ -1428,40 +1465,6 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	qt.splitter_add_widget(splitter, auto_cast target_group)
 
 	qt.layout_add_widget(layout, auto_cast splitter)
-
-	// Dynamic properties demo
-	props_group := qt.group_box_create(nil, "Dynamic Properties & deleteLater()")
-	props_layout := qt.vbox_layout_create(auto_cast props_group)
-
-	props_label := qt.label_create(nil, "Dynamic properties let you attach arbitrary key-value data to any QObject at runtime.")
-	qt.label_set_word_wrap(props_label, 1)
-	qt.layout_add_widget(props_layout, auto_cast props_label)
-
-	props_btn_row := qt.widget_create(nil)
-	props_btn_layout := qt.hbox_layout_create(props_btn_row)
-
-	set_prop_btn := qt.push_button_create(nil, "Set Property")
-	qt.push_button_connect_clicked(set_prop_btn, proc"c"(user_data: rawptr) {
-		widget: qt.Widget = auto_cast user_data
-		qt.object_set_property_string(widget, "demo_tag", "Hello from Odin!")
-		qt.object_set_property_int(widget, "demo_counter", 42)
-		statusbar_show("Properties set: demo_tag, demo_counter")
-	}, auto_cast drop_label)
-	qt.layout_add_widget(props_btn_layout, auto_cast set_prop_btn)
-
-	get_prop_btn := qt.push_button_create(nil, "Get Property")
-	qt.push_button_connect_clicked(get_prop_btn, proc"c"(user_data: rawptr) {
-		widget: qt.Widget = auto_cast user_data
-		tag := qt.object_get_property_string(widget, "demo_tag", "(not set)")
-		if tag != nil {
-			statusbar_show(tag, 5000)
-			qt.free_string(cast(cstring)tag)
-		}
-	}, auto_cast drop_label)
-	qt.layout_add_widget(props_btn_layout, auto_cast get_prop_btn)
-
-	qt.layout_add_widget(props_layout, props_btn_row)
-	qt.layout_add_widget(layout, auto_cast props_group)
 
 	qt.box_layout_add_stretch(layout, 1)
 	return page
