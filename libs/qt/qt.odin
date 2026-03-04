@@ -130,6 +130,29 @@ Property_Animation :: distinct rawptr
 Parallel_Animation_Group :: distinct rawptr
 Sequential_Animation_Group :: distinct rawptr
 Drag_Drop_Filter :: distinct rawptr
+Tab_Bar :: distinct rawptr
+Tool_Box :: distinct rawptr
+Scroll_Bar :: distinct rawptr
+LCD_Number :: distinct rawptr
+Command_Link_Button :: distinct rawptr
+Key_Sequence_Edit :: distinct rawptr
+Font_Combo_Box :: distinct rawptr
+Splash_Screen :: distinct rawptr
+Stacked_Layout :: distinct rawptr
+Widget_Action :: distinct rawptr
+Action_Group :: distinct rawptr
+Error_Message :: distinct rawptr
+Mdi_Area :: distinct rawptr
+Mdi_Sub_Window :: distinct rawptr
+Wizard :: distinct rawptr
+Wizard_Page :: distinct rawptr
+Column_View :: distinct rawptr
+Undo_View :: distinct rawptr
+Undo_Stack :: distinct rawptr
+Undo_Group :: distinct rawptr
+Rubber_Band :: distinct rawptr
+Focus_Frame :: distinct rawptr
+Size_Grip :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -571,6 +594,92 @@ Key :: enum c.int {
 	Backslash = 0x5c,
 	Bracket_Right = 0x5d,
 	Grave_Accent = 0x60,
+}
+
+Tab_Bar_Shape :: enum c.int {
+	Rounded_North = 0,
+	Rounded_South = 1,
+	Rounded_West = 2,
+	Rounded_East = 3,
+	Triangular_North = 4,
+	Triangular_South = 5,
+	Triangular_West = 6,
+	Triangular_East = 7,
+}
+
+LCD_Number_Mode :: enum c.int {
+	Hex = 0,
+	Dec = 1,
+	Oct = 2,
+	Bin = 3,
+}
+
+LCD_Number_Segment_Style :: enum c.int {
+	Outline = 0,
+	Filled = 1,
+	Flat = 2,
+}
+
+Font_Combo_Box_Font_Filter :: enum c.int {
+	All = 0,
+	Scalable = 0x1,
+	Non_Scalable = 0x2,
+	Monospaced = 0x4,
+	Proportional = 0x8,
+}
+
+Stacked_Layout_Stacking_Mode :: enum c.int {
+	Stack_One = 0,
+	Stack_All = 1,
+}
+
+Mdi_Area_View_Mode :: enum c.int {
+	Sub_Window = 0,
+	Tabbed = 1,
+}
+
+Wizard_Style :: enum c.int {
+	Classic = 0,
+	Modern = 1,
+	Mac = 2,
+	Aero = 3,
+}
+
+Wizard_Option :: enum c.int {
+	Independent_Pages = 0x00000001,
+	Ignore_Sub_Titles = 0x00000002,
+	Extended_Watermark_Pixmap = 0x00000004,
+	No_Default_Button = 0x00000008,
+	No_Back_Button_On_Start_Page = 0x00000010,
+	No_Back_Button_On_Last_Page = 0x00000020,
+	Disabled_Back_Button_On_Last_Page = 0x00000040,
+	Have_Next_Button_On_Last_Page = 0x00000080,
+	Have_Finish_Button_On_Early_Pages = 0x00000100,
+	No_Cancel_Button = 0x00000200,
+	Cancel_Button_On_Left = 0x00000400,
+	Have_Help_Button = 0x00000800,
+	Help_Button_On_Right = 0x00001000,
+	Have_Custom_Button_1 = 0x00002000,
+	Have_Custom_Button_2 = 0x00004000,
+	Have_Custom_Button_3 = 0x00008000,
+	No_Cancel_Button_On_Last_Page = 0x00010000,
+}
+
+Wizard_Button :: enum c.int {
+	Back = 0,
+	Next = 1,
+	Commit = 2,
+	Finish = 3,
+	Cancel = 4,
+	Help = 5,
+	Custom_1 = 6,
+	Custom_2 = 7,
+	Custom_3 = 8,
+}
+
+Rubber_Band_Shape :: enum c.int {
+	Line = 0,
+	Rectangle = 1,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -1584,4 +1693,237 @@ foreign qt_lib {
 	sequential_animation_group_start :: proc(group: Sequential_Animation_Group) ---
 	sequential_animation_group_stop :: proc(group: Sequential_Animation_Group) ---
 	sequential_animation_group_connect_finished :: proc(group: Sequential_Animation_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QTabBar */
+
+	@(require_results) tab_bar_create :: proc(parent: Widget) -> Tab_Bar ---
+	@(require_results) tab_bar_add_tab :: proc(tab_bar: Tab_Bar, text: cstring) -> c.int ---
+	@(require_results) tab_bar_insert_tab :: proc(tab_bar: Tab_Bar, index: c.int, text: cstring) -> c.int ---
+	tab_bar_remove_tab :: proc(tab_bar: Tab_Bar, index: c.int) ---
+	@(require_results) tab_bar_get_current_index :: proc(tab_bar: Tab_Bar) -> c.int ---
+	tab_bar_set_current_index :: proc(tab_bar: Tab_Bar, index: c.int) ---
+	@(require_results) tab_bar_get_count :: proc(tab_bar: Tab_Bar) -> c.int ---
+	tab_bar_set_tab_text :: proc(tab_bar: Tab_Bar, index: c.int, text: cstring) ---
+	@(require_results) tab_bar_get_tab_text :: proc(tab_bar: Tab_Bar, index: c.int) -> cstring ---
+	tab_bar_set_tab_enabled :: proc(tab_bar: Tab_Bar, index: c.int, is_enabled: c.int) ---
+	@(require_results) tab_bar_is_tab_enabled :: proc(tab_bar: Tab_Bar, index: c.int) -> c.int ---
+	tab_bar_set_tab_visible :: proc(tab_bar: Tab_Bar, index: c.int, is_visible: c.int) ---
+	@(require_results) tab_bar_is_tab_visible :: proc(tab_bar: Tab_Bar, index: c.int) -> c.int ---
+	tab_bar_set_tabs_closable :: proc(tab_bar: Tab_Bar, is_closable: c.int) ---
+	tab_bar_set_movable :: proc(tab_bar: Tab_Bar, is_movable: c.int) ---
+	tab_bar_set_expanding :: proc(tab_bar: Tab_Bar, is_expanding: c.int) ---
+	tab_bar_set_shape :: proc(tab_bar: Tab_Bar, shape: Tab_Bar_Shape) ---
+	tab_bar_set_icon_size :: proc(tab_bar: Tab_Bar, width: c.int, height: c.int) ---
+	tab_bar_set_document_mode :: proc(tab_bar: Tab_Bar, is_document_mode: c.int) ---
+	tab_bar_set_draw_base :: proc(tab_bar: Tab_Bar, is_draw_base: c.int) ---
+	tab_bar_set_tab_icon :: proc(tab_bar: Tab_Bar, index: c.int, icon: Icon) ---
+	tab_bar_connect_current_changed :: proc(tab_bar: Tab_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	tab_bar_connect_tab_close_requested :: proc(tab_bar: Tab_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QToolBox */
+
+	@(require_results) tool_box_create :: proc(parent: Widget) -> Tool_Box ---
+	@(require_results) tool_box_add_item :: proc(tool_box: Tool_Box, widget: Widget, text: cstring) -> c.int ---
+	@(require_results) tool_box_insert_item :: proc(tool_box: Tool_Box, index: c.int, widget: Widget, text: cstring) -> c.int ---
+	tool_box_remove_item :: proc(tool_box: Tool_Box, index: c.int) ---
+	@(require_results) tool_box_get_current_index :: proc(tool_box: Tool_Box) -> c.int ---
+	tool_box_set_current_index :: proc(tool_box: Tool_Box, index: c.int) ---
+	@(require_results) tool_box_get_count :: proc(tool_box: Tool_Box) -> c.int ---
+	tool_box_set_item_text :: proc(tool_box: Tool_Box, index: c.int, text: cstring) ---
+	@(require_results) tool_box_get_item_text :: proc(tool_box: Tool_Box, index: c.int) -> cstring ---
+	tool_box_set_item_enabled :: proc(tool_box: Tool_Box, index: c.int, is_enabled: c.int) ---
+	@(require_results) tool_box_is_item_enabled :: proc(tool_box: Tool_Box, index: c.int) -> c.int ---
+	tool_box_set_item_icon :: proc(tool_box: Tool_Box, index: c.int, icon: Icon) ---
+	@(require_results) tool_box_get_widget :: proc(tool_box: Tool_Box, index: c.int) -> Widget ---
+	tool_box_connect_current_changed :: proc(tool_box: Tool_Box, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QScrollBar */
+
+	@(require_results) scroll_bar_create :: proc(orientation: Orientation, parent: Widget) -> Scroll_Bar ---
+	scroll_bar_set_range :: proc(scroll_bar: Scroll_Bar, min_val: c.int, max_val: c.int) ---
+	@(require_results) scroll_bar_get_value :: proc(scroll_bar: Scroll_Bar) -> c.int ---
+	scroll_bar_set_value :: proc(scroll_bar: Scroll_Bar, value: c.int) ---
+	scroll_bar_set_single_step :: proc(scroll_bar: Scroll_Bar, step: c.int) ---
+	scroll_bar_set_page_step :: proc(scroll_bar: Scroll_Bar, step: c.int) ---
+	scroll_bar_set_orientation :: proc(scroll_bar: Scroll_Bar, orientation: Orientation) ---
+	scroll_bar_connect_value_changed :: proc(scroll_bar: Scroll_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QLCDNumber */
+
+	@(require_results) lcd_number_create :: proc(parent: Widget) -> LCD_Number ---
+	lcd_number_display_int :: proc(lcd: LCD_Number, value: c.int) ---
+	lcd_number_display_double :: proc(lcd: LCD_Number, value: c.double) ---
+	lcd_number_display_string :: proc(lcd: LCD_Number, text: cstring) ---
+	lcd_number_set_digit_count :: proc(lcd: LCD_Number, count: c.int) ---
+	@(require_results) lcd_number_get_digit_count :: proc(lcd: LCD_Number) -> c.int ---
+	lcd_number_set_mode :: proc(lcd: LCD_Number, mode: LCD_Number_Mode) ---
+	@(require_results) lcd_number_get_mode :: proc(lcd: LCD_Number) -> LCD_Number_Mode ---
+	lcd_number_set_segment_style :: proc(lcd: LCD_Number, style: LCD_Number_Segment_Style) ---
+	@(require_results) lcd_number_get_segment_style :: proc(lcd: LCD_Number) -> LCD_Number_Segment_Style ---
+	lcd_number_set_small_decimal_point :: proc(lcd: LCD_Number, is_small: c.int) ---
+
+	/* QCommandLinkButton */
+
+	@(require_results) command_link_button_create :: proc(parent: Widget, text: cstring, description: cstring) -> Command_Link_Button ---
+	command_link_button_set_description :: proc(button: Command_Link_Button, description: cstring) ---
+	@(require_results) command_link_button_get_description :: proc(button: Command_Link_Button) -> cstring ---
+
+	/* QKeySequenceEdit */
+
+	@(require_results) key_sequence_edit_create :: proc(parent: Widget) -> Key_Sequence_Edit ---
+	@(require_results) key_sequence_edit_get_key_sequence :: proc(edit: Key_Sequence_Edit) -> cstring ---
+	key_sequence_edit_set_key_sequence :: proc(edit: Key_Sequence_Edit, key_sequence: cstring) ---
+	key_sequence_edit_clear :: proc(edit: Key_Sequence_Edit) ---
+	key_sequence_edit_connect_key_sequence_changed :: proc(edit: Key_Sequence_Edit, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QFontComboBox */
+
+	@(require_results) font_combo_box_create :: proc(parent: Widget) -> Font_Combo_Box ---
+	@(require_results) font_combo_box_get_current_font_family :: proc(combo: Font_Combo_Box) -> cstring ---
+	font_combo_box_set_current_font_family :: proc(combo: Font_Combo_Box, family: cstring) ---
+	font_combo_box_set_font_filters :: proc(combo: Font_Combo_Box, filters: Font_Combo_Box_Font_Filter) ---
+	font_combo_box_connect_current_font_changed :: proc(combo: Font_Combo_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QSplashScreen */
+
+	@(require_results) splash_screen_create :: proc() -> Splash_Screen ---
+	@(require_results) splash_screen_create_with_pixmap :: proc(pixmap: Pixmap) -> Splash_Screen ---
+	splash_screen_show_message :: proc(splash: Splash_Screen, message: cstring, alignment: Alignment, colour_r: c.int, colour_g: c.int, colour_b: c.int) ---
+	splash_screen_clear_message :: proc(splash: Splash_Screen) ---
+	splash_screen_finish :: proc(splash: Splash_Screen, main_window: Widget) ---
+
+	/* QStackedLayout */
+
+	@(require_results) stacked_layout_create :: proc(parent: Widget) -> Stacked_Layout ---
+	@(require_results) stacked_layout_add_widget :: proc(layout: Stacked_Layout, widget: Widget) -> c.int ---
+	@(require_results) stacked_layout_insert_widget :: proc(layout: Stacked_Layout, index: c.int, widget: Widget) -> c.int ---
+	stacked_layout_set_current_index :: proc(layout: Stacked_Layout, index: c.int) ---
+	@(require_results) stacked_layout_get_current_index :: proc(layout: Stacked_Layout) -> c.int ---
+	@(require_results) stacked_layout_get_count :: proc(layout: Stacked_Layout) -> c.int ---
+	@(require_results) stacked_layout_get_widget :: proc(layout: Stacked_Layout, index: c.int) -> Widget ---
+	stacked_layout_set_current_widget :: proc(layout: Stacked_Layout, widget: Widget) ---
+	stacked_layout_set_stacking_mode :: proc(layout: Stacked_Layout, mode: Stacked_Layout_Stacking_Mode) ---
+	stacked_layout_connect_current_changed :: proc(layout: Stacked_Layout, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QWidgetAction */
+
+	@(require_results) widget_action_create :: proc(parent: Widget) -> Widget_Action ---
+	widget_action_set_default_widget :: proc(action: Widget_Action, widget: Widget) ---
+	@(require_results) widget_action_get_default_widget :: proc(action: Widget_Action) -> Widget ---
+
+	/* QActionGroup */
+
+	@(require_results) action_group_create :: proc(parent: Widget) -> Action_Group ---
+	action_group_destroy :: proc(group: Action_Group) ---
+	action_group_add_action :: proc(group: Action_Group, action: Action) ---
+	action_group_remove_action :: proc(group: Action_Group, action: Action) ---
+	action_group_set_exclusive :: proc(group: Action_Group, is_exclusive: c.int) ---
+	@(require_results) action_group_is_exclusive :: proc(group: Action_Group) -> c.int ---
+	action_group_set_enabled :: proc(group: Action_Group, is_enabled: c.int) ---
+	@(require_results) action_group_is_enabled :: proc(group: Action_Group) -> c.int ---
+	action_group_set_visible :: proc(group: Action_Group, is_visible: c.int) ---
+	@(require_results) action_group_is_visible :: proc(group: Action_Group) -> c.int ---
+	@(require_results) action_group_get_checked_action :: proc(group: Action_Group) -> Action ---
+	action_group_connect_triggered :: proc(group: Action_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QErrorMessage */
+
+	@(require_results) error_message_create :: proc(parent: Widget) -> Error_Message ---
+	error_message_show_message :: proc(dialog: Error_Message, message: cstring) ---
+	error_message_show_message_type :: proc(dialog: Error_Message, message: cstring, type: cstring) ---
+
+	/* QMdiArea */
+
+	@(require_results) mdi_area_create :: proc(parent: Widget) -> Mdi_Area ---
+	@(require_results) mdi_area_add_sub_window :: proc(mdi_area: Mdi_Area, widget: Widget) -> Mdi_Sub_Window ---
+	mdi_area_remove_sub_window :: proc(mdi_area: Mdi_Area, widget: Widget) ---
+	mdi_area_set_active_sub_window :: proc(mdi_area: Mdi_Area, sub_window: Mdi_Sub_Window) ---
+	@(require_results) mdi_area_get_active_sub_window :: proc(mdi_area: Mdi_Area) -> Mdi_Sub_Window ---
+	@(require_results) mdi_area_get_sub_window_count :: proc(mdi_area: Mdi_Area) -> c.int ---
+	mdi_area_cascade_sub_windows :: proc(mdi_area: Mdi_Area) ---
+	mdi_area_tile_sub_windows :: proc(mdi_area: Mdi_Area) ---
+	mdi_area_close_active_sub_window :: proc(mdi_area: Mdi_Area) ---
+	mdi_area_close_all_sub_windows :: proc(mdi_area: Mdi_Area) ---
+	mdi_area_set_view_mode :: proc(mdi_area: Mdi_Area, mode: Mdi_Area_View_Mode) ---
+	mdi_area_connect_sub_window_activated :: proc(mdi_area: Mdi_Area, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QMdiSubWindow */
+
+	@(require_results) mdi_sub_window_create :: proc(parent: Widget) -> Mdi_Sub_Window ---
+	mdi_sub_window_set_widget :: proc(sub_window: Mdi_Sub_Window, widget: Widget) ---
+	@(require_results) mdi_sub_window_get_widget :: proc(sub_window: Mdi_Sub_Window) -> Widget ---
+	mdi_sub_window_set_system_menu :: proc(sub_window: Mdi_Sub_Window, menu: Menu) ---
+	@(require_results) mdi_sub_window_is_shaded :: proc(sub_window: Mdi_Sub_Window) -> c.int ---
+	mdi_sub_window_show_shaded :: proc(sub_window: Mdi_Sub_Window) ---
+	mdi_sub_window_show_normal :: proc(sub_window: Mdi_Sub_Window) ---
+
+	/* QWizard */
+
+	@(require_results) wizard_create :: proc(parent: Widget) -> Wizard ---
+	@(require_results) wizard_add_page :: proc(wizard: Wizard, page: Wizard_Page) -> c.int ---
+	wizard_set_page :: proc(wizard: Wizard, id: c.int, page: Wizard_Page) ---
+	wizard_remove_page :: proc(wizard: Wizard, id: c.int) ---
+	@(require_results) wizard_get_current_id :: proc(wizard: Wizard) -> c.int ---
+	wizard_set_start_id :: proc(wizard: Wizard, id: c.int) ---
+	wizard_set_button_text :: proc(wizard: Wizard, which: Wizard_Button, text: cstring) ---
+	wizard_set_wizard_style :: proc(wizard: Wizard, style: Wizard_Style) ---
+	wizard_set_option :: proc(wizard: Wizard, option: Wizard_Option, is_on: c.int) ---
+	wizard_restart :: proc(wizard: Wizard) ---
+	wizard_connect_current_id_changed :: proc(wizard: Wizard, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	wizard_connect_page_added :: proc(wizard: Wizard, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	wizard_connect_page_removed :: proc(wizard: Wizard, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QWizardPage */
+
+	@(require_results) wizard_page_create :: proc(parent: Widget) -> Wizard_Page ---
+	wizard_page_set_title :: proc(page: Wizard_Page, title: cstring) ---
+	@(require_results) wizard_page_get_title :: proc(page: Wizard_Page) -> cstring ---
+	wizard_page_set_sub_title :: proc(page: Wizard_Page, sub_title: cstring) ---
+	@(require_results) wizard_page_get_sub_title :: proc(page: Wizard_Page) -> cstring ---
+	wizard_page_set_commit_page :: proc(page: Wizard_Page, is_commit: c.int) ---
+	@(require_results) wizard_page_is_commit_page :: proc(page: Wizard_Page) -> c.int ---
+	wizard_page_set_final_page :: proc(page: Wizard_Page, is_final: c.int) ---
+	@(require_results) wizard_page_is_final_page :: proc(page: Wizard_Page) -> c.int ---
+
+	/* QColumnView */
+
+	@(require_results) column_view_create :: proc(parent: Widget) -> Column_View ---
+	column_view_set_model :: proc(view: Column_View, model: rawptr) ---
+	column_view_set_root_index :: proc(view: Column_View, index: Model_Index) ---
+	column_view_set_preview_widget :: proc(view: Column_View, widget: Widget) ---
+	@(require_results) column_view_get_preview_widget :: proc(view: Column_View) -> Widget ---
+	column_view_set_resizing_grips_visible :: proc(view: Column_View, is_visible: c.int) ---
+
+	/* QUndoView */
+
+	@(require_results) undo_view_create :: proc(parent: Widget) -> Undo_View ---
+	undo_view_set_stack :: proc(view: Undo_View, stack: Undo_Stack) ---
+	undo_view_set_group :: proc(view: Undo_View, group: Undo_Group) ---
+	undo_view_set_clean_icon :: proc(view: Undo_View, icon: Icon) ---
+	undo_view_set_empty_label :: proc(view: Undo_View, label: cstring) ---
+
+	/* QRubberBand */
+
+	@(require_results) rubber_band_create :: proc(shape: Rubber_Band_Shape, parent: Widget) -> Rubber_Band ---
+	rubber_band_set_geometry :: proc(band: Rubber_Band, x: c.int, y: c.int, width: c.int, height: c.int) ---
+	rubber_band_move :: proc(band: Rubber_Band, x: c.int, y: c.int) ---
+	rubber_band_resize :: proc(band: Rubber_Band, width: c.int, height: c.int) ---
+
+	/* QFocusFrame */
+
+	@(require_results) focus_frame_create :: proc(parent: Widget) -> Focus_Frame ---
+	focus_frame_set_widget :: proc(frame: Focus_Frame, widget: Widget) ---
+	@(require_results) focus_frame_get_widget :: proc(frame: Focus_Frame) -> Widget ---
+
+	/* QSizeGrip */
+
+	@(require_results) size_grip_create :: proc(parent: Widget) -> Size_Grip ---
+
+	/* QWhatsThis */
+
+	whats_this_enter_mode :: proc() ---
+	whats_this_leave_mode :: proc() ---
+	@(require_results) whats_this_is_in_mode :: proc() -> c.int ---
+	whats_this_show_text :: proc(global_x: c.int, global_y: c.int, text: cstring, widget: Widget) ---
+	whats_this_hide_text :: proc() ---
 }
