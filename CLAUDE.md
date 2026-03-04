@@ -33,6 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Never use `#partial switch` to avoid handling `.None` — always handle `.None` explicitly
 - Use `unreachable()` for switch/case arms that are logically impossible but required by the compiler, with a comment explaining why the case is unreachable
 - NEVER align struct fields or parameters with extra spaces — use single spaces only
+- Calling convention annotations on `proc` MUST NOT have spaces: `proc"c"()` not `proc "c" ()`
 - I'm Canadian, so use wording such as `colour` instead of `color`
 
 ## Odin Language Notes
