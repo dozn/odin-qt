@@ -370,6 +370,9 @@ typedef void (*qt_callback_t)(void *user_data);
 typedef void (*qt_int_callback_t)(int value, void *user_data);
 typedef void (*qt_double_callback_t)(double value, void *user_data);
 typedef void (*qt_string_callback_t)(const char *text, void *user_data);
+typedef void (*qt_cell_callback_t)(int value_a, int value_b, void *user_data);
+typedef void (*qt_item_callback_t)(void *item, int column, void *user_data);
+typedef void (*qt_point_callback_t)(int x, int y, void *user_data);
 
 /* ── Signal connections ─────────────────────────────────────────────── */
 
@@ -388,8 +391,9 @@ void qt_text_edit_connect_text_changed(void *text_edit, qt_callback_t callback, 
 void qt_plain_text_edit_connect_text_changed(void *text_edit, qt_callback_t callback, void *user_data);
 void qt_combo_box_connect_index_changed(void *combo_box, qt_int_callback_t callback, void *user_data);
 void qt_list_widget_connect_current_row_changed(void *list, qt_int_callback_t callback, void *user_data);
-void qt_tree_widget_connect_item_clicked(void *tree, qt_callback_t callback, void *user_data);
-void qt_table_widget_connect_cell_clicked(void *table, qt_callback_t callback, void *user_data);
+void qt_tree_widget_connect_item_clicked(void *tree, qt_item_callback_t callback, void *user_data);
+void qt_table_widget_connect_cell_clicked(void *table, qt_cell_callback_t callback, void *user_data);
+void qt_widget_connect_custom_context_menu_requested(void *widget, qt_point_callback_t callback, void *user_data);
 void qt_action_connect_triggered(void *action, qt_callback_t callback, void *user_data);
 void qt_tab_widget_connect_current_changed(void *tab_widget, qt_int_callback_t callback, void *user_data);
 void qt_group_box_connect_toggled(void *group_box, qt_int_callback_t callback, void *user_data);

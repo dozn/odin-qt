@@ -1337,15 +1337,21 @@ void qt_list_widget_connect_current_row_changed(void *list, qt_int_callback_t ca
     });
 }
 
-void qt_tree_widget_connect_item_clicked(void *tree, qt_callback_t callback, void *user_data) {
-    QObject::connect(static_cast<QTreeWidget *>(tree), &QTreeWidget::itemClicked, [callback, user_data](QTreeWidgetItem *, int) {
-        callback(user_data);
+void qt_tree_widget_connect_item_clicked(void *tree, qt_item_callback_t callback, void *user_data) {
+    QObject::connect(static_cast<QTreeWidget *>(tree), &QTreeWidget::itemClicked, [callback, user_data](QTreeWidgetItem *item, int column) {
+        callback(static_cast<void *>(item), column, user_data);
     });
 }
 
-void qt_table_widget_connect_cell_clicked(void *table, qt_callback_t callback, void *user_data) {
-    QObject::connect(static_cast<QTableWidget *>(table), &QTableWidget::cellClicked, [callback, user_data](int, int) {
-        callback(user_data);
+void qt_table_widget_connect_cell_clicked(void *table, qt_cell_callback_t callback, void *user_data) {
+    QObject::connect(static_cast<QTableWidget *>(table), &QTableWidget::cellClicked, [callback, user_data](int row, int col) {
+        callback(row, col, user_data);
+    });
+}
+
+void qt_widget_connect_custom_context_menu_requested(void *widget, qt_point_callback_t callback, void *user_data) {
+    QObject::connect(static_cast<QWidget *>(widget), &QWidget::customContextMenuRequested, [callback, user_data](const QPoint &pos) {
+        callback(pos.x(), pos.y(), user_data);
     });
 }
 

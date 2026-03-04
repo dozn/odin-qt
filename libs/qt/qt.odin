@@ -107,6 +107,9 @@ Callback :: #type proc"c"(user_data: rawptr)
 Int_Callback :: #type proc"c"(value: c.int, user_data: rawptr)
 Double_Callback :: #type proc"c"(value: c.double, user_data: rawptr)
 String_Callback :: #type proc"c"(text: cstring, user_data: rawptr)
+Cell_Callback :: #type proc"c"(value_a: c.int, value_b: c.int, user_data: rawptr)
+Item_Callback :: #type proc"c"(item: rawptr, column: c.int, user_data: rawptr)
+Point_Callback :: #type proc"c"(x: c.int, y: c.int, user_data: rawptr)
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -612,8 +615,9 @@ foreign qt_lib {
 	plain_text_edit_connect_text_changed :: proc(plain_text_edit: Plain_Text_Edit, callback: Callback, user_data: rawptr) ---
 	combo_box_connect_index_changed :: proc(combo_box: Combo_Box, callback: Int_Callback, user_data: rawptr) ---
 	list_widget_connect_current_row_changed :: proc(list_widget: List_Widget, callback: Int_Callback, user_data: rawptr) ---
-	tree_widget_connect_item_clicked :: proc(tree_widget: Tree_Widget, callback: Callback, user_data: rawptr) ---
-	table_widget_connect_cell_clicked :: proc(table_widget: Table_Widget, callback: Callback, user_data: rawptr) ---
+	tree_widget_connect_item_clicked :: proc(tree_widget: Tree_Widget, callback: Item_Callback, user_data: rawptr) ---
+	table_widget_connect_cell_clicked :: proc(table_widget: Table_Widget, callback: Cell_Callback, user_data: rawptr) ---
+	widget_connect_custom_context_menu_requested :: proc(widget: Widget, callback: Point_Callback, user_data: rawptr) ---
 	action_connect_triggered :: proc(action: Action, callback: Callback, user_data: rawptr) ---
 	tab_widget_connect_current_changed :: proc(tab_widget: Tab_Widget, callback: Int_Callback, user_data: rawptr) ---
 	group_box_connect_toggled :: proc(group_box: Group_Box, callback: Int_Callback, user_data: rawptr) ---
