@@ -1732,7 +1732,7 @@ build_extra_widgets_tab :: proc() -> qt.Widget {
 	qt.layout_add_widget(layout, auto_cast cl_group)
 
 	// QKeySequenceEdit + QFontComboBox
-	kf_group := qt.group_box_create(nil, "QKeySequenceEdit && QFontComboBox")
+	kf_group := qt.group_box_create(nil, "QKeySequenceEdit + QFontComboBox")
 	kf_layout := qt.form_layout_create(auto_cast kf_group)
 	key_edit := qt.key_sequence_edit_create(nil)
 	qt.form_layout_add_row(kf_layout, "Key Sequence:", auto_cast key_edit)
@@ -1748,7 +1748,7 @@ build_extra_widgets_tab :: proc() -> qt.Widget {
 	qt.layout_add_widget(layout, auto_cast kf_group)
 
 	// QErrorMessage + QWhatsThis
-	ew_group := qt.group_box_create(nil, "QErrorMessage && QWhatsThis")
+	ew_group := qt.group_box_create(nil, "QErrorMessage + QWhatsThis")
 	ew_layout := qt.hbox_layout_create(auto_cast ew_group)
 	err_dialog := qt.error_message_create(auto_cast demo_state.window)
 	err_btn := qt.push_button_create(nil, "Show Error Message")
@@ -1815,7 +1815,7 @@ build_mdi_wizard_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(page)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "MDI && Wizard Demo")
+	heading := qt.label_create(nil, "MDI + Wizard Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
@@ -2017,7 +2017,7 @@ build_undo_mapping_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(page)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "Undo/Redo && Data Mapping Demo")
+	heading := qt.label_create(nil, "Undo/Redo + Data Mapping Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
@@ -2223,7 +2223,7 @@ build_file_data_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(page)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "File I/O && Data Formats Demo")
+	heading := qt.label_create(nil, "File I/O + Data Formats Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
@@ -2515,7 +2515,7 @@ build_advanced_models_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(content)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "Advanced Models && Utilities Demo")
+	heading := qt.label_create(nil, "Advanced Models + Utilities Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.layout_add_widget(layout, auto_cast heading)
