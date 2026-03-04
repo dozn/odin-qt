@@ -1620,6 +1620,14 @@ foreign qt_lib {
 	@(require_results) label_get_text :: proc(label: Label) -> cstring ---
 	label_set_alignment :: proc(label: Label, alignment: Alignment) ---
 	label_set_word_wrap :: proc(label: Label, is_word_wrap: c.int) ---
+	label_clear :: proc(label: Label) ---
+	label_set_scaled_contents :: proc(label: Label, is_scaled: c.int) ---
+	label_set_text_format :: proc(label: Label, format: Text_Format) ---
+	label_set_text_interaction_flags :: proc(label: Label, flags: c.int) ---
+	label_set_open_external_links :: proc(label: Label, is_open: c.int) ---
+	label_set_buddy :: proc(label: Label, buddy: Widget) ---
+	label_set_indent :: proc(label: Label, indent: c.int) ---
+	label_set_margin :: proc(label: Label, margin: c.int) ---
 
 	/* QPushButton */
 
@@ -1631,6 +1639,12 @@ foreign qt_lib {
 	push_button_set_checkable :: proc(button: Push_Button, is_checkable: c.int) ---
 	@(require_results) push_button_is_checked :: proc(button: Push_Button) -> c.int ---
 	push_button_set_checked :: proc(button: Push_Button, is_checked: c.int) ---
+	push_button_set_default :: proc(button: Push_Button, is_default: c.int) ---
+	@(require_results) push_button_is_default :: proc(button: Push_Button) -> c.int ---
+	push_button_set_auto_default :: proc(button: Push_Button, is_auto_default: c.int) ---
+	@(require_results) push_button_is_auto_default :: proc(button: Push_Button) -> c.int ---
+	push_button_set_menu :: proc(button: Push_Button, menu: Menu) ---
+	push_button_show_menu :: proc(button: Push_Button) ---
 
 	/* QRadioButton */
 
@@ -1654,6 +1668,20 @@ foreign qt_lib {
 	line_edit_select_all :: proc(line_edit: Line_Edit) ---
 	line_edit_set_max_length :: proc(line_edit: Line_Edit, length: c.int) ---
 	@(require_results) line_edit_get_max_length :: proc(line_edit: Line_Edit) -> c.int ---
+	line_edit_set_alignment :: proc(line_edit: Line_Edit, alignment: Alignment) ---
+	line_edit_set_cursor_position :: proc(line_edit: Line_Edit, position: c.int) ---
+	@(require_results) line_edit_get_cursor_position :: proc(line_edit: Line_Edit) -> c.int ---
+	line_edit_set_input_mask :: proc(line_edit: Line_Edit, mask: cstring) ---
+	@(require_results) line_edit_has_selected_text :: proc(line_edit: Line_Edit) -> c.int ---
+	@(require_results) line_edit_get_selected_text :: proc(line_edit: Line_Edit) -> cstring ---
+	line_edit_set_selection :: proc(line_edit: Line_Edit, start: c.int, length: c.int) ---
+	line_edit_undo :: proc(line_edit: Line_Edit) ---
+	line_edit_redo :: proc(line_edit: Line_Edit) ---
+	@(require_results) line_edit_is_modified :: proc(line_edit: Line_Edit) -> c.int ---
+	line_edit_set_modified :: proc(line_edit: Line_Edit, is_modified: c.int) ---
+	line_edit_set_drag_enabled :: proc(line_edit: Line_Edit, is_drag_enabled: c.int) ---
+	line_edit_home :: proc(line_edit: Line_Edit, is_mark: c.int) ---
+	line_edit_end :: proc(line_edit: Line_Edit, is_mark: c.int) ---
 
 	/* QTextEdit */
 

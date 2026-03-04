@@ -64,33 +64,6 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ### Missing Methods/Signals on Existing Classes
 
-#### QLabel
-- `clear`
-- `setScaledContents` -- auto-scale pixmap to label size
-- `setTextFormat` -- plain text vs rich text vs auto
-- `setTextInteractionFlags` -- selectable text
-- `setOpenExternalLinks` -- clickable links
-- `setBuddy` -- keyboard focus buddy
-- `setIndent`
-- `setMargin`
-
-#### QPushButton
-- `setDefault` / `isDefault` -- dialog default button
-- `setAutoDefault` / `isAutoDefault`
-- `setMenu` -- dropdown menu on button
-- `showMenu`
-
-#### QLineEdit
-- `setAlignment`
-- `setCursorPosition` / `getCursorPosition`
-- `setInputMask`
-- `hasSelectedText` / `getSelectedText`
-- `setSelection`
-- `undo` / `redo`
-- `isModified` / `setModified`
-- `setDragEnabled`
-- `home` / `end`
-
 #### QTextEdit
 - `setTabStopDistance` / `getTabStopDistance`
 - `setLineWrapMode`

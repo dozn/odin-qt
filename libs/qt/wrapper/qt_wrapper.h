@@ -135,6 +135,14 @@ void  qt_label_set_text(void *label, const char *text);
 char *qt_label_get_text(void *label);
 void  qt_label_set_alignment(void *label, int alignment);
 void  qt_label_set_word_wrap(void *label, int is_word_wrap);
+void  qt_label_clear(void *label);
+void  qt_label_set_scaled_contents(void *label, int is_scaled);
+void  qt_label_set_text_format(void *label, int format);
+void  qt_label_set_text_interaction_flags(void *label, int flags);
+void  qt_label_set_open_external_links(void *label, int is_open);
+void  qt_label_set_buddy(void *label, void *buddy);
+void  qt_label_set_indent(void *label, int indent);
+void  qt_label_set_margin(void *label, int margin);
 
 /* ── QPushButton ────────────────────────────────────────────────────── */
 
@@ -146,6 +154,12 @@ int   qt_push_button_is_flat(void *button);
 void  qt_push_button_set_checkable(void *button, int is_checkable);
 int   qt_push_button_is_checked(void *button);
 void  qt_push_button_set_checked(void *button, int is_checked);
+void  qt_push_button_set_default(void *button, int is_default);
+int   qt_push_button_is_default(void *button);
+void  qt_push_button_set_auto_default(void *button, int is_auto_default);
+int   qt_push_button_is_auto_default(void *button);
+void  qt_push_button_set_menu(void *button, void *menu);
+void  qt_push_button_show_menu(void *button);
 
 /* ── QRadioButton ───────────────────────────────────────────────────── */
 
@@ -169,6 +183,20 @@ char *qt_line_edit_get_placeholder_text(void *line_edit);
 void  qt_line_edit_select_all(void *line_edit);
 void  qt_line_edit_set_max_length(void *line_edit, int length);
 int   qt_line_edit_get_max_length(void *line_edit);
+void  qt_line_edit_set_alignment(void *line_edit, int alignment);
+void  qt_line_edit_set_cursor_position(void *line_edit, int position);
+int   qt_line_edit_get_cursor_position(void *line_edit);
+void  qt_line_edit_set_input_mask(void *line_edit, const char *mask);
+int   qt_line_edit_has_selected_text(void *line_edit);
+char *qt_line_edit_get_selected_text(void *line_edit);
+void  qt_line_edit_set_selection(void *line_edit, int start, int length);
+void  qt_line_edit_undo(void *line_edit);
+void  qt_line_edit_redo(void *line_edit);
+int   qt_line_edit_is_modified(void *line_edit);
+void  qt_line_edit_set_modified(void *line_edit, int is_modified);
+void  qt_line_edit_set_drag_enabled(void *line_edit, int is_drag_enabled);
+void  qt_line_edit_home(void *line_edit, int is_mark);
+void  qt_line_edit_end(void *line_edit, int is_mark);
 
 /* ── QTextEdit ──────────────────────────────────────────────────────── */
 

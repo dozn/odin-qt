@@ -968,6 +968,38 @@ void qt_label_set_word_wrap(void *label, int is_word_wrap) {
     static_cast<QLabel *>(label)->setWordWrap(is_word_wrap != 0);
 }
 
+void qt_label_clear(void *label) {
+    static_cast<QLabel *>(label)->clear();
+}
+
+void qt_label_set_scaled_contents(void *label, int is_scaled) {
+    static_cast<QLabel *>(label)->setScaledContents(is_scaled != 0);
+}
+
+void qt_label_set_text_format(void *label, int format) {
+    static_cast<QLabel *>(label)->setTextFormat(static_cast<Qt::TextFormat>(format));
+}
+
+void qt_label_set_text_interaction_flags(void *label, int flags) {
+    static_cast<QLabel *>(label)->setTextInteractionFlags(static_cast<Qt::TextInteractionFlags>(flags));
+}
+
+void qt_label_set_open_external_links(void *label, int is_open) {
+    static_cast<QLabel *>(label)->setOpenExternalLinks(is_open != 0);
+}
+
+void qt_label_set_buddy(void *label, void *buddy) {
+    static_cast<QLabel *>(label)->setBuddy(static_cast<QWidget *>(buddy));
+}
+
+void qt_label_set_indent(void *label, int indent) {
+    static_cast<QLabel *>(label)->setIndent(indent);
+}
+
+void qt_label_set_margin(void *label, int margin) {
+    static_cast<QLabel *>(label)->setMargin(margin);
+}
+
 /* ── QPushButton ────────────────────────────────────────────────────── */
 
 void *qt_push_button_create(void *parent, const char *text) {
@@ -1000,6 +1032,30 @@ int qt_push_button_is_checked(void *button) {
 
 void qt_push_button_set_checked(void *button, int is_checked) {
     static_cast<QPushButton *>(button)->setChecked(is_checked != 0);
+}
+
+void qt_push_button_set_default(void *button, int is_default) {
+    static_cast<QPushButton *>(button)->setDefault(is_default != 0);
+}
+
+int qt_push_button_is_default(void *button) {
+    return static_cast<QPushButton *>(button)->isDefault() ? 1 : 0;
+}
+
+void qt_push_button_set_auto_default(void *button, int is_auto_default) {
+    static_cast<QPushButton *>(button)->setAutoDefault(is_auto_default != 0);
+}
+
+int qt_push_button_is_auto_default(void *button) {
+    return static_cast<QPushButton *>(button)->autoDefault() ? 1 : 0;
+}
+
+void qt_push_button_set_menu(void *button, void *menu) {
+    static_cast<QPushButton *>(button)->setMenu(static_cast<QMenu *>(menu));
+}
+
+void qt_push_button_show_menu(void *button) {
+    static_cast<QPushButton *>(button)->showMenu();
 }
 
 /* ── QRadioButton ───────────────────────────────────────────────────── */
@@ -1072,6 +1128,62 @@ void qt_line_edit_set_max_length(void *line_edit, int length) {
 
 int qt_line_edit_get_max_length(void *line_edit) {
     return static_cast<QLineEdit *>(line_edit)->maxLength();
+}
+
+void qt_line_edit_set_alignment(void *line_edit, int alignment) {
+    static_cast<QLineEdit *>(line_edit)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+void qt_line_edit_set_cursor_position(void *line_edit, int position) {
+    static_cast<QLineEdit *>(line_edit)->setCursorPosition(position);
+}
+
+int qt_line_edit_get_cursor_position(void *line_edit) {
+    return static_cast<QLineEdit *>(line_edit)->cursorPosition();
+}
+
+void qt_line_edit_set_input_mask(void *line_edit, const char *mask) {
+    static_cast<QLineEdit *>(line_edit)->setInputMask(QString::fromUtf8(mask));
+}
+
+int qt_line_edit_has_selected_text(void *line_edit) {
+    return static_cast<QLineEdit *>(line_edit)->hasSelectedText() ? 1 : 0;
+}
+
+char *qt_line_edit_get_selected_text(void *line_edit) {
+    return qstring_to_heap_utf8(static_cast<QLineEdit *>(line_edit)->selectedText());
+}
+
+void qt_line_edit_set_selection(void *line_edit, int start, int length) {
+    static_cast<QLineEdit *>(line_edit)->setSelection(start, length);
+}
+
+void qt_line_edit_undo(void *line_edit) {
+    static_cast<QLineEdit *>(line_edit)->undo();
+}
+
+void qt_line_edit_redo(void *line_edit) {
+    static_cast<QLineEdit *>(line_edit)->redo();
+}
+
+int qt_line_edit_is_modified(void *line_edit) {
+    return static_cast<QLineEdit *>(line_edit)->isModified() ? 1 : 0;
+}
+
+void qt_line_edit_set_modified(void *line_edit, int is_modified) {
+    static_cast<QLineEdit *>(line_edit)->setModified(is_modified != 0);
+}
+
+void qt_line_edit_set_drag_enabled(void *line_edit, int is_drag_enabled) {
+    static_cast<QLineEdit *>(line_edit)->setDragEnabled(is_drag_enabled != 0);
+}
+
+void qt_line_edit_home(void *line_edit, int is_mark) {
+    static_cast<QLineEdit *>(line_edit)->home(is_mark != 0);
+}
+
+void qt_line_edit_end(void *line_edit, int is_mark) {
+    static_cast<QLineEdit *>(line_edit)->end(is_mark != 0);
 }
 
 /* ── QTextEdit ──────────────────────────────────────────────────────── */
