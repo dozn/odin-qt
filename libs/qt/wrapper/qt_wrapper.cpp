@@ -286,6 +286,38 @@ void qt_widget_add_action(void *widget, void *action) {
     static_cast<QWidget *>(widget)->addAction(static_cast<QAction *>(action));
 }
 
+int qt_widget_is_visible(void *widget) {
+    return static_cast<QWidget *>(widget)->isVisible() ? 1 : 0;
+}
+
+char *qt_widget_get_window_title(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->windowTitle());
+}
+
+char *qt_widget_get_tool_tip(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->toolTip());
+}
+
+char *qt_widget_get_style_sheet(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->styleSheet());
+}
+
+void qt_widget_set_fixed_width(void *widget, int width) {
+    static_cast<QWidget *>(widget)->setFixedWidth(width);
+}
+
+void qt_widget_set_fixed_height(void *widget, int height) {
+    static_cast<QWidget *>(widget)->setFixedHeight(height);
+}
+
+void qt_widget_set_object_name(void *widget, const char *name) {
+    static_cast<QWidget *>(widget)->setObjectName(QString::fromUtf8(name));
+}
+
+char *qt_widget_get_object_name(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->objectName());
+}
+
 /* ── QLabel ─────────────────────────────────────────────────────────── */
 
 void *qt_label_create(void *parent, const char *text) {
@@ -318,6 +350,30 @@ void qt_push_button_set_text(void *button, const char *text) {
     static_cast<QPushButton *>(button)->setText(QString::fromUtf8(text));
 }
 
+char *qt_push_button_get_text(void *button) {
+    return qstring_to_heap_utf8(static_cast<QPushButton *>(button)->text());
+}
+
+void qt_push_button_set_flat(void *button, int is_flat) {
+    static_cast<QPushButton *>(button)->setFlat(is_flat != 0);
+}
+
+int qt_push_button_is_flat(void *button) {
+    return static_cast<QPushButton *>(button)->isFlat() ? 1 : 0;
+}
+
+void qt_push_button_set_checkable(void *button, int is_checkable) {
+    static_cast<QPushButton *>(button)->setCheckable(is_checkable != 0);
+}
+
+int qt_push_button_is_checked(void *button) {
+    return static_cast<QPushButton *>(button)->isChecked() ? 1 : 0;
+}
+
+void qt_push_button_set_checked(void *button, int is_checked) {
+    static_cast<QPushButton *>(button)->setChecked(is_checked != 0);
+}
+
 /* ── QRadioButton ───────────────────────────────────────────────────── */
 
 void *qt_radio_button_create(void *parent, const char *text) {
@@ -326,6 +382,14 @@ void *qt_radio_button_create(void *parent, const char *text) {
 
 int qt_radio_button_is_checked(void *radio_button) {
     return static_cast<QRadioButton *>(radio_button)->isChecked() ? 1 : 0;
+}
+
+void qt_radio_button_set_text(void *radio_button, const char *text) {
+    static_cast<QRadioButton *>(radio_button)->setText(QString::fromUtf8(text));
+}
+
+char *qt_radio_button_get_text(void *radio_button) {
+    return qstring_to_heap_utf8(static_cast<QRadioButton *>(radio_button)->text());
 }
 
 void qt_radio_button_set_checked(void *radio_button, int is_checked) {
@@ -362,6 +426,26 @@ void qt_line_edit_clear(void *line_edit) {
     static_cast<QLineEdit *>(line_edit)->clear();
 }
 
+int qt_line_edit_is_read_only(void *line_edit) {
+    return static_cast<QLineEdit *>(line_edit)->isReadOnly() ? 1 : 0;
+}
+
+char *qt_line_edit_get_placeholder_text(void *line_edit) {
+    return qstring_to_heap_utf8(static_cast<QLineEdit *>(line_edit)->placeholderText());
+}
+
+void qt_line_edit_select_all(void *line_edit) {
+    static_cast<QLineEdit *>(line_edit)->selectAll();
+}
+
+void qt_line_edit_set_max_length(void *line_edit, int length) {
+    static_cast<QLineEdit *>(line_edit)->setMaxLength(length);
+}
+
+int qt_line_edit_get_max_length(void *line_edit) {
+    return static_cast<QLineEdit *>(line_edit)->maxLength();
+}
+
 /* ── QTextEdit ──────────────────────────────────────────────────────── */
 
 void *qt_text_edit_create(void *parent) {
@@ -380,8 +464,28 @@ void qt_text_edit_set_read_only(void *text_edit, int is_read_only) {
     static_cast<QTextEdit *>(text_edit)->setReadOnly(is_read_only != 0);
 }
 
+int qt_text_edit_is_read_only(void *text_edit) {
+    return static_cast<QTextEdit *>(text_edit)->isReadOnly() ? 1 : 0;
+}
+
 void qt_text_edit_clear(void *text_edit) {
     static_cast<QTextEdit *>(text_edit)->clear();
+}
+
+void qt_text_edit_set_html(void *text_edit, const char *html) {
+    static_cast<QTextEdit *>(text_edit)->setHtml(QString::fromUtf8(html));
+}
+
+char *qt_text_edit_get_html(void *text_edit) {
+    return qstring_to_heap_utf8(static_cast<QTextEdit *>(text_edit)->toHtml());
+}
+
+void qt_text_edit_append(void *text_edit, const char *text) {
+    static_cast<QTextEdit *>(text_edit)->append(QString::fromUtf8(text));
+}
+
+void qt_text_edit_insert_plain_text(void *text_edit, const char *text) {
+    static_cast<QTextEdit *>(text_edit)->insertPlainText(QString::fromUtf8(text));
 }
 
 /* ── QPlainTextEdit ─────────────────────────────────────────────────── */
@@ -402,8 +506,20 @@ void qt_plain_text_edit_set_read_only(void *text_edit, int is_read_only) {
     static_cast<QPlainTextEdit *>(text_edit)->setReadOnly(is_read_only != 0);
 }
 
+int qt_plain_text_edit_is_read_only(void *text_edit) {
+    return static_cast<QPlainTextEdit *>(text_edit)->isReadOnly() ? 1 : 0;
+}
+
 void qt_plain_text_edit_clear(void *text_edit) {
     static_cast<QPlainTextEdit *>(text_edit)->clear();
+}
+
+void qt_plain_text_edit_append_plain_text(void *text_edit, const char *text) {
+    static_cast<QPlainTextEdit *>(text_edit)->appendPlainText(QString::fromUtf8(text));
+}
+
+void qt_plain_text_edit_insert_plain_text(void *text_edit, const char *text) {
+    static_cast<QPlainTextEdit *>(text_edit)->insertPlainText(QString::fromUtf8(text));
 }
 
 /* ── QCheckBox ──────────────────────────────────────────────────────── */
@@ -422,6 +538,26 @@ void qt_check_box_set_checked(void *check_box, int is_checked) {
 
 void qt_check_box_set_text(void *check_box, const char *text) {
     static_cast<QCheckBox *>(check_box)->setText(QString::fromUtf8(text));
+}
+
+char *qt_check_box_get_text(void *check_box) {
+    return qstring_to_heap_utf8(static_cast<QCheckBox *>(check_box)->text());
+}
+
+void qt_check_box_set_tristate(void *check_box, int is_tristate) {
+    static_cast<QCheckBox *>(check_box)->setTristate(is_tristate != 0);
+}
+
+int qt_check_box_is_tristate(void *check_box) {
+    return static_cast<QCheckBox *>(check_box)->isTristate() ? 1 : 0;
+}
+
+int qt_check_box_get_check_state(void *check_box) {
+    return static_cast<int>(static_cast<QCheckBox *>(check_box)->checkState());
+}
+
+void qt_check_box_set_check_state(void *check_box, int state) {
+    static_cast<QCheckBox *>(check_box)->setCheckState(static_cast<Qt::CheckState>(state));
 }
 
 /* ── QComboBox ──────────────────────────────────────────────────────── */
@@ -878,6 +1014,18 @@ void qt_frame_set_line_width(void *frame, int width) {
     static_cast<QFrame *>(frame)->setLineWidth(width);
 }
 
+int qt_frame_get_frame_shape(void *frame) {
+    return static_cast<int>(static_cast<QFrame *>(frame)->frameShape());
+}
+
+int qt_frame_get_frame_shadow(void *frame) {
+    return static_cast<int>(static_cast<QFrame *>(frame)->frameShadow());
+}
+
+int qt_frame_get_line_width(void *frame) {
+    return static_cast<QFrame *>(frame)->lineWidth();
+}
+
 /* ── QMenuBar ───────────────────────────────────────────────────────── */
 
 void *qt_menu_bar_add_menu(void *menu_bar, const char *title) {
@@ -922,6 +1070,30 @@ void qt_action_set_checked(void *action, int is_checked) {
 
 void qt_action_set_tooltip(void *action, const char *tooltip) {
     static_cast<QAction *>(action)->setToolTip(QString::fromUtf8(tooltip));
+}
+
+void qt_action_set_text(void *action, const char *text) {
+    static_cast<QAction *>(action)->setText(QString::fromUtf8(text));
+}
+
+char *qt_action_get_text(void *action) {
+    return qstring_to_heap_utf8(static_cast<QAction *>(action)->text());
+}
+
+int qt_action_is_enabled(void *action) {
+    return static_cast<QAction *>(action)->isEnabled() ? 1 : 0;
+}
+
+int qt_action_is_checkable(void *action) {
+    return static_cast<QAction *>(action)->isCheckable() ? 1 : 0;
+}
+
+void qt_action_set_visible(void *action, int is_visible) {
+    static_cast<QAction *>(action)->setVisible(is_visible != 0);
+}
+
+int qt_action_is_visible(void *action) {
+    return static_cast<QAction *>(action)->isVisible() ? 1 : 0;
 }
 
 /* ── QToolBar ───────────────────────────────────────────────────────── */
@@ -990,6 +1162,18 @@ int qt_group_box_is_checked(void *group_box) {
 
 void qt_group_box_set_checked(void *group_box, int is_checked) {
     static_cast<QGroupBox *>(group_box)->setChecked(is_checked != 0);
+}
+
+char *qt_group_box_get_title(void *group_box) {
+    return qstring_to_heap_utf8(static_cast<QGroupBox *>(group_box)->title());
+}
+
+void qt_group_box_set_flat(void *group_box, int is_flat) {
+    static_cast<QGroupBox *>(group_box)->setFlat(is_flat != 0);
+}
+
+int qt_group_box_is_flat(void *group_box) {
+    return static_cast<QGroupBox *>(group_box)->isFlat() ? 1 : 0;
 }
 
 /* ── QDialog ────────────────────────────────────────────────────────── */

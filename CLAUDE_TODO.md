@@ -9,16 +9,17 @@
 - [x] Add `customContextMenuRequested` signal (with position callback)
 
 ## 2. Fill Getter/Setter Asymmetries
-- [ ] QPushButton: `get_text`, `set_icon`, `set_flat`/`is_flat`, `set_checkable`/`is_checked`/`set_checked`
-- [ ] QRadioButton: `set_text`, `get_text`
-- [ ] QTextEdit: `set_html`, `to_html`, `append`, `insert_plain_text`
-- [ ] QWidget: `is_visible`, `get_window_title`, `get_tool_tip`, `get_style_sheet`, `set_fixed_width`, `set_fixed_height`, `set_object_name`, `get_object_name`
-- [ ] QLineEdit: `is_read_only`, `get_placeholder_text`, `select_all`, `set_max_length`, `get_max_length`
-- [ ] QAction: `set_text`, `get_text`, `is_enabled`, `is_checkable`, `set_visible`, `is_visible`
-- [ ] QCheckBox: `get_text`, tristate support (`set_tristate`, `is_tristate`, `get_check_state`, `set_check_state`)
-- [ ] QTextEdit/QPlainTextEdit: `is_read_only`
-- [ ] QFrame: `get_frame_shape`, `get_frame_shadow`, `get_line_width`
-- [ ] QGroupBox: `get_title`, `set_flat`/`is_flat`
+- [x] QPushButton: `get_text`, `set_flat`/`is_flat`, `set_checkable`/`is_checked`/`set_checked`
+- [x] QRadioButton: `set_text`, `get_text`
+- [x] QTextEdit: `set_html`, `get_html`, `append`, `insert_plain_text`, `is_read_only`
+- [x] QPlainTextEdit: `is_read_only`, `append_plain_text`, `insert_plain_text`
+- [x] QWidget: `is_visible`, `get_window_title`, `get_tool_tip`, `get_style_sheet`, `set_fixed_width`, `set_fixed_height`, `set_object_name`, `get_object_name`
+- [x] QLineEdit: `is_read_only`, `get_placeholder_text`, `select_all`, `set_max_length`, `get_max_length`
+- [x] QAction: `set_text`, `get_text`, `is_enabled`, `is_checkable`, `set_visible`, `is_visible`
+- [x] QCheckBox: `get_text`, tristate support (`set_tristate`, `is_tristate`, `get_check_state`, `set_check_state`) + `Check_State` enum
+- [x] QFrame: `get_frame_shape`, `get_frame_shadow`, `get_line_width`
+- [x] QGroupBox: `get_title`, `set_flat`/`is_flat`
+- [ ] QPushButton: `set_icon` (deferred to QIcon/QPixmap section)
 
 ## 3. Missing Common Operations on Existing Widgets
 - [ ] QTabWidget: `remove_tab`, `insert_tab`, `set_tab_enabled`/`is_tab_enabled`, `set_tabs_closable`, `set_movable`, `get_widget`, `index_of`

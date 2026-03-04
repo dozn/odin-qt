@@ -62,6 +62,14 @@ void  qt_widget_set_layout(void *widget, void *layout);
 void  qt_widget_set_size_policy(void *widget, int horizontal, int vertical);
 void  qt_widget_set_context_menu_policy(void *widget, int policy);
 void  qt_widget_add_action(void *widget, void *action);
+int   qt_widget_is_visible(void *widget);
+char *qt_widget_get_window_title(void *widget);
+char *qt_widget_get_tool_tip(void *widget);
+char *qt_widget_get_style_sheet(void *widget);
+void  qt_widget_set_fixed_width(void *widget, int width);
+void  qt_widget_set_fixed_height(void *widget, int height);
+void  qt_widget_set_object_name(void *widget, const char *name);
+char *qt_widget_get_object_name(void *widget);
 
 /* ── QLabel ─────────────────────────────────────────────────────────── */
 
@@ -75,10 +83,18 @@ void  qt_label_set_word_wrap(void *label, int is_word_wrap);
 
 void *qt_push_button_create(void *parent, const char *text);
 void  qt_push_button_set_text(void *button, const char *text);
+char *qt_push_button_get_text(void *button);
+void  qt_push_button_set_flat(void *button, int is_flat);
+int   qt_push_button_is_flat(void *button);
+void  qt_push_button_set_checkable(void *button, int is_checkable);
+int   qt_push_button_is_checked(void *button);
+void  qt_push_button_set_checked(void *button, int is_checked);
 
 /* ── QRadioButton ───────────────────────────────────────────────────── */
 
 void *qt_radio_button_create(void *parent, const char *text);
+void  qt_radio_button_set_text(void *radio_button, const char *text);
+char *qt_radio_button_get_text(void *radio_button);
 int   qt_radio_button_is_checked(void *radio_button);
 void  qt_radio_button_set_checked(void *radio_button, int is_checked);
 
@@ -91,6 +107,11 @@ void  qt_line_edit_set_placeholder_text(void *line_edit, const char *text);
 void  qt_line_edit_set_read_only(void *line_edit, int is_read_only);
 void  qt_line_edit_set_echo_mode(void *line_edit, int mode);
 void  qt_line_edit_clear(void *line_edit);
+int   qt_line_edit_is_read_only(void *line_edit);
+char *qt_line_edit_get_placeholder_text(void *line_edit);
+void  qt_line_edit_select_all(void *line_edit);
+void  qt_line_edit_set_max_length(void *line_edit, int length);
+int   qt_line_edit_get_max_length(void *line_edit);
 
 /* ── QTextEdit ──────────────────────────────────────────────────────── */
 
@@ -98,7 +119,12 @@ void *qt_text_edit_create(void *parent);
 void  qt_text_edit_set_plain_text(void *text_edit, const char *text);
 char *qt_text_edit_get_plain_text(void *text_edit);
 void  qt_text_edit_set_read_only(void *text_edit, int is_read_only);
+int   qt_text_edit_is_read_only(void *text_edit);
 void  qt_text_edit_clear(void *text_edit);
+void  qt_text_edit_set_html(void *text_edit, const char *html);
+char *qt_text_edit_get_html(void *text_edit);
+void  qt_text_edit_append(void *text_edit, const char *text);
+void  qt_text_edit_insert_plain_text(void *text_edit, const char *text);
 
 /* ── QPlainTextEdit ─────────────────────────────────────────────────── */
 
@@ -106,7 +132,10 @@ void *qt_plain_text_edit_create(void *parent);
 void  qt_plain_text_edit_set_plain_text(void *text_edit, const char *text);
 char *qt_plain_text_edit_get_plain_text(void *text_edit);
 void  qt_plain_text_edit_set_read_only(void *text_edit, int is_read_only);
+int   qt_plain_text_edit_is_read_only(void *text_edit);
 void  qt_plain_text_edit_clear(void *text_edit);
+void  qt_plain_text_edit_append_plain_text(void *text_edit, const char *text);
+void  qt_plain_text_edit_insert_plain_text(void *text_edit, const char *text);
 
 /* ── QCheckBox ──────────────────────────────────────────────────────── */
 
@@ -114,6 +143,11 @@ void *qt_check_box_create(void *parent, const char *text);
 int   qt_check_box_is_checked(void *check_box);
 void  qt_check_box_set_checked(void *check_box, int is_checked);
 void  qt_check_box_set_text(void *check_box, const char *text);
+char *qt_check_box_get_text(void *check_box);
+void  qt_check_box_set_tristate(void *check_box, int is_tristate);
+int   qt_check_box_is_tristate(void *check_box);
+int   qt_check_box_get_check_state(void *check_box);
+void  qt_check_box_set_check_state(void *check_box, int state);
 
 /* ── QComboBox ──────────────────────────────────────────────────────── */
 
@@ -251,6 +285,9 @@ void *qt_frame_create(void *parent);
 void  qt_frame_set_frame_shape(void *frame, int shape);
 void  qt_frame_set_frame_shadow(void *frame, int shadow);
 void  qt_frame_set_line_width(void *frame, int width);
+int   qt_frame_get_frame_shape(void *frame);
+int   qt_frame_get_frame_shadow(void *frame);
+int   qt_frame_get_line_width(void *frame);
 
 /* ── QMenuBar ───────────────────────────────────────────────────────── */
 
@@ -270,6 +307,12 @@ void  qt_action_set_checkable(void *action, int is_checkable);
 int   qt_action_is_checked(void *action);
 void  qt_action_set_checked(void *action, int is_checked);
 void  qt_action_set_tooltip(void *action, const char *tooltip);
+void  qt_action_set_text(void *action, const char *text);
+char *qt_action_get_text(void *action);
+int   qt_action_is_enabled(void *action);
+int   qt_action_is_checkable(void *action);
+void  qt_action_set_visible(void *action, int is_visible);
+int   qt_action_is_visible(void *action);
 
 /* ── QToolBar ───────────────────────────────────────────────────────── */
 
@@ -294,6 +337,9 @@ void  qt_group_box_set_title(void *group_box, const char *title);
 void  qt_group_box_set_checkable(void *group_box, int is_checkable);
 int   qt_group_box_is_checked(void *group_box);
 void  qt_group_box_set_checked(void *group_box, int is_checked);
+char *qt_group_box_get_title(void *group_box);
+void  qt_group_box_set_flat(void *group_box, int is_flat);
+int   qt_group_box_is_flat(void *group_box);
 
 /* ── QDialog ────────────────────────────────────────────────────────── */
 

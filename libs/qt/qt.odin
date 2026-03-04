@@ -237,6 +237,12 @@ Context_Menu_Policy :: enum c.int {
 	Prevent_Context_Menu = 4,
 }
 
+Check_State :: enum c.int {
+	Unchecked = 0,
+	Partially_Checked = 1,
+	Checked = 2,
+}
+
 /* ── Foreign declarations ──────────────────────────────────────────── */
 
 @(default_calling_convention="c", link_prefix="qt_")
@@ -299,6 +305,14 @@ foreign qt_lib {
 	widget_set_size_policy :: proc(widget: Widget, horizontal: Size_Policy, vertical: Size_Policy) ---
 	widget_set_context_menu_policy :: proc(widget: Widget, policy: Context_Menu_Policy) ---
 	widget_add_action :: proc(widget: Widget, action: Action) ---
+	@(require_results) widget_is_visible :: proc(widget: Widget) -> c.int ---
+	@(require_results) widget_get_window_title :: proc(widget: Widget) -> cstring ---
+	@(require_results) widget_get_tool_tip :: proc(widget: Widget) -> cstring ---
+	@(require_results) widget_get_style_sheet :: proc(widget: Widget) -> cstring ---
+	widget_set_fixed_width :: proc(widget: Widget, width: c.int) ---
+	widget_set_fixed_height :: proc(widget: Widget, height: c.int) ---
+	widget_set_object_name :: proc(widget: Widget, name: cstring) ---
+	@(require_results) widget_get_object_name :: proc(widget: Widget) -> cstring ---
 
 	/* QLabel */
 
@@ -312,10 +326,18 @@ foreign qt_lib {
 
 	@(require_results) push_button_create :: proc(parent: Widget, text: cstring) -> Push_Button ---
 	push_button_set_text :: proc(button: Push_Button, text: cstring) ---
+	@(require_results) push_button_get_text :: proc(button: Push_Button) -> cstring ---
+	push_button_set_flat :: proc(button: Push_Button, is_flat: c.int) ---
+	@(require_results) push_button_is_flat :: proc(button: Push_Button) -> c.int ---
+	push_button_set_checkable :: proc(button: Push_Button, is_checkable: c.int) ---
+	@(require_results) push_button_is_checked :: proc(button: Push_Button) -> c.int ---
+	push_button_set_checked :: proc(button: Push_Button, is_checked: c.int) ---
 
 	/* QRadioButton */
 
 	@(require_results) radio_button_create :: proc(parent: Widget, text: cstring) -> Radio_Button ---
+	radio_button_set_text :: proc(radio_button: Radio_Button, text: cstring) ---
+	@(require_results) radio_button_get_text :: proc(radio_button: Radio_Button) -> cstring ---
 	@(require_results) radio_button_is_checked :: proc(radio_button: Radio_Button) -> c.int ---
 	radio_button_set_checked :: proc(radio_button: Radio_Button, is_checked: c.int) ---
 
@@ -328,6 +350,11 @@ foreign qt_lib {
 	line_edit_set_read_only :: proc(line_edit: Line_Edit, is_read_only: c.int) ---
 	line_edit_set_echo_mode :: proc(line_edit: Line_Edit, mode: Echo_Mode) ---
 	line_edit_clear :: proc(line_edit: Line_Edit) ---
+	@(require_results) line_edit_is_read_only :: proc(line_edit: Line_Edit) -> c.int ---
+	@(require_results) line_edit_get_placeholder_text :: proc(line_edit: Line_Edit) -> cstring ---
+	line_edit_select_all :: proc(line_edit: Line_Edit) ---
+	line_edit_set_max_length :: proc(line_edit: Line_Edit, length: c.int) ---
+	@(require_results) line_edit_get_max_length :: proc(line_edit: Line_Edit) -> c.int ---
 
 	/* QTextEdit */
 
@@ -335,7 +362,12 @@ foreign qt_lib {
 	text_edit_set_plain_text :: proc(text_edit: Text_Edit, text: cstring) ---
 	@(require_results) text_edit_get_plain_text :: proc(text_edit: Text_Edit) -> cstring ---
 	text_edit_set_read_only :: proc(text_edit: Text_Edit, is_read_only: c.int) ---
+	@(require_results) text_edit_is_read_only :: proc(text_edit: Text_Edit) -> c.int ---
 	text_edit_clear :: proc(text_edit: Text_Edit) ---
+	text_edit_set_html :: proc(text_edit: Text_Edit, html: cstring) ---
+	@(require_results) text_edit_get_html :: proc(text_edit: Text_Edit) -> cstring ---
+	text_edit_append :: proc(text_edit: Text_Edit, text: cstring) ---
+	text_edit_insert_plain_text :: proc(text_edit: Text_Edit, text: cstring) ---
 
 	/* QPlainTextEdit */
 
@@ -343,7 +375,10 @@ foreign qt_lib {
 	plain_text_edit_set_plain_text :: proc(plain_text_edit: Plain_Text_Edit, text: cstring) ---
 	@(require_results) plain_text_edit_get_plain_text :: proc(plain_text_edit: Plain_Text_Edit) -> cstring ---
 	plain_text_edit_set_read_only :: proc(plain_text_edit: Plain_Text_Edit, is_read_only: c.int) ---
+	@(require_results) plain_text_edit_is_read_only :: proc(plain_text_edit: Plain_Text_Edit) -> c.int ---
 	plain_text_edit_clear :: proc(plain_text_edit: Plain_Text_Edit) ---
+	plain_text_edit_append_plain_text :: proc(plain_text_edit: Plain_Text_Edit, text: cstring) ---
+	plain_text_edit_insert_plain_text :: proc(plain_text_edit: Plain_Text_Edit, text: cstring) ---
 
 	/* QCheckBox */
 
@@ -351,6 +386,11 @@ foreign qt_lib {
 	@(require_results) check_box_is_checked :: proc(check_box: Check_Box) -> c.int ---
 	check_box_set_checked :: proc(check_box: Check_Box, is_checked: c.int) ---
 	check_box_set_text :: proc(check_box: Check_Box, text: cstring) ---
+	@(require_results) check_box_get_text :: proc(check_box: Check_Box) -> cstring ---
+	check_box_set_tristate :: proc(check_box: Check_Box, is_tristate: c.int) ---
+	@(require_results) check_box_is_tristate :: proc(check_box: Check_Box) -> c.int ---
+	@(require_results) check_box_get_check_state :: proc(check_box: Check_Box) -> Check_State ---
+	check_box_set_check_state :: proc(check_box: Check_Box, state: Check_State) ---
 
 	/* QComboBox */
 
@@ -489,6 +529,9 @@ foreign qt_lib {
 	frame_set_frame_shape :: proc(frame: Frame, shape: Frame_Shape) ---
 	frame_set_frame_shadow :: proc(frame: Frame, shadow: Frame_Shadow) ---
 	frame_set_line_width :: proc(frame: Frame, width: c.int) ---
+	@(require_results) frame_get_frame_shape :: proc(frame: Frame) -> Frame_Shape ---
+	@(require_results) frame_get_frame_shadow :: proc(frame: Frame) -> Frame_Shadow ---
+	@(require_results) frame_get_line_width :: proc(frame: Frame) -> c.int ---
 
 	/* QMenuBar */
 
@@ -508,6 +551,12 @@ foreign qt_lib {
 	@(require_results) action_is_checked :: proc(action: Action) -> c.int ---
 	action_set_checked :: proc(action: Action, is_checked: c.int) ---
 	action_set_tooltip :: proc(action: Action, tooltip: cstring) ---
+	action_set_text :: proc(action: Action, text: cstring) ---
+	@(require_results) action_get_text :: proc(action: Action) -> cstring ---
+	@(require_results) action_is_enabled :: proc(action: Action) -> c.int ---
+	@(require_results) action_is_checkable :: proc(action: Action) -> c.int ---
+	action_set_visible :: proc(action: Action, is_visible: c.int) ---
+	@(require_results) action_is_visible :: proc(action: Action) -> c.int ---
 
 	/* QToolBar */
 
@@ -532,6 +581,9 @@ foreign qt_lib {
 	group_box_set_checkable :: proc(group_box: Group_Box, is_checkable: c.int) ---
 	@(require_results) group_box_is_checked :: proc(group_box: Group_Box) -> c.int ---
 	group_box_set_checked :: proc(group_box: Group_Box, is_checked: c.int) ---
+	@(require_results) group_box_get_title :: proc(group_box: Group_Box) -> cstring ---
+	group_box_set_flat :: proc(group_box: Group_Box, is_flat: c.int) ---
+	@(require_results) group_box_is_flat :: proc(group_box: Group_Box) -> c.int ---
 
 	/* QDialog */
 
