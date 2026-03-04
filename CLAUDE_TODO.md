@@ -32,7 +32,13 @@ QTabBar, QToolBox, QScrollBar, QLCDNumber, QCommandLinkButton,
 QKeySequenceEdit, QFontComboBox, QSplashScreen, QStackedLayout,
 QWidgetAction, QActionGroup, QErrorMessage, QMdiArea, QMdiSubWindow,
 QWizard, QWizardPage, QColumnView, QUndoView, QRubberBand,
-QFocusFrame, QSizeGrip, QWhatsThis
+QFocusFrame, QSizeGrip, QWhatsThis,
+QImage, QColor, QFont, QPen, QBrush, QPalette, QCursor,
+QPainterPath, QTransform, QRegion,
+QLinearGradient, QRadialGradient, QConicalGradient,
+QTextCursor, QTextDocument, QFontDatabase, QKeySequence,
+QMovie, QImageReader, QImageWriter, QBitmap, QStaticText, QPicture,
+QPageLayout, QPageSize
 
 ---
 
@@ -60,29 +66,29 @@ QFocusFrame, QSizeGrip, QWhatsThis
 - [x] QSizeGrip
 - [x] QWhatsThis
 
-## Batch 2: QtGui Essentials
-- [ ] QImage
-- [ ] QColor (standalone)
-- [ ] QFont (standalone)
-- [ ] QPen (standalone)
-- [ ] QBrush (standalone)
-- [ ] QPalette
-- [ ] QCursor (standalone)
-- [ ] QPainterPath
-- [ ] QTransform
-- [ ] QRegion
-- [ ] QGradient / QLinearGradient / QRadialGradient / QConicalGradient
-- [ ] QTextCursor
-- [ ] QTextDocument
-- [ ] QFontDatabase
-- [ ] QKeySequence (standalone)
-- [ ] QMovie
-- [ ] QImageReader
-- [ ] QImageWriter
-- [ ] QBitmap
-- [ ] QStaticText
-- [ ] QPicture
-- [ ] QPageLayout / QPageSize
+## Batch 2: QtGui Essentials ✅
+- [x] QImage
+- [x] QColor (standalone)
+- [x] QFont (standalone)
+- [x] QPen (standalone)
+- [x] QBrush (standalone)
+- [x] QPalette
+- [x] QCursor (standalone)
+- [x] QPainterPath
+- [x] QTransform
+- [x] QRegion
+- [x] QGradient / QLinearGradient / QRadialGradient / QConicalGradient
+- [x] QTextCursor
+- [x] QTextDocument
+- [x] QFontDatabase
+- [x] QKeySequence (standalone)
+- [x] QMovie
+- [x] QImageReader
+- [x] QImageWriter
+- [x] QBitmap
+- [x] QStaticText
+- [x] QPicture
+- [x] QPageLayout / QPageSize
 
 ## Batch 3: QtCore Essentials
 - [ ] QFile

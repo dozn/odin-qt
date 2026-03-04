@@ -131,6 +131,28 @@
 #include <QFocusFrame>
 #include <QSizeGrip>
 #include <QWhatsThis>
+#include <QImage>
+#include <QColor>
+#include <QFont>
+#include <QPalette>
+#include <QPainterPath>
+#include <QTransform>
+#include <QRegion>
+#include <QLinearGradient>
+#include <QRadialGradient>
+#include <QConicalGradient>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextBlock>
+#include <QFontDatabase>
+#include <QMovie>
+#include <QImageReader>
+#include <QImageWriter>
+#include <QBitmap>
+#include <QStaticText>
+#include <QPicture>
+#include <QPageLayout>
+#include <QPageSize>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -4969,6 +4991,1147 @@ void qt_whats_this_show_text(int global_x, int global_y, const char *text, void 
 
 void qt_whats_this_hide_text(void) {
     QWhatsThis::hideText();
+}
+
+/* ── QImage ──────────────────────────────────────────────────────────── */
+
+void *qt_image_create(int width, int height, int format) {
+    return static_cast<void *>(new QImage(width, height, static_cast<QImage::Format>(format)));
+}
+
+void *qt_image_create_from_file(const char *file_path) {
+    return static_cast<void *>(new QImage(QString::fromUtf8(file_path)));
+}
+
+void *qt_image_create_from_data(const unsigned char *data, int size) {
+    return static_cast<void *>(new QImage(QImage::fromData(data, size)));
+}
+
+void qt_image_destroy(void *image) {
+    delete static_cast<QImage *>(image);
+}
+
+int qt_image_get_width(void *image) {
+    return static_cast<QImage *>(image)->width();
+}
+
+int qt_image_get_height(void *image) {
+    return static_cast<QImage *>(image)->height();
+}
+
+int qt_image_get_format(void *image) {
+    return static_cast<int>(static_cast<QImage *>(image)->format());
+}
+
+int qt_image_is_null(void *image) {
+    return static_cast<QImage *>(image)->isNull() ? 1 : 0;
+}
+
+void qt_image_fill(void *image, int r, int g, int b, int a) {
+    static_cast<QImage *>(image)->fill(QColor(r, g, b, a));
+}
+
+void qt_image_set_pixel(void *image, int x, int y, int r, int g, int b, int a) {
+    static_cast<QImage *>(image)->setPixelColor(x, y, QColor(r, g, b, a));
+}
+
+void qt_image_get_pixel(void *image, int x, int y, int *r, int *g, int *b, int *a) {
+    QColor c = static_cast<QImage *>(image)->pixelColor(x, y);
+    *r = c.red(); *g = c.green(); *b = c.blue(); *a = c.alpha();
+}
+
+void *qt_image_scaled(void *image, int width, int height, int aspect_mode, int transform_mode) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->scaled(
+        width, height, static_cast<Qt::AspectRatioMode>(aspect_mode), static_cast<Qt::TransformationMode>(transform_mode))));
+}
+
+void *qt_image_mirrored(void *image, int is_horizontal, int is_vertical) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->mirrored(is_horizontal != 0, is_vertical != 0)));
+}
+
+void *qt_image_copy(void *image, int x, int y, int width, int height) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->copy(x, y, width, height)));
+}
+
+int qt_image_save(void *image, const char *file_path, const char *format, int quality) {
+    return static_cast<QImage *>(image)->save(QString::fromUtf8(file_path), format, quality) ? 1 : 0;
+}
+
+void *qt_image_to_pixmap(void *image) {
+    return static_cast<void *>(new QPixmap(QPixmap::fromImage(*static_cast<QImage *>(image))));
+}
+
+void *qt_pixmap_to_image(void *pixmap) {
+    return static_cast<void *>(new QImage(static_cast<QPixmap *>(pixmap)->toImage()));
+}
+
+int qt_image_get_depth(void *image) {
+    return static_cast<QImage *>(image)->depth();
+}
+
+int qt_image_get_byte_count(void *image) {
+    return static_cast<int>(static_cast<QImage *>(image)->sizeInBytes());
+}
+
+const unsigned char *qt_image_get_bits(void *image) {
+    return static_cast<QImage *>(image)->constBits();
+}
+
+/* ── QColor (standalone) ────────────────────────────────────────────── */
+
+void *qt_colour_create(int r, int g, int b, int a) {
+    return static_cast<void *>(new QColor(r, g, b, a));
+}
+
+void *qt_colour_create_from_name(const char *name) {
+    return static_cast<void *>(new QColor(QString::fromUtf8(name)));
+}
+
+void *qt_colour_create_from_hsv(int h, int s, int v, int a) {
+    return static_cast<void *>(new QColor(QColor::fromHsv(h, s, v, a)));
+}
+
+void *qt_colour_create_from_hsl(int h, int s, int l, int a) {
+    return static_cast<void *>(new QColor(QColor::fromHsl(h, s, l, a)));
+}
+
+void qt_colour_destroy(void *colour) {
+    delete static_cast<QColor *>(colour);
+}
+
+void qt_colour_get_rgb(void *colour, int *r, int *g, int *b, int *a) {
+    QColor *c = static_cast<QColor *>(colour);
+    *r = c->red(); *g = c->green(); *b = c->blue(); *a = c->alpha();
+}
+
+void qt_colour_get_hsv(void *colour, int *h, int *s, int *v, int *a) {
+    QColor *c = static_cast<QColor *>(colour);
+    *h = c->hsvHue(); *s = c->hsvSaturation(); *v = c->value(); *a = c->alpha();
+}
+
+void qt_colour_get_hsl(void *colour, int *h, int *s, int *l, int *a) {
+    QColor *c = static_cast<QColor *>(colour);
+    *h = c->hslHue(); *s = c->hslSaturation(); *l = c->lightness(); *a = c->alpha();
+}
+
+char *qt_colour_get_name(void *colour) {
+    return qstring_to_heap_utf8(static_cast<QColor *>(colour)->name());
+}
+
+int qt_colour_is_valid(void *colour) {
+    return static_cast<QColor *>(colour)->isValid() ? 1 : 0;
+}
+
+void *qt_colour_lighter(void *colour, int factor) {
+    return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->lighter(factor)));
+}
+
+void *qt_colour_darker(void *colour, int factor) {
+    return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->darker(factor)));
+}
+
+/* ── QFont (standalone) ─────────────────────────────────────────────── */
+
+void *qt_font_create(const char *family, int point_size, int weight, int is_italic) {
+    return static_cast<void *>(new QFont(QString::fromUtf8(family), point_size, weight, is_italic != 0));
+}
+
+void *qt_font_create_default(void) {
+    return static_cast<void *>(new QFont());
+}
+
+void qt_font_destroy(void *font) {
+    delete static_cast<QFont *>(font);
+}
+
+void qt_font_set_family(void *font, const char *family) {
+    static_cast<QFont *>(font)->setFamily(QString::fromUtf8(family));
+}
+
+char *qt_font_get_family(void *font) {
+    return qstring_to_heap_utf8(static_cast<QFont *>(font)->family());
+}
+
+void qt_font_set_point_size(void *font, int size) {
+    static_cast<QFont *>(font)->setPointSize(size);
+}
+
+int qt_font_get_point_size(void *font) {
+    return static_cast<QFont *>(font)->pointSize();
+}
+
+void qt_font_set_pixel_size(void *font, int size) {
+    static_cast<QFont *>(font)->setPixelSize(size);
+}
+
+int qt_font_get_pixel_size(void *font) {
+    return static_cast<QFont *>(font)->pixelSize();
+}
+
+void qt_font_set_weight(void *font, int weight) {
+    static_cast<QFont *>(font)->setWeight(static_cast<QFont::Weight>(weight));
+}
+
+int qt_font_get_weight(void *font) {
+    return static_cast<int>(static_cast<QFont *>(font)->weight());
+}
+
+void qt_font_set_bold(void *font, int is_bold) {
+    static_cast<QFont *>(font)->setBold(is_bold != 0);
+}
+
+int qt_font_is_bold(void *font) {
+    return static_cast<QFont *>(font)->bold() ? 1 : 0;
+}
+
+void qt_font_set_italic(void *font, int is_italic) {
+    static_cast<QFont *>(font)->setItalic(is_italic != 0);
+}
+
+int qt_font_is_italic(void *font) {
+    return static_cast<QFont *>(font)->italic() ? 1 : 0;
+}
+
+void qt_font_set_underline(void *font, int is_underline) {
+    static_cast<QFont *>(font)->setUnderline(is_underline != 0);
+}
+
+int qt_font_is_underline(void *font) {
+    return static_cast<QFont *>(font)->underline() ? 1 : 0;
+}
+
+void qt_font_set_strikeout(void *font, int is_strikeout) {
+    static_cast<QFont *>(font)->setStrikeOut(is_strikeout != 0);
+}
+
+int qt_font_is_strikeout(void *font) {
+    return static_cast<QFont *>(font)->strikeOut() ? 1 : 0;
+}
+
+void qt_font_set_kerning(void *font, int is_kerning) {
+    static_cast<QFont *>(font)->setKerning(is_kerning != 0);
+}
+
+int qt_font_is_kerning(void *font) {
+    return static_cast<QFont *>(font)->kerning() ? 1 : 0;
+}
+
+void qt_font_set_letter_spacing(void *font, int spacing_type, double spacing) {
+    static_cast<QFont *>(font)->setLetterSpacing(static_cast<QFont::SpacingType>(spacing_type), spacing);
+}
+
+void qt_font_set_word_spacing(void *font, double spacing) {
+    static_cast<QFont *>(font)->setWordSpacing(spacing);
+}
+
+void qt_font_set_stretch(void *font, int factor) {
+    static_cast<QFont *>(font)->setStretch(factor);
+}
+
+void qt_font_set_style_hint(void *font, int hint) {
+    static_cast<QFont *>(font)->setStyleHint(static_cast<QFont::StyleHint>(hint));
+}
+
+char *qt_font_to_string(void *font) {
+    return qstring_to_heap_utf8(static_cast<QFont *>(font)->toString());
+}
+
+/* ── QPen (standalone) ──────────────────────────────────────────────── */
+
+void *qt_pen_create(void) {
+    return static_cast<void *>(new QPen());
+}
+
+void *qt_pen_create_with_colour(int r, int g, int b, int a) {
+    return static_cast<void *>(new QPen(QColor(r, g, b, a)));
+}
+
+void qt_pen_destroy(void *pen) {
+    delete static_cast<QPen *>(pen);
+}
+
+void qt_pen_set_colour(void *pen, int r, int g, int b, int a) {
+    static_cast<QPen *>(pen)->setColor(QColor(r, g, b, a));
+}
+
+void qt_pen_get_colour(void *pen, int *r, int *g, int *b, int *a) {
+    QColor c = static_cast<QPen *>(pen)->color();
+    *r = c.red(); *g = c.green(); *b = c.blue(); *a = c.alpha();
+}
+
+void qt_pen_set_width(void *pen, int width) {
+    static_cast<QPen *>(pen)->setWidth(width);
+}
+
+int qt_pen_get_width(void *pen) {
+    return static_cast<QPen *>(pen)->width();
+}
+
+void qt_pen_set_width_f(void *pen, double width) {
+    static_cast<QPen *>(pen)->setWidthF(width);
+}
+
+double qt_pen_get_width_f(void *pen) {
+    return static_cast<QPen *>(pen)->widthF();
+}
+
+void qt_pen_set_style(void *pen, int style) {
+    static_cast<QPen *>(pen)->setStyle(static_cast<Qt::PenStyle>(style));
+}
+
+int qt_pen_get_style(void *pen) {
+    return static_cast<int>(static_cast<QPen *>(pen)->style());
+}
+
+void qt_pen_set_cap_style(void *pen, int style) {
+    static_cast<QPen *>(pen)->setCapStyle(static_cast<Qt::PenCapStyle>(style));
+}
+
+int qt_pen_get_cap_style(void *pen) {
+    return static_cast<int>(static_cast<QPen *>(pen)->capStyle());
+}
+
+void qt_pen_set_join_style(void *pen, int style) {
+    static_cast<QPen *>(pen)->setJoinStyle(static_cast<Qt::PenJoinStyle>(style));
+}
+
+int qt_pen_get_join_style(void *pen) {
+    return static_cast<int>(static_cast<QPen *>(pen)->joinStyle());
+}
+
+void qt_pen_set_dash_offset(void *pen, double offset) {
+    static_cast<QPen *>(pen)->setDashOffset(offset);
+}
+
+double qt_pen_get_dash_offset(void *pen) {
+    return static_cast<QPen *>(pen)->dashOffset();
+}
+
+/* ── QBrush (standalone) ────────────────────────────────────────────── */
+
+void *qt_brush_create(void) {
+    return static_cast<void *>(new QBrush());
+}
+
+void *qt_brush_create_with_colour(int r, int g, int b, int a) {
+    return static_cast<void *>(new QBrush(QColor(r, g, b, a)));
+}
+
+void qt_brush_destroy(void *brush) {
+    delete static_cast<QBrush *>(brush);
+}
+
+void qt_brush_set_colour(void *brush, int r, int g, int b, int a) {
+    static_cast<QBrush *>(brush)->setColor(QColor(r, g, b, a));
+}
+
+void qt_brush_get_colour(void *brush, int *r, int *g, int *b, int *a) {
+    QColor c = static_cast<QBrush *>(brush)->color();
+    *r = c.red(); *g = c.green(); *b = c.blue(); *a = c.alpha();
+}
+
+void qt_brush_set_style(void *brush, int style) {
+    static_cast<QBrush *>(brush)->setStyle(static_cast<Qt::BrushStyle>(style));
+}
+
+int qt_brush_get_style(void *brush) {
+    return static_cast<int>(static_cast<QBrush *>(brush)->style());
+}
+
+void qt_brush_set_texture(void *brush, void *pixmap) {
+    static_cast<QBrush *>(brush)->setTexture(*static_cast<QPixmap *>(pixmap));
+}
+
+/* ── QPalette ───────────────────────────────────────────────────────── */
+
+void *qt_palette_create(void) {
+    return static_cast<void *>(new QPalette());
+}
+
+void *qt_palette_create_from_widget(void *widget) {
+    return static_cast<void *>(new QPalette(static_cast<QWidget *>(widget)->palette()));
+}
+
+void qt_palette_destroy(void *palette) {
+    delete static_cast<QPalette *>(palette);
+}
+
+void qt_palette_set_colour(void *palette, int group, int role, int r, int g, int b, int a) {
+    static_cast<QPalette *>(palette)->setColor(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role), QColor(r, g, b, a));
+}
+
+void qt_palette_get_colour(void *palette, int group, int role, int *r, int *g, int *b, int *a) {
+    QColor c = static_cast<QPalette *>(palette)->color(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role));
+    *r = c.red(); *g = c.green(); *b = c.blue(); *a = c.alpha();
+}
+
+void qt_palette_set_brush(void *palette, int group, int role, void *brush) {
+    static_cast<QPalette *>(palette)->setBrush(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role), *static_cast<QBrush *>(brush));
+}
+
+void qt_widget_set_palette(void *widget, void *palette) {
+    static_cast<QWidget *>(widget)->setPalette(*static_cast<QPalette *>(palette));
+}
+
+/* ── QCursor (standalone) ───────────────────────────────────────────── */
+
+void *qt_cursor_create(int shape) {
+    return static_cast<void *>(new QCursor(static_cast<Qt::CursorShape>(shape)));
+}
+
+void *qt_cursor_create_from_pixmap(void *pixmap, int hot_x, int hot_y) {
+    return static_cast<void *>(new QCursor(*static_cast<QPixmap *>(pixmap), hot_x, hot_y));
+}
+
+void qt_cursor_destroy(void *cursor) {
+    delete static_cast<QCursor *>(cursor);
+}
+
+void qt_cursor_get_pos(int *x, int *y) {
+    QPoint p = QCursor::pos();
+    *x = p.x(); *y = p.y();
+}
+
+void qt_cursor_set_pos(int x, int y) {
+    QCursor::setPos(x, y);
+}
+
+void qt_widget_set_cursor_object(void *widget, void *cursor) {
+    static_cast<QWidget *>(widget)->setCursor(*static_cast<QCursor *>(cursor));
+}
+
+/* ── QPainterPath ───────────────────────────────────────────────────── */
+
+void *qt_painter_path_create(void) {
+    return static_cast<void *>(new QPainterPath());
+}
+
+void qt_painter_path_destroy(void *path) {
+    delete static_cast<QPainterPath *>(path);
+}
+
+void qt_painter_path_move_to(void *path, double x, double y) {
+    static_cast<QPainterPath *>(path)->moveTo(x, y);
+}
+
+void qt_painter_path_line_to(void *path, double x, double y) {
+    static_cast<QPainterPath *>(path)->lineTo(x, y);
+}
+
+void qt_painter_path_cubic_to(void *path, double ctrl1_x, double ctrl1_y, double ctrl2_x, double ctrl2_y, double end_x, double end_y) {
+    static_cast<QPainterPath *>(path)->cubicTo(ctrl1_x, ctrl1_y, ctrl2_x, ctrl2_y, end_x, end_y);
+}
+
+void qt_painter_path_quad_to(void *path, double ctrl_x, double ctrl_y, double end_x, double end_y) {
+    static_cast<QPainterPath *>(path)->quadTo(ctrl_x, ctrl_y, end_x, end_y);
+}
+
+void qt_painter_path_arc_to(void *path, double x, double y, double width, double height, double start_angle, double sweep_length) {
+    static_cast<QPainterPath *>(path)->arcTo(x, y, width, height, start_angle, sweep_length);
+}
+
+void qt_painter_path_add_rect(void *path, double x, double y, double width, double height) {
+    static_cast<QPainterPath *>(path)->addRect(x, y, width, height);
+}
+
+void qt_painter_path_add_ellipse(void *path, double x, double y, double width, double height) {
+    static_cast<QPainterPath *>(path)->addEllipse(x, y, width, height);
+}
+
+void qt_painter_path_add_text(void *path, double x, double y, void *font, const char *text) {
+    static_cast<QPainterPath *>(path)->addText(x, y, *static_cast<QFont *>(font), QString::fromUtf8(text));
+}
+
+void qt_painter_path_add_rounded_rect(void *path, double x, double y, double w, double h, double x_radius, double y_radius) {
+    static_cast<QPainterPath *>(path)->addRoundedRect(x, y, w, h, x_radius, y_radius);
+}
+
+void qt_painter_path_close_subpath(void *path) {
+    static_cast<QPainterPath *>(path)->closeSubpath();
+}
+
+int qt_painter_path_is_empty(void *path) {
+    return static_cast<QPainterPath *>(path)->isEmpty() ? 1 : 0;
+}
+
+int qt_painter_path_contains_point(void *path, double x, double y) {
+    return static_cast<QPainterPath *>(path)->contains(QPointF(x, y)) ? 1 : 0;
+}
+
+void qt_painter_draw_path(void *painter, void *path) {
+    static_cast<QPainter *>(painter)->drawPath(*static_cast<QPainterPath *>(path));
+}
+
+void qt_painter_set_clip_path(void *painter, void *path) {
+    static_cast<QPainter *>(painter)->setClipPath(*static_cast<QPainterPath *>(path));
+}
+
+void qt_painter_fill_path(void *painter, void *path, int r, int g, int b, int a) {
+    static_cast<QPainter *>(painter)->fillPath(*static_cast<QPainterPath *>(path), QColor(r, g, b, a));
+}
+
+void qt_painter_stroke_path(void *painter, void *path, void *pen) {
+    static_cast<QPainter *>(painter)->strokePath(*static_cast<QPainterPath *>(path), *static_cast<QPen *>(pen));
+}
+
+/* ── QTransform ─────────────────────────────────────────────────────── */
+
+void *qt_transform_create(void) {
+    return static_cast<void *>(new QTransform());
+}
+
+void *qt_transform_create_values(double m11, double m12, double m13, double m21, double m22, double m23, double m31, double m32, double m33) {
+    return static_cast<void *>(new QTransform(m11, m12, m13, m21, m22, m23, m31, m32, m33));
+}
+
+void qt_transform_destroy(void *transform) {
+    delete static_cast<QTransform *>(transform);
+}
+
+void *qt_transform_inverted(void *transform) {
+    return static_cast<void *>(new QTransform(static_cast<QTransform *>(transform)->inverted()));
+}
+
+void *qt_transform_transposed(void *transform) {
+    return static_cast<void *>(new QTransform(static_cast<QTransform *>(transform)->transposed()));
+}
+
+void qt_transform_translate(void *transform, double dx, double dy) {
+    static_cast<QTransform *>(transform)->translate(dx, dy);
+}
+
+void qt_transform_scale(void *transform, double sx, double sy) {
+    static_cast<QTransform *>(transform)->scale(sx, sy);
+}
+
+void qt_transform_rotate(void *transform, double angle) {
+    static_cast<QTransform *>(transform)->rotate(angle);
+}
+
+void qt_transform_shear(void *transform, double sh, double sv) {
+    static_cast<QTransform *>(transform)->shear(sh, sv);
+}
+
+void qt_transform_reset(void *transform) {
+    static_cast<QTransform *>(transform)->reset();
+}
+
+int qt_transform_is_identity(void *transform) {
+    return static_cast<QTransform *>(transform)->isIdentity() ? 1 : 0;
+}
+
+double qt_transform_determinant(void *transform) {
+    return static_cast<QTransform *>(transform)->determinant();
+}
+
+void qt_painter_set_transform(void *painter, void *transform, int is_combine) {
+    static_cast<QPainter *>(painter)->setTransform(*static_cast<QTransform *>(transform), is_combine != 0);
+}
+
+void qt_painter_reset_transform(void *painter) {
+    static_cast<QPainter *>(painter)->resetTransform();
+}
+
+/* ── QRegion ────────────────────────────────────────────────────────── */
+
+void *qt_region_create(void) {
+    return static_cast<void *>(new QRegion());
+}
+
+void *qt_region_create_rect(int x, int y, int width, int height) {
+    return static_cast<void *>(new QRegion(x, y, width, height, QRegion::Rectangle));
+}
+
+void *qt_region_create_ellipse(int x, int y, int width, int height) {
+    return static_cast<void *>(new QRegion(x, y, width, height, QRegion::Ellipse));
+}
+
+void qt_region_destroy(void *region) {
+    delete static_cast<QRegion *>(region);
+}
+
+int qt_region_is_empty(void *region) {
+    return static_cast<QRegion *>(region)->isEmpty() ? 1 : 0;
+}
+
+int qt_region_contains_point(void *region, int x, int y) {
+    return static_cast<QRegion *>(region)->contains(QPoint(x, y)) ? 1 : 0;
+}
+
+int qt_region_contains_rect(void *region, int x, int y, int width, int height) {
+    return static_cast<QRegion *>(region)->contains(QRect(x, y, width, height)) ? 1 : 0;
+}
+
+void *qt_region_united(void *region, void *other) {
+    return static_cast<void *>(new QRegion(static_cast<QRegion *>(region)->united(*static_cast<QRegion *>(other))));
+}
+
+void *qt_region_intersected(void *region, void *other) {
+    return static_cast<void *>(new QRegion(static_cast<QRegion *>(region)->intersected(*static_cast<QRegion *>(other))));
+}
+
+void *qt_region_subtracted(void *region, void *other) {
+    return static_cast<void *>(new QRegion(static_cast<QRegion *>(region)->subtracted(*static_cast<QRegion *>(other))));
+}
+
+void *qt_region_xored(void *region, void *other) {
+    return static_cast<void *>(new QRegion(static_cast<QRegion *>(region)->xored(*static_cast<QRegion *>(other))));
+}
+
+void qt_region_get_bounding_rect(void *region, int *x, int *y, int *width, int *height) {
+    QRect r = static_cast<QRegion *>(region)->boundingRect();
+    *x = r.x(); *y = r.y(); *width = r.width(); *height = r.height();
+}
+
+void qt_painter_set_clip_region(void *painter, void *region) {
+    static_cast<QPainter *>(painter)->setClipRegion(*static_cast<QRegion *>(region));
+}
+
+/* ── QGradient / QLinearGradient / QRadialGradient / QConicalGradient ── */
+
+void *qt_linear_gradient_create(double x1, double y1, double x2, double y2) {
+    return static_cast<void *>(new QLinearGradient(x1, y1, x2, y2));
+}
+
+void *qt_radial_gradient_create(double cx, double cy, double radius) {
+    return static_cast<void *>(new QRadialGradient(cx, cy, radius));
+}
+
+void *qt_radial_gradient_create_focal(double cx, double cy, double radius, double fx, double fy) {
+    return static_cast<void *>(new QRadialGradient(cx, cy, radius, fx, fy));
+}
+
+void *qt_conical_gradient_create(double cx, double cy, double angle) {
+    return static_cast<void *>(new QConicalGradient(cx, cy, angle));
+}
+
+void qt_gradient_destroy(void *gradient) {
+    delete static_cast<QGradient *>(gradient);
+}
+
+void qt_gradient_set_colour_at(void *gradient, double position, int r, int g, int b, int a) {
+    static_cast<QGradient *>(gradient)->setColorAt(position, QColor(r, g, b, a));
+}
+
+void qt_gradient_set_spread(void *gradient, int spread) {
+    static_cast<QGradient *>(gradient)->setSpread(static_cast<QGradient::Spread>(spread));
+}
+
+void qt_brush_set_gradient(void *brush, void *gradient) {
+    *static_cast<QBrush *>(brush) = QBrush(*static_cast<QGradient *>(gradient));
+}
+
+/* ── QTextCursor ────────────────────────────────────────────────────── */
+
+void *qt_text_cursor_create(void *document) {
+    return static_cast<void *>(new QTextCursor(static_cast<QTextDocument *>(document)));
+}
+
+void *qt_text_cursor_create_from_text_edit(void *text_edit) {
+    return static_cast<void *>(new QTextCursor(static_cast<QTextEdit *>(text_edit)->textCursor()));
+}
+
+void *qt_text_cursor_create_from_plain_text_edit(void *plain_text_edit) {
+    return static_cast<void *>(new QTextCursor(static_cast<QPlainTextEdit *>(plain_text_edit)->textCursor()));
+}
+
+void qt_text_cursor_destroy(void *cursor) {
+    delete static_cast<QTextCursor *>(cursor);
+}
+
+int qt_text_cursor_get_position(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->position();
+}
+
+void qt_text_cursor_set_position(void *cursor, int position, int move_mode) {
+    static_cast<QTextCursor *>(cursor)->setPosition(position, static_cast<QTextCursor::MoveMode>(move_mode));
+}
+
+int qt_text_cursor_get_anchor(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->anchor();
+}
+
+int qt_text_cursor_has_selection(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->hasSelection() ? 1 : 0;
+}
+
+char *qt_text_cursor_get_selected_text(void *cursor) {
+    return qstring_to_heap_utf8(static_cast<QTextCursor *>(cursor)->selectedText());
+}
+
+void qt_text_cursor_remove_selected_text(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->removeSelectedText();
+}
+
+void qt_text_cursor_insert_text(void *cursor, const char *text) {
+    static_cast<QTextCursor *>(cursor)->insertText(QString::fromUtf8(text));
+}
+
+void qt_text_cursor_insert_html(void *cursor, const char *html) {
+    static_cast<QTextCursor *>(cursor)->insertHtml(QString::fromUtf8(html));
+}
+
+void qt_text_cursor_select(void *cursor, int selection_type) {
+    static_cast<QTextCursor *>(cursor)->select(static_cast<QTextCursor::SelectionType>(selection_type));
+}
+
+void qt_text_cursor_move_position(void *cursor, int operation, int move_mode, int n) {
+    static_cast<QTextCursor *>(cursor)->movePosition(static_cast<QTextCursor::MoveOperation>(operation), static_cast<QTextCursor::MoveMode>(move_mode), n);
+}
+
+void qt_text_cursor_begin_edit_block(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->beginEditBlock();
+}
+
+void qt_text_cursor_end_edit_block(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->endEditBlock();
+}
+
+int qt_text_cursor_at_start(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->atStart() ? 1 : 0;
+}
+
+int qt_text_cursor_at_end(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->atEnd() ? 1 : 0;
+}
+
+int qt_text_cursor_get_block_number(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->blockNumber();
+}
+
+int qt_text_cursor_get_column_number(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->columnNumber();
+}
+
+void qt_text_edit_set_text_cursor(void *text_edit, void *cursor) {
+    static_cast<QTextEdit *>(text_edit)->setTextCursor(*static_cast<QTextCursor *>(cursor));
+}
+
+void qt_plain_text_edit_set_text_cursor(void *text_edit, void *cursor) {
+    static_cast<QPlainTextEdit *>(text_edit)->setTextCursor(*static_cast<QTextCursor *>(cursor));
+}
+
+/* ── QTextDocument ──────────────────────────────────────────────────── */
+
+void *qt_text_document_create(void *parent) {
+    return static_cast<void *>(new QTextDocument(static_cast<QObject *>(parent)));
+}
+
+void *qt_text_document_create_from_text_edit(void *text_edit) {
+    return static_cast<void *>(static_cast<QTextEdit *>(text_edit)->document());
+}
+
+void *qt_text_document_create_from_plain_text_edit(void *plain_text_edit) {
+    return static_cast<void *>(static_cast<QPlainTextEdit *>(plain_text_edit)->document());
+}
+
+void qt_text_document_destroy(void *document) {
+    delete static_cast<QTextDocument *>(document);
+}
+
+char *qt_text_document_get_plain_text(void *document) {
+    return qstring_to_heap_utf8(static_cast<QTextDocument *>(document)->toPlainText());
+}
+
+char *qt_text_document_get_html(void *document) {
+    return qstring_to_heap_utf8(static_cast<QTextDocument *>(document)->toHtml());
+}
+
+void qt_text_document_set_plain_text(void *document, const char *text) {
+    static_cast<QTextDocument *>(document)->setPlainText(QString::fromUtf8(text));
+}
+
+void qt_text_document_set_html(void *document, const char *html) {
+    static_cast<QTextDocument *>(document)->setHtml(QString::fromUtf8(html));
+}
+
+int qt_text_document_is_modified(void *document) {
+    return static_cast<QTextDocument *>(document)->isModified() ? 1 : 0;
+}
+
+void qt_text_document_set_modified(void *document, int is_modified) {
+    static_cast<QTextDocument *>(document)->setModified(is_modified != 0);
+}
+
+int qt_text_document_is_empty(void *document) {
+    return static_cast<QTextDocument *>(document)->isEmpty() ? 1 : 0;
+}
+
+int qt_text_document_get_block_count(void *document) {
+    return static_cast<QTextDocument *>(document)->blockCount();
+}
+
+int qt_text_document_get_character_count(void *document) {
+    return static_cast<QTextDocument *>(document)->characterCount();
+}
+
+void qt_text_document_set_default_font(void *document, void *font) {
+    static_cast<QTextDocument *>(document)->setDefaultFont(*static_cast<QFont *>(font));
+}
+
+void qt_text_document_undo(void *document) {
+    static_cast<QTextDocument *>(document)->undo();
+}
+
+void qt_text_document_redo(void *document) {
+    static_cast<QTextDocument *>(document)->redo();
+}
+
+int qt_text_document_is_undo_available(void *document) {
+    return static_cast<QTextDocument *>(document)->isUndoAvailable() ? 1 : 0;
+}
+
+int qt_text_document_is_redo_available(void *document) {
+    return static_cast<QTextDocument *>(document)->isRedoAvailable() ? 1 : 0;
+}
+
+void qt_text_document_clear_undo_redo_stacks(void *document) {
+    static_cast<QTextDocument *>(document)->clearUndoRedoStacks();
+}
+
+void qt_text_document_set_maximum_block_count(void *document, int maximum) {
+    static_cast<QTextDocument *>(document)->setMaximumBlockCount(maximum);
+}
+
+/* ── QFontDatabase ──────────────────────────────────────────────────── */
+
+int qt_font_database_get_families(char ***families_out) {
+    QStringList families = QFontDatabase::families();
+    int count = families.size();
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; i++) {
+        arr[i] = qstring_to_heap_utf8(families[i]);
+    }
+    *families_out = arr;
+    return count;
+}
+
+void qt_font_database_free_families(char **families, int count) {
+    for (int i = 0; i < count; i++) {
+        free(families[i]);
+    }
+    free(families);
+}
+
+int qt_font_database_has_family(const char *family) {
+    return QFontDatabase::families().contains(QString::fromUtf8(family), Qt::CaseInsensitive) ? 1 : 0;
+}
+
+int qt_font_database_is_fixed_pitch(const char *family) {
+    return QFontDatabase::isFixedPitch(QString::fromUtf8(family)) ? 1 : 0;
+}
+
+int qt_font_database_is_scalable(const char *family) {
+    return QFontDatabase::isScalable(QString::fromUtf8(family)) ? 1 : 0;
+}
+
+int qt_font_database_add_application_font(const char *file_path) {
+    return QFontDatabase::addApplicationFont(QString::fromUtf8(file_path));
+}
+
+int qt_font_database_add_application_font_from_data(const unsigned char *data, int size) {
+    return QFontDatabase::addApplicationFontFromData(QByteArray(reinterpret_cast<const char *>(data), size));
+}
+
+void qt_font_database_remove_application_font(int id) {
+    QFontDatabase::removeApplicationFont(id);
+}
+
+/* ── QKeySequence (standalone) ──────────────────────────────────────── */
+
+void *qt_key_sequence_create(const char *key) {
+    return static_cast<void *>(new QKeySequence(QString::fromUtf8(key)));
+}
+
+void *qt_key_sequence_create_standard(int standard_key) {
+    return static_cast<void *>(new QKeySequence(static_cast<QKeySequence::StandardKey>(standard_key)));
+}
+
+void qt_key_sequence_destroy(void *key_sequence) {
+    delete static_cast<QKeySequence *>(key_sequence);
+}
+
+char *qt_key_sequence_to_string(void *key_sequence) {
+    return qstring_to_heap_utf8(static_cast<QKeySequence *>(key_sequence)->toString());
+}
+
+int qt_key_sequence_get_count(void *key_sequence) {
+    return static_cast<QKeySequence *>(key_sequence)->count();
+}
+
+int qt_key_sequence_matches(void *key_sequence, void *other) {
+    return static_cast<int>(static_cast<QKeySequence *>(key_sequence)->matches(*static_cast<QKeySequence *>(other)));
+}
+
+/* ── QMovie ─────────────────────────────────────────────────────────── */
+
+void *qt_movie_create(const char *file_path, void *parent) {
+    return static_cast<void *>(new QMovie(QString::fromUtf8(file_path), QByteArray(), static_cast<QObject *>(parent)));
+}
+
+void qt_movie_destroy(void *movie) {
+    delete static_cast<QMovie *>(movie);
+}
+
+void qt_movie_start(void *movie) {
+    static_cast<QMovie *>(movie)->start();
+}
+
+void qt_movie_stop(void *movie) {
+    static_cast<QMovie *>(movie)->stop();
+}
+
+void qt_movie_set_paused(void *movie, int is_paused) {
+    static_cast<QMovie *>(movie)->setPaused(is_paused != 0);
+}
+
+int qt_movie_is_valid(void *movie) {
+    return static_cast<QMovie *>(movie)->isValid() ? 1 : 0;
+}
+
+int qt_movie_get_frame_count(void *movie) {
+    return static_cast<QMovie *>(movie)->frameCount();
+}
+
+int qt_movie_get_current_frame_number(void *movie) {
+    return static_cast<QMovie *>(movie)->currentFrameNumber();
+}
+
+void qt_movie_set_speed(void *movie, int percent) {
+    static_cast<QMovie *>(movie)->setSpeed(percent);
+}
+
+void qt_movie_set_scaled_size(void *movie, int width, int height) {
+    static_cast<QMovie *>(movie)->setScaledSize(QSize(width, height));
+}
+
+int qt_movie_get_state(void *movie) {
+    return static_cast<int>(static_cast<QMovie *>(movie)->state());
+}
+
+void qt_label_set_movie(void *label, void *movie) {
+    static_cast<QLabel *>(label)->setMovie(static_cast<QMovie *>(movie));
+}
+
+int qt_movie_connect_frame_changed(void *movie, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMovie *>(movie), &QMovie::frameChanged, [callback, user_data](int frame) {
+        callback(frame, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_movie_connect_state_changed(void *movie, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMovie *>(movie), &QMovie::stateChanged, [callback, user_data](QMovie::MovieState state) {
+        callback(static_cast<int>(state), user_data);
+    });
+    return store_connection(conn);
+}
+
+/* ── QImageReader ───────────────────────────────────────────────────── */
+
+void *qt_image_reader_create(const char *file_path) {
+    return static_cast<void *>(new QImageReader(QString::fromUtf8(file_path)));
+}
+
+void qt_image_reader_destroy(void *reader) {
+    delete static_cast<QImageReader *>(reader);
+}
+
+int qt_image_reader_can_read(void *reader) {
+    return static_cast<QImageReader *>(reader)->canRead() ? 1 : 0;
+}
+
+void *qt_image_reader_read(void *reader) {
+    QImage img = static_cast<QImageReader *>(reader)->read();
+    if (img.isNull()) return nullptr;
+    return static_cast<void *>(new QImage(img));
+}
+
+int qt_image_reader_get_image_count(void *reader) {
+    return static_cast<QImageReader *>(reader)->imageCount();
+}
+
+void qt_image_reader_get_size(void *reader, int *width, int *height) {
+    QSize s = static_cast<QImageReader *>(reader)->size();
+    *width = s.width(); *height = s.height();
+}
+
+char *qt_image_reader_get_format(void *reader) {
+    QByteArray fmt = static_cast<QImageReader *>(reader)->format();
+    return qstring_to_heap_utf8(QString::fromUtf8(fmt));
+}
+
+char *qt_image_reader_get_error_string(void *reader) {
+    return qstring_to_heap_utf8(static_cast<QImageReader *>(reader)->errorString());
+}
+
+void qt_image_reader_set_scaled_size(void *reader, int width, int height) {
+    static_cast<QImageReader *>(reader)->setScaledSize(QSize(width, height));
+}
+
+/* ── QImageWriter ───────────────────────────────────────────────────── */
+
+void *qt_image_writer_create(const char *file_path) {
+    return static_cast<void *>(new QImageWriter(QString::fromUtf8(file_path)));
+}
+
+void qt_image_writer_destroy(void *writer) {
+    delete static_cast<QImageWriter *>(writer);
+}
+
+void qt_image_writer_set_format(void *writer, const char *format) {
+    static_cast<QImageWriter *>(writer)->setFormat(QByteArray(format));
+}
+
+void qt_image_writer_set_quality(void *writer, int quality) {
+    static_cast<QImageWriter *>(writer)->setQuality(quality);
+}
+
+int qt_image_writer_write(void *writer, void *image) {
+    return static_cast<QImageWriter *>(writer)->write(*static_cast<QImage *>(image)) ? 1 : 0;
+}
+
+char *qt_image_writer_get_error_string(void *writer) {
+    return qstring_to_heap_utf8(static_cast<QImageWriter *>(writer)->errorString());
+}
+
+/* ── QBitmap ────────────────────────────────────────────────────────── */
+
+void *qt_bitmap_create(int width, int height) {
+    return static_cast<void *>(new QBitmap(width, height));
+}
+
+void *qt_bitmap_create_from_file(const char *file_path) {
+    return static_cast<void *>(new QBitmap(QString::fromUtf8(file_path)));
+}
+
+void qt_bitmap_destroy(void *bitmap) {
+    delete static_cast<QBitmap *>(bitmap);
+}
+
+void *qt_bitmap_from_image(void *image) {
+    return static_cast<void *>(new QBitmap(QBitmap::fromImage(*static_cast<QImage *>(image))));
+}
+
+void qt_bitmap_clear(void *bitmap) {
+    static_cast<QBitmap *>(bitmap)->clear();
+}
+
+/* ── QStaticText ────────────────────────────────────────────────────── */
+
+void *qt_static_text_create(const char *text) {
+    return static_cast<void *>(new QStaticText(QString::fromUtf8(text)));
+}
+
+void qt_static_text_destroy(void *static_text) {
+    delete static_cast<QStaticText *>(static_text);
+}
+
+void qt_static_text_set_text(void *static_text, const char *text) {
+    static_cast<QStaticText *>(static_text)->setText(QString::fromUtf8(text));
+}
+
+char *qt_static_text_get_text(void *static_text) {
+    return qstring_to_heap_utf8(static_cast<QStaticText *>(static_text)->text());
+}
+
+void qt_static_text_set_text_format(void *static_text, int format) {
+    static_cast<QStaticText *>(static_text)->setTextFormat(static_cast<Qt::TextFormat>(format));
+}
+
+void qt_static_text_set_text_width(void *static_text, double width) {
+    static_cast<QStaticText *>(static_text)->setTextWidth(width);
+}
+
+void qt_static_text_prepare(void *static_text, void *font) {
+    QTransform identity;
+    static_cast<QStaticText *>(static_text)->prepare(identity, *static_cast<QFont *>(font));
+}
+
+void qt_painter_draw_static_text(void *painter, int x, int y, void *static_text) {
+    static_cast<QPainter *>(painter)->drawStaticText(x, y, *static_cast<QStaticText *>(static_text));
+}
+
+/* ── QPicture ───────────────────────────────────────────────────────── */
+
+void *qt_picture_create(void) {
+    return static_cast<void *>(new QPicture());
+}
+
+void qt_picture_destroy(void *picture) {
+    delete static_cast<QPicture *>(picture);
+}
+
+int qt_picture_is_null(void *picture) {
+    return static_cast<QPicture *>(picture)->isNull() ? 1 : 0;
+}
+
+int qt_picture_save(void *picture, const char *file_path) {
+    return static_cast<QPicture *>(picture)->save(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+int qt_picture_load(void *picture, const char *file_path) {
+    return static_cast<QPicture *>(picture)->load(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+void qt_picture_get_bounding_rect(void *picture, int *x, int *y, int *width, int *height) {
+    QRect r = static_cast<QPicture *>(picture)->boundingRect();
+    *x = r.x(); *y = r.y(); *width = r.width(); *height = r.height();
+}
+
+void qt_painter_draw_picture(void *painter, int x, int y, void *picture) {
+    static_cast<QPainter *>(painter)->drawPicture(x, y, *static_cast<QPicture *>(picture));
+}
+
+/* ── QPageLayout / QPageSize ────────────────────────────────────────── */
+
+void *qt_page_size_create(int page_size_id) {
+    return static_cast<void *>(new QPageSize(static_cast<QPageSize::PageSizeId>(page_size_id)));
+}
+
+void *qt_page_size_create_custom(double width, double height, int unit) {
+    return static_cast<void *>(new QPageSize(QSizeF(width, height), static_cast<QPageSize::Unit>(unit)));
+}
+
+void qt_page_size_destroy(void *page_size) {
+    delete static_cast<QPageSize *>(page_size);
+}
+
+char *qt_page_size_get_name(void *page_size) {
+    return qstring_to_heap_utf8(static_cast<QPageSize *>(page_size)->name());
+}
+
+int qt_page_size_get_id(void *page_size) {
+    return static_cast<int>(static_cast<QPageSize *>(page_size)->id());
+}
+
+int qt_page_size_is_valid(void *page_size) {
+    return static_cast<QPageSize *>(page_size)->isValid() ? 1 : 0;
+}
+
+void *qt_page_layout_create(void *page_size, int orientation, double left, double top, double right, double bottom, int unit) {
+    QMarginsF margins(left, top, right, bottom);
+    return static_cast<void *>(new QPageLayout(
+        *static_cast<QPageSize *>(page_size),
+        static_cast<QPageLayout::Orientation>(orientation),
+        margins,
+        static_cast<QPageLayout::Unit>(unit)));
+}
+
+void qt_page_layout_destroy(void *page_layout) {
+    delete static_cast<QPageLayout *>(page_layout);
+}
+
+int qt_page_layout_get_orientation(void *page_layout) {
+    return static_cast<int>(static_cast<QPageLayout *>(page_layout)->orientation());
+}
+
+void qt_page_layout_set_orientation(void *page_layout, int orientation) {
+    static_cast<QPageLayout *>(page_layout)->setOrientation(static_cast<QPageLayout::Orientation>(orientation));
+}
+
+int qt_page_layout_is_valid(void *page_layout) {
+    return static_cast<QPageLayout *>(page_layout)->isValid() ? 1 : 0;
 }
 
 } /* extern "C" */

@@ -153,6 +153,28 @@ Undo_Group :: distinct rawptr
 Rubber_Band :: distinct rawptr
 Focus_Frame :: distinct rawptr
 Size_Grip :: distinct rawptr
+Image :: distinct rawptr
+Colour_Handle :: distinct rawptr
+Font_Handle :: distinct rawptr
+Pen :: distinct rawptr
+Brush :: distinct rawptr
+Palette :: distinct rawptr
+Cursor_Handle :: distinct rawptr
+Painter_Path :: distinct rawptr
+Transform :: distinct rawptr
+Region :: distinct rawptr
+Gradient :: distinct rawptr
+Text_Cursor :: distinct rawptr
+Text_Document :: distinct rawptr
+Key_Sequence :: distinct rawptr
+Movie :: distinct rawptr
+Image_Reader :: distinct rawptr
+Image_Writer :: distinct rawptr
+Bitmap :: distinct rawptr
+Static_Text :: distinct rawptr
+Picture :: distinct rawptr
+Page_Size :: distinct rawptr
+Page_Layout :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -680,6 +702,311 @@ Wizard_Button :: enum c.int {
 Rubber_Band_Shape :: enum c.int {
 	Line = 0,
 	Rectangle = 1,
+}
+
+Image_Format :: enum c.int {
+	Invalid = 0,
+	Mono = 1,
+	Mono_LSB = 2,
+	Indexed_8 = 3,
+	RGB_32 = 4,
+	ARGB_32 = 5,
+	ARGB_32_Premultiplied = 6,
+	RGB_16 = 7,
+	ARGB_8565_Premultiplied = 8,
+	RGB_666 = 9,
+	ARGB_6666_Premultiplied = 10,
+	RGB_555 = 11,
+	ARGB_8555_Premultiplied = 12,
+	RGB_888 = 13,
+	RGB_444 = 14,
+	ARGB_4444_Premultiplied = 15,
+	RGBX_8888 = 16,
+	RGBA_8888 = 17,
+	RGBA_8888_Premultiplied = 18,
+	Grayscale_8 = 24,
+	Grayscale_16 = 28,
+	RGBA_16FPx4 = 31,
+	RGBA_16FPx4_Premultiplied = 32,
+	RGBA_32FPx4 = 33,
+	RGBA_32FPx4_Premultiplied = 34,
+}
+
+Aspect_Ratio_Mode :: enum c.int {
+	Ignore = 0,
+	Keep = 1,
+	Keep_By_Expanding = 2,
+}
+
+Transformation_Mode :: enum c.int {
+	Fast = 0,
+	Smooth = 1,
+}
+
+Pen_Style :: enum c.int {
+	No_Pen = 0,
+	Solid = 1,
+	Dash = 2,
+	Dot = 3,
+	Dash_Dot = 4,
+	Dash_Dot_Dot = 5,
+	Custom_Dash = 6,
+}
+
+Pen_Cap_Style :: enum c.int {
+	Flat = 0x00,
+	Square = 0x10,
+	Round = 0x20,
+}
+
+Pen_Join_Style :: enum c.int {
+	Miter = 0x00,
+	Bevel = 0x40,
+	Round = 0x80,
+	Svg_Miter = 0x100,
+}
+
+Brush_Style :: enum c.int {
+	No_Brush = 0,
+	Solid = 1,
+	Dense_1 = 2,
+	Dense_2 = 3,
+	Dense_3 = 4,
+	Dense_4 = 5,
+	Dense_5 = 6,
+	Dense_6 = 7,
+	Dense_7 = 8,
+	Horizontal = 9,
+	Vertical = 10,
+	Cross = 11,
+	B_Diagonal = 12,
+	F_Diagonal = 13,
+	Diagonal_Cross = 14,
+	Linear_Gradient = 15,
+	Radial_Gradient = 16,
+	Conical_Gradient = 17,
+	Texture = 24,
+}
+
+Palette_Colour_Group :: enum c.int {
+	Active = 0,
+	Disabled = 1,
+	Inactive = 2,
+	All = 3,
+}
+
+Palette_Colour_Role :: enum c.int {
+	Window = 10,
+	Window_Text = 0,
+	Base = 9,
+	Alternate_Base = 16,
+	Text = 6,
+	Button = 1,
+	Button_Text = 8,
+	Bright_Text = 7,
+	Light = 2,
+	Midlight = 3,
+	Dark = 4,
+	Mid = 5,
+	Shadow = 11,
+	Highlight = 12,
+	Highlighted_Text = 13,
+	Link = 14,
+	Link_Visited = 15,
+	Tool_Tip_Base = 18,
+	Tool_Tip_Text = 19,
+	Placeholder_Text = 20,
+	Accent = 21,
+}
+
+Gradient_Spread :: enum c.int {
+	Pad = 0,
+	Reflect = 1,
+	Repeat = 2,
+}
+
+Text_Cursor_Move_Mode :: enum c.int {
+	Move_Anchor = 0,
+	Keep_Anchor = 1,
+}
+
+Text_Cursor_Move_Operation :: enum c.int {
+	No_Move = 0,
+	Start = 1,
+	Up = 2,
+	Start_Of_Line = 3,
+	Start_Of_Block = 4,
+	Start_Of_Word = 5,
+	Previous_Block = 6,
+	Previous_Character = 7,
+	Previous_Word = 8,
+	Left = 9,
+	Word_Left = 10,
+	End = 11,
+	Down = 12,
+	End_Of_Line = 13,
+	End_Of_Word = 14,
+	End_Of_Block = 15,
+	Next_Block = 16,
+	Next_Character = 17,
+	Next_Word = 18,
+	Right = 19,
+	Word_Right = 20,
+}
+
+Text_Cursor_Selection_Type :: enum c.int {
+	Word_Under_Cursor = 0,
+	Line_Under_Cursor = 1,
+	Block_Under_Cursor = 2,
+	Document = 3,
+}
+
+Key_Sequence_Standard_Key :: enum c.int {
+	Unknown_Key = 0,
+	Help_Contents = 1,
+	Whats_This = 2,
+	Open = 3,
+	Close = 4,
+	Save = 5,
+	New = 6,
+	Delete = 7,
+	Cut = 8,
+	Copy = 9,
+	Paste = 10,
+	Undo = 11,
+	Redo = 12,
+	Back = 13,
+	Forward = 14,
+	Refresh = 15,
+	Zoom_In = 16,
+	Zoom_Out = 17,
+	Print = 18,
+	Add_Tab = 19,
+	Next_Child = 20,
+	Previous_Child = 21,
+	Find = 22,
+	Find_Next = 23,
+	Find_Previous = 24,
+	Replace = 25,
+	Select_All = 26,
+	Bold = 27,
+	Italic = 28,
+	Underline = 29,
+	Move_To_Next_Char = 30,
+	Move_To_Previous_Char = 31,
+	Move_To_Next_Word = 32,
+	Move_To_Previous_Word = 33,
+	Move_To_Next_Line = 34,
+	Move_To_Previous_Line = 35,
+	Move_To_Next_Page = 36,
+	Move_To_Previous_Page = 37,
+	Move_To_Start_Of_Line = 38,
+	Move_To_End_Of_Line = 39,
+	Move_To_Start_Of_Block = 40,
+	Move_To_End_Of_Block = 41,
+	Move_To_Start_Of_Document = 42,
+	Move_To_End_Of_Document = 43,
+	Select_Next_Char = 44,
+	Select_Previous_Char = 45,
+	Select_Next_Word = 46,
+	Select_Previous_Word = 47,
+	Select_Next_Line = 48,
+	Select_Previous_Line = 49,
+	Select_Next_Page = 50,
+	Select_Previous_Page = 51,
+	Select_Start_Of_Line = 52,
+	Select_End_Of_Line = 53,
+	Select_Start_Of_Block = 54,
+	Select_End_Of_Block = 55,
+	Select_Start_Of_Document = 56,
+	Select_End_Of_Document = 57,
+	Delete_Start_Of_Word = 58,
+	Delete_End_Of_Word = 59,
+	Delete_End_Of_Line = 60,
+	Deselect = 67,
+	Backspace = 69,
+	Cancel = 70,
+	Full_Screen = 71,
+	Preferences = 64,
+	Quit = 65,
+}
+
+Key_Sequence_Match :: enum c.int {
+	No_Match = 0,
+	Partial_Match = 1,
+	Exact_Match = 2,
+}
+
+Movie_State :: enum c.int {
+	Not_Running = 0,
+	Paused = 1,
+	Running = 2,
+}
+
+Text_Format :: enum c.int {
+	Plain_Text = 0,
+	Rich_Text = 1,
+	Auto_Text = 2,
+	Markdown = 3,
+}
+
+Font_Style_Hint :: enum c.int {
+	Any_Style = 5,
+	Serif = 0,
+	Sans_Serif = 1,
+	Type_Writer = 2,
+	Decorative = 3,
+	Monospace = 7,
+	Fantasy = 8,
+	Cursive = 6,
+	System = 4,
+}
+
+Font_Spacing_Type :: enum c.int {
+	Percentage = 0,
+	Absolute = 1,
+}
+
+Page_Size_Id :: enum c.int {
+	A4 = 0,
+	B5 = 1,
+	Letter = 2,
+	Legal = 3,
+	Executive = 4,
+	A0 = 5,
+	A1 = 6,
+	A2 = 7,
+	A3 = 8,
+	A5 = 9,
+	A6 = 10,
+	A7 = 11,
+	A8 = 12,
+	A9 = 13,
+	B0 = 14,
+	B1 = 15,
+	B10 = 16,
+	B2 = 17,
+	B3 = 18,
+	B4 = 19,
+	B6 = 20,
+	B7 = 21,
+	B8 = 22,
+	B9 = 23,
+	Custom = 30,
+}
+
+Page_Size_Unit :: enum c.int {
+	Millimeter = 0,
+	Point = 1,
+	Inch = 2,
+	Pica = 3,
+	Didot = 4,
+	Cicero = 5,
+}
+
+Page_Layout_Orientation :: enum c.int {
+	Portrait = 0,
+	Landscape = 1,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -1926,4 +2253,338 @@ foreign qt_lib {
 	@(require_results) whats_this_is_in_mode :: proc() -> c.int ---
 	whats_this_show_text :: proc(global_x: c.int, global_y: c.int, text: cstring, widget: Widget) ---
 	whats_this_hide_text :: proc() ---
+
+	/* QImage */
+
+	@(require_results) image_create :: proc(width: c.int, height: c.int, format: Image_Format) -> Image ---
+	@(require_results) image_create_from_file :: proc(file_path: cstring) -> Image ---
+	@(require_results) image_create_from_data :: proc(data: [^]u8, size: c.int) -> Image ---
+	image_destroy :: proc(image: Image) ---
+	@(require_results) image_get_width :: proc(image: Image) -> c.int ---
+	@(require_results) image_get_height :: proc(image: Image) -> c.int ---
+	@(require_results) image_get_format :: proc(image: Image) -> Image_Format ---
+	@(require_results) image_is_null :: proc(image: Image) -> c.int ---
+	image_fill :: proc(image: Image, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	image_set_pixel :: proc(image: Image, x: c.int, y: c.int, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	image_get_pixel :: proc(image: Image, x: c.int, y: c.int, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	@(require_results) image_scaled :: proc(image: Image, width: c.int, height: c.int, aspect_mode: Aspect_Ratio_Mode, transform_mode: Transformation_Mode) -> Image ---
+	@(require_results) image_mirrored :: proc(image: Image, is_horizontal: c.int, is_vertical: c.int) -> Image ---
+	@(require_results) image_copy :: proc(image: Image, x: c.int, y: c.int, width: c.int, height: c.int) -> Image ---
+	@(require_results) image_save :: proc(image: Image, file_path: cstring, format: cstring, quality: c.int) -> c.int ---
+	@(require_results) image_to_pixmap :: proc(image: Image) -> Pixmap ---
+	@(require_results) pixmap_to_image :: proc(pixmap: Pixmap) -> Image ---
+	@(require_results) image_get_depth :: proc(image: Image) -> c.int ---
+	@(require_results) image_get_byte_count :: proc(image: Image) -> c.int ---
+	@(require_results) image_get_bits :: proc(image: Image) -> [^]u8 ---
+
+	/* QColor (standalone) */
+
+	@(require_results) colour_create :: proc(r: c.int, g: c.int, b: c.int, a: c.int) -> Colour_Handle ---
+	@(require_results) colour_create_from_name :: proc(name: cstring) -> Colour_Handle ---
+	@(require_results) colour_create_from_hsv :: proc(h: c.int, s: c.int, v: c.int, a: c.int) -> Colour_Handle ---
+	@(require_results) colour_create_from_hsl :: proc(h: c.int, s: c.int, l: c.int, a: c.int) -> Colour_Handle ---
+	colour_destroy :: proc(colour: Colour_Handle) ---
+	colour_get_rgb :: proc(colour: Colour_Handle, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	colour_get_hsv :: proc(colour: Colour_Handle, h: ^c.int, s: ^c.int, v: ^c.int, a: ^c.int) ---
+	colour_get_hsl :: proc(colour: Colour_Handle, h: ^c.int, s: ^c.int, l: ^c.int, a: ^c.int) ---
+	@(require_results) colour_get_name :: proc(colour: Colour_Handle) -> cstring ---
+	@(require_results) colour_is_valid :: proc(colour: Colour_Handle) -> c.int ---
+	@(require_results) colour_lighter :: proc(colour: Colour_Handle, factor: c.int) -> Colour_Handle ---
+	@(require_results) colour_darker :: proc(colour: Colour_Handle, factor: c.int) -> Colour_Handle ---
+
+	/* QFont (standalone) */
+
+	@(require_results) font_create :: proc(family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) -> Font_Handle ---
+	@(require_results) font_create_default :: proc() -> Font_Handle ---
+	font_destroy :: proc(font: Font_Handle) ---
+	font_set_family :: proc(font: Font_Handle, family: cstring) ---
+	@(require_results) font_get_family :: proc(font: Font_Handle) -> cstring ---
+	font_set_point_size :: proc(font: Font_Handle, size: c.int) ---
+	@(require_results) font_get_point_size :: proc(font: Font_Handle) -> c.int ---
+	font_set_pixel_size :: proc(font: Font_Handle, size: c.int) ---
+	@(require_results) font_get_pixel_size :: proc(font: Font_Handle) -> c.int ---
+	font_set_weight :: proc(font: Font_Handle, weight: c.int) ---
+	@(require_results) font_get_weight :: proc(font: Font_Handle) -> c.int ---
+	font_set_bold :: proc(font: Font_Handle, is_bold: c.int) ---
+	@(require_results) font_is_bold :: proc(font: Font_Handle) -> c.int ---
+	font_set_italic :: proc(font: Font_Handle, is_italic: c.int) ---
+	@(require_results) font_is_italic :: proc(font: Font_Handle) -> c.int ---
+	font_set_underline :: proc(font: Font_Handle, is_underline: c.int) ---
+	@(require_results) font_is_underline :: proc(font: Font_Handle) -> c.int ---
+	font_set_strikeout :: proc(font: Font_Handle, is_strikeout: c.int) ---
+	@(require_results) font_is_strikeout :: proc(font: Font_Handle) -> c.int ---
+	font_set_kerning :: proc(font: Font_Handle, is_kerning: c.int) ---
+	@(require_results) font_is_kerning :: proc(font: Font_Handle) -> c.int ---
+	font_set_letter_spacing :: proc(font: Font_Handle, spacing_type: Font_Spacing_Type, spacing: c.double) ---
+	font_set_word_spacing :: proc(font: Font_Handle, spacing: c.double) ---
+	font_set_stretch :: proc(font: Font_Handle, factor: c.int) ---
+	font_set_style_hint :: proc(font: Font_Handle, hint: Font_Style_Hint) ---
+	@(require_results) font_to_string :: proc(font: Font_Handle) -> cstring ---
+
+	/* QPen (standalone) */
+
+	@(require_results) pen_create :: proc() -> Pen ---
+	@(require_results) pen_create_with_colour :: proc(r: c.int, g: c.int, b: c.int, a: c.int) -> Pen ---
+	pen_destroy :: proc(pen: Pen) ---
+	pen_set_colour :: proc(pen: Pen, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	pen_get_colour :: proc(pen: Pen, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	pen_set_width :: proc(pen: Pen, width: c.int) ---
+	@(require_results) pen_get_width :: proc(pen: Pen) -> c.int ---
+	pen_set_width_f :: proc(pen: Pen, width: c.double) ---
+	@(require_results) pen_get_width_f :: proc(pen: Pen) -> c.double ---
+	pen_set_style :: proc(pen: Pen, style: Pen_Style) ---
+	@(require_results) pen_get_style :: proc(pen: Pen) -> Pen_Style ---
+	pen_set_cap_style :: proc(pen: Pen, style: Pen_Cap_Style) ---
+	@(require_results) pen_get_cap_style :: proc(pen: Pen) -> Pen_Cap_Style ---
+	pen_set_join_style :: proc(pen: Pen, style: Pen_Join_Style) ---
+	@(require_results) pen_get_join_style :: proc(pen: Pen) -> Pen_Join_Style ---
+	pen_set_dash_offset :: proc(pen: Pen, offset: c.double) ---
+	@(require_results) pen_get_dash_offset :: proc(pen: Pen) -> c.double ---
+
+	/* QBrush (standalone) */
+
+	@(require_results) brush_create :: proc() -> Brush ---
+	@(require_results) brush_create_with_colour :: proc(r: c.int, g: c.int, b: c.int, a: c.int) -> Brush ---
+	brush_destroy :: proc(brush: Brush) ---
+	brush_set_colour :: proc(brush: Brush, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	brush_get_colour :: proc(brush: Brush, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	brush_set_style :: proc(brush: Brush, style: Brush_Style) ---
+	@(require_results) brush_get_style :: proc(brush: Brush) -> Brush_Style ---
+	brush_set_texture :: proc(brush: Brush, pixmap: Pixmap) ---
+
+	/* QPalette */
+
+	@(require_results) palette_create :: proc() -> Palette ---
+	@(require_results) palette_create_from_widget :: proc(widget: Widget) -> Palette ---
+	palette_destroy :: proc(palette: Palette) ---
+	palette_set_colour :: proc(palette: Palette, group: Palette_Colour_Group, role: Palette_Colour_Role, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	palette_get_colour :: proc(palette: Palette, group: Palette_Colour_Group, role: Palette_Colour_Role, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	palette_set_brush :: proc(palette: Palette, group: Palette_Colour_Group, role: Palette_Colour_Role, brush: Brush) ---
+	widget_set_palette :: proc(widget: Widget, palette: Palette) ---
+
+	/* QCursor (standalone) */
+
+	@(require_results) cursor_create :: proc(shape: Cursor_Shape) -> Cursor_Handle ---
+	@(require_results) cursor_create_from_pixmap :: proc(pixmap: Pixmap, hot_x: c.int, hot_y: c.int) -> Cursor_Handle ---
+	cursor_destroy :: proc(cursor: Cursor_Handle) ---
+	cursor_get_pos :: proc(x: ^c.int, y: ^c.int) ---
+	cursor_set_pos :: proc(x: c.int, y: c.int) ---
+	widget_set_cursor_object :: proc(widget: Widget, cursor: Cursor_Handle) ---
+
+	/* QPainterPath */
+
+	@(require_results) painter_path_create :: proc() -> Painter_Path ---
+	painter_path_destroy :: proc(path: Painter_Path) ---
+	painter_path_move_to :: proc(path: Painter_Path, x: c.double, y: c.double) ---
+	painter_path_line_to :: proc(path: Painter_Path, x: c.double, y: c.double) ---
+	painter_path_cubic_to :: proc(path: Painter_Path, ctrl1_x: c.double, ctrl1_y: c.double, ctrl2_x: c.double, ctrl2_y: c.double, end_x: c.double, end_y: c.double) ---
+	painter_path_quad_to :: proc(path: Painter_Path, ctrl_x: c.double, ctrl_y: c.double, end_x: c.double, end_y: c.double) ---
+	painter_path_arc_to :: proc(path: Painter_Path, x: c.double, y: c.double, width: c.double, height: c.double, start_angle: c.double, sweep_length: c.double) ---
+	painter_path_add_rect :: proc(path: Painter_Path, x: c.double, y: c.double, width: c.double, height: c.double) ---
+	painter_path_add_ellipse :: proc(path: Painter_Path, x: c.double, y: c.double, width: c.double, height: c.double) ---
+	painter_path_add_text :: proc(path: Painter_Path, x: c.double, y: c.double, font: Font_Handle, text: cstring) ---
+	painter_path_add_rounded_rect :: proc(path: Painter_Path, x: c.double, y: c.double, w: c.double, h: c.double, x_radius: c.double, y_radius: c.double) ---
+	painter_path_close_subpath :: proc(path: Painter_Path) ---
+	@(require_results) painter_path_is_empty :: proc(path: Painter_Path) -> c.int ---
+	@(require_results) painter_path_contains_point :: proc(path: Painter_Path, x: c.double, y: c.double) -> c.int ---
+	painter_draw_path :: proc(painter: Painter, path: Painter_Path) ---
+	painter_set_clip_path :: proc(painter: Painter, path: Painter_Path) ---
+	painter_fill_path :: proc(painter: Painter, path: Painter_Path, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	painter_stroke_path :: proc(painter: Painter, path: Painter_Path, pen: Pen) ---
+
+	/* QTransform */
+
+	@(require_results) transform_create :: proc() -> Transform ---
+	@(require_results) transform_create_values :: proc(m11: c.double, m12: c.double, m13: c.double, m21: c.double, m22: c.double, m23: c.double, m31: c.double, m32: c.double, m33: c.double) -> Transform ---
+	transform_destroy :: proc(transform: Transform) ---
+	@(require_results) transform_inverted :: proc(transform: Transform) -> Transform ---
+	@(require_results) transform_transposed :: proc(transform: Transform) -> Transform ---
+	transform_translate :: proc(transform: Transform, dx: c.double, dy: c.double) ---
+	transform_scale :: proc(transform: Transform, sx: c.double, sy: c.double) ---
+	transform_rotate :: proc(transform: Transform, angle: c.double) ---
+	transform_shear :: proc(transform: Transform, sh: c.double, sv: c.double) ---
+	transform_reset :: proc(transform: Transform) ---
+	@(require_results) transform_is_identity :: proc(transform: Transform) -> c.int ---
+	@(require_results) transform_determinant :: proc(transform: Transform) -> c.double ---
+	painter_set_transform :: proc(painter: Painter, transform: Transform, is_combine: c.int) ---
+	painter_reset_transform :: proc(painter: Painter) ---
+
+	/* QRegion */
+
+	@(require_results) region_create :: proc() -> Region ---
+	@(require_results) region_create_rect :: proc(x: c.int, y: c.int, width: c.int, height: c.int) -> Region ---
+	@(require_results) region_create_ellipse :: proc(x: c.int, y: c.int, width: c.int, height: c.int) -> Region ---
+	region_destroy :: proc(region: Region) ---
+	@(require_results) region_is_empty :: proc(region: Region) -> c.int ---
+	@(require_results) region_contains_point :: proc(region: Region, x: c.int, y: c.int) -> c.int ---
+	@(require_results) region_contains_rect :: proc(region: Region, x: c.int, y: c.int, width: c.int, height: c.int) -> c.int ---
+	@(require_results) region_united :: proc(region: Region, other: Region) -> Region ---
+	@(require_results) region_intersected :: proc(region: Region, other: Region) -> Region ---
+	@(require_results) region_subtracted :: proc(region: Region, other: Region) -> Region ---
+	@(require_results) region_xored :: proc(region: Region, other: Region) -> Region ---
+	region_get_bounding_rect :: proc(region: Region, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+	painter_set_clip_region :: proc(painter: Painter, region: Region) ---
+
+	/* QGradient / QLinearGradient / QRadialGradient / QConicalGradient */
+
+	@(require_results) linear_gradient_create :: proc(x1: c.double, y1: c.double, x2: c.double, y2: c.double) -> Gradient ---
+	@(require_results) radial_gradient_create :: proc(cx: c.double, cy: c.double, radius: c.double) -> Gradient ---
+	@(require_results) radial_gradient_create_focal :: proc(cx: c.double, cy: c.double, radius: c.double, fx: c.double, fy: c.double) -> Gradient ---
+	@(require_results) conical_gradient_create :: proc(cx: c.double, cy: c.double, angle: c.double) -> Gradient ---
+	gradient_destroy :: proc(gradient: Gradient) ---
+	gradient_set_colour_at :: proc(gradient: Gradient, position: c.double, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	gradient_set_spread :: proc(gradient: Gradient, spread: Gradient_Spread) ---
+	brush_set_gradient :: proc(brush: Brush, gradient: Gradient) ---
+
+	/* QTextCursor */
+
+	@(require_results) text_cursor_create :: proc(document: Text_Document) -> Text_Cursor ---
+	@(require_results) text_cursor_create_from_text_edit :: proc(text_edit: Text_Edit) -> Text_Cursor ---
+	@(require_results) text_cursor_create_from_plain_text_edit :: proc(plain_text_edit: Plain_Text_Edit) -> Text_Cursor ---
+	text_cursor_destroy :: proc(cursor: Text_Cursor) ---
+	@(require_results) text_cursor_get_position :: proc(cursor: Text_Cursor) -> c.int ---
+	text_cursor_set_position :: proc(cursor: Text_Cursor, position: c.int, move_mode: Text_Cursor_Move_Mode) ---
+	@(require_results) text_cursor_get_anchor :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_has_selection :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_get_selected_text :: proc(cursor: Text_Cursor) -> cstring ---
+	text_cursor_remove_selected_text :: proc(cursor: Text_Cursor) ---
+	text_cursor_insert_text :: proc(cursor: Text_Cursor, text: cstring) ---
+	text_cursor_insert_html :: proc(cursor: Text_Cursor, html: cstring) ---
+	text_cursor_select :: proc(cursor: Text_Cursor, selection_type: Text_Cursor_Selection_Type) ---
+	text_cursor_move_position :: proc(cursor: Text_Cursor, operation: Text_Cursor_Move_Operation, move_mode: Text_Cursor_Move_Mode, n: c.int) ---
+	text_cursor_begin_edit_block :: proc(cursor: Text_Cursor) ---
+	text_cursor_end_edit_block :: proc(cursor: Text_Cursor) ---
+	@(require_results) text_cursor_at_start :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_at_end :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_get_block_number :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_get_column_number :: proc(cursor: Text_Cursor) -> c.int ---
+	text_edit_set_text_cursor :: proc(text_edit: Text_Edit, cursor: Text_Cursor) ---
+	plain_text_edit_set_text_cursor :: proc(text_edit: Plain_Text_Edit, cursor: Text_Cursor) ---
+
+	/* QTextDocument */
+
+	@(require_results) text_document_create :: proc(parent: Widget) -> Text_Document ---
+	@(require_results) text_document_create_from_text_edit :: proc(text_edit: Text_Edit) -> Text_Document ---
+	@(require_results) text_document_create_from_plain_text_edit :: proc(plain_text_edit: Plain_Text_Edit) -> Text_Document ---
+	text_document_destroy :: proc(document: Text_Document) ---
+	@(require_results) text_document_get_plain_text :: proc(document: Text_Document) -> cstring ---
+	@(require_results) text_document_get_html :: proc(document: Text_Document) -> cstring ---
+	text_document_set_plain_text :: proc(document: Text_Document, text: cstring) ---
+	text_document_set_html :: proc(document: Text_Document, html: cstring) ---
+	@(require_results) text_document_is_modified :: proc(document: Text_Document) -> c.int ---
+	text_document_set_modified :: proc(document: Text_Document, is_modified: c.int) ---
+	@(require_results) text_document_is_empty :: proc(document: Text_Document) -> c.int ---
+	@(require_results) text_document_get_block_count :: proc(document: Text_Document) -> c.int ---
+	@(require_results) text_document_get_character_count :: proc(document: Text_Document) -> c.int ---
+	text_document_set_default_font :: proc(document: Text_Document, font: Font_Handle) ---
+	text_document_undo :: proc(document: Text_Document) ---
+	text_document_redo :: proc(document: Text_Document) ---
+	@(require_results) text_document_is_undo_available :: proc(document: Text_Document) -> c.int ---
+	@(require_results) text_document_is_redo_available :: proc(document: Text_Document) -> c.int ---
+	text_document_clear_undo_redo_stacks :: proc(document: Text_Document) ---
+	text_document_set_maximum_block_count :: proc(document: Text_Document, maximum: c.int) ---
+
+	/* QFontDatabase */
+
+	@(require_results) font_database_get_families :: proc(families_out: ^[^]cstring) -> c.int ---
+	font_database_free_families :: proc(families: [^]cstring, count: c.int) ---
+	@(require_results) font_database_has_family :: proc(family: cstring) -> c.int ---
+	@(require_results) font_database_is_fixed_pitch :: proc(family: cstring) -> c.int ---
+	@(require_results) font_database_is_scalable :: proc(family: cstring) -> c.int ---
+	@(require_results) font_database_add_application_font :: proc(file_path: cstring) -> c.int ---
+	@(require_results) font_database_add_application_font_from_data :: proc(data: [^]u8, size: c.int) -> c.int ---
+	font_database_remove_application_font :: proc(id: c.int) ---
+
+	/* QKeySequence (standalone) */
+
+	@(require_results) key_sequence_create :: proc(key: cstring) -> Key_Sequence ---
+	@(require_results) key_sequence_create_standard :: proc(standard_key: Key_Sequence_Standard_Key) -> Key_Sequence ---
+	key_sequence_destroy :: proc(key_sequence: Key_Sequence) ---
+	@(require_results) key_sequence_to_string :: proc(key_sequence: Key_Sequence) -> cstring ---
+	@(require_results) key_sequence_get_count :: proc(key_sequence: Key_Sequence) -> c.int ---
+	@(require_results) key_sequence_matches :: proc(key_sequence: Key_Sequence, other: Key_Sequence) -> Key_Sequence_Match ---
+
+	/* QMovie */
+
+	@(require_results) movie_create :: proc(file_path: cstring, parent: Widget) -> Movie ---
+	movie_destroy :: proc(movie: Movie) ---
+	movie_start :: proc(movie: Movie) ---
+	movie_stop :: proc(movie: Movie) ---
+	movie_set_paused :: proc(movie: Movie, is_paused: c.int) ---
+	@(require_results) movie_is_valid :: proc(movie: Movie) -> c.int ---
+	@(require_results) movie_get_frame_count :: proc(movie: Movie) -> c.int ---
+	@(require_results) movie_get_current_frame_number :: proc(movie: Movie) -> c.int ---
+	movie_set_speed :: proc(movie: Movie, percent: c.int) ---
+	movie_set_scaled_size :: proc(movie: Movie, width: c.int, height: c.int) ---
+	@(require_results) movie_get_state :: proc(movie: Movie) -> Movie_State ---
+	label_set_movie :: proc(label: Label, movie: Movie) ---
+	movie_connect_frame_changed :: proc(movie: Movie, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	movie_connect_state_changed :: proc(movie: Movie, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QImageReader */
+
+	@(require_results) image_reader_create :: proc(file_path: cstring) -> Image_Reader ---
+	image_reader_destroy :: proc(reader: Image_Reader) ---
+	@(require_results) image_reader_can_read :: proc(reader: Image_Reader) -> c.int ---
+	@(require_results) image_reader_read :: proc(reader: Image_Reader) -> Image ---
+	@(require_results) image_reader_get_image_count :: proc(reader: Image_Reader) -> c.int ---
+	image_reader_get_size :: proc(reader: Image_Reader, width: ^c.int, height: ^c.int) ---
+	@(require_results) image_reader_get_format :: proc(reader: Image_Reader) -> cstring ---
+	@(require_results) image_reader_get_error_string :: proc(reader: Image_Reader) -> cstring ---
+	image_reader_set_scaled_size :: proc(reader: Image_Reader, width: c.int, height: c.int) ---
+
+	/* QImageWriter */
+
+	@(require_results) image_writer_create :: proc(file_path: cstring) -> Image_Writer ---
+	image_writer_destroy :: proc(writer: Image_Writer) ---
+	image_writer_set_format :: proc(writer: Image_Writer, format: cstring) ---
+	image_writer_set_quality :: proc(writer: Image_Writer, quality: c.int) ---
+	@(require_results) image_writer_write :: proc(writer: Image_Writer, image: Image) -> c.int ---
+	@(require_results) image_writer_get_error_string :: proc(writer: Image_Writer) -> cstring ---
+
+	/* QBitmap */
+
+	@(require_results) bitmap_create :: proc(width: c.int, height: c.int) -> Bitmap ---
+	@(require_results) bitmap_create_from_file :: proc(file_path: cstring) -> Bitmap ---
+	bitmap_destroy :: proc(bitmap: Bitmap) ---
+	@(require_results) bitmap_from_image :: proc(image: Image) -> Bitmap ---
+	bitmap_clear :: proc(bitmap: Bitmap) ---
+
+	/* QStaticText */
+
+	@(require_results) static_text_create :: proc(text: cstring) -> Static_Text ---
+	static_text_destroy :: proc(static_text: Static_Text) ---
+	static_text_set_text :: proc(static_text: Static_Text, text: cstring) ---
+	@(require_results) static_text_get_text :: proc(static_text: Static_Text) -> cstring ---
+	static_text_set_text_format :: proc(static_text: Static_Text, format: Text_Format) ---
+	static_text_set_text_width :: proc(static_text: Static_Text, width: c.double) ---
+	static_text_prepare :: proc(static_text: Static_Text, font: Font_Handle) ---
+	painter_draw_static_text :: proc(painter: Painter, x: c.int, y: c.int, static_text: Static_Text) ---
+
+	/* QPicture */
+
+	@(require_results) picture_create :: proc() -> Picture ---
+	picture_destroy :: proc(picture: Picture) ---
+	@(require_results) picture_is_null :: proc(picture: Picture) -> c.int ---
+	@(require_results) picture_save :: proc(picture: Picture, file_path: cstring) -> c.int ---
+	@(require_results) picture_load :: proc(picture: Picture, file_path: cstring) -> c.int ---
+	picture_get_bounding_rect :: proc(picture: Picture, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+	painter_draw_picture :: proc(painter: Painter, x: c.int, y: c.int, picture: Picture) ---
+
+	/* QPageSize */
+
+	@(require_results) page_size_create :: proc(page_size_id: Page_Size_Id) -> Page_Size ---
+	@(require_results) page_size_create_custom :: proc(width: c.double, height: c.double, unit: Page_Size_Unit) -> Page_Size ---
+	page_size_destroy :: proc(page_size: Page_Size) ---
+	@(require_results) page_size_get_name :: proc(page_size: Page_Size) -> cstring ---
+	@(require_results) page_size_get_id :: proc(page_size: Page_Size) -> Page_Size_Id ---
+	@(require_results) page_size_is_valid :: proc(page_size: Page_Size) -> c.int ---
+
+	/* QPageLayout */
+
+	@(require_results) page_layout_create :: proc(page_size: Page_Size, orientation: Page_Layout_Orientation, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: Page_Size_Unit) -> Page_Layout ---
+	page_layout_destroy :: proc(page_layout: Page_Layout) ---
+	@(require_results) page_layout_get_orientation :: proc(page_layout: Page_Layout) -> Page_Layout_Orientation ---
+	page_layout_set_orientation :: proc(page_layout: Page_Layout, orientation: Page_Layout_Orientation) ---
+	@(require_results) page_layout_is_valid :: proc(page_layout: Page_Layout) -> c.int ---
 }
