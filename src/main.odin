@@ -1559,7 +1559,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_containers_tab(), "Containers")
 	_ = qt.tab_widget_add_tab(tabs, build_layouts_tab(), "Layouts")
 	_ = qt.tab_widget_add_tab(tabs, build_dialogs_tab(), "Dialogs")
-	_ = qt.tab_widget_add_tab(tabs, build_timer_utility_tab(application), "Timer & Utility")
+	_ = qt.tab_widget_add_tab(tabs, build_timer_utility_tab(application), "Timer && Utility")
 	_ = qt.tab_widget_add_tab(tabs, build_model_view_tab(), "Model/View")
 	_ = qt.tab_widget_add_tab(tabs, build_custom_drawing_tab(), "Drawing")
 	_ = qt.tab_widget_add_tab(tabs, build_syntax_highlighting_tab(), "Syntax HL")
