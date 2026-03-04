@@ -64,16 +64,6 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ### Missing Methods/Signals on Existing Classes
 
-#### QMainWindow
-- `saveState` / `restoreState` -- persist toolbar/dock layout (very common)
-- `removeDockWidget`
-- `tabifyDockWidget` -- tabbed dock areas
-- `setDockOptions`
-- `setToolButtonStyle`
-- `setAnimated`
-- `centralWidget` -- getter for the central widget
-- `setCorner` -- dock widget corner assignment
-
 #### QLabel
 - `clear`
 - `setScaledContents` -- auto-scale pixmap to label size

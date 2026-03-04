@@ -38,6 +38,15 @@ void  qt_main_window_add_toolbar(void *window, int area, void *toolbar);
 void  qt_main_window_statusbar_show_message(void *window, const char *message, int timeout_ms);
 void  qt_main_window_add_dock_widget(void *window, int area, void *dock_widget);
 void *qt_main_window_get_statusbar(void *window);
+void *qt_main_window_get_central_widget(void *window);
+void  qt_main_window_remove_dock_widget(void *window, void *dock_widget);
+void  qt_main_window_tabify_dock_widget(void *window, void *first, void *second);
+void  qt_main_window_set_dock_options(void *window, int options);
+void  qt_main_window_set_tool_button_style(void *window, int style);
+void  qt_main_window_set_animated(void *window, int is_animated);
+void  qt_main_window_set_corner(void *window, int corner, int area);
+char *qt_main_window_save_state(void *window, int *out_len, int version);
+int   qt_main_window_restore_state(void *window, const char *data, int len, int version);
 
 /* ── QWidget (works on any QWidget-derived object) ─────────────────── */
 

@@ -1326,6 +1326,22 @@ Lock_File_Error :: enum c.int {
 	Unknown_Error = 3,
 }
 
+Dock_Option :: enum c.int {
+	Animated_Docks = 0x01,
+	Allow_Nested_Docks = 0x02,
+	Allow_Tabbed_Docks = 0x04,
+	Force_Tabbed_Docks = 0x08,
+	Vertical_Tabs = 0x10,
+	Grouped_Dragging = 0x20,
+}
+
+Corner :: enum c.int {
+	Top_Left = 0x00000,
+	Top_Right = 0x00001,
+	Bottom_Left = 0x00002,
+	Bottom_Right = 0x00003,
+}
+
 Scroller_Gesture_Type :: enum c.int {
 	Touch = 0,
 	Left_Mouse_Button = 1,
@@ -1507,6 +1523,15 @@ foreign qt_lib {
 	main_window_statusbar_show_message :: proc(window: Main_Window, message: cstring, timeout_ms: c.int) ---
 	main_window_add_dock_widget :: proc(window: Main_Window, area: Dock_Widget_Area, dock_widget: Dock_Widget) ---
 	@(require_results) main_window_get_statusbar :: proc(window: Main_Window) -> Status_Bar ---
+	@(require_results) main_window_get_central_widget :: proc(window: Main_Window) -> Widget ---
+	main_window_remove_dock_widget :: proc(window: Main_Window, dock_widget: Dock_Widget) ---
+	main_window_tabify_dock_widget :: proc(window: Main_Window, first: Dock_Widget, second: Dock_Widget) ---
+	main_window_set_dock_options :: proc(window: Main_Window, options: c.int) ---
+	main_window_set_tool_button_style :: proc(window: Main_Window, style: Tool_Button_Style) ---
+	main_window_set_animated :: proc(window: Main_Window, is_animated: c.int) ---
+	main_window_set_corner :: proc(window: Main_Window, corner: Corner, area: Dock_Widget_Area) ---
+	@(require_results) main_window_save_state :: proc(window: Main_Window, out_len: ^c.int, version: c.int) -> [^]u8 ---
+	@(require_results) main_window_restore_state :: proc(window: Main_Window, data: [^]u8, len: c.int, version: c.int) -> c.int ---
 
 	/* QWidget */
 

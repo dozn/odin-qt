@@ -551,6 +551,60 @@ void *qt_main_window_get_statusbar(void *window) {
     return static_cast<void *>(static_cast<QMainWindow *>(window)->statusBar());
 }
 
+void *qt_main_window_get_central_widget(void *window) {
+    return static_cast<void *>(static_cast<QMainWindow *>(window)->centralWidget());
+}
+
+void qt_main_window_remove_dock_widget(void *window, void *dock_widget) {
+    static_cast<QMainWindow *>(window)->removeDockWidget(
+        static_cast<QDockWidget *>(dock_widget)
+    );
+}
+
+void qt_main_window_tabify_dock_widget(void *window, void *first, void *second) {
+    static_cast<QMainWindow *>(window)->tabifyDockWidget(
+        static_cast<QDockWidget *>(first),
+        static_cast<QDockWidget *>(second)
+    );
+}
+
+void qt_main_window_set_dock_options(void *window, int options) {
+    static_cast<QMainWindow *>(window)->setDockOptions(
+        static_cast<QMainWindow::DockOptions>(options)
+    );
+}
+
+void qt_main_window_set_tool_button_style(void *window, int style) {
+    static_cast<QMainWindow *>(window)->setToolButtonStyle(
+        static_cast<Qt::ToolButtonStyle>(style)
+    );
+}
+
+void qt_main_window_set_animated(void *window, int is_animated) {
+    static_cast<QMainWindow *>(window)->setAnimated(is_animated != 0);
+}
+
+void qt_main_window_set_corner(void *window, int corner, int area) {
+    static_cast<QMainWindow *>(window)->setCorner(
+        static_cast<Qt::Corner>(corner),
+        static_cast<Qt::DockWidgetArea>(area)
+    );
+}
+
+char *qt_main_window_save_state(void *window, int *out_len, int version) {
+    QByteArray state = static_cast<QMainWindow *>(window)->saveState(version);
+    *out_len = state.size();
+    char *result = static_cast<char *>(malloc(state.size()));
+    memcpy(result, state.constData(), state.size());
+    return result;
+}
+
+int qt_main_window_restore_state(void *window, const char *data, int len, int version) {
+    return static_cast<QMainWindow *>(window)->restoreState(
+        QByteArray(data, len), version
+    ) ? 1 : 0;
+}
+
 /* ── QWidget ───────────────────────────────────────────────────────── */
 
 void *qt_widget_create(void *parent) {
