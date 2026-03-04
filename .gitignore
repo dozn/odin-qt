@@ -1,0 +1,20 @@
+# Build output
+*.exe
+*.pdb
+*.obj
+
+# Qt static install (rebuild from source — see CLAUDE.md)
+libs/qt6-static/
+libs/qt6-static-build/
+
+# Qt source (download via curl — see CLAUDE.md)
+libs/qtbase-everywhere-src-*/
+libs/qtbase-src.zip
+
+# Compiled wrapper lib (rebuild via libs/qt/wrapper/build.bat)
+libs/qt/wrapper/qt_wrapper.lib
+
+# Unused
+libs/vcpkg/
+aqtinstall.log
+nul
