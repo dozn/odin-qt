@@ -8160,7 +8160,8 @@ void *qt_graphics_scene_add_ellipse(void *scene, double x, double y, double w, d
 
 void *qt_graphics_scene_add_text(void *scene, const char *text, void *font) {
     QFont f = font ? *static_cast<QFont *>(font) : QFont();
-    return static_cast<void *>(static_cast<QGraphicsScene *>(scene)->addText(QString::fromUtf8(text), f));
+    QGraphicsTextItem *item = static_cast<QGraphicsScene *>(scene)->addText(QString::fromUtf8(text), f);
+    return static_cast<void *>(static_cast<QGraphicsItem *>(item));
 }
 
 void *qt_graphics_scene_add_line(void *scene, double x1, double y1, double x2, double y2, void *pen) {
@@ -8179,7 +8180,8 @@ void *qt_graphics_scene_add_path(void *scene, void *path, void *pen, void *brush
 }
 
 void *qt_graphics_scene_add_widget(void *scene, void *widget) {
-    return static_cast<void *>(static_cast<QGraphicsScene *>(scene)->addWidget(static_cast<QWidget *>(widget)));
+    QGraphicsProxyWidget *proxy = static_cast<QGraphicsScene *>(scene)->addWidget(static_cast<QWidget *>(widget));
+    return static_cast<void *>(static_cast<QGraphicsItem *>(proxy));
 }
 
 void *qt_graphics_scene_create_item_group(void *scene, void **items, int count) {
@@ -8493,39 +8495,43 @@ void qt_graphics_ellipse_item_set_span_angle(void *item, int angle) {
 
 void *qt_graphics_text_item_create(const char *text, void *parent) {
     auto item = new QGraphicsTextItem(QString::fromUtf8(text), static_cast<QGraphicsItem *>(parent));
-    return static_cast<void *>(item);
+    return static_cast<void *>(static_cast<QGraphicsItem *>(item));
 }
 
+// Note: QGraphicsTextItem inherits from QGraphicsObject (QObject + QGraphicsItem).
+// All pointers are stored as QGraphicsItem* (via void*) to avoid multiple-inheritance
+// pointer adjustment issues. We cast back through QGraphicsItem* to reach the subclass.
+
 void qt_graphics_text_item_set_text(void *item, const char *text) {
-    static_cast<QGraphicsTextItem *>(item)->setPlainText(QString::fromUtf8(text));
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setPlainText(QString::fromUtf8(text));
 }
 
 void qt_graphics_text_item_set_html(void *item, const char *html) {
-    static_cast<QGraphicsTextItem *>(item)->setHtml(QString::fromUtf8(html));
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setHtml(QString::fromUtf8(html));
 }
 
 char *qt_graphics_text_item_get_text(void *item) {
-    return qstring_to_heap_utf8(static_cast<QGraphicsTextItem *>(item)->toPlainText());
+    return qstring_to_heap_utf8(static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->toPlainText());
 }
 
 void qt_graphics_text_item_set_font(void *item, void *font) {
-    static_cast<QGraphicsTextItem *>(item)->setFont(*static_cast<QFont *>(font));
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setFont(*static_cast<QFont *>(font));
 }
 
 void qt_graphics_text_item_set_default_text_colour(void *item, int r, int g, int b, int a) {
-    static_cast<QGraphicsTextItem *>(item)->setDefaultTextColor(QColor(r, g, b, a));
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setDefaultTextColor(QColor(r, g, b, a));
 }
 
 void qt_graphics_text_item_set_text_width(void *item, double width) {
-    static_cast<QGraphicsTextItem *>(item)->setTextWidth(width);
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setTextWidth(width);
 }
 
 double qt_graphics_text_item_get_text_width(void *item) {
-    return static_cast<QGraphicsTextItem *>(item)->textWidth();
+    return static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->textWidth();
 }
 
 void qt_graphics_text_item_set_text_interaction_flags(void *item, int flags) {
-    static_cast<QGraphicsTextItem *>(item)->setTextInteractionFlags(
+    static_cast<QGraphicsTextItem *>(static_cast<QGraphicsItem *>(item))->setTextInteractionFlags(
         static_cast<Qt::TextInteractionFlags>(flags));
 }
 
@@ -8605,15 +8611,19 @@ void qt_graphics_item_group_remove_from_group(void *group, void *item) {
 /* ── QGraphicsProxyWidget ──────────────────────────────────────────── */
 
 void *qt_graphics_proxy_widget_create(void *parent) {
-    return static_cast<void *>(new QGraphicsProxyWidget(static_cast<QGraphicsItem *>(parent)));
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(static_cast<QGraphicsItem *>(parent));
+    return static_cast<void *>(static_cast<QGraphicsItem *>(proxy));
 }
 
+// Note: QGraphicsProxyWidget inherits via QGraphicsObject (multiple inheritance).
+// Pointers are stored as QGraphicsItem* — cast through QGraphicsItem* to reach subclass.
+
 void qt_graphics_proxy_widget_set_widget(void *proxy, void *widget) {
-    static_cast<QGraphicsProxyWidget *>(proxy)->setWidget(static_cast<QWidget *>(widget));
+    static_cast<QGraphicsProxyWidget *>(static_cast<QGraphicsItem *>(proxy))->setWidget(static_cast<QWidget *>(widget));
 }
 
 void *qt_graphics_proxy_widget_get_widget(void *proxy) {
-    return static_cast<void *>(static_cast<QGraphicsProxyWidget *>(proxy)->widget());
+    return static_cast<void *>(static_cast<QGraphicsProxyWidget *>(static_cast<QGraphicsItem *>(proxy))->widget());
 }
 
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */
