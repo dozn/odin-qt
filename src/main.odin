@@ -2685,6 +2685,214 @@ build_advanced_models_tab :: proc(application: qt.Application) -> qt.Widget {
 	return page
 }
 
+/* ── Widget Properties callbacks ───────────────────────────────────── */
+
+opacity_slider_changed :: proc"c"(value: c.int, user_data: rawptr) {
+	opacity := cast(c.double)value / 100.0
+	qt.widget_set_window_opacity(auto_cast demo_state.window, opacity)
+	context = runtime.default_context()
+	buf: [64]u8
+	msg := fmt.bprintf(buf[:], "Opacity: %.0f%%", opacity * 100.0)
+	buf[len(msg)] = 0
+	statusbar_show(cstring(raw_data(buf[:])))
+}
+
+widget_show_minimized_cb :: proc"c"(user_data: rawptr) {
+	qt.widget_show_minimized(auto_cast demo_state.window)
+}
+
+widget_show_maximized_cb :: proc"c"(user_data: rawptr) {
+	qt.widget_show_maximized(auto_cast demo_state.window)
+}
+
+widget_show_full_screen_cb :: proc"c"(user_data: rawptr) {
+	qt.widget_show_full_screen(auto_cast demo_state.window)
+}
+
+widget_show_normal_cb :: proc"c"(user_data: rawptr) {
+	qt.widget_show_normal(auto_cast demo_state.window)
+}
+
+widget_adjust_size_cb :: proc"c"(user_data: rawptr) {
+	qt.widget_adjust_size(auto_cast demo_state.window)
+	statusbar_show("adjustSize() called")
+}
+
+build_widget_properties_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Widget Properties Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "Demonstrates new QWidget methods: window opacity, window state, geometry, coordinate mapping, and more.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	// Window Opacity
+	opacity_group := qt.group_box_create(nil, "Window Opacity (setWindowOpacity / getWindowOpacity)")
+	opacity_layout := qt.vbox_layout_create(auto_cast opacity_group)
+	opacity_slider := qt.slider_create(.Horizontal, nil)
+	qt.slider_set_range(opacity_slider, 20, 100)
+	qt.slider_set_value(opacity_slider, 100)
+	qt.slider_set_tick_position(opacity_slider, .Ticks_Below)
+	qt.slider_set_tick_interval(opacity_slider, 10)
+	qt.slider_connect_value_changed(opacity_slider, opacity_slider_changed, nil)
+	qt.layout_add_widget(opacity_layout, auto_cast opacity_slider)
+	opacity_note := qt.label_create(nil, "Drag to change main window opacity (20%\xe2\x80\x93100%)")
+	qt.layout_add_widget(opacity_layout, auto_cast opacity_note)
+	qt.layout_add_widget(layout, auto_cast opacity_group)
+
+	// Window State
+	state_group := qt.group_box_create(nil, "Window State (showMinimized / showMaximized / showFullScreen / showNormal)")
+	state_layout := qt.hbox_layout_create(auto_cast state_group)
+	minimize_btn := qt.push_button_create(nil, "Minimize")
+	qt.push_button_connect_clicked(minimize_btn, widget_show_minimized_cb, nil)
+	qt.layout_add_widget(state_layout, auto_cast minimize_btn)
+	maximize_btn := qt.push_button_create(nil, "Maximize")
+	qt.push_button_connect_clicked(maximize_btn, widget_show_maximized_cb, nil)
+	qt.layout_add_widget(state_layout, auto_cast maximize_btn)
+	fullscreen_btn := qt.push_button_create(nil, "Full Screen")
+	qt.push_button_connect_clicked(fullscreen_btn, widget_show_full_screen_cb, nil)
+	qt.layout_add_widget(state_layout, auto_cast fullscreen_btn)
+	normal_btn := qt.push_button_create(nil, "Normal")
+	qt.push_button_connect_clicked(normal_btn, widget_show_normal_cb, nil)
+	qt.layout_add_widget(state_layout, auto_cast normal_btn)
+	qt.layout_add_widget(layout, auto_cast state_group)
+
+	// Geometry
+	geom_group := qt.group_box_create(nil, "Geometry (setGeometry / getGeometry)")
+	geom_layout := qt.vbox_layout_create(auto_cast geom_group)
+	geom_info := qt.label_create(nil, "(click Refresh to read current geometry)")
+	qt.layout_add_widget(geom_layout, auto_cast geom_info)
+	geom_btn_row := qt.widget_create(nil)
+	geom_btn_layout := qt.hbox_layout_create(geom_btn_row)
+	geom_refresh_btn := qt.push_button_create(nil, "Refresh Geometry")
+	qt.push_button_connect_clicked(geom_refresh_btn, proc"c"(user_data: rawptr) {
+		label: qt.Label = auto_cast user_data
+		gx, gy, gw, gh: c.int
+		qt.widget_get_geometry(auto_cast demo_state.window, &gx, &gy, &gw, &gh)
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "Window geometry: x=%d, y=%d, w=%d, h=%d", gx, gy, gw, gh)
+		buf[len(msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(buf[:])))
+	}, auto_cast geom_info)
+	qt.layout_add_widget(geom_btn_layout, auto_cast geom_refresh_btn)
+	geom_set_btn := qt.push_button_create(nil, "Set to 100,100,800,600")
+	qt.push_button_connect_clicked(geom_set_btn, proc"c"(user_data: rawptr) {
+		qt.widget_set_geometry(auto_cast demo_state.window, 100, 100, 800, 600)
+		statusbar_show("Geometry set to 100,100,800,600")
+	}, nil)
+	qt.layout_add_widget(geom_btn_layout, auto_cast geom_set_btn)
+	qt.layout_add_widget(geom_layout, geom_btn_row)
+	qt.layout_add_widget(layout, auto_cast geom_group)
+
+	// Coordinate Mapping
+	map_group := qt.group_box_create(nil, "Coordinate Mapping (mapToGlobal / mapFromGlobal)")
+	map_layout := qt.vbox_layout_create(auto_cast map_group)
+	map_info := qt.label_create(nil, "(click to map widget origin (0,0) to global coordinates)")
+	qt.layout_add_widget(map_layout, auto_cast map_info)
+	map_btn := qt.push_button_create(nil, "Map (0,0) to Global")
+	qt.push_button_connect_clicked(map_btn, proc"c"(user_data: rawptr) {
+		label: qt.Label = auto_cast user_data
+		global_x, global_y: c.int
+		qt.widget_map_to_global(auto_cast demo_state.window, 0, 0, &global_x, &global_y)
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "Window (0,0) -> Global (%d, %d)", global_x, global_y)
+		buf[len(msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(buf[:])))
+	}, auto_cast map_info)
+	qt.layout_add_widget(map_layout, auto_cast map_btn)
+	qt.layout_add_widget(layout, auto_cast map_group)
+
+	// Adjust Size + Contents Margins
+	misc_group := qt.group_box_create(nil, "Miscellaneous (adjustSize / contentsMargins / rect / size / pos)")
+	misc_layout := qt.vbox_layout_create(auto_cast misc_group)
+	misc_info := qt.label_create(nil, "(click Refresh to read rect, size, pos)")
+	qt.layout_add_widget(misc_layout, auto_cast misc_info)
+	misc_btn_row := qt.widget_create(nil)
+	misc_btn_layout := qt.hbox_layout_create(misc_btn_row)
+	adjust_btn := qt.push_button_create(nil, "Adjust Size")
+	qt.push_button_connect_clicked(adjust_btn, widget_adjust_size_cb, nil)
+	qt.layout_add_widget(misc_btn_layout, auto_cast adjust_btn)
+	misc_refresh_btn := qt.push_button_create(nil, "Refresh Info")
+	qt.push_button_connect_clicked(misc_refresh_btn, proc"c"(user_data: rawptr) {
+		label: qt.Label = auto_cast user_data
+		rx, ry, rw, rh: c.int
+		qt.widget_get_rect(auto_cast demo_state.window, &rx, &ry, &rw, &rh)
+		sw, sh: c.int
+		qt.widget_get_size(auto_cast demo_state.window, &sw, &sh)
+		px, py: c.int
+		qt.widget_get_pos(auto_cast demo_state.window, &px, &py)
+		is_min := qt.widget_is_minimized(auto_cast demo_state.window)
+		is_max := qt.widget_is_maximized(auto_cast demo_state.window)
+		is_fs := qt.widget_is_full_screen(auto_cast demo_state.window)
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "rect: (%d,%d,%d,%d)  size: (%d,%d)  pos: (%d,%d)\nminimized=%d  maximized=%d  fullscreen=%d", rx, ry, rw, rh, sw, sh, px, py, is_min, is_max, is_fs)
+		buf[len(msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(buf[:])))
+	}, auto_cast misc_info)
+	qt.layout_add_widget(misc_btn_layout, auto_cast misc_refresh_btn)
+	qt.layout_add_widget(misc_layout, misc_btn_row)
+	qt.layout_add_widget(layout, auto_cast misc_group)
+
+	// Contents Margins demo
+	margins_group := qt.group_box_create(nil, "Widget Contents Margins (setContentsMargins / getContentsMargins)")
+	margins_layout := qt.vbox_layout_create(auto_cast margins_group)
+	margin_target := qt.label_create(nil, "This label has widget-level content margins")
+	qt.label_set_alignment(margin_target, .Centre)
+	qt.widget_set_style_sheet(auto_cast margin_target, "QLabel { background: #e0e8f0; border: 1px solid #999; }")
+	qt.widget_set_contents_margins(auto_cast margin_target, 20, 10, 20, 10)
+	qt.layout_add_widget(margins_layout, auto_cast margin_target)
+	margin_info := qt.label_create(nil, "")
+	{
+		left, top, right, bottom: c.int
+		qt.widget_get_contents_margins(auto_cast margin_target, &left, &top, &right, &bottom)
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "Margins: left=%d, top=%d, right=%d, bottom=%d", left, top, right, bottom)
+		buf[len(msg)] = 0
+		qt.label_set_text(margin_info, cstring(raw_data(buf[:])))
+	}
+	qt.layout_add_widget(margins_layout, auto_cast margin_info)
+	qt.layout_add_widget(layout, auto_cast margins_group)
+
+	// Tab order demo
+	tab_group := qt.group_box_create(nil, "Tab Order (setTabOrder)")
+	tab_layout := qt.vbox_layout_create(auto_cast tab_group)
+	tab_note := qt.label_create(nil, "These three fields have explicit tab order: C -> A -> B")
+	qt.layout_add_widget(tab_layout, auto_cast tab_note)
+	tab_row := qt.widget_create(nil)
+	tab_row_layout := qt.hbox_layout_create(tab_row)
+	tab_a := qt.line_edit_create(nil)
+	qt.line_edit_set_placeholder_text(tab_a, "Field A")
+	tab_b := qt.line_edit_create(nil)
+	qt.line_edit_set_placeholder_text(tab_b, "Field B")
+	tab_c := qt.line_edit_create(nil)
+	qt.line_edit_set_placeholder_text(tab_c, "Field C")
+	qt.layout_add_widget(tab_row_layout, auto_cast tab_a)
+	qt.layout_add_widget(tab_row_layout, auto_cast tab_b)
+	qt.layout_add_widget(tab_row_layout, auto_cast tab_c)
+	qt.widget_set_tab_order(auto_cast tab_c, auto_cast tab_a)
+	qt.widget_set_tab_order(auto_cast tab_a, auto_cast tab_b)
+	qt.layout_add_widget(tab_layout, tab_row)
+	qt.layout_add_widget(layout, auto_cast tab_group)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -2788,6 +2996,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_file_data_tab(), "File && Data")
 	_ = qt.tab_widget_add_tab(tabs, build_core_utilities_tab(), "Core Utilities")
 	_ = qt.tab_widget_add_tab(tabs, build_advanced_models_tab(application), "Adv. Models")
+	_ = qt.tab_widget_add_tab(tabs, build_widget_properties_tab(), "Widget Props")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 

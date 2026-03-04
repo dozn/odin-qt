@@ -731,6 +731,167 @@ char *qt_widget_get_object_name(void *widget) {
     return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->objectName());
 }
 
+void qt_widget_set_window_flags(void *widget, int flags) {
+    static_cast<QWidget *>(widget)->setWindowFlags(static_cast<Qt::WindowFlags>(flags));
+}
+
+int qt_widget_get_window_flags(void *widget) {
+    return static_cast<int>(static_cast<QWidget *>(widget)->windowFlags());
+}
+
+void qt_widget_set_window_state(void *widget, int state) {
+    static_cast<QWidget *>(widget)->setWindowState(static_cast<Qt::WindowStates>(state));
+}
+
+int qt_widget_get_window_state(void *widget) {
+    return static_cast<int>(static_cast<QWidget *>(widget)->windowState());
+}
+
+void qt_widget_show_minimized(void *widget) {
+    static_cast<QWidget *>(widget)->showMinimized();
+}
+
+void qt_widget_show_maximized(void *widget) {
+    static_cast<QWidget *>(widget)->showMaximized();
+}
+
+void qt_widget_show_full_screen(void *widget) {
+    static_cast<QWidget *>(widget)->showFullScreen();
+}
+
+void qt_widget_show_normal(void *widget) {
+    static_cast<QWidget *>(widget)->showNormal();
+}
+
+int qt_widget_is_minimized(void *widget) {
+    return static_cast<QWidget *>(widget)->isMinimized() ? 1 : 0;
+}
+
+int qt_widget_is_maximized(void *widget) {
+    return static_cast<QWidget *>(widget)->isMaximized() ? 1 : 0;
+}
+
+int qt_widget_is_full_screen(void *widget) {
+    return static_cast<QWidget *>(widget)->isFullScreen() ? 1 : 0;
+}
+
+void qt_widget_set_window_modality(void *widget, int modality) {
+    static_cast<QWidget *>(widget)->setWindowModality(static_cast<Qt::WindowModality>(modality));
+}
+
+void qt_widget_set_window_opacity(void *widget, double opacity) {
+    static_cast<QWidget *>(widget)->setWindowOpacity(opacity);
+}
+
+double qt_widget_get_window_opacity(void *widget) {
+    return static_cast<QWidget *>(widget)->windowOpacity();
+}
+
+void qt_widget_set_geometry(void *widget, int x, int y, int w, int h) {
+    static_cast<QWidget *>(widget)->setGeometry(x, y, w, h);
+}
+
+void qt_widget_get_geometry(void *widget, int *out_x, int *out_y, int *out_w, int *out_h) {
+    QRect r = static_cast<QWidget *>(widget)->geometry();
+    if (out_x) *out_x = r.x();
+    if (out_y) *out_y = r.y();
+    if (out_w) *out_w = r.width();
+    if (out_h) *out_h = r.height();
+}
+
+void qt_widget_map_to_global(void *widget, int x, int y, int *out_x, int *out_y) {
+    QPoint p = static_cast<QWidget *>(widget)->mapToGlobal(QPoint(x, y));
+    if (out_x) *out_x = p.x();
+    if (out_y) *out_y = p.y();
+}
+
+void qt_widget_map_from_global(void *widget, int x, int y, int *out_x, int *out_y) {
+    QPoint p = static_cast<QWidget *>(widget)->mapFromGlobal(QPoint(x, y));
+    if (out_x) *out_x = p.x();
+    if (out_y) *out_y = p.y();
+}
+
+void qt_widget_map_to_parent(void *widget, int x, int y, int *out_x, int *out_y) {
+    QPoint p = static_cast<QWidget *>(widget)->mapToParent(QPoint(x, y));
+    if (out_x) *out_x = p.x();
+    if (out_y) *out_y = p.y();
+}
+
+void qt_widget_map_from_parent(void *widget, int x, int y, int *out_x, int *out_y) {
+    QPoint p = static_cast<QWidget *>(widget)->mapFromParent(QPoint(x, y));
+    if (out_x) *out_x = p.x();
+    if (out_y) *out_y = p.y();
+}
+
+void qt_widget_set_parent(void *widget, void *parent) {
+    static_cast<QWidget *>(widget)->setParent(static_cast<QWidget *>(parent));
+}
+
+void *qt_widget_get_parent_widget(void *widget) {
+    return static_cast<void *>(static_cast<QWidget *>(widget)->parentWidget());
+}
+
+void qt_widget_set_focus_policy(void *widget, int policy) {
+    static_cast<QWidget *>(widget)->setFocusPolicy(static_cast<Qt::FocusPolicy>(policy));
+}
+
+void qt_widget_set_attribute(void *widget, int attribute, int on) {
+    static_cast<QWidget *>(widget)->setAttribute(static_cast<Qt::WidgetAttribute>(attribute), on != 0);
+}
+
+int qt_widget_test_attribute(void *widget, int attribute) {
+    return static_cast<QWidget *>(widget)->testAttribute(static_cast<Qt::WidgetAttribute>(attribute)) ? 1 : 0;
+}
+
+void qt_widget_adjust_size(void *widget) {
+    static_cast<QWidget *>(widget)->adjustSize();
+}
+
+void qt_widget_set_contents_margins(void *widget, int left, int top, int right, int bottom) {
+    static_cast<QWidget *>(widget)->setContentsMargins(left, top, right, bottom);
+}
+
+void qt_widget_get_contents_margins(void *widget, int *left, int *top, int *right, int *bottom) {
+    QMargins m = static_cast<QWidget *>(widget)->contentsMargins();
+    if (left) *left = m.left();
+    if (top) *top = m.top();
+    if (right) *right = m.right();
+    if (bottom) *bottom = m.bottom();
+}
+
+void qt_widget_repaint(void *widget) {
+    static_cast<QWidget *>(widget)->repaint();
+}
+
+void qt_widget_set_tab_order(void *first, void *second) {
+    QWidget::setTabOrder(static_cast<QWidget *>(first), static_cast<QWidget *>(second));
+}
+
+void *qt_widget_grab(void *widget) {
+    QPixmap *pm = new QPixmap(static_cast<QWidget *>(widget)->grab());
+    return static_cast<void *>(pm);
+}
+
+void qt_widget_get_rect(void *widget, int *out_x, int *out_y, int *out_w, int *out_h) {
+    QRect r = static_cast<QWidget *>(widget)->rect();
+    if (out_x) *out_x = r.x();
+    if (out_y) *out_y = r.y();
+    if (out_w) *out_w = r.width();
+    if (out_h) *out_h = r.height();
+}
+
+void qt_widget_get_size(void *widget, int *out_w, int *out_h) {
+    QSize s = static_cast<QWidget *>(widget)->size();
+    if (out_w) *out_w = s.width();
+    if (out_h) *out_h = s.height();
+}
+
+void qt_widget_get_pos(void *widget, int *out_x, int *out_y) {
+    QPoint p = static_cast<QWidget *>(widget)->pos();
+    if (out_x) *out_x = p.x();
+    if (out_y) *out_y = p.y();
+}
+
 /* ── QLabel ─────────────────────────────────────────────────────────── */
 
 void *qt_label_create(void *parent, const char *text) {

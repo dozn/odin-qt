@@ -64,29 +64,6 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ### Missing Methods/Signals on Existing Classes
 
-#### QWidget (high priority gaps)
-- `setWindowFlags` / `getWindowFlags` -- essential for popups, frameless windows, tool windows
-- `setWindowState` / `getWindowState` -- minimize, maximize, fullscreen
-- `showMinimized` / `showMaximized` / `showFullScreen` / `showNormal`
-- `isMinimized` / `isMaximized` / `isFullScreen`
-- `setWindowModality` -- for modal windows without QDialog
-- `setWindowOpacity` / `getWindowOpacity` -- window transparency
-- `setGeometry` / `getGeometry` -- combined position+size
-- `mapToGlobal` / `mapFromGlobal` -- coordinate mapping (essential for custom popups)
-- `mapToParent` / `mapFromParent`
-- `setParent` / `getParentWidget`
-- `setFocusPolicy`
-- `setAttribute` / `testAttribute` -- Qt::WA_* flags
-- `adjustSize`
-- `setContentsMargins` (widget-level, distinct from layout)
-- `getContentsMargins`
-- `repaint` -- immediate repaint (vs `update` which is deferred)
-- `setTabOrder` (static) -- keyboard navigation order
-- `grab` -- render widget to QPixmap
-- `rect` -- convenience for 0,0,width,height
-- `size` -- width+height as pair
-- `pos` -- x+y as pair
-
 #### QMainWindow
 - `saveState` / `restoreState` -- persist toolbar/dock layout (very common)
 - `removeDockWidget`

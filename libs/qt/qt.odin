@@ -1423,6 +1423,66 @@ Style_Pixel_Metric :: enum c.int {
 	Layout_Vertical_Spacing = 72,
 }
 
+Window_Flag :: enum c.int {
+	Widget = 0x00000000,
+	Window = 0x00000001,
+	Dialog = 0x00000003,
+	Sheet = 0x00000005,
+	Popup = 0x00000009,
+	Tool = 0x0000000d,
+	Tool_Tip = 0x0000000f,
+	Splash_Screen = 0x0000000f | 0x00000004,
+	Sub_Window = 0x00000012,
+	Frameless_Window_Hint = 0x00000800,
+	Custom_Window_Hint = 0x00000000,
+	Window_Title_Hint = 0x00001000,
+	Window_System_Menu_Hint = 0x00002000,
+	Window_Minimize_Button_Hint = 0x00004000,
+	Window_Maximize_Button_Hint = 0x00008000,
+	Window_Min_Max_Buttons_Hint = 0x0000C000,
+	Window_Close_Button_Hint = 0x08000000,
+	Window_Context_Help_Button_Hint = 0x00010000,
+	Window_Stays_On_Top_Hint = 0x00040000,
+	Window_Stays_On_Bottom_Hint = 0x04000000,
+}
+
+Window_State :: enum c.int {
+	No_State = 0x00000000,
+	Minimized = 0x00000001,
+	Maximized = 0x00000002,
+	Full_Screen = 0x00000004,
+	Active = 0x00000008,
+}
+
+Window_Modality :: enum c.int {
+	Non_Modal = 0,
+	Window_Modal = 1,
+	Application_Modal = 2,
+}
+
+Focus_Policy :: enum c.int {
+	No_Focus = 0,
+	Tab_Focus = 0x1,
+	Click_Focus = 0x2,
+	Strong_Focus = 0xb,
+	Wheel_Focus = 0xf,
+}
+
+Widget_Attribute :: enum c.int {
+	Delete_On_Close = 55,
+	Transparent_For_Mouse_Events = 51,
+	No_System_Background = 9,
+	Translucent_Background = 120,
+	Styled_Background = 100,
+	Accepts_Touches = 122,
+	Always_Show_Tool_Tips = 84,
+	Hover = 74,
+	Input_Method_Enabled = 14,
+	Mouse_No_Mask = 71,
+	Touch_Padding = 126,
+	Mac_Always_Show_Tool_Window = 36,
+}
+
 /* ── Foreign declarations ──────────────────────────────────────────── */
 
 @(default_calling_convention="c", link_prefix="qt_")
@@ -1493,6 +1553,40 @@ foreign qt_lib {
 	widget_set_fixed_height :: proc(widget: Widget, height: c.int) ---
 	widget_set_object_name :: proc(widget: Widget, name: cstring) ---
 	@(require_results) widget_get_object_name :: proc(widget: Widget) -> cstring ---
+	widget_set_window_flags :: proc(widget: Widget, flags: c.int) ---
+	@(require_results) widget_get_window_flags :: proc(widget: Widget) -> c.int ---
+	widget_set_window_state :: proc(widget: Widget, state: c.int) ---
+	@(require_results) widget_get_window_state :: proc(widget: Widget) -> c.int ---
+	widget_show_minimized :: proc(widget: Widget) ---
+	widget_show_maximized :: proc(widget: Widget) ---
+	widget_show_full_screen :: proc(widget: Widget) ---
+	widget_show_normal :: proc(widget: Widget) ---
+	@(require_results) widget_is_minimized :: proc(widget: Widget) -> c.int ---
+	@(require_results) widget_is_maximized :: proc(widget: Widget) -> c.int ---
+	@(require_results) widget_is_full_screen :: proc(widget: Widget) -> c.int ---
+	widget_set_window_modality :: proc(widget: Widget, modality: c.int) ---
+	widget_set_window_opacity :: proc(widget: Widget, opacity: c.double) ---
+	@(require_results) widget_get_window_opacity :: proc(widget: Widget) -> c.double ---
+	widget_set_geometry :: proc(widget: Widget, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	widget_get_geometry :: proc(widget: Widget, out_x: ^c.int, out_y: ^c.int, out_w: ^c.int, out_h: ^c.int) ---
+	widget_map_to_global :: proc(widget: Widget, x: c.int, y: c.int, out_x: ^c.int, out_y: ^c.int) ---
+	widget_map_from_global :: proc(widget: Widget, x: c.int, y: c.int, out_x: ^c.int, out_y: ^c.int) ---
+	widget_map_to_parent :: proc(widget: Widget, x: c.int, y: c.int, out_x: ^c.int, out_y: ^c.int) ---
+	widget_map_from_parent :: proc(widget: Widget, x: c.int, y: c.int, out_x: ^c.int, out_y: ^c.int) ---
+	widget_set_parent :: proc(widget: Widget, parent: Widget) ---
+	@(require_results) widget_get_parent_widget :: proc(widget: Widget) -> Widget ---
+	widget_set_focus_policy :: proc(widget: Widget, policy: c.int) ---
+	widget_set_attribute :: proc(widget: Widget, attribute: c.int, on: c.int) ---
+	@(require_results) widget_test_attribute :: proc(widget: Widget, attribute: c.int) -> c.int ---
+	widget_adjust_size :: proc(widget: Widget) ---
+	widget_set_contents_margins :: proc(widget: Widget, left: c.int, top: c.int, right: c.int, bottom: c.int) ---
+	widget_get_contents_margins :: proc(widget: Widget, left: ^c.int, top: ^c.int, right: ^c.int, bottom: ^c.int) ---
+	widget_repaint :: proc(widget: Widget) ---
+	widget_set_tab_order :: proc(first: Widget, second: Widget) ---
+	@(require_results) widget_grab :: proc(widget: Widget) -> Pixmap ---
+	widget_get_rect :: proc(widget: Widget, out_x: ^c.int, out_y: ^c.int, out_w: ^c.int, out_h: ^c.int) ---
+	widget_get_size :: proc(widget: Widget, out_w: ^c.int, out_h: ^c.int) ---
+	widget_get_pos :: proc(widget: Widget, out_x: ^c.int, out_y: ^c.int) ---
 
 	/* QLabel */
 
