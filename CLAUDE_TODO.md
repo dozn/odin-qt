@@ -79,10 +79,10 @@
 - [x] QToolTip::showText() (tooltip at arbitrary position)
 
 ## 6. Event System
-- [ ] Event filters (installEventFilter/removeEventFilter)
-- [ ] Close event interception (for "unsaved changes?" prompts)
-- [ ] Key press/release event handling
-- [ ] Mouse event handling
+- [x] Event filters (installEventFilter/removeEventFilter)
+- [x] Close event interception (for "unsaved changes?" prompts)
+- [x] Key press/release event handling
+- [x] Mouse event handling
 
 ## 7. Layout Extras
 - [ ] QGridLayout::addLayout() (nest layouts in grid cells)

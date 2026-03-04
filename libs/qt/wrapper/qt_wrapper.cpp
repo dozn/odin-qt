@@ -82,12 +82,115 @@
 #include <QToolTip>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QCloseEvent>
+#include <QKeyEvent>
+#include <QMouseEvent>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
 
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 Q_IMPORT_PLUGIN(QModernWindowsStylePlugin)
+
+/* ── Event filter helper classes ───────────────────────────────────── */
+
+class CGenericEventFilter : public QObject {
+public:
+    CGenericEventFilter(qt_event_filter_callback_t callback, void *user_data)
+        : m_callback(callback), m_user_data(user_data) {}
+
+    bool eventFilter(QObject *, QEvent *event) override {
+        return m_callback(static_cast<int>(event->type()), m_user_data) != 0;
+    }
+
+private:
+    qt_event_filter_callback_t m_callback;
+    void *m_user_data;
+};
+
+class CCloseEventFilter : public QObject {
+public:
+    CCloseEventFilter(qt_close_event_callback_t callback, void *user_data)
+        : m_callback(callback), m_user_data(user_data) {}
+
+    bool eventFilter(QObject *, QEvent *event) override {
+        if (event->type() == QEvent::Close) {
+            int should_close = m_callback(m_user_data);
+            if (!should_close) {
+                event->ignore();
+                return true;
+            }
+        }
+        return false;
+    }
+
+private:
+    qt_close_event_callback_t m_callback;
+    void *m_user_data;
+};
+
+class CKeyEventFilter : public QObject {
+public:
+    CKeyEventFilter(qt_key_event_callback_t callback, void *user_data)
+        : m_callback(callback), m_user_data(user_data) {}
+
+    bool eventFilter(QObject *, QEvent *event) override {
+        if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) {
+            auto *ke = static_cast<QKeyEvent *>(event);
+            QByteArray text_utf8 = ke->text().toUtf8();
+            int is_handled = m_callback(
+                static_cast<int>(event->type()),
+                ke->key(),
+                static_cast<int>(ke->modifiers()),
+                ke->isAutoRepeat() ? 1 : 0,
+                text_utf8.constData(),
+                m_user_data
+            );
+            return is_handled != 0;
+        }
+        return false;
+    }
+
+private:
+    qt_key_event_callback_t m_callback;
+    void *m_user_data;
+};
+
+class CMouseEventFilter : public QObject {
+public:
+    CMouseEventFilter(qt_mouse_event_callback_t callback, void *user_data)
+        : m_callback(callback), m_user_data(user_data) {}
+
+    bool eventFilter(QObject *, QEvent *event) override {
+        switch (event->type()) {
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::MouseButtonDblClick:
+        case QEvent::MouseMove: {
+            auto *me = static_cast<QMouseEvent *>(event);
+            QPointF local = me->position();
+            QPointF global = me->globalPosition();
+            int is_handled = m_callback(
+                static_cast<int>(event->type()),
+                static_cast<int>(me->button()),
+                static_cast<int>(local.x()),
+                static_cast<int>(local.y()),
+                static_cast<int>(global.x()),
+                static_cast<int>(global.y()),
+                static_cast<int>(me->modifiers()),
+                m_user_data
+            );
+            return is_handled != 0;
+        }
+        default:
+            return false;
+        }
+    }
+
+private:
+    qt_mouse_event_callback_t m_callback;
+    void *m_user_data;
+};
 
 static char *qstring_to_heap_utf8(const QString &s) {
     if (s.isEmpty()) return nullptr;
@@ -3114,6 +3217,44 @@ void qt_disconnect(int connection_id) {
         QObject::disconnect(it->second);
         g_connections.erase(it);
     }
+}
+
+/* ── Event system ───────────────────────────────────────────────────── */
+
+void *qt_event_filter_create(qt_event_filter_callback_t callback, void *user_data) {
+    return static_cast<void *>(new CGenericEventFilter(callback, user_data));
+}
+
+void qt_event_filter_destroy(void *filter) {
+    delete static_cast<QObject *>(filter);
+}
+
+void qt_widget_install_event_filter(void *widget, void *filter) {
+    static_cast<QWidget *>(widget)->installEventFilter(static_cast<QObject *>(filter));
+}
+
+void qt_widget_remove_event_filter(void *widget, void *filter) {
+    static_cast<QWidget *>(widget)->removeEventFilter(static_cast<QObject *>(filter));
+}
+
+void *qt_close_event_filter_create(qt_close_event_callback_t callback, void *user_data) {
+    return static_cast<void *>(new CCloseEventFilter(callback, user_data));
+}
+
+void *qt_key_event_filter_create(qt_key_event_callback_t callback, void *user_data) {
+    return static_cast<void *>(new CKeyEventFilter(callback, user_data));
+}
+
+void *qt_mouse_event_filter_create(qt_mouse_event_callback_t callback, void *user_data) {
+    return static_cast<void *>(new CMouseEventFilter(callback, user_data));
+}
+
+void qt_widget_set_mouse_tracking(void *widget, int is_enabled) {
+    static_cast<QWidget *>(widget)->setMouseTracking(is_enabled != 0);
+}
+
+int qt_widget_has_mouse_tracking(void *widget) {
+    return static_cast<QWidget *>(widget)->hasMouseTracking() ? 1 : 0;
 }
 
 } /* extern "C" */

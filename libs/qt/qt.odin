@@ -110,6 +110,7 @@ Settings :: distinct rawptr
 Font_Metrics :: distinct rawptr
 Completer :: distinct rawptr
 Validator :: distinct rawptr
+Event_Filter :: distinct rawptr
 Connection_Id :: distinct c.int
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
@@ -130,6 +131,10 @@ String_Callback :: #type proc"c"(text: cstring, user_data: rawptr)
 Cell_Callback :: #type proc"c"(value_a: c.int, value_b: c.int, user_data: rawptr)
 Item_Callback :: #type proc"c"(item: rawptr, column: c.int, user_data: rawptr)
 Point_Callback :: #type proc"c"(x: c.int, y: c.int, user_data: rawptr)
+Event_Filter_Callback :: #type proc"c"(event_type: c.int, user_data: rawptr) -> c.int
+Close_Event_Callback :: #type proc"c"(user_data: rawptr) -> c.int
+Key_Event_Callback :: #type proc"c"(event_type: c.int, key: c.int, modifiers: c.int, is_auto_repeat: c.int, text: cstring, user_data: rawptr) -> c.int
+Mouse_Event_Callback :: #type proc"c"(event_type: c.int, button: c.int, x: c.int, y: c.int, global_x: c.int, global_y: c.int, modifiers: c.int, user_data: rawptr) -> c.int
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -373,6 +378,135 @@ Match_Flag :: enum c.int {
 	Contains = 1,
 	Starts_With = 2,
 	Ends_With = 3,
+}
+
+Event_Type :: enum c.int {
+	Mouse_Button_Press = 2,
+	Mouse_Button_Release = 3,
+	Mouse_Button_Double_Click = 4,
+	Mouse_Move = 5,
+	Key_Press = 6,
+	Key_Release = 7,
+	Focus_In = 8,
+	Focus_Out = 9,
+	Enter = 10,
+	Leave = 11,
+	Paint = 12,
+	Move = 13,
+	Resize = 14,
+	Show = 17,
+	Hide = 18,
+	Close = 19,
+	Wheel = 31,
+	Context_Menu = 82,
+	Tool_Tip = 110,
+}
+
+Mouse_Button :: enum c.int {
+	None = 0,
+	Left = 1,
+	Right = 2,
+	Middle = 4,
+	Back = 8,
+	Forward = 16,
+}
+
+Keyboard_Modifier :: enum c.int {
+	None = 0x00000000,
+	Shift = 0x02000000,
+	Control = 0x04000000,
+	Alt = 0x08000000,
+	Meta = 0x10000000,
+	Keypad = 0x20000000,
+}
+
+Key :: enum c.int {
+	Escape = 0x01000000,
+	Tab = 0x01000001,
+	Backtab = 0x01000002,
+	Backspace = 0x01000003,
+	Return = 0x01000004,
+	Enter = 0x01000005,
+	Insert = 0x01000006,
+	Delete = 0x01000007,
+	Pause = 0x01000008,
+	Print = 0x01000009,
+	Home = 0x01000010,
+	End = 0x01000011,
+	Left = 0x01000012,
+	Up = 0x01000013,
+	Right = 0x01000014,
+	Down = 0x01000015,
+	Page_Up = 0x01000016,
+	Page_Down = 0x01000017,
+	Shift = 0x01000020,
+	Control = 0x01000021,
+	Meta = 0x01000022,
+	Alt = 0x01000023,
+	Caps_Lock = 0x01000024,
+	Num_Lock = 0x01000025,
+	Scroll_Lock = 0x01000026,
+	F1 = 0x01000030,
+	F2 = 0x01000031,
+	F3 = 0x01000032,
+	F4 = 0x01000033,
+	F5 = 0x01000034,
+	F6 = 0x01000035,
+	F7 = 0x01000036,
+	F8 = 0x01000037,
+	F9 = 0x01000038,
+	F10 = 0x01000039,
+	F11 = 0x0100003a,
+	F12 = 0x0100003b,
+	Space = 0x20,
+	Exclam = 0x21,
+	Apostrophe = 0x27,
+	Comma = 0x2c,
+	Minus = 0x2d,
+	Period = 0x2e,
+	Slash = 0x2f,
+	Num_0 = 0x30,
+	Num_1 = 0x31,
+	Num_2 = 0x32,
+	Num_3 = 0x33,
+	Num_4 = 0x34,
+	Num_5 = 0x35,
+	Num_6 = 0x36,
+	Num_7 = 0x37,
+	Num_8 = 0x38,
+	Num_9 = 0x39,
+	Semicolon = 0x3b,
+	Equal = 0x3d,
+	A = 0x41,
+	B = 0x42,
+	C = 0x43,
+	D = 0x44,
+	E = 0x45,
+	F = 0x46,
+	G = 0x47,
+	H = 0x48,
+	I = 0x49,
+	J = 0x4a,
+	K = 0x4b,
+	L = 0x4c,
+	M = 0x4d,
+	N = 0x4e,
+	O = 0x4f,
+	P = 0x50,
+	Q = 0x51,
+	R = 0x52,
+	S = 0x53,
+	T = 0x54,
+	U = 0x55,
+	V = 0x56,
+	W = 0x57,
+	X = 0x58,
+	Y = 0x59,
+	Z = 0x5a,
+	Bracket_Left = 0x5b,
+	Backslash = 0x5c,
+	Bracket_Right = 0x5d,
+	Grave_Accent = 0x60,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -1168,4 +1302,16 @@ foreign qt_lib {
 	/* Signal disconnection */
 
 	disconnect :: proc(connection_id: Connection_Id) ---
+
+	/* Event system */
+
+	@(require_results) event_filter_create :: proc(callback: Event_Filter_Callback, user_data: rawptr) -> Event_Filter ---
+	event_filter_destroy :: proc(filter: Event_Filter) ---
+	widget_install_event_filter :: proc(widget: Widget, filter: Event_Filter) ---
+	widget_remove_event_filter :: proc(widget: Widget, filter: Event_Filter) ---
+	@(require_results) close_event_filter_create :: proc(callback: Close_Event_Callback, user_data: rawptr) -> Event_Filter ---
+	@(require_results) key_event_filter_create :: proc(callback: Key_Event_Callback, user_data: rawptr) -> Event_Filter ---
+	@(require_results) mouse_event_filter_create :: proc(callback: Mouse_Event_Callback, user_data: rawptr) -> Event_Filter ---
+	widget_set_mouse_tracking :: proc(widget: Widget, is_enabled: c.int) ---
+	@(require_results) widget_has_mouse_tracking :: proc(widget: Widget) -> c.int ---
 }

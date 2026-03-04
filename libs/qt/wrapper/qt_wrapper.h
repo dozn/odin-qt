@@ -14,6 +14,10 @@ typedef void (*qt_string_callback_t)(const char *text, void *user_data);
 typedef void (*qt_cell_callback_t)(int value_a, int value_b, void *user_data);
 typedef void (*qt_item_callback_t)(void *item, int column, void *user_data);
 typedef void (*qt_point_callback_t)(int x, int y, void *user_data);
+typedef int  (*qt_event_filter_callback_t)(int event_type, void *user_data);
+typedef int  (*qt_close_event_callback_t)(void *user_data);
+typedef int  (*qt_key_event_callback_t)(int event_type, int key, int modifiers, int is_auto_repeat, const char *text, void *user_data);
+typedef int  (*qt_mouse_event_callback_t)(int event_type, int button, int x, int y, int global_x, int global_y, int modifiers, void *user_data);
 
 /* ── QApplication ──────────────────────────────────────────────────── */
 
@@ -804,6 +808,27 @@ void qt_tooltip_hide_text(void);
 /* ── Signal disconnection ───────────────────────────────────────────── */
 
 void qt_disconnect(int connection_id);
+
+/* ── Event system ───────────────────────────────────────────────────── */
+
+/* Generic event filter (receives all events as int event_type) */
+void *qt_event_filter_create(qt_event_filter_callback_t callback, void *user_data);
+void  qt_event_filter_destroy(void *filter);
+void  qt_widget_install_event_filter(void *widget, void *filter);
+void  qt_widget_remove_event_filter(void *widget, void *filter);
+
+/* Close event interception (callback returns 1 to allow close, 0 to reject) */
+void *qt_close_event_filter_create(qt_close_event_callback_t callback, void *user_data);
+
+/* Key event handling (callback returns 1 to consume, 0 to pass through) */
+void *qt_key_event_filter_create(qt_key_event_callback_t callback, void *user_data);
+
+/* Mouse event handling (callback returns 1 to consume, 0 to pass through) */
+void *qt_mouse_event_filter_create(qt_mouse_event_callback_t callback, void *user_data);
+
+/* Mouse tracking (required for mouse move events without held buttons) */
+void  qt_widget_set_mouse_tracking(void *widget, int is_enabled);
+int   qt_widget_has_mouse_tracking(void *widget);
 
 #ifdef __cplusplus
 }
