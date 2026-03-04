@@ -36,6 +36,8 @@ Demo_State :: struct {
 	timer_label: qt.Label,
 	timer_count: c.int,
 	clipboard_edit: qt.Line_Edit,
+	// Animations tab
+	anim_easing_combo: qt.Combo_Box,
 }
 
 demo_state: Demo_State
@@ -466,6 +468,27 @@ paint_demo :: proc"c"(painter: qt.Painter, width: c.int, height: c.int, user_dat
 
 /* ── Animation callbacks ───────────────────────────────────────────── */
 
+animation_get_selected_easing :: proc"c"() -> qt.Easing_Curve {
+	index := qt.combo_box_get_current_index(demo_state.anim_easing_combo)
+	// Map combo index to easing curve values
+	easing_values := [?]qt.Easing_Curve{
+		.Linear, .In_Quad, .Out_Quad, .In_Out_Quad,
+		.In_Cubic, .Out_Cubic, .In_Out_Cubic,
+		.In_Quart, .Out_Quart, .In_Out_Quart,
+		.In_Quint, .Out_Quint, .In_Out_Quint,
+		.In_Sine, .Out_Sine, .In_Out_Sine,
+		.In_Expo, .Out_Expo, .In_Out_Expo,
+		.In_Circ, .Out_Circ, .In_Out_Circ,
+		.In_Elastic, .Out_Elastic, .In_Out_Elastic,
+		.In_Back, .Out_Back, .In_Out_Back,
+		.In_Bounce, .Out_Bounce, .In_Out_Bounce,
+	}
+	if index >= 0 && index < cast(c.int)len(easing_values) {
+		return easing_values[index]
+	}
+	return .Linear
+}
+
 animation_finished :: proc"c"(user_data: rawptr) {
 	statusbar_show("Animation finished!")
 }
@@ -488,12 +511,8 @@ drop_handle :: proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr
 
 drag_source_mouse_handler :: proc"c"(event_type: c.int, button: c.int, x: c.int, y: c.int, global_x: c.int, global_y: c.int, modifiers: c.int, user_data: rawptr) -> c.int {
 	if event_type == cast(c.int)qt.Event_Type.Mouse_Button_Press && button == cast(c.int)qt.Mouse_Button.Left {
-		input: qt.Line_Edit = auto_cast user_data
-		text := qt.line_edit_get_text(input)
-		if text != nil {
-			qt.widget_start_drag(auto_cast input, text)
-			qt.free_string(text)
-		}
+		source: qt.Widget = auto_cast user_data
+		qt.widget_start_drag(source, "Hello from Odin drag source!")
 		return 1
 	}
 	return 0
@@ -1236,11 +1255,52 @@ build_animations_tab :: proc() -> qt.Widget {
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.layout_add_widget(layout, auto_cast heading)
 
-	description := qt.label_create(nil, "Click the buttons below to animate widget properties using QPropertyAnimation.")
+	description := qt.label_create(nil, "Select an easing curve, then click the animation buttons to see it applied.")
 	qt.label_set_word_wrap(description, 1)
 	qt.layout_add_widget(layout, auto_cast description)
 
-	// Animated button - moves across the screen
+	// Easing curve selector
+	easing_row := qt.widget_create(nil)
+	easing_row_layout := qt.hbox_layout_create(easing_row)
+	easing_label := qt.label_create(nil, "Easing Curve:")
+	qt.layout_add_widget(easing_row_layout, auto_cast easing_label)
+	demo_state.anim_easing_combo = qt.combo_box_create(nil)
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Linear")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Quad")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Quad")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Quad")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Cubic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Cubic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Cubic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Quart")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Quart")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Quart")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Quint")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Quint")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Quint")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Sine")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Sine")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Sine")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Expo")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Expo")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Expo")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Circ")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Circ")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Circ")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Elastic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Elastic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Elastic")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Back")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Back")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Back")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In Bounce")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "Out Bounce")
+	qt.combo_box_add_item(demo_state.anim_easing_combo, "In/Out Bounce")
+	qt.combo_box_set_current_index(demo_state.anim_easing_combo, 29) // Out Bounce
+	qt.layout_add_widget(easing_row_layout, auto_cast demo_state.anim_easing_combo)
+	qt.layout_add_widget(layout, easing_row)
+
+	// Property Animation group
 	anim_group := qt.group_box_create(nil, "Property Animation")
 	anim_layout := qt.vbox_layout_create(auto_cast anim_group)
 
@@ -1256,11 +1316,12 @@ build_animations_tab :: proc() -> qt.Widget {
 	grow_btn := qt.push_button_create(nil, "Grow Width")
 	qt.push_button_connect_clicked(grow_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
+		easing := animation_get_selected_easing()
 		anim := qt.property_animation_create(target, "maximumWidth")
 		qt.property_animation_set_duration(anim, 1000)
 		qt.property_animation_set_start_value_int(anim, 100)
 		qt.property_animation_set_end_value_int(anim, 600)
-		qt.property_animation_set_easing_curve(anim, .Out_Bounce)
+		qt.property_animation_set_easing_curve(anim, easing)
 		qt.property_animation_connect_finished(anim, animation_finished, nil)
 		qt.property_animation_start(anim)
 	}, auto_cast target_btn)
@@ -1270,28 +1331,31 @@ build_animations_tab :: proc() -> qt.Widget {
 	shrink_btn := qt.push_button_create(nil, "Shrink Width")
 	qt.push_button_connect_clicked(shrink_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
+		easing := animation_get_selected_easing()
 		anim := qt.property_animation_create(target, "maximumWidth")
 		qt.property_animation_set_duration(anim, 800)
 		qt.property_animation_set_start_value_int(anim, 600)
 		qt.property_animation_set_end_value_int(anim, 100)
-		qt.property_animation_set_easing_curve(anim, .In_Out_Cubic)
+		qt.property_animation_set_easing_curve(anim, easing)
 		qt.property_animation_connect_finished(anim, animation_finished, nil)
 		qt.property_animation_start(anim)
 	}, auto_cast target_btn)
 	qt.layout_add_widget(btn_layout, auto_cast shrink_btn)
 
-	// Elastic animation
-	elastic_btn := qt.push_button_create(nil, "Elastic")
-	qt.push_button_connect_clicked(elastic_btn, proc"c"(user_data: rawptr) {
+	// Grow height animation
+	grow_height_btn := qt.push_button_create(nil, "Grow Height")
+	qt.push_button_connect_clicked(grow_height_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
+		easing := animation_get_selected_easing()
 		anim := qt.property_animation_create(target, "minimumHeight")
-		qt.property_animation_set_duration(anim, 1500)
+		qt.property_animation_set_duration(anim, 1000)
 		qt.property_animation_set_start_value_int(anim, 40)
-		qt.property_animation_set_end_value_int(anim, 100)
-		qt.property_animation_set_easing_curve(anim, .Out_Elastic)
+		qt.property_animation_set_end_value_int(anim, 120)
+		qt.property_animation_set_easing_curve(anim, easing)
+		qt.property_animation_connect_finished(anim, animation_finished, nil)
 		qt.property_animation_start(anim)
 	}, auto_cast target_btn)
-	qt.layout_add_widget(btn_layout, auto_cast elastic_btn)
+	qt.layout_add_widget(btn_layout, auto_cast grow_height_btn)
 
 	// Reset
 	reset_btn := qt.push_button_create(nil, "Reset")
@@ -1306,14 +1370,6 @@ build_animations_tab :: proc() -> qt.Widget {
 	qt.layout_add_widget(anim_layout, btn_row)
 	qt.layout_add_widget(layout, auto_cast anim_group)
 
-	// Easing curve info
-	easing_group := qt.group_box_create(nil, "Available Easing Curves")
-	easing_layout := qt.vbox_layout_create(auto_cast easing_group)
-	easing_label := qt.label_create(nil, "Linear, InQuad, OutQuad, InOutQuad, InCubic, OutCubic, InOutCubic, InElastic, OutElastic, InBounce, OutBounce, InOutBounce, InBack, OutBack, InSine, OutSine, InExpo, OutExpo, and more...")
-	qt.label_set_word_wrap(easing_label, 1)
-	qt.layout_add_widget(easing_layout, auto_cast easing_label)
-	qt.layout_add_widget(layout, auto_cast easing_group)
-
 	qt.box_layout_add_stretch(layout, 1)
 	return page
 }
@@ -1323,13 +1379,13 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(page)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "Drag && Drop Demo")
+	heading := qt.label_create(nil, "Drag and Drop Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast heading)
 
-	description := qt.label_create(nil, "Edit the text below, then click and drag from the drag handle into the drop zone. You can also drag text from external applications.")
+	description := qt.label_create(nil, "Click and drag from the drag handle into the drop zone. You can also drag text from external applications.")
 	qt.label_set_word_wrap(description, 1)
 	qt.widget_set_size_policy(auto_cast description, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast description)
@@ -1339,20 +1395,17 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	// Drag source
 	source_group := qt.group_box_create(nil, "Drag Source")
 	source_layout := qt.vbox_layout_create(auto_cast source_group)
-	drag_input := qt.line_edit_create(nil)
-	qt.line_edit_set_text(drag_input, "Drag this text!")
-	qt.layout_add_widget(source_layout, auto_cast drag_input)
 
 	// Drag handle - user clicks and drags from here
 	drag_handle := qt.label_create(nil, "Click and drag from here")
 	qt.label_set_alignment(drag_handle, .Centre)
 	qt.widget_set_cursor(auto_cast drag_handle, .Open_Hand)
-	qt.widget_set_minimum_size(auto_cast drag_handle, 150, 60)
+	qt.widget_set_minimum_size(auto_cast drag_handle, 150, 80)
 	qt.widget_set_style_sheet(auto_cast drag_handle, "QLabel { background-color: #e0e8f0; border: 2px solid #6090c0; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold; }")
 	qt.layout_add_widget(source_layout, auto_cast drag_handle)
 
 	// Mouse event filter to start drag on press
-	mouse_filter := qt.mouse_event_filter_create(drag_source_mouse_handler, auto_cast drag_input)
+	mouse_filter := qt.mouse_event_filter_create(drag_source_mouse_handler, auto_cast drag_handle)
 	qt.widget_install_event_filter(auto_cast drag_handle, auto_cast mouse_filter)
 
 	qt.box_layout_add_stretch(source_layout, 1)
