@@ -60,124 +60,462 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ---
 
-## Batch 1: Missing QtWidgets ✅
-- [x] QTabBar
-- [x] QToolBox
-- [x] QScrollBar
-- [x] QLCDNumber
-- [x] QCommandLinkButton
-- [x] QKeySequenceEdit
-- [x] QFontComboBox
-- [x] QSplashScreen
-- [x] QStackedLayout
-- [x] QWidgetAction
-- [x] QActionGroup
-- [x] QErrorMessage
-- [x] QMdiArea
-- [x] QMdiSubWindow
-- [x] QWizard
-- [x] QWizardPage
-- [x] QColumnView
-- [x] QUndoView
-- [x] QRubberBand
-- [x] QFocusFrame
-- [x] QSizeGrip
-- [x] QWhatsThis
+## Not Yet Implemented
 
-## Batch 2: QtGui Essentials ✅
-- [x] QImage
-- [x] QColor (standalone)
-- [x] QFont (standalone)
-- [x] QPen (standalone)
-- [x] QBrush (standalone)
-- [x] QPalette
-- [x] QCursor (standalone)
-- [x] QPainterPath
-- [x] QTransform
-- [x] QRegion
-- [x] QGradient / QLinearGradient / QRadialGradient / QConicalGradient
-- [x] QTextCursor
-- [x] QTextDocument
-- [x] QFontDatabase
-- [x] QKeySequence (standalone)
-- [x] QMovie
-- [x] QImageReader
-- [x] QImageWriter
-- [x] QBitmap
-- [x] QStaticText
-- [x] QPicture
-- [x] QPageLayout / QPageSize
+### Missing Methods/Signals on Existing Classes
 
-## Batch 3: QtCore Essentials ✅
-- [x] QFile
-- [x] QFileInfo
-- [x] QDir
-- [x] QProcess
-- [x] QThread
-- [x] QMutex
-- [x] QReadWriteLock
-- [x] QSemaphore
-- [x] QBuffer
-- [x] QJsonDocument
-- [x] QJsonObject
-- [x] QJsonArray
-- [x] QXmlStreamReader
-- [x] QXmlStreamWriter
-- [x] QDateTime (standalone)
-- [x] QDate (standalone)
-- [x] QTime (standalone)
-- [x] QLocale
-- [x] QRegularExpression (standalone)
-- [x] QUrl
-- [x] QUuid
-- [x] QElapsedTimer
-- [x] QCryptographicHash
-- [x] QMimeType / QMimeDatabase
-- [x] QStorageInfo
-- [x] QVersionNumber
-- [x] QTranslator
-- [x] QCommandLineParser / QCommandLineOption
-- [x] QTemporaryFile
-- [x] QTemporaryDir
-- [x] QSaveFile
-- [x] QFileSystemWatcher
-- [x] QStringListModel
-- [x] QItemSelectionModel
-- Deferred: QWaitCondition, QTextStream, QDataStream, QUrlQuery (low value for typical GUI use)
+#### QWidget (high priority gaps)
+- `setWindowFlags` / `getWindowFlags` -- essential for popups, frameless windows, tool windows
+- `setWindowState` / `getWindowState` -- minimize, maximize, fullscreen
+- `showMinimized` / `showMaximized` / `showFullScreen` / `showNormal`
+- `isMinimized` / `isMaximized` / `isFullScreen`
+- `setWindowModality` -- for modal windows without QDialog
+- `setWindowOpacity` / `getWindowOpacity` -- window transparency
+- `setGeometry` / `getGeometry` -- combined position+size
+- `mapToGlobal` / `mapFromGlobal` -- coordinate mapping (essential for custom popups)
+- `mapToParent` / `mapFromParent`
+- `setParent` / `getParentWidget`
+- `setFocusPolicy`
+- `setAttribute` / `testAttribute` -- Qt::WA_* flags
+- `adjustSize`
+- `setContentsMargins` (widget-level, distinct from layout)
+- `getContentsMargins`
+- `repaint` -- immediate repaint (vs `update` which is deferred)
+- `setTabOrder` (static) -- keyboard navigation order
+- `grab` -- render widget to QPixmap
+- `rect` -- convenience for 0,0,width,height
+- `size` -- width+height as pair
+- `pos` -- x+y as pair
 
-## Batch 4: Advanced Features ✅
-- [x] QUndoStack / QUndoCommand / QUndoGroup
-- [x] QDataWidgetMapper
-- [x] QStyledItemDelegate / QItemDelegate
-- [x] QGraphicsScene
-- [x] QGraphicsView
-- [x] QGraphicsItem (base + all item types)
-- [x] QGraphicsItemGroup
-- [x] QGraphicsProxyWidget
-- [x] QGraphicsEffect (Blur, Colorize, DropShadow, Opacity)
-- [x] QStyle / QStyleFactory
-- [x] QScroller / QScrollerProperties
-- [x] QIdentityProxyModel
-- [x] QTransposeProxyModel
-- [x] QConcatenateTablesProxyModel
-- [x] QSignalMapper
-- [x] QLockFile
-- [x] QTimeLine
-- [x] QCalendar
-- [x] QRandomGenerator
-- [x] QEventLoop
-- [x] QSysInfo
-- [x] QLibrary
-- [x] QSharedMemory
-- [x] QSystemSemaphore
+#### QMainWindow
+- `saveState` / `restoreState` -- persist toolbar/dock layout (very common)
+- `removeDockWidget`
+- `tabifyDockWidget` -- tabbed dock areas
+- `setDockOptions`
+- `setToolButtonStyle`
+- `setAnimated`
+- `centralWidget` -- getter for the central widget
+- `setCorner` -- dock widget corner assignment
 
-## Batch 5: Add demos for each item to the application
-- [x] Extra Widgets tab (QTabBar, QToolBox, QScrollBar, QLCDNumber, QCommandLinkButton, QKeySequenceEdit, QFontComboBox, QStackedLayout, QErrorMessage, QWhatsThis)
-- [x] MDI & Wizard tab (QMdiArea, QMdiSubWindow, QWizard, QWizardPage, QActionGroup)
-- [x] Graphics Scene tab (QGraphicsScene, QGraphicsView, QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsLineItem, QGraphicsPathItem, QGraphicsProxyWidget)
-- [x] Undo & Mapping tab (QUndoStack, QUndoCommand, QUndoView, QDataWidgetMapper)
-- [x] QtGui Objects tab (QPen, QBrush, QPainterPath, QTransform, QStaticText, QColor, QFont, QFontDatabase, QKeySequence)
-- [x] File & Data tab (QDir, QFileInfo, QJsonObject, QJsonArray, QJsonDocument, QXmlStreamWriter)
-- [x] Core Utilities tab (QDateTime, QDate, QTime, QLocale, QCalendar, QUrl, QUuid, QRegularExpression, QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber, QSysInfo, QStorageInfo, QMimeDatabase)
-- [x] Advanced Models tab (QStringListModel, QListView, QTransposeProxyModel, QStyle, QStyleFactory, QTimeLine, QSignalMapper)
-- [x] Register all 8 new tabs in main()
+#### QLabel
+- `clear`
+- `setScaledContents` -- auto-scale pixmap to label size
+- `setTextFormat` -- plain text vs rich text vs auto
+- `setTextInteractionFlags` -- selectable text
+- `setOpenExternalLinks` -- clickable links
+- `setBuddy` -- keyboard focus buddy
+- `setIndent`
+- `setMargin`
+
+#### QPushButton
+- `setDefault` / `isDefault` -- dialog default button
+- `setAutoDefault` / `isAutoDefault`
+- `setMenu` -- dropdown menu on button
+- `showMenu`
+
+#### QLineEdit
+- `setAlignment`
+- `setCursorPosition` / `getCursorPosition`
+- `setInputMask`
+- `hasSelectedText` / `getSelectedText`
+- `setSelection`
+- `undo` / `redo`
+- `isModified` / `setModified`
+- `setDragEnabled`
+- `home` / `end`
+
+#### QTextEdit
+- `setTabStopDistance` / `getTabStopDistance`
+- `setLineWrapMode`
+- `setWordWrapMode`
+- `setAcceptRichText`
+- `find` -- text search
+- `undo` / `redo`
+- `zoomIn` / `zoomOut`
+- `getTextCursor` -- getter (setter exists)
+- `getDocument` -- getter
+- `setCurrentFont` / `setFontWeight` / `setFontItalic` / `setFontUnderline`
+- `setFontPointSize` / `setFontFamily`
+- `setTextColour` / `setTextBackgroundColour`
+- `setAlignment` -- paragraph alignment
+- `moveCursor` / `ensureCursorVisible`
+- `setOverwriteMode`
+- `canPaste`
+- `verticalScrollBar` / `horizontalScrollBar` -- access scroll bars
+- Signal: `cursorPositionChanged`
+- Signal: `selectionChanged`
+- Signal: `copyAvailable`
+- Signal: `undoAvailable` / `redoAvailable`
+
+#### QPlainTextEdit
+- `setTabStopDistance` / `getTabStopDistance`
+- `setLineWrapMode`
+- `find` -- text search
+- `undo` / `redo`
+- `zoomIn` / `zoomOut`
+- `getTextCursor` -- getter (setter exists)
+- `getDocument` -- getter
+- `getBlockCount`
+- `setMaximumBlockCount`
+- `moveCursor` / `ensureCursorVisible`
+- `setOverwriteMode`
+- `verticalScrollBar` / `horizontalScrollBar`
+- Signal: `cursorPositionChanged`
+- Signal: `selectionChanged`
+- Signal: `blockCountChanged`
+- Signal: `copyAvailable`
+- Signal: `undoAvailable` / `redoAvailable`
+
+#### QComboBox
+- `addItems` -- batch add from string array
+- `insertItems` -- batch insert
+- `setMaxVisibleItems`
+- `setMaxCount`
+- `setInsertPolicy`
+- `setDuplicatesEnabled`
+- `getLineEdit` -- access embedded line edit when editable
+- `showPopup` / `hidePopup`
+- `setModel` / `getModel`
+- `setSizeAdjustPolicy`
+- Signal: `activated`
+- Signal: `highlighted`
+- Signal: `editTextChanged`
+
+#### QTableWidget
+- `setCellWidget` / `getCellWidget` -- embed widgets in cells (very common)
+- `getItem` / `getCurrentItem` -- get QTableWidgetItem objects
+- `setCurrentCell`
+- `getSelectedItems`
+- `setShowGrid`
+- `setSpan` / `getRowSpan` / `getColumnSpan` -- merge cells
+- `scrollToItem`
+- `findItems`
+- `setWordWrap`
+- `setCornerButtonEnabled`
+- Signal: `currentCellChanged`
+- Signal: `currentItemChanged`
+
+#### QTreeWidget
+- `insertTopLevelItem`
+- `getTopLevelItem` -- by index
+- `indexOfTopLevelItem`
+- `getSelectedItems`
+- `findItems`
+- `scrollToItem`
+- `sortItems`
+- `setIndentation`
+- `setUniformRowHeights` -- performance optimization for large trees
+- `setAnimated`
+- `setHeaderHidden`
+- Signal: `itemChanged`
+- Signal: `itemSelectionChanged`
+
+#### QTreeWidgetItem
+- `setIcon`
+- `setCheckState` / `getCheckState`
+- `setFlags`
+- `setData` / `getData` -- custom role data
+- `setToolTip`
+- `setHidden` / `isHidden`
+- `setDisabled` / `isDisabled`
+- `setSelected` / `isSelected`
+- `setFirstColumnSpanned`
+- `getTreeWidget`
+- `takeChild`
+- `sortChildren`
+
+#### QListWidget
+- `getItem` -- by row
+- `getItemAt` -- by point
+- `getCurrentItem`
+- `setCurrentItem`
+- `getSelectedItems`
+- `addItems` -- batch add
+- `findItems`
+- `scrollToItem`
+- `setViewMode` -- list vs icon mode
+- `setIconSize`
+- `setGridSize`
+- `setFlow`
+- `setSpacing`
+- `setSortingEnabled`
+- Signal: `itemChanged`
+- Signal: `itemActivated`
+
+#### QMenu
+- `addSection` -- section headers
+- `insertAction` / `insertSeparator` / `insertMenu`
+- `setTitle` / `getTitle`
+- `setIcon`
+- `setTearOffEnabled`
+- `setDefaultAction`
+- `getActions`
+- `isEmpty`
+- Signal: `aboutToShow`
+- Signal: `aboutToHide`
+- Signal: `triggered` (with action parameter)
+
+#### QAction
+- `setShortcutContext`
+- `setStatusTip`
+- `setWhatsThis`
+- `setAutoRepeat`
+- `setData` / `getData` -- attach arbitrary data
+- `trigger` -- programmatic trigger
+- `setMenuRole`
+- Signal: `toggled`
+- Signal: `hovered`
+
+#### QDialog
+- `setModal`
+- `open` -- non-blocking show (vs exec which blocks)
+- `done`
+- `setResult` / `getResult`
+- `setSizeGripEnabled`
+
+#### QTabWidget
+- `getCurrentWidget`
+- `clear`
+- `setDocumentMode`
+- `setElideMode`
+- `setUsesScrollButtons`
+- `setTabBarAutoHide`
+- `setCornerWidget`
+- Signal: `tabBarClicked`
+- Signal: `tabBarDoubleClicked`
+
+#### QSplitter
+- `getWidget` -- by index
+- `indexOf`
+- `setChildrenCollapsible`
+- `setOpaqueResize`
+- `setHandleWidth`
+- `saveState` / `restoreState` -- persist splitter layout
+- Signal: `splitterMoved`
+
+#### QScrollArea
+- `ensureVisible`
+- `ensureWidgetVisible`
+- `takeWidget`
+- `getVerticalScrollBar` / `getHorizontalScrollBar`
+- `setAlignment`
+
+#### QToolBar
+- `insertAction` / `insertSeparator` / `insertWidget`
+- `setAllowedAreas`
+- `setFloatable`
+- `setOrientation`
+- `toggleViewAction`
+- `widgetForAction`
+- `clear`
+- Signal: `actionTriggered`
+- Signal: `visibilityChanged`
+- Signal: `topLevelChanged`
+
+#### QSlider
+- `setOrientation` -- change orientation after creation
+- `setMinimum` / `setMaximum` / `getMinimum` / `getMaximum`
+- `setInvertedAppearance` / `setInvertedControls`
+- Signal: `sliderMoved`
+- Signal: `rangeChanged`
+
+#### QProgressBar
+- `setMinimum` / `setMaximum` / `getMinimum` / `getMaximum`
+- `isTextVisible`
+- `getText`
+
+#### QStatusBar
+- `insertWidget` / `insertPermanentWidget`
+- `getCurrentMessage`
+- `setSizeGripEnabled`
+
+#### QPainter
+- `setPen` (QPen object) / `setBrush` (QBrush object) -- use full pen/brush objects
+- `drawImage`
+- `drawPoint` / `drawPoints`
+- `drawPolyline`
+- `drawConvexPolygon`
+- `drawChord`
+- `eraseRect`
+- `setRenderHint` / `setRenderHints` (Render_Hint enum)
+- `setCompositionMode` / `getCompositionMode`
+- `setClipping` / `hasClipping`
+- `getClipBoundingRect`
+- `boundingRect` -- text bounding rect calculation
+- `begin` / `end` -- manual painter sessions on QPixmap/QImage
+- `isActive`
+
+#### QPixmap
+- `scaled` / `scaledToWidth` / `scaledToHeight`
+- `fill` -- fill with colour
+- `save` -- save to file
+- `load` -- load from file (alternative to create_from_file)
+- `copy` -- copy sub-region
+- `size` / `rect`
+- `fromImage` (static)
+- `createMaskFromColour`
+- `setMask` / `getMask`
+
+#### QIcon
+- `addFile` / `addPixmap` -- add size variants
+- `getPixmap` -- extract pixmap at specific size
+- `fromTheme` (static) -- system theme icons
+- `hasThemeIcon` (static)
+- `setThemeName` / `getThemeName` (static)
+- `availableSizes`
+
+#### QImage
+- `convertToFormat`
+- `rgbSwapped`
+- `transformed`
+- `setText` / `getText` -- metadata
+- `allGray` / `isGrayscale`
+
+#### QFont
+- `setStyleStrategy`
+- `fromString` / already has `toString`
+- `exactMatch`
+- `setOverline` / `isOverline`
+- `setCapitalization`
+- `setHintingPreference`
+
+#### QColor
+- `setAlpha` / `getAlpha`
+- `setRed` / `getRed` / `setGreen` / `getGreen` / `setBlue` / `getBlue`
+- `toRgb` / `toHsv` / `toHsl` -- format conversion
+- `getSpec` -- which colour space is native
+- `setNamedColour`
+
+#### QPen
+- `setBrush` / `getBrush`
+- `setDashPattern` / `getDashPattern`
+- `setCosmetic` / `isCosmetic`
+- `setMiterLimit` / `getMiterLimit`
+
+#### QPainterPath
+- `addPath`
+- `addPolygon`
+- `getBoundingRect`
+- `getLength`
+- `percentAtLength` / `pointAtPercent` / `angleAtPercent`
+- `united` / `intersected` / `subtracted` -- boolean operations
+- `simplified`
+- `translated`
+- `toReversed`
+- `intersects` -- collision testing (rect or path)
+- `setFillRule` / `getFillRule`
+- `getElementCount`
+
+#### QTextCursor
+- `insertBlock`
+- `insertImage`
+- `insertTable`
+- `insertList`
+- `deleteChar` / `deletePreviousChar`
+- `setCharFormat` / `getCharFormat` / `mergeCharFormat`
+- `setBlockFormat` / `getBlockFormat` / `mergeBlockFormat`
+- `clearSelection`
+- `getSelectionStart` / `getSelectionEnd`
+- `getBlock`
+
+#### QTextDocument
+- `find` -- search text
+- `setDefaultStyleSheet`
+- `setPageSize` / `getPageSize`
+- `setTextWidth` / `getTextWidth`
+- `getIdealWidth`
+- `getLineCount`
+- Signal: `contentsChanged`
+- Signal: `modificationChanged`
+- Signal: `undoAvailable` / `redoAvailable`
+
+#### QGraphicsScene
+- `addWidget` -- returns QGraphicsProxyWidget
+- `itemAt`
+- `getItems` -- all items or items in region
+- `collidingItems`
+- `render` -- render to QPainter
+- `getWidth` / `getHeight`
+- `invalidate`
+- `advance`
+- `setFocusItem` / `getFocusItem`
+- Signal: `changed`
+- Signal: `sceneRectChanged`
+
+#### QGraphicsView
+- `setViewport` -- for QOpenGLWidget
+- `setBackgroundBrush` / `setForegroundBrush`
+- `setTransform` / `getTransform`
+- `getItems` / `getItemAt`
+- `getViewport`
+- Signal: `rubberBandChanged`
+
+#### QGraphicsItem
+- `setTransform` / `getTransform`
+- `setTransformOriginPoint`
+- `mapToScene` / `mapFromScene` / `mapToParent` / `mapFromParent`
+- `collidesWithItem` / `collidesWithPath`
+- `isSelected` / `setSelected`
+- `contains` -- point containment
+- `getShape`
+- `update`
+- `getChildItems`
+- `getSceneBoundingRect`
+- `setAcceptHoverEvents` / `setAcceptDrops`
+
+#### QProcess
+- `setEnvironment` / `setProcessEnvironment`
+- `setStandardOutputProcess` -- pipe to another process
+- `readAllStandardOutput` / `readAllStandardError` exist, but:
+- `setReadChannel`
+- `setProcessChannelMode`
+- Signal: `readyReadStandardOutput`
+- Signal: `readyReadStandardError`
+
+#### QTimer
+- `setInterval` -- change interval without restart
+- `setTimerType` -- precise vs coarse
+
+#### QFrame
+- `setMidLineWidth` / `getMidLineWidth`
+
+#### QGroupBox
+- `setAlignment`
+
+#### QDockWidget
+- `setTitleBarWidget` / `getTitleBarWidget`
+
+#### QToolButton
+- `setArrowType`
+- `getDefaultAction`
+
+#### QHeaderView
+- `setSectionHidden` / `isSectionHidden`
+- `resizeSection` / `getSectionSize`
+- `moveSection`
+- `setSortIndicatorClearable`
+- `getCount`
+- `swapSections`
+- `setMinimumSectionSize` / `setMaximumSectionSize`
+- Signal: `sectionClicked`
+- Signal: `sectionResized`
+- Signal: `sectionMoved`
+- Signal: `sortIndicatorChanged`
+
+### New Classes to Wrap
+
+#### High Priority
+- `QPauseAnimation` -- needed for animation sequences with delays
+- `QOpenGLWidget` -- OpenGL/3D rendering integration
+- `QPolygon` / `QPolygonF` -- geometric polygon shapes (used with QPainter)
+- `QTextBlock` -- rich text block iteration (needed for syntax highlighters, line numbers)
+- `QTextOption` -- text layout options (wrap mode, alignment, tab stops)
+- `QDrag` -- explicit drag source object (currently only drop target via filter)
+
+#### Medium Priority
+- `QPdfWriter` -- PDF generation
+- `QTextStream` / `QDataStream` -- stream-based I/O
+- `QTextTable` / `QTextList` / `QTextFrame` -- rich text structure manipulation
+- `QDeadlineTimer` -- timeout management with deadline semantics
+- `QCollator` -- locale-aware string comparison and sorting
+- `QAbstractItemModel` helper class -- custom model support (like CPaintableWidget pattern for models)
