@@ -1563,6 +1563,7 @@ foreign qt_lib {
 	property_animation_set_start_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) ---
 	property_animation_set_end_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) ---
 	property_animation_set_easing_curve :: proc(animation: Property_Animation, curve_type: Easing_Curve) ---
+	property_animation_set_clamp_range :: proc(animation: Property_Animation, min_val: c.int, max_val: c.int) ---
 	property_animation_start :: proc(animation: Property_Animation) ---
 	property_animation_stop :: proc(animation: Property_Animation) ---
 	property_animation_pause :: proc(animation: Property_Animation) ---

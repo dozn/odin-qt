@@ -337,6 +337,33 @@ static int store_connection(QMetaObject::Connection conn) {
     return id;
 }
 
+class ClampedPropertyAnimation : public QPropertyAnimation {
+public:
+    ClampedPropertyAnimation(QObject *target, const QByteArray &propertyName)
+        : QPropertyAnimation(target, propertyName), m_has_clamp(false), m_min_val(0), m_max_val(0) {}
+
+    void setClampRange(int min_val, int max_val) {
+        m_has_clamp = true;
+        m_min_val = min_val;
+        m_max_val = max_val;
+    }
+
+protected:
+    void updateCurrentValue(const QVariant &value) override {
+        if (m_has_clamp) {
+            int clamped = qBound(m_min_val, value.toInt(), m_max_val);
+            QPropertyAnimation::updateCurrentValue(QVariant(clamped));
+        } else {
+            QPropertyAnimation::updateCurrentValue(value);
+        }
+    }
+
+private:
+    bool m_has_clamp;
+    int m_min_val;
+    int m_max_val;
+};
+
 extern "C" {
 
 /* ── QApplication ──────────────────────────────────────────────────── */
@@ -4024,7 +4051,7 @@ void qt_syntax_highlighter_rehighlight(void *highlighter) {
 
 void *qt_property_animation_create(void *target, const char *property_name) {
     return static_cast<void *>(
-        new QPropertyAnimation(static_cast<QObject *>(target), QByteArray(property_name))
+        new ClampedPropertyAnimation(static_cast<QObject *>(target), QByteArray(property_name))
     );
 }
 
@@ -4080,6 +4107,10 @@ void qt_property_animation_set_easing_curve(void *animation, int curve_type) {
     static_cast<QPropertyAnimation *>(animation)->setEasingCurve(
         static_cast<QEasingCurve::Type>(curve_type)
     );
+}
+
+void qt_property_animation_set_clamp_range(void *animation, int min_val, int max_val) {
+    static_cast<ClampedPropertyAnimation *>(animation)->setClampRange(min_val, max_val);
 }
 
 void qt_property_animation_start(void *animation) {

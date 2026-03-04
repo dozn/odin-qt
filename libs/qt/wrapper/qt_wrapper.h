@@ -1022,6 +1022,7 @@ void  qt_property_animation_set_end_value_size(void *animation, int w, int h);
 void  qt_property_animation_set_start_value_point(void *animation, int x, int y);
 void  qt_property_animation_set_end_value_point(void *animation, int x, int y);
 void  qt_property_animation_set_easing_curve(void *animation, int curve_type);
+void  qt_property_animation_set_clamp_range(void *animation, int min_val, int max_val);
 void  qt_property_animation_start(void *animation);
 void  qt_property_animation_stop(void *animation);
 void  qt_property_animation_pause(void *animation);
