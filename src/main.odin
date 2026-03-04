@@ -486,6 +486,19 @@ drop_handle :: proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr
 	statusbar_show("Drop received!")
 }
 
+drag_source_mouse_handler :: proc"c"(event_type: c.int, button: c.int, x: c.int, y: c.int, global_x: c.int, global_y: c.int, modifiers: c.int, user_data: rawptr) -> c.int {
+	if event_type == cast(c.int)qt.Event_Type.Mouse_Button_Press && button == cast(c.int)qt.Mouse_Button.Left {
+		input: qt.Line_Edit = auto_cast user_data
+		text := qt.line_edit_get_text(input)
+		if text != nil {
+			qt.widget_start_drag(auto_cast input, text)
+			qt.free_string(text)
+		}
+		return 1
+	}
+	return 0
+}
+
 /* ── Menu action callbacks ─────────────────────────────────────────── */
 
 menu_exit :: proc"c"(user_data: rawptr) {
@@ -1046,6 +1059,7 @@ build_model_view_tab :: proc() -> qt.Widget {
 	heading := qt.label_create(nil, "Model/View Framework Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast heading)
 
 	splitter := qt.splitter_create(.Horizontal, nil)
@@ -1238,29 +1252,30 @@ build_animations_tab :: proc() -> qt.Widget {
 	btn_row := qt.widget_create(nil)
 	btn_layout := qt.hbox_layout_create(btn_row)
 
-	// Geometry animation
-	move_btn := qt.push_button_create(nil, "Animate Size")
-	qt.push_button_connect_clicked(move_btn, proc"c"(user_data: rawptr) {
+	// Width animation (maximumWidth constrains layout stretch)
+	grow_btn := qt.push_button_create(nil, "Grow Width")
+	qt.push_button_connect_clicked(grow_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
-		anim := qt.property_animation_create(target, "minimumWidth")
+		anim := qt.property_animation_create(target, "maximumWidth")
 		qt.property_animation_set_duration(anim, 1000)
 		qt.property_animation_set_start_value_int(anim, 100)
-		qt.property_animation_set_end_value_int(anim, 300)
+		qt.property_animation_set_end_value_int(anim, 600)
 		qt.property_animation_set_easing_curve(anim, .Out_Bounce)
 		qt.property_animation_connect_finished(anim, animation_finished, nil)
 		qt.property_animation_start(anim)
 	}, auto_cast target_btn)
-	qt.layout_add_widget(btn_layout, auto_cast move_btn)
+	qt.layout_add_widget(btn_layout, auto_cast grow_btn)
 
-	// Opacity animation (via windowOpacity - only works on top-level windows, so we animate size instead)
-	shrink_btn := qt.push_button_create(nil, "Animate Shrink")
+	// Shrink width animation
+	shrink_btn := qt.push_button_create(nil, "Shrink Width")
 	qt.push_button_connect_clicked(shrink_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
-		anim := qt.property_animation_create(target, "minimumWidth")
+		anim := qt.property_animation_create(target, "maximumWidth")
 		qt.property_animation_set_duration(anim, 800)
-		qt.property_animation_set_start_value_int(anim, 300)
+		qt.property_animation_set_start_value_int(anim, 600)
 		qt.property_animation_set_end_value_int(anim, 100)
 		qt.property_animation_set_easing_curve(anim, .In_Out_Cubic)
+		qt.property_animation_connect_finished(anim, animation_finished, nil)
 		qt.property_animation_start(anim)
 	}, auto_cast target_btn)
 	qt.layout_add_widget(btn_layout, auto_cast shrink_btn)
@@ -1283,6 +1298,7 @@ build_animations_tab :: proc() -> qt.Widget {
 	qt.push_button_connect_clicked(reset_btn, proc"c"(user_data: rawptr) {
 		target: qt.Widget = auto_cast user_data
 		qt.widget_set_minimum_size(target, 100, 40)
+		qt.widget_set_maximum_size(target, 16777215, 16777215)
 		statusbar_show("Animation target reset")
 	}, auto_cast target_btn)
 	qt.layout_add_widget(btn_layout, auto_cast reset_btn)
@@ -1307,13 +1323,15 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	layout := qt.vbox_layout_create(page)
 	qt.layout_set_spacing(layout, 8)
 
-	heading := qt.label_create(nil, "Drag & Drop Demo")
+	heading := qt.label_create(nil, "Drag && Drop Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast heading)
 
-	description := qt.label_create(nil, "Type text in the source field and click 'Start Drag' to initiate a drag. The drop zone accepts text drops from any source.")
+	description := qt.label_create(nil, "Edit the text below, then click and drag from the drag handle into the drop zone. You can also drag text from external applications.")
 	qt.label_set_word_wrap(description, 1)
+	qt.widget_set_size_policy(auto_cast description, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast description)
 
 	splitter := qt.splitter_create(.Horizontal, nil)
@@ -1324,16 +1342,20 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	drag_input := qt.line_edit_create(nil)
 	qt.line_edit_set_text(drag_input, "Drag this text!")
 	qt.layout_add_widget(source_layout, auto_cast drag_input)
-	drag_btn := qt.push_button_create(nil, "Start Drag")
-	qt.push_button_connect_clicked(drag_btn, proc"c"(user_data: rawptr) {
-		input: qt.Line_Edit = auto_cast user_data
-		text := qt.line_edit_get_text(input)
-		if text != nil {
-			qt.widget_start_drag(auto_cast input, text)
-			qt.free_string(text)
-		}
-	}, auto_cast drag_input)
-	qt.layout_add_widget(source_layout, auto_cast drag_btn)
+
+	// Drag handle - user clicks and drags from here
+	drag_handle := qt.label_create(nil, "Click and drag from here")
+	qt.label_set_alignment(drag_handle, .Centre)
+	qt.widget_set_cursor(auto_cast drag_handle, .Open_Hand)
+	qt.widget_set_minimum_size(auto_cast drag_handle, 150, 60)
+	qt.widget_set_style_sheet(auto_cast drag_handle, "QLabel { background-color: #e0e8f0; border: 2px solid #6090c0; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold; }")
+	qt.layout_add_widget(source_layout, auto_cast drag_handle)
+
+	// Mouse event filter to start drag on press
+	mouse_filter := qt.mouse_event_filter_create(drag_source_mouse_handler, auto_cast drag_input)
+	qt.widget_install_event_filter(auto_cast drag_handle, auto_cast mouse_filter)
+
+	qt.box_layout_add_stretch(source_layout, 1)
 	qt.splitter_add_widget(splitter, auto_cast source_group)
 
 	// Drop target
@@ -1345,10 +1367,10 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	qt.widget_set_style_sheet(auto_cast drop_label, "QLabel { background-color: #f0f0f0; border: 2px dashed #999; border-radius: 8px; padding: 20px; font-size: 14px; }")
 	qt.layout_add_widget(target_layout, auto_cast drop_label)
 
-	// Enable drops on the drop zone
-	qt.widget_set_accept_drops(auto_cast target_group, 1)
+	// Enable drops directly on the drop label
+	qt.widget_set_accept_drops(auto_cast drop_label, 1)
 	drop_filter := qt.drag_drop_filter_create(drag_enter_accept, drop_handle, auto_cast drop_label)
-	qt.widget_install_event_filter(auto_cast target_group, auto_cast drop_filter)
+	qt.widget_install_event_filter(auto_cast drop_label, auto_cast drop_filter)
 
 	qt.splitter_add_widget(splitter, auto_cast target_group)
 
@@ -1486,7 +1508,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_custom_drawing_tab(), "Drawing")
 	_ = qt.tab_widget_add_tab(tabs, build_syntax_highlighting_tab(), "Syntax HL")
 	_ = qt.tab_widget_add_tab(tabs, build_animations_tab(), "Animations")
-	_ = qt.tab_widget_add_tab(tabs, build_drag_drop_tab(), "Drag & Drop")
+	_ = qt.tab_widget_add_tab(tabs, build_drag_drop_tab(), "Drag && Drop")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
