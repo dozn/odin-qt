@@ -172,3 +172,12 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 - [x] QSystemSemaphore
 
 ## Batch 5: Add demos for each item to the application
+- [x] Extra Widgets tab (QTabBar, QToolBox, QScrollBar, QLCDNumber, QCommandLinkButton, QKeySequenceEdit, QFontComboBox, QStackedLayout, QErrorMessage, QWhatsThis)
+- [x] MDI & Wizard tab (QMdiArea, QMdiSubWindow, QWizard, QWizardPage, QActionGroup)
+- [x] Graphics Scene tab (QGraphicsScene, QGraphicsView, QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsLineItem, QGraphicsPathItem, QGraphicsProxyWidget)
+- [x] Undo & Mapping tab (QUndoStack, QUndoCommand, QUndoView, QDataWidgetMapper)
+- [x] QtGui Objects tab (QPen, QBrush, QPainterPath, QTransform, QStaticText, QColor, QFont, QFontDatabase, QKeySequence)
+- [x] File & Data tab (QDir, QFileInfo, QJsonObject, QJsonArray, QJsonDocument, QXmlStreamWriter)
+- [x] Core Utilities tab (QDateTime, QDate, QTime, QLocale, QCalendar, QUrl, QUuid, QRegularExpression, QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber, QSysInfo, QStorageInfo, QMimeDatabase)
+- [x] Advanced Models tab (QStringListModel, QListView, QTransposeProxyModel, QStyle, QStyleFactory, QTimeLine, QSignalMapper)
+- [x] Register all 8 new tabs in main()

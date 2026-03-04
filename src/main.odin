@@ -38,6 +38,20 @@ Demo_State :: struct {
 	clipboard_edit: qt.Line_Edit,
 	// Animations tab
 	anim_easing_combo: qt.Combo_Box,
+	// Extra Widgets tab
+	extra_lcd: qt.LCD_Number,
+	// MDI tab
+	mdi_area: qt.Mdi_Area,
+	mdi_counter: c.int,
+	// Undo tab
+	undo_stack: qt.Undo_Stack,
+	undo_counter: c.int,
+	undo_label: qt.Label,
+	// Advanced Models tab
+	signal_mapper: qt.Signal_Mapper,
+	time_line: qt.Time_Line,
+	time_line_progress: qt.Progress_Bar,
+	time_line_label: qt.Label,
 }
 
 demo_state: Demo_State
@@ -1473,6 +1487,1211 @@ build_drag_drop_tab :: proc() -> qt.Widget {
 	return page
 }
 
+/* ── MDI callbacks ─────────────────────────────────────────────────── */
+
+mdi_add_sub_window :: proc"c"(user_data: rawptr) {
+	context = runtime.default_context()
+	demo_state.mdi_counter += 1
+	sub_content := qt.text_edit_create(nil)
+	buf: [64]u8
+	msg := fmt.bprintf(buf[:], "Document %d content...", demo_state.mdi_counter)
+	buf[len(msg)] = 0
+	qt.text_edit_set_plain_text(sub_content, cstring(raw_data(buf[:])))
+	sub := qt.mdi_area_add_sub_window(demo_state.mdi_area, auto_cast sub_content)
+	title_buf: [64]u8
+	title := fmt.bprintf(title_buf[:], "Document %d", demo_state.mdi_counter)
+	title_buf[len(title)] = 0
+	qt.widget_set_window_title(auto_cast sub, cstring(raw_data(title_buf[:])))
+	qt.widget_show(auto_cast sub)
+}
+
+wizard_open :: proc"c"(user_data: rawptr) {
+	wiz := qt.wizard_create(auto_cast demo_state.window)
+	qt.widget_set_window_title(auto_cast wiz, "Sample Wizard")
+
+	page1 := qt.wizard_page_create(nil)
+	qt.wizard_page_set_title(page1, "Introduction")
+	qt.wizard_page_set_sub_title(page1, "Welcome to the sample wizard.")
+	p1_layout := qt.vbox_layout_create(auto_cast page1)
+	qt.layout_add_widget(p1_layout, auto_cast qt.label_create(nil, "This wizard demonstrates QWizard and QWizardPage."))
+	_ = qt.wizard_add_page(wiz, page1)
+
+	page2 := qt.wizard_page_create(nil)
+	qt.wizard_page_set_title(page2, "Configuration")
+	qt.wizard_page_set_sub_title(page2, "Set your preferences.")
+	p2_layout := qt.form_layout_create(auto_cast page2)
+	qt.form_layout_add_row(p2_layout, "Name:", auto_cast qt.line_edit_create(nil))
+	qt.form_layout_add_row(p2_layout, "Option:", auto_cast qt.check_box_create(nil, "Enable feature"))
+	_ = qt.wizard_add_page(wiz, page2)
+
+	page3 := qt.wizard_page_create(nil)
+	qt.wizard_page_set_title(page3, "Summary")
+	qt.wizard_page_set_sub_title(page3, "Review and finish.")
+	qt.wizard_page_set_final_page(page3, 1)
+	p3_layout := qt.vbox_layout_create(auto_cast page3)
+	qt.layout_add_widget(p3_layout, auto_cast qt.label_create(nil, "Click Finish to complete the wizard."))
+	_ = qt.wizard_add_page(wiz, page3)
+
+	result := qt.dialog_exec(auto_cast wiz)
+	if result != 0 {
+		statusbar_show("Wizard completed!")
+	} else {
+		statusbar_show("Wizard cancelled")
+	}
+	qt.widget_destroy(auto_cast wiz)
+}
+
+/* ── Undo callbacks ────────────────────────────────────────────────── */
+
+undo_add_command :: proc"c"(user_data: rawptr) {
+	context = runtime.default_context()
+	demo_state.undo_counter += 1
+	buf: [64]u8
+	msg := fmt.bprintf(buf[:], "Action %d", demo_state.undo_counter)
+	buf[len(msg)] = 0
+	cmd := qt.undo_command_create(cstring(raw_data(buf[:])), nil)
+	qt.undo_stack_push(demo_state.undo_stack, cmd)
+	label_buf: [64]u8
+	label_msg := fmt.bprintf(label_buf[:], "Commands: %d", qt.undo_stack_get_count(demo_state.undo_stack))
+	label_buf[len(label_msg)] = 0
+	qt.label_set_text(demo_state.undo_label, cstring(raw_data(label_buf[:])))
+}
+
+undo_do_undo :: proc"c"(user_data: rawptr) {
+	if qt.undo_stack_can_undo(demo_state.undo_stack) != 0 {
+		qt.undo_stack_undo(demo_state.undo_stack)
+		context = runtime.default_context()
+		buf: [64]u8
+		msg := fmt.bprintf(buf[:], "Commands: %d (index %d)", qt.undo_stack_get_count(demo_state.undo_stack), qt.undo_stack_get_index(demo_state.undo_stack))
+		buf[len(msg)] = 0
+		qt.label_set_text(demo_state.undo_label, cstring(raw_data(buf[:])))
+	}
+}
+
+undo_do_redo :: proc"c"(user_data: rawptr) {
+	if qt.undo_stack_can_redo(demo_state.undo_stack) != 0 {
+		qt.undo_stack_redo(demo_state.undo_stack)
+		context = runtime.default_context()
+		buf: [64]u8
+		msg := fmt.bprintf(buf[:], "Commands: %d (index %d)", qt.undo_stack_get_count(demo_state.undo_stack), qt.undo_stack_get_index(demo_state.undo_stack))
+		buf[len(msg)] = 0
+		qt.label_set_text(demo_state.undo_label, cstring(raw_data(buf[:])))
+	}
+}
+
+/* ── TimeLine callbacks ────────────────────────────────────────────── */
+
+time_line_value_changed :: proc"c"(value: c.double, user_data: rawptr) {
+	qt.progress_bar_set_value(demo_state.time_line_progress, cast(c.int)(value * 100.0))
+}
+
+time_line_frame_changed :: proc"c"(frame: c.int, user_data: rawptr) {
+	context = runtime.default_context()
+	buf: [64]u8
+	msg := fmt.bprintf(buf[:], "Frame: %d", frame)
+	buf[len(msg)] = 0
+	qt.label_set_text(demo_state.time_line_label, cstring(raw_data(buf[:])))
+}
+
+time_line_finished :: proc"c"(user_data: rawptr) {
+	qt.label_set_text(demo_state.time_line_label, "TimeLine finished!")
+	statusbar_show("TimeLine finished!")
+}
+
+/* ── QtGui paint callback ──────────────────────────────────────────── */
+
+qtgui_paint_demo :: proc"c"(painter: qt.Painter, width: c.int, height: c.int, user_data: rawptr) {
+	qt.painter_set_antialiasing(painter, 1)
+	qt.painter_fill_rect(painter, 0, 0, width, height, 255, 255, 255, 255)
+
+	// QPen + QBrush + QPainterPath
+	pen := qt.pen_create_with_colour(60, 60, 180, 255)
+	qt.pen_set_width(pen, 3)
+	qt.pen_set_style(pen, .Dash)
+	path := qt.painter_path_create()
+	qt.painter_path_move_to(path, 20, 30)
+	qt.painter_path_line_to(path, 140, 30)
+	qt.painter_path_cubic_to(path, 180, 30, 180, 110, 140, 110)
+	qt.painter_path_line_to(path, 20, 110)
+	qt.painter_path_close_subpath(path)
+	qt.painter_fill_path(painter, path, 100, 180, 220, 100)
+	qt.painter_stroke_path(painter, path, pen)
+	qt.painter_path_destroy(path)
+	qt.pen_destroy(pen)
+
+	// QStaticText
+	font := qt.font_create("Segoe UI", 11, cast(c.int)qt.Font_Weight.Normal, 0)
+	static_txt := qt.static_text_create("QStaticText for efficient rendering")
+	qt.static_text_prepare(static_txt, font)
+	qt.painter_draw_static_text(painter, 20, 140, static_txt)
+	qt.static_text_destroy(static_txt)
+	qt.font_destroy(font)
+
+	// QTransform: rotated rectangle
+	transform := qt.transform_create()
+	qt.transform_translate(transform, 300, 60)
+	qt.transform_rotate(transform, 15.0)
+	qt.painter_set_transform(painter, transform, 0)
+	qt.painter_set_brush_colour(painter, 220, 180, 120, 180)
+	qt.painter_set_pen_colour(painter, 140, 100, 40, 255)
+	qt.painter_set_pen_width(painter, 2)
+	qt.painter_draw_rounded_rect(painter, 0, 0, 100, 50, 8.0, 8.0)
+	qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+	qt.painter_set_font(painter, "Segoe UI", 9, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.painter_draw_text(painter, 5, 30, "QTransform")
+	qt.painter_reset_transform(painter)
+	qt.transform_destroy(transform)
+
+	// Labels
+	qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+	qt.painter_set_font(painter, "Segoe UI", 9, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.painter_draw_text(painter, 20, 22, "QPen + QBrush + QPainterPath:")
+	qt.painter_draw_text(painter, 300, 22, "QTransform:")
+	qt.painter_draw_text(painter, 20, 135, "QStaticText:")
+}
+
+/* ── Batch 5 tab builders ─────────────────────────────────────────── */
+
+build_extra_widgets_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Extra Widgets Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// QTabBar
+	tb_group := qt.group_box_create(nil, "QTabBar (closable, movable)")
+	tb_layout := qt.vbox_layout_create(auto_cast tb_group)
+	tab_bar := qt.tab_bar_create(nil)
+	_ = qt.tab_bar_add_tab(tab_bar, "Documents")
+	_ = qt.tab_bar_add_tab(tab_bar, "Images")
+	_ = qt.tab_bar_add_tab(tab_bar, "Settings")
+	qt.tab_bar_set_tabs_closable(tab_bar, 1)
+	qt.tab_bar_set_movable(tab_bar, 1)
+	qt.tab_bar_set_document_mode(tab_bar, 1)
+	qt.layout_add_widget(tb_layout, auto_cast tab_bar)
+	tb_label := qt.label_create(nil, "Current tab index: 0")
+	qt.label_set_alignment(tb_label, .Centre)
+	_ = qt.tab_bar_connect_current_changed(tab_bar, proc"c"(value: c.int, user_data: rawptr) {
+		context = runtime.default_context()
+		label: qt.Label = auto_cast user_data
+		buf: [64]u8
+		msg := fmt.bprintf(buf[:], "Current tab index: %d", value)
+		buf[len(msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(buf[:])))
+	}, auto_cast tb_label)
+	qt.layout_add_widget(tb_layout, auto_cast tb_label)
+	qt.layout_add_widget(layout, auto_cast tb_group)
+
+	// QToolBox
+	tbx_group := qt.group_box_create(nil, "QToolBox (accordion)")
+	tbx_layout := qt.vbox_layout_create(auto_cast tbx_group)
+	tool_box := qt.tool_box_create(nil)
+	_ = qt.tool_box_add_item(tool_box, auto_cast qt.label_create(nil, "First page of the QToolBox. Click headers to switch."), "Page One")
+	_ = qt.tool_box_add_item(tool_box, auto_cast qt.label_create(nil, "Second page. QToolBox shows one page at a time."), "Page Two")
+	_ = qt.tool_box_add_item(tool_box, auto_cast qt.label_create(nil, "Third page content."), "Page Three")
+	qt.widget_set_maximum_height(auto_cast tool_box, 150)
+	qt.layout_add_widget(tbx_layout, auto_cast tool_box)
+	qt.layout_add_widget(layout, auto_cast tbx_group)
+
+	// QScrollBar + QLCDNumber
+	sl_group := qt.group_box_create(nil, "QScrollBar + QLCDNumber")
+	sl_layout := qt.hbox_layout_create(auto_cast sl_group)
+	scrollbar := qt.scroll_bar_create(.Horizontal, nil)
+	qt.scroll_bar_set_range(scrollbar, 0, 255)
+	qt.scroll_bar_set_value(scrollbar, 42)
+	qt.scroll_bar_set_single_step(scrollbar, 1)
+	qt.scroll_bar_set_page_step(scrollbar, 16)
+	demo_state.extra_lcd = qt.lcd_number_create(nil)
+	qt.lcd_number_set_digit_count(demo_state.extra_lcd, 3)
+	qt.lcd_number_set_segment_style(demo_state.extra_lcd, .Flat)
+	qt.lcd_number_display_int(demo_state.extra_lcd, 42)
+	qt.widget_set_minimum_height(auto_cast demo_state.extra_lcd, 50)
+	qt.layout_add_widget(sl_layout, auto_cast scrollbar)
+	qt.layout_add_widget(sl_layout, auto_cast demo_state.extra_lcd)
+	_ = qt.scroll_bar_connect_value_changed(scrollbar, proc"c"(value: c.int, user_data: rawptr) {
+		qt.lcd_number_display_int(demo_state.extra_lcd, value)
+	}, nil)
+	qt.layout_add_widget(layout, auto_cast sl_group)
+
+	// QCommandLinkButton
+	cl_group := qt.group_box_create(nil, "QCommandLinkButton")
+	cl_layout := qt.vbox_layout_create(auto_cast cl_group)
+	cmd_btn := qt.command_link_button_create(nil, "Open Settings", "Click here to open the application settings panel")
+	qt.push_button_connect_clicked(auto_cast cmd_btn, proc"c"(user_data: rawptr) {
+		statusbar_show("Command link button clicked!")
+	}, nil)
+	qt.layout_add_widget(cl_layout, auto_cast cmd_btn)
+	qt.layout_add_widget(layout, auto_cast cl_group)
+
+	// QKeySequenceEdit + QFontComboBox
+	kf_group := qt.group_box_create(nil, "QKeySequenceEdit && QFontComboBox")
+	kf_layout := qt.form_layout_create(auto_cast kf_group)
+	key_edit := qt.key_sequence_edit_create(nil)
+	qt.form_layout_add_row(kf_layout, "Key Sequence:", auto_cast key_edit)
+	font_combo := qt.font_combo_box_create(nil)
+	font_preview := qt.label_create(nil, "The quick brown fox jumps over the lazy dog")
+	qt.widget_set_font(auto_cast font_preview, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.form_layout_add_row(kf_layout, "Font:", auto_cast font_combo)
+	qt.form_layout_add_row(kf_layout, "Preview:", auto_cast font_preview)
+	_ = qt.font_combo_box_connect_current_font_changed(font_combo, proc"c"(family: cstring, user_data: rawptr) {
+		label: qt.Label = auto_cast user_data
+		qt.widget_set_font(auto_cast label, family, 14, cast(c.int)qt.Font_Weight.Normal, 0)
+	}, auto_cast font_preview)
+	qt.layout_add_widget(layout, auto_cast kf_group)
+
+	// QErrorMessage + QWhatsThis
+	ew_group := qt.group_box_create(nil, "QErrorMessage && QWhatsThis")
+	ew_layout := qt.hbox_layout_create(auto_cast ew_group)
+	err_dialog := qt.error_message_create(auto_cast demo_state.window)
+	err_btn := qt.push_button_create(nil, "Show Error Message")
+	qt.push_button_connect_clicked(err_btn, proc"c"(user_data: rawptr) {
+		dialog: qt.Error_Message = auto_cast user_data
+		qt.error_message_show_message(dialog, "This is a sample error from the Extra Widgets demo.")
+	}, auto_cast err_dialog)
+	qt.layout_add_widget(ew_layout, auto_cast err_btn)
+	whats_btn := qt.push_button_create(nil, "Enter What's This Mode")
+	qt.push_button_connect_clicked(whats_btn, proc"c"(user_data: rawptr) {
+		qt.whats_this_enter_mode()
+		statusbar_show("What's This mode active")
+	}, nil)
+	qt.layout_add_widget(ew_layout, auto_cast whats_btn)
+	qt.layout_add_widget(layout, auto_cast ew_group)
+
+	// QStackedLayout
+	stl_group := qt.group_box_create(nil, "QStackedLayout")
+	stl_outer := qt.vbox_layout_create(auto_cast stl_group)
+	stl_btn_row := qt.widget_create(nil)
+	stl_btn_layout := qt.hbox_layout_create(stl_btn_row)
+	stl_container := qt.widget_create(nil)
+	stacked_lay := qt.stacked_layout_create(stl_container)
+	stl_page_a := qt.label_create(nil, "Stacked Page A")
+	qt.label_set_alignment(stl_page_a, .Centre)
+	_ = qt.stacked_layout_add_widget(stacked_lay, auto_cast stl_page_a)
+	stl_page_b := qt.label_create(nil, "Stacked Page B")
+	qt.label_set_alignment(stl_page_b, .Centre)
+	_ = qt.stacked_layout_add_widget(stacked_lay, auto_cast stl_page_b)
+	stl_page_c := qt.label_create(nil, "Stacked Page C")
+	qt.label_set_alignment(stl_page_c, .Centre)
+	_ = qt.stacked_layout_add_widget(stacked_lay, auto_cast stl_page_c)
+	stl_a := qt.push_button_create(nil, "Page A")
+	stl_b := qt.push_button_create(nil, "Page B")
+	stl_c := qt.push_button_create(nil, "Page C")
+	qt.push_button_connect_clicked(stl_a, proc"c"(ud: rawptr) {
+		qt.stacked_layout_set_current_index(auto_cast ud, 0)
+	}, auto_cast stacked_lay)
+	qt.push_button_connect_clicked(stl_b, proc"c"(ud: rawptr) {
+		qt.stacked_layout_set_current_index(auto_cast ud, 1)
+	}, auto_cast stacked_lay)
+	qt.push_button_connect_clicked(stl_c, proc"c"(ud: rawptr) {
+		qt.stacked_layout_set_current_index(auto_cast ud, 2)
+	}, auto_cast stacked_lay)
+	qt.layout_add_widget(stl_btn_layout, auto_cast stl_a)
+	qt.layout_add_widget(stl_btn_layout, auto_cast stl_b)
+	qt.layout_add_widget(stl_btn_layout, auto_cast stl_c)
+	qt.layout_add_widget(stl_outer, stl_btn_row)
+	qt.layout_add_widget(stl_outer, stl_container)
+	qt.layout_add_widget(layout, auto_cast stl_group)
+
+	extra_note := qt.label_create(nil, "Also bound: QSizeGrip, QFocusFrame, QRubberBand, QSplashScreen")
+	qt.widget_set_style_sheet(auto_cast extra_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast extra_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
+build_mdi_wizard_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "MDI && Wizard Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// QMdiArea
+	mdi_group := qt.group_box_create(nil, "QMdiArea + QMdiSubWindow")
+	mdi_layout := qt.vbox_layout_create(auto_cast mdi_group)
+	mdi_btn_row := qt.widget_create(nil)
+	mdi_btn_layout := qt.hbox_layout_create(mdi_btn_row)
+	demo_state.mdi_area = qt.mdi_area_create(nil)
+
+	add_btn := qt.push_button_create(nil, "Add Window")
+	qt.push_button_connect_clicked(add_btn, mdi_add_sub_window, nil)
+	qt.layout_add_widget(mdi_btn_layout, auto_cast add_btn)
+
+	cascade_btn := qt.push_button_create(nil, "Cascade")
+	qt.push_button_connect_clicked(cascade_btn, proc"c"(ud: rawptr) {
+		qt.mdi_area_cascade_sub_windows(demo_state.mdi_area)
+	}, nil)
+	qt.layout_add_widget(mdi_btn_layout, auto_cast cascade_btn)
+
+	tile_btn := qt.push_button_create(nil, "Tile")
+	qt.push_button_connect_clicked(tile_btn, proc"c"(ud: rawptr) {
+		qt.mdi_area_tile_sub_windows(demo_state.mdi_area)
+	}, nil)
+	qt.layout_add_widget(mdi_btn_layout, auto_cast tile_btn)
+
+	close_active_btn := qt.push_button_create(nil, "Close Active")
+	qt.push_button_connect_clicked(close_active_btn, proc"c"(ud: rawptr) {
+		qt.mdi_area_close_active_sub_window(demo_state.mdi_area)
+	}, nil)
+	qt.layout_add_widget(mdi_btn_layout, auto_cast close_active_btn)
+
+	qt.layout_add_widget(mdi_layout, mdi_btn_row)
+	qt.layout_add_widget(mdi_layout, auto_cast demo_state.mdi_area)
+	qt.layout_add_widget(layout, auto_cast mdi_group)
+
+	// QWizard + QActionGroup
+	bottom_row := qt.widget_create(nil)
+	bottom_layout := qt.hbox_layout_create(bottom_row)
+
+	wiz_group := qt.group_box_create(nil, "QWizard + QWizardPage")
+	wiz_layout := qt.vbox_layout_create(auto_cast wiz_group)
+	wiz_btn := qt.push_button_create(nil, "Open 3-Page Wizard...")
+	qt.push_button_connect_clicked(wiz_btn, wizard_open, nil)
+	qt.layout_add_widget(wiz_layout, auto_cast wiz_btn)
+	qt.layout_add_widget(bottom_layout, auto_cast wiz_group)
+
+	ag_group_box := qt.group_box_create(nil, "QActionGroup (exclusive)")
+	ag_box_layout := qt.vbox_layout_create(auto_cast ag_group_box)
+	ag_toolbar := qt.toolbar_create(nil, "Actions")
+	ag_group := qt.action_group_create(nil)
+	qt.action_group_set_exclusive(ag_group, 1)
+	ag_a := qt.toolbar_add_action(ag_toolbar, "Option A")
+	qt.action_set_checkable(ag_a, 1)
+	qt.action_set_checked(ag_a, 1)
+	qt.action_group_add_action(ag_group, ag_a)
+	ag_b := qt.toolbar_add_action(ag_toolbar, "Option B")
+	qt.action_set_checkable(ag_b, 1)
+	qt.action_group_add_action(ag_group, ag_b)
+	ag_c := qt.toolbar_add_action(ag_toolbar, "Option C")
+	qt.action_set_checkable(ag_c, 1)
+	qt.action_group_add_action(ag_group, ag_c)
+	qt.layout_add_widget(ag_box_layout, auto_cast ag_toolbar)
+	qt.layout_add_widget(bottom_layout, auto_cast ag_group_box)
+
+	qt.layout_add_widget(layout, bottom_row)
+
+	mdi_note := qt.label_create(nil, "Also bound: QColumnView, QWidgetAction")
+	qt.widget_set_style_sheet(auto_cast mdi_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast mdi_note)
+	return page
+}
+
+build_graphics_scene_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Graphics Scene Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	desc := qt.label_create(nil, "QGraphicsScene with movable items. Drag items to reposition. Scroll-hand drag to pan.")
+	qt.label_set_word_wrap(desc, 1)
+	qt.widget_set_size_policy(auto_cast desc, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast desc)
+
+	scene := qt.graphics_scene_create_with_rect(0, 0, 600, 400, nil)
+	view := qt.graphics_view_create_with_scene(scene, nil)
+	qt.graphics_view_set_render_hint(view, .Antialiasing, 1)
+	qt.graphics_view_set_drag_mode(view, .Scroll_Hand_Drag)
+
+	bg := qt.brush_create_with_colour(245, 245, 250, 255)
+	qt.graphics_scene_set_background_brush(scene, bg)
+	qt.brush_destroy(bg)
+
+	// QGraphicsRectItem
+	r_pen := qt.pen_create_with_colour(30, 60, 120, 255)
+	qt.pen_set_width(r_pen, 2)
+	r_brush := qt.brush_create_with_colour(70, 130, 180, 180)
+	rect := qt.graphics_scene_add_rect(scene, 20, 20, 120, 80, r_pen, r_brush)
+	qt.graphics_item_set_flag(auto_cast rect, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast rect, .Is_Selectable, 1)
+	qt.graphics_item_set_tool_tip(auto_cast rect, "QGraphicsRectItem")
+	qt.pen_destroy(r_pen)
+	qt.brush_destroy(r_brush)
+
+	// QGraphicsEllipseItem
+	e_pen := qt.pen_create_with_colour(120, 30, 30, 255)
+	qt.pen_set_width(e_pen, 2)
+	e_brush := qt.brush_create_with_colour(220, 100, 100, 180)
+	ellipse := qt.graphics_scene_add_ellipse(scene, 180, 40, 100, 80, e_pen, e_brush)
+	qt.graphics_item_set_flag(auto_cast ellipse, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast ellipse, .Is_Selectable, 1)
+	qt.graphics_item_set_tool_tip(auto_cast ellipse, "QGraphicsEllipseItem")
+	qt.pen_destroy(e_pen)
+	qt.brush_destroy(e_brush)
+
+	// QGraphicsTextItem
+	t_font := qt.font_create("Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	text_item := qt.graphics_scene_add_text(scene, "QGraphicsTextItem", t_font)
+	qt.graphics_item_set_pos(auto_cast text_item, 20, 130)
+	qt.graphics_item_set_flag(auto_cast text_item, .Is_Movable, 1)
+	qt.graphics_text_item_set_default_text_colour(text_item, 40, 40, 120, 255)
+	qt.font_destroy(t_font)
+
+	// QGraphicsLineItem
+	l_pen := qt.pen_create_with_colour(50, 150, 50, 255)
+	qt.pen_set_width(l_pen, 3)
+	_ = qt.graphics_scene_add_line(scene, 320, 20, 500, 120, l_pen)
+	qt.pen_destroy(l_pen)
+
+	// QGraphicsPathItem
+	gpath := qt.painter_path_create()
+	qt.painter_path_move_to(gpath, 350, 150)
+	qt.painter_path_cubic_to(gpath, 350, 220, 470, 220, 470, 150)
+	qt.painter_path_close_subpath(gpath)
+	p_pen := qt.pen_create_with_colour(140, 80, 200, 255)
+	qt.pen_set_width(p_pen, 2)
+	p_brush := qt.brush_create_with_colour(180, 140, 220, 150)
+	gpath_item := qt.graphics_scene_add_path(scene, gpath, p_pen, p_brush)
+	qt.graphics_item_set_flag(auto_cast gpath_item, .Is_Movable, 1)
+	qt.graphics_item_set_tool_tip(auto_cast gpath_item, "QGraphicsPathItem")
+	qt.painter_path_destroy(gpath)
+	qt.pen_destroy(p_pen)
+	qt.brush_destroy(p_brush)
+
+	// QGraphicsProxyWidget
+	proxy_btn := qt.push_button_create(nil, "Embedded QPushButton")
+	proxy := qt.graphics_scene_add_widget(scene, auto_cast proxy_btn)
+	qt.graphics_item_set_pos(auto_cast proxy, 20, 280)
+	qt.graphics_item_set_flag(auto_cast proxy, .Is_Movable, 1)
+
+	qt.layout_add_widget(layout, auto_cast view)
+
+	// Zoom/rotate controls
+	ctrl_row := qt.widget_create(nil)
+	ctrl_layout := qt.hbox_layout_create(ctrl_row)
+
+	zoom_in_btn := qt.push_button_create(nil, "Zoom In")
+	qt.push_button_connect_clicked(zoom_in_btn, proc"c"(ud: rawptr) {
+		qt.graphics_view_scale(auto_cast ud, 1.25, 1.25)
+	}, auto_cast view)
+	qt.layout_add_widget(ctrl_layout, auto_cast zoom_in_btn)
+
+	zoom_out_btn := qt.push_button_create(nil, "Zoom Out")
+	qt.push_button_connect_clicked(zoom_out_btn, proc"c"(ud: rawptr) {
+		qt.graphics_view_scale(auto_cast ud, 0.8, 0.8)
+	}, auto_cast view)
+	qt.layout_add_widget(ctrl_layout, auto_cast zoom_out_btn)
+
+	reset_view_btn := qt.push_button_create(nil, "Reset View")
+	qt.push_button_connect_clicked(reset_view_btn, proc"c"(ud: rawptr) {
+		qt.graphics_view_reset_transform(auto_cast ud)
+	}, auto_cast view)
+	qt.layout_add_widget(ctrl_layout, auto_cast reset_view_btn)
+
+	rotate_view_btn := qt.push_button_create(nil, "Rotate 15\xC2\xB0")
+	qt.push_button_connect_clicked(rotate_view_btn, proc"c"(ud: rawptr) {
+		qt.graphics_view_rotate(auto_cast ud, 15.0)
+	}, auto_cast view)
+	qt.layout_add_widget(ctrl_layout, auto_cast rotate_view_btn)
+
+	qt.layout_add_widget(layout, ctrl_row)
+
+	gfx_note := qt.label_create(nil, "Also bound: QGraphicsItemGroup, QGraphicsPixmapItem, QGraphicsBlurEffect, QGraphicsColourizeEffect, QGraphicsDropShadowEffect, QGraphicsOpacityEffect")
+	qt.label_set_word_wrap(gfx_note, 1)
+	qt.widget_set_style_sheet(auto_cast gfx_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast gfx_note)
+	return page
+}
+
+build_undo_mapping_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Undo/Redo && Data Mapping Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	splitter := qt.splitter_create(.Horizontal, nil)
+
+	// QUndoStack + QUndoView
+	undo_group := qt.group_box_create(nil, "QUndoStack + QUndoView")
+	undo_layout := qt.vbox_layout_create(auto_cast undo_group)
+
+	demo_state.undo_stack = qt.undo_stack_create(nil)
+	demo_state.undo_label = qt.label_create(nil, "Commands: 0")
+	qt.label_set_alignment(demo_state.undo_label, .Centre)
+	qt.layout_add_widget(undo_layout, auto_cast demo_state.undo_label)
+
+	undo_btn_row := qt.widget_create(nil)
+	undo_btn_layout := qt.hbox_layout_create(undo_btn_row)
+	push_cmd_btn := qt.push_button_create(nil, "Push Command")
+	qt.push_button_connect_clicked(push_cmd_btn, undo_add_command, nil)
+	qt.layout_add_widget(undo_btn_layout, auto_cast push_cmd_btn)
+	undo_action_btn := qt.push_button_create(nil, "Undo")
+	qt.push_button_connect_clicked(undo_action_btn, undo_do_undo, nil)
+	qt.layout_add_widget(undo_btn_layout, auto_cast undo_action_btn)
+	redo_action_btn := qt.push_button_create(nil, "Redo")
+	qt.push_button_connect_clicked(redo_action_btn, undo_do_redo, nil)
+	qt.layout_add_widget(undo_btn_layout, auto_cast redo_action_btn)
+	qt.layout_add_widget(undo_layout, undo_btn_row)
+
+	undo_view := qt.undo_view_create(nil)
+	qt.undo_view_set_stack(undo_view, demo_state.undo_stack)
+	qt.undo_view_set_empty_label(undo_view, "(no commands)")
+	qt.layout_add_widget(undo_layout, auto_cast undo_view)
+	qt.splitter_add_widget(splitter, auto_cast undo_group)
+
+	// QDataWidgetMapper
+	mapper_group := qt.group_box_create(nil, "QDataWidgetMapper")
+	mapper_layout := qt.vbox_layout_create(auto_cast mapper_group)
+
+	mapper_model := qt.standard_item_model_create(0, 3, nil)
+	mapper_headers := [?]cstring{"Name", "Language", "Rating"}
+	qt.standard_item_model_set_horizontal_header_labels(mapper_model, raw_data(mapper_headers[:]), 3)
+
+	mapper_data := [4][3]cstring{
+		{"Odin", "Systems", "5/5"},
+		{"Zig", "Systems", "4/5"},
+		{"Rust", "Systems", "4/5"},
+		{"Python", "Scripting", "3/5"},
+	}
+	for row_idx in 0 ..< 4 {
+		items := [3]qt.Standard_Item{
+			qt.standard_item_create(mapper_data[row_idx][0]),
+			qt.standard_item_create(mapper_data[row_idx][1]),
+			qt.standard_item_create(mapper_data[row_idx][2]),
+		}
+		qt.standard_item_model_append_row(mapper_model, raw_data(items[:]), 3)
+	}
+
+	mapper_form_widget := qt.widget_create(nil)
+	mapper_form := qt.form_layout_create(mapper_form_widget)
+	name_edit := qt.line_edit_create(nil)
+	lang_edit := qt.line_edit_create(nil)
+	rating_edit := qt.line_edit_create(nil)
+	qt.form_layout_add_row(mapper_form, "Name:", auto_cast name_edit)
+	qt.form_layout_add_row(mapper_form, "Language:", auto_cast lang_edit)
+	qt.form_layout_add_row(mapper_form, "Rating:", auto_cast rating_edit)
+	qt.layout_add_widget(mapper_layout, mapper_form_widget)
+
+	mapper := qt.data_widget_mapper_create(nil)
+	qt.data_widget_mapper_set_model(mapper, auto_cast mapper_model)
+	qt.data_widget_mapper_add_mapping(mapper, auto_cast name_edit, 0)
+	qt.data_widget_mapper_add_mapping(mapper, auto_cast lang_edit, 1)
+	qt.data_widget_mapper_add_mapping(mapper, auto_cast rating_edit, 2)
+	qt.data_widget_mapper_to_first(mapper)
+
+	nav_row := qt.widget_create(nil)
+	nav_layout := qt.hbox_layout_create(nav_row)
+	first_nav_btn := qt.push_button_create(nil, "First")
+	qt.push_button_connect_clicked(first_nav_btn, proc"c"(ud: rawptr) {
+		qt.data_widget_mapper_to_first(auto_cast ud)
+	}, auto_cast mapper)
+	qt.layout_add_widget(nav_layout, auto_cast first_nav_btn)
+	prev_nav_btn := qt.push_button_create(nil, "Previous")
+	qt.push_button_connect_clicked(prev_nav_btn, proc"c"(ud: rawptr) {
+		qt.data_widget_mapper_to_previous(auto_cast ud)
+	}, auto_cast mapper)
+	qt.layout_add_widget(nav_layout, auto_cast prev_nav_btn)
+	next_nav_btn := qt.push_button_create(nil, "Next")
+	qt.push_button_connect_clicked(next_nav_btn, proc"c"(ud: rawptr) {
+		qt.data_widget_mapper_to_next(auto_cast ud)
+	}, auto_cast mapper)
+	qt.layout_add_widget(nav_layout, auto_cast next_nav_btn)
+	last_nav_btn := qt.push_button_create(nil, "Last")
+	qt.push_button_connect_clicked(last_nav_btn, proc"c"(ud: rawptr) {
+		qt.data_widget_mapper_to_last(auto_cast ud)
+	}, auto_cast mapper)
+	qt.layout_add_widget(nav_layout, auto_cast last_nav_btn)
+	qt.layout_add_widget(mapper_layout, nav_row)
+	qt.splitter_add_widget(splitter, auto_cast mapper_group)
+
+	qt.layout_add_widget(layout, auto_cast splitter)
+
+	undo_note := qt.label_create(nil, "Also bound: QUndoCommand, QUndoGroup, QStyledItemDelegate, QItemDelegate")
+	qt.widget_set_style_sheet(auto_cast undo_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast undo_note)
+	return page
+}
+
+build_qtgui_objects_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "QtGui Objects Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	canvas := qt.paintable_widget_create(nil, qtgui_paint_demo, nil)
+	qt.widget_set_minimum_size(auto_cast canvas, 500, 180)
+	qt.layout_add_widget(layout, auto_cast canvas)
+
+	info_splitter := qt.splitter_create(.Horizontal, nil)
+
+	// QColor
+	colour_group := qt.group_box_create(nil, "QColor")
+	colour_layout := qt.vbox_layout_create(auto_cast colour_group)
+	colour_info := qt.label_create(nil, "")
+	{
+		col := qt.colour_create(70, 130, 180, 255)
+		col_name := qt.colour_get_name(col)
+		col_h, col_s, col_v, col_a: c.int
+		qt.colour_get_hsv(col, &col_h, &col_s, &col_v, &col_a)
+		lighter := qt.colour_lighter(col, 150)
+		lighter_name := qt.colour_get_name(lighter)
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "RGBA(70,130,180,255)\nName: %s\nHSV: %d,%d,%d\nLighter(150): %s", col_name, col_h, col_s, col_v, lighter_name)
+		buf[len(msg)] = 0
+		qt.label_set_text(colour_info, cstring(raw_data(buf[:])))
+		qt.colour_destroy(lighter)
+		qt.colour_destroy(col)
+		if col_name != nil do qt.free_string(col_name)
+		if lighter_name != nil do qt.free_string(lighter_name)
+	}
+	qt.layout_add_widget(colour_layout, auto_cast colour_info)
+	qt.splitter_add_widget(info_splitter, auto_cast colour_group)
+
+	// QFont + QFontDatabase
+	font_group := qt.group_box_create(nil, "QFont + QFontDatabase")
+	font_layout := qt.vbox_layout_create(auto_cast font_group)
+	font_info := qt.label_create(nil, "")
+	{
+		fnt := qt.font_create("Segoe UI", 12, cast(c.int)qt.Font_Weight.Bold, 1)
+		fnt_family := qt.font_get_family(fnt)
+		fnt_size := qt.font_get_point_size(fnt)
+		is_bold := qt.font_is_bold(fnt)
+		is_italic := qt.font_is_italic(fnt)
+		families_ptr: [^]cstring
+		family_count := qt.font_database_get_families(&families_ptr)
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "Family: %s\nSize: %dpt  Bold: %d  Italic: %d\nFontDatabase: %d families", fnt_family, fnt_size, is_bold, is_italic, family_count)
+		buf[len(msg)] = 0
+		qt.label_set_text(font_info, cstring(raw_data(buf[:])))
+		qt.font_destroy(fnt)
+		if fnt_family != nil do qt.free_string(fnt_family)
+		if family_count > 0 do qt.font_database_free_families(families_ptr, family_count)
+	}
+	qt.layout_add_widget(font_layout, auto_cast font_info)
+	qt.splitter_add_widget(info_splitter, auto_cast font_group)
+
+	// QKeySequence
+	ks_group := qt.group_box_create(nil, "QKeySequence")
+	ks_layout := qt.vbox_layout_create(auto_cast ks_group)
+	ks_info := qt.label_create(nil, "")
+	{
+		ks := qt.key_sequence_create("Ctrl+Shift+S")
+		ks_str := qt.key_sequence_to_string(ks)
+		ks_count := qt.key_sequence_get_count(ks)
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "Input: Ctrl+Shift+S\nParsed: %s\nKey count: %d", ks_str, ks_count)
+		buf[len(msg)] = 0
+		qt.label_set_text(ks_info, cstring(raw_data(buf[:])))
+		if ks_str != nil do qt.free_string(ks_str)
+		qt.key_sequence_destroy(ks)
+	}
+	qt.layout_add_widget(ks_layout, auto_cast ks_info)
+	qt.splitter_add_widget(info_splitter, auto_cast ks_group)
+
+	qt.layout_add_widget(layout, auto_cast info_splitter)
+
+	gui_note := qt.label_create(nil, "Also bound: QPalette, QCursor, QRegion, QTextCursor, QTextDocument, QGradient variants, QImage, QBitmap, QPicture, QPageLayout/QPageSize, QMovie, QImageReader/QImageWriter")
+	qt.label_set_word_wrap(gui_note, 1)
+	qt.widget_set_style_sheet(auto_cast gui_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast gui_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	return page
+}
+
+build_file_data_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(page)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "File I/O && Data Formats Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	splitter := qt.splitter_create(.Horizontal, nil)
+
+	// QFile, QFileInfo, QDir
+	file_group := qt.group_box_create(nil, "QFile, QFileInfo, QDir")
+	file_layout := qt.vbox_layout_create(auto_cast file_group)
+	file_output := qt.plain_text_edit_create(nil)
+	qt.plain_text_edit_set_read_only(file_output, 1)
+	qt.widget_set_font(auto_cast file_output, "Consolas", 9, cast(c.int)qt.Font_Weight.Normal, 0)
+	{
+		dir := qt.dir_create(".")
+		dir_path := qt.dir_get_absolute_path(dir)
+		home_path := qt.dir_home_path()
+		temp_path := qt.dir_temp_path()
+		entry_count := qt.dir_get_entry_count(dir, .All_Entries)
+
+		info := qt.file_info_create(".")
+		abs_path := qt.file_info_get_absolute_file_path(info)
+		is_dir_result := qt.file_info_is_dir(info)
+
+		buf: [1024]u8
+		msg := fmt.bprintf(buf[:], "QDir:\n  Path: %s\n  Entries: %d\n  Home: %s\n  Temp: %s\n\nQFileInfo (\".\"):\n  Absolute: %s\n  Is dir: %d\n\nQTemporaryFile, QTemporaryDir,\nQSaveFile, QBuffer,\nQFileSystemWatcher: bound", dir_path, entry_count, home_path, temp_path, abs_path, is_dir_result)
+		buf[len(msg)] = 0
+		qt.plain_text_edit_set_plain_text(file_output, cstring(raw_data(buf[:])))
+
+		if dir_path != nil do qt.free_string(dir_path)
+		if home_path != nil do qt.free_string(home_path)
+		if temp_path != nil do qt.free_string(temp_path)
+		if abs_path != nil do qt.free_string(abs_path)
+		qt.file_info_destroy(info)
+		qt.dir_destroy(dir)
+	}
+	qt.layout_add_widget(file_layout, auto_cast file_output)
+	qt.splitter_add_widget(splitter, auto_cast file_group)
+
+	// JSON + XML
+	data_group := qt.group_box_create(nil, "QJson*, QXmlStream*")
+	data_layout := qt.vbox_layout_create(auto_cast data_group)
+	data_output := qt.plain_text_edit_create(nil)
+	qt.plain_text_edit_set_read_only(data_output, 1)
+	qt.widget_set_font(auto_cast data_output, "Consolas", 9, cast(c.int)qt.Font_Weight.Normal, 0)
+	{
+		obj := qt.json_object_create()
+		qt.json_object_set_string(obj, "name", "Odin Qt Demo")
+		qt.json_object_set_int(obj, "version", 1)
+		qt.json_object_set_bool(obj, "is_awesome", 1)
+		arr := qt.json_array_create()
+		qt.json_array_append_string(arr, "widgets")
+		qt.json_array_append_string(arr, "bindings")
+		qt.json_array_append_string(arr, "demos")
+		qt.json_object_set_array(obj, "features", arr)
+		doc := qt.json_document_from_object(obj)
+		json_text := qt.json_document_to_json(doc, 0)
+
+		writer := qt.xml_stream_writer_create()
+		qt.xml_stream_writer_set_auto_formatting(writer, 1)
+		qt.xml_stream_writer_write_start_document(writer)
+		qt.xml_stream_writer_write_start_element(writer, "demo")
+		qt.xml_stream_writer_write_attribute(writer, "version", "1.0")
+		qt.xml_stream_writer_write_text_element(writer, "name", "Odin Qt")
+		qt.xml_stream_writer_write_text_element(writer, "language", "Odin")
+		qt.xml_stream_writer_write_end_element(writer)
+		qt.xml_stream_writer_write_end_document(writer)
+		xml_text := qt.xml_stream_writer_get_output(writer)
+
+		buf: [2048]u8
+		msg := fmt.bprintf(buf[:], "=== JSON ===\n%s\n=== XML ===\n%s", json_text, xml_text)
+		buf[len(msg)] = 0
+		qt.plain_text_edit_set_plain_text(data_output, cstring(raw_data(buf[:])))
+
+		if json_text != nil do qt.free_string(json_text)
+		if xml_text != nil do qt.free_string(xml_text)
+		qt.json_document_destroy(doc)
+		qt.json_array_destroy(arr)
+		qt.json_object_destroy(obj)
+		qt.xml_stream_writer_destroy(writer)
+	}
+	qt.layout_add_widget(data_layout, auto_cast data_output)
+	qt.splitter_add_widget(splitter, auto_cast data_group)
+
+	qt.layout_add_widget(layout, auto_cast splitter)
+	return page
+}
+
+build_core_utilities_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Core Utilities Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// QDateTime, QDate, QTime, QLocale, QCalendar
+	dt_group := qt.group_box_create(nil, "QDateTime, QDate, QTime, QLocale, QCalendar")
+	dt_layout := qt.vbox_layout_create(auto_cast dt_group)
+	dt_output := qt.label_create(nil, "")
+	{
+		dt := qt.date_time_current()
+		dt_str := qt.date_time_to_string(dt, "yyyy-MM-dd hh:mm:ss")
+
+		date := qt.date_current()
+		date_str := qt.date_to_string(date, "dddd, MMMM d, yyyy")
+		day_of_week := qt.date_get_day_of_week(date)
+
+		time_now := qt.time_current()
+		time_str := qt.time_to_string(time_now, "hh:mm:ss.zzz")
+
+		locale := qt.locale_create()
+		locale_name := qt.locale_get_name(locale)
+		locale_lang := qt.locale_get_language_name(locale)
+
+		cal := qt.calendar_create()
+		cal_year: c.int
+		cal_month: c.int
+		cal_day: c.int
+		qt.date_time_get_date(dt, &cal_year, &cal_month, &cal_day)
+		days_in_month := qt.calendar_get_days_in_month(cal, cal_month, cal_year)
+		is_leap := qt.calendar_is_leap_year(cal, cal_year)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "DateTime: %s\nDate: %s (weekday %d)\nTime: %s\nLocale: %s (%s)\nCalendar: days in month=%d, leap=%d", dt_str, date_str, day_of_week, time_str, locale_name, locale_lang, days_in_month, is_leap)
+		buf[len(msg)] = 0
+		qt.label_set_text(dt_output, cstring(raw_data(buf[:])))
+
+		if dt_str != nil do qt.free_string(dt_str)
+		if date_str != nil do qt.free_string(date_str)
+		if time_str != nil do qt.free_string(time_str)
+		if locale_name != nil do qt.free_string(locale_name)
+		if locale_lang != nil do qt.free_string(locale_lang)
+		qt.calendar_destroy(cal)
+		qt.locale_destroy(locale)
+		qt.time_destroy(time_now)
+		qt.date_destroy(date)
+		qt.date_time_destroy(dt)
+	}
+	qt.label_set_word_wrap(dt_output, 1)
+	qt.layout_add_widget(dt_layout, auto_cast dt_output)
+	qt.layout_add_widget(layout, auto_cast dt_group)
+
+	// QUrl, QUuid, QRegularExpression
+	url_group := qt.group_box_create(nil, "QUrl, QUuid, QRegularExpression")
+	url_layout := qt.vbox_layout_create(auto_cast url_group)
+	url_output := qt.label_create(nil, "")
+	{
+		url := qt.url_create("https://odin-lang.org/docs?q=hello#section")
+		url_scheme := qt.url_get_scheme(url)
+		url_host := qt.url_get_host(url)
+		url_path := qt.url_get_path(url)
+		url_query := qt.url_get_query(url)
+		url_frag := qt.url_get_fragment(url)
+
+		uuid := qt.uuid_create()
+		uuid_str := qt.uuid_to_string(uuid)
+
+		regex := qt.regex_create("(\\w+)@(\\w+\\.\\w+)")
+		regex_valid := qt.regex_is_valid(regex)
+		regex_match := qt.regex_has_match(regex, "user@example.com")
+		regex_cap := qt.regex_get_match(regex, "user@example.com", 0)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "URL: %s://%s%s?%s#%s\nUUID: %s\nRegex valid=%d, match=%d, captured='%s'", url_scheme, url_host, url_path, url_query, url_frag, uuid_str, regex_valid, regex_match, regex_cap)
+		buf[len(msg)] = 0
+		qt.label_set_text(url_output, cstring(raw_data(buf[:])))
+
+		if url_scheme != nil do qt.free_string(url_scheme)
+		if url_host != nil do qt.free_string(url_host)
+		if url_path != nil do qt.free_string(url_path)
+		if url_query != nil do qt.free_string(url_query)
+		if url_frag != nil do qt.free_string(url_frag)
+		if uuid_str != nil do qt.free_string(uuid_str)
+		if regex_cap != nil do qt.free_string(regex_cap)
+		qt.regex_destroy(regex)
+		qt.uuid_destroy(uuid)
+		qt.url_destroy(url)
+	}
+	qt.label_set_word_wrap(url_output, 1)
+	qt.layout_add_widget(url_layout, auto_cast url_output)
+	qt.layout_add_widget(layout, auto_cast url_group)
+
+	// QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber
+	crypto_group := qt.group_box_create(nil, "QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber")
+	crypto_layout := qt.vbox_layout_create(auto_cast crypto_group)
+	crypto_output := qt.label_create(nil, "")
+	{
+		input_str: string = "Hello, Odin + Qt!"
+		hash := qt.crypto_hash_create(.Sha256)
+		qt.crypto_hash_add_data(hash, raw_data(input_str), cast(c.int)len(input_str))
+		hash_buf: [32]u8
+		hash_len := qt.crypto_hash_get_result(hash, raw_data(hash_buf[:]), 32)
+
+		etimer := qt.elapsed_timer_create()
+		qt.elapsed_timer_start(etimer)
+		elapsed := qt.elapsed_timer_elapsed(etimer)
+
+		rand_val := qt.random_generator_generate()
+		rand_bounded := qt.random_generator_generate_bounded_int(100)
+		rand_dbl := qt.random_generator_generate_double()
+
+		v1 := qt.version_number_create(1, 2, 3)
+		v2 := qt.version_number_create(1, 3, 0)
+		v1_str := qt.version_number_to_string(v1)
+		v2_str := qt.version_number_to_string(v2)
+		ver_cmp := qt.version_number_compare(v1, v2)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "SHA256: %02x%02x%02x%02x... (%d bytes)\nElapsed: %dms\nRandom: %d, bounded(100)=%d, dbl=%.4f\nVersion: %s vs %s = %d", hash_buf[0], hash_buf[1], hash_buf[2], hash_buf[3], hash_len, elapsed, rand_val, rand_bounded, rand_dbl, v1_str, v2_str, ver_cmp)
+		buf[len(msg)] = 0
+		qt.label_set_text(crypto_output, cstring(raw_data(buf[:])))
+
+		if v1_str != nil do qt.free_string(v1_str)
+		if v2_str != nil do qt.free_string(v2_str)
+		qt.version_number_destroy(v2)
+		qt.version_number_destroy(v1)
+		qt.elapsed_timer_destroy(etimer)
+		qt.crypto_hash_destroy(hash)
+	}
+	qt.label_set_word_wrap(crypto_output, 1)
+	qt.layout_add_widget(crypto_layout, auto_cast crypto_output)
+	qt.layout_add_widget(layout, auto_cast crypto_group)
+
+	// QSysInfo, QStorageInfo, QMimeDatabase
+	sys_group := qt.group_box_create(nil, "QSysInfo, QStorageInfo, QMimeDatabase")
+	sys_layout := qt.vbox_layout_create(auto_cast sys_group)
+	sys_output := qt.label_create(nil, "")
+	{
+		product := qt.sys_info_get_pretty_product_name()
+		kernel := qt.sys_info_get_kernel_type()
+		kernel_ver := qt.sys_info_get_kernel_version()
+		cpu := qt.sys_info_get_cpu_architecture()
+		hostname := qt.sys_info_get_machine_host_name()
+
+		storage := qt.storage_info_create("C:/")
+		total_bytes := qt.storage_info_get_bytes_total(storage)
+		free_bytes := qt.storage_info_get_bytes_free(storage)
+		fs_type := qt.storage_info_get_file_system_type(storage)
+
+		mime_db := qt.mime_database_create()
+		mime_type := qt.mime_database_mime_type_for_file(mime_db, "test.txt")
+
+		total_gb := cast(f64)total_bytes / (1024.0 * 1024.0 * 1024.0)
+		free_gb := cast(f64)free_bytes / (1024.0 * 1024.0 * 1024.0)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "System: %s\nKernel: %s %s\nCPU: %s  Host: %s\nC:/ %.1fGB total, %.1fGB free (%s)\nMIME .txt: %s", product, kernel, kernel_ver, cpu, hostname, total_gb, free_gb, fs_type, mime_type)
+		buf[len(msg)] = 0
+		qt.label_set_text(sys_output, cstring(raw_data(buf[:])))
+
+		if product != nil do qt.free_string(product)
+		if kernel != nil do qt.free_string(kernel)
+		if kernel_ver != nil do qt.free_string(kernel_ver)
+		if cpu != nil do qt.free_string(cpu)
+		if hostname != nil do qt.free_string(hostname)
+		if fs_type != nil do qt.free_string(fs_type)
+		if mime_type != nil do qt.free_string(mime_type)
+		qt.mime_database_destroy(mime_db)
+		qt.storage_info_destroy(storage)
+	}
+	qt.label_set_word_wrap(sys_output, 1)
+	qt.layout_add_widget(sys_layout, auto_cast sys_output)
+	qt.layout_add_widget(layout, auto_cast sys_group)
+
+	core_note := qt.label_create(nil, "Also bound: QThread, QMutex, QReadWriteLock, QSemaphore, QProcess, QSharedMemory, QSystemSemaphore, QLockFile, QLibrary, QEventLoop")
+	qt.label_set_word_wrap(core_note, 1)
+	qt.widget_set_style_sheet(auto_cast core_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast core_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
+build_advanced_models_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Advanced Models && Utilities Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// QStringListModel + QListView
+	slm_group := qt.group_box_create(nil, "QStringListModel + QListView")
+	slm_layout := qt.vbox_layout_create(auto_cast slm_group)
+	slm := qt.string_list_model_create(nil)
+	slm_items := [?]cstring{"Apple", "Banana", "Cherry", "Date", "Elderberry"}
+	qt.string_list_model_set_string_list(slm, raw_data(slm_items[:]), 5)
+	slm_view := qt.list_view_create(nil)
+	qt.list_view_set_model(slm_view, auto_cast slm)
+	qt.widget_set_maximum_height(auto_cast slm_view, 100)
+	qt.layout_add_widget(slm_layout, auto_cast slm_view)
+	qt.layout_add_widget(layout, auto_cast slm_group)
+
+	// QTransposeProxyModel
+	tp_group := qt.group_box_create(nil, "QTransposeProxyModel")
+	tp_layout := qt.vbox_layout_create(auto_cast tp_group)
+	src_model := qt.standard_item_model_create(0, 2, nil)
+	src_headers := [?]cstring{"Name", "Value"}
+	qt.standard_item_model_set_horizontal_header_labels(src_model, raw_data(src_headers[:]), 2)
+	src_data := [3][2]cstring{{"Alpha", "100"}, {"Beta", "200"}, {"Gamma", "300"}}
+	for row_idx in 0 ..< 3 {
+		row_items := [2]qt.Standard_Item{
+			qt.standard_item_create(src_data[row_idx][0]),
+			qt.standard_item_create(src_data[row_idx][1]),
+		}
+		qt.standard_item_model_append_row(src_model, raw_data(row_items[:]), 2)
+	}
+	transpose := qt.transpose_proxy_model_create(nil)
+	qt.transpose_proxy_model_set_source_model(transpose, auto_cast src_model)
+
+	tp_splitter := qt.splitter_create(.Horizontal, nil)
+	orig_container := qt.widget_create(nil)
+	orig_cl := qt.vbox_layout_create(orig_container)
+	qt.layout_add_widget(orig_cl, auto_cast qt.label_create(nil, "Original (3x2):"))
+	orig_table := qt.table_view_create(nil)
+	qt.table_view_set_model(orig_table, src_model)
+	qt.table_view_resize_columns_to_contents(orig_table)
+	qt.widget_set_maximum_height(auto_cast orig_table, 120)
+	qt.layout_add_widget(orig_cl, auto_cast orig_table)
+	qt.splitter_add_widget(tp_splitter, orig_container)
+
+	trans_container := qt.widget_create(nil)
+	trans_cl := qt.vbox_layout_create(trans_container)
+	qt.layout_add_widget(trans_cl, auto_cast qt.label_create(nil, "Transposed (2x3):"))
+	trans_table := qt.table_view_create(nil)
+	qt.table_view_set_model(trans_table, auto_cast transpose)
+	qt.table_view_resize_columns_to_contents(trans_table)
+	qt.widget_set_maximum_height(auto_cast trans_table, 120)
+	qt.layout_add_widget(trans_cl, auto_cast trans_table)
+	qt.splitter_add_widget(tp_splitter, trans_container)
+
+	qt.layout_add_widget(tp_layout, auto_cast tp_splitter)
+	qt.layout_add_widget(layout, auto_cast tp_group)
+
+	// QStyle / QStyleFactory
+	style_group := qt.group_box_create(nil, "QStyle / QStyleFactory")
+	style_layout := qt.vbox_layout_create(auto_cast style_group)
+	style_output := qt.label_create(nil, "")
+	{
+		keys_ptr: [^]cstring
+		key_count := qt.style_get_keys(&keys_ptr)
+		buf: [256]u8
+		offset := copy(buf[:], "Available styles: ")
+		for key_idx in 0 ..< key_count {
+			if key_idx > 0 {
+				extra := copy(buf[offset:], ", ")
+				offset += extra
+			}
+			key_text := fmt.bprintf(buf[offset:], "%s", keys_ptr[key_idx])
+			offset += len(key_text)
+		}
+		buf[offset] = 0
+		qt.label_set_text(style_output, cstring(raw_data(buf[:])))
+		if key_count > 0 do qt.style_free_keys(keys_ptr, key_count)
+	}
+	qt.label_set_word_wrap(style_output, 1)
+	qt.layout_add_widget(style_layout, auto_cast style_output)
+	qt.layout_add_widget(layout, auto_cast style_group)
+
+	// QTimeLine
+	tl_group := qt.group_box_create(nil, "QTimeLine")
+	tl_layout := qt.vbox_layout_create(auto_cast tl_group)
+	demo_state.time_line_progress = qt.progress_bar_create(nil)
+	qt.progress_bar_set_range(demo_state.time_line_progress, 0, 100)
+	qt.progress_bar_set_value(demo_state.time_line_progress, 0)
+	demo_state.time_line_label = qt.label_create(nil, "Frame: 0")
+	qt.label_set_alignment(demo_state.time_line_label, .Centre)
+	demo_state.time_line = qt.time_line_create(3000, nil)
+	qt.time_line_set_frame_range(demo_state.time_line, 0, 100)
+	qt.time_line_set_easing_curve(demo_state.time_line, .In_Out_Cubic)
+	_ = qt.time_line_connect_value_changed(demo_state.time_line, time_line_value_changed, nil)
+	_ = qt.time_line_connect_frame_changed(demo_state.time_line, time_line_frame_changed, nil)
+	_ = qt.time_line_connect_finished(demo_state.time_line, time_line_finished, nil)
+	qt.layout_add_widget(tl_layout, auto_cast demo_state.time_line_progress)
+	qt.layout_add_widget(tl_layout, auto_cast demo_state.time_line_label)
+
+	tl_btn_row := qt.widget_create(nil)
+	tl_btn_layout := qt.hbox_layout_create(tl_btn_row)
+	tl_start := qt.push_button_create(nil, "Start")
+	qt.push_button_connect_clicked(tl_start, proc"c"(ud: rawptr) {
+		qt.time_line_start(demo_state.time_line)
+		statusbar_show("TimeLine started (3 seconds)")
+	}, nil)
+	qt.layout_add_widget(tl_btn_layout, auto_cast tl_start)
+	tl_stop := qt.push_button_create(nil, "Stop")
+	qt.push_button_connect_clicked(tl_stop, proc"c"(ud: rawptr) {
+		qt.time_line_stop(demo_state.time_line)
+	}, nil)
+	qt.layout_add_widget(tl_btn_layout, auto_cast tl_stop)
+	tl_reset := qt.push_button_create(nil, "Reset")
+	qt.push_button_connect_clicked(tl_reset, proc"c"(ud: rawptr) {
+		qt.time_line_stop(demo_state.time_line)
+		qt.time_line_set_current_time(demo_state.time_line, 0)
+		qt.progress_bar_set_value(demo_state.time_line_progress, 0)
+		qt.label_set_text(demo_state.time_line_label, "Frame: 0")
+	}, nil)
+	qt.layout_add_widget(tl_btn_layout, auto_cast tl_reset)
+	qt.layout_add_widget(tl_layout, tl_btn_row)
+	qt.layout_add_widget(layout, auto_cast tl_group)
+
+	// QSignalMapper
+	sm_group := qt.group_box_create(nil, "QSignalMapper")
+	sm_layout := qt.vbox_layout_create(auto_cast sm_group)
+	sm_result := qt.label_create(nil, "Click a button:")
+	qt.label_set_alignment(sm_result, .Centre)
+	demo_state.signal_mapper = qt.signal_mapper_create(nil)
+	_ = qt.signal_mapper_connect_mapped_int(demo_state.signal_mapper, proc"c"(value: c.int, user_data: rawptr) {
+		context = runtime.default_context()
+		label: qt.Label = auto_cast user_data
+		buf: [64]u8
+		msg := fmt.bprintf(buf[:], "Button %d clicked via QSignalMapper", value)
+		buf[len(msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(buf[:])))
+	}, auto_cast sm_result)
+
+	sm_btn_row := qt.widget_create(nil)
+	sm_btn_layout := qt.hbox_layout_create(sm_btn_row)
+	sm_btn_1 := qt.push_button_create(nil, "Button 1")
+	qt.signal_mapper_set_mapping_int(demo_state.signal_mapper, auto_cast sm_btn_1, 1)
+	qt.push_button_connect_clicked(sm_btn_1, proc"c"(ud: rawptr) {
+		qt.signal_mapper_map(demo_state.signal_mapper, ud)
+	}, auto_cast sm_btn_1)
+	qt.layout_add_widget(sm_btn_layout, auto_cast sm_btn_1)
+
+	sm_btn_2 := qt.push_button_create(nil, "Button 2")
+	qt.signal_mapper_set_mapping_int(demo_state.signal_mapper, auto_cast sm_btn_2, 2)
+	qt.push_button_connect_clicked(sm_btn_2, proc"c"(ud: rawptr) {
+		qt.signal_mapper_map(demo_state.signal_mapper, ud)
+	}, auto_cast sm_btn_2)
+	qt.layout_add_widget(sm_btn_layout, auto_cast sm_btn_2)
+
+	sm_btn_3 := qt.push_button_create(nil, "Button 3")
+	qt.signal_mapper_set_mapping_int(demo_state.signal_mapper, auto_cast sm_btn_3, 3)
+	qt.push_button_connect_clicked(sm_btn_3, proc"c"(ud: rawptr) {
+		qt.signal_mapper_map(demo_state.signal_mapper, ud)
+	}, auto_cast sm_btn_3)
+	qt.layout_add_widget(sm_btn_layout, auto_cast sm_btn_3)
+
+	qt.layout_add_widget(sm_layout, sm_btn_row)
+	qt.layout_add_widget(sm_layout, auto_cast sm_result)
+	qt.layout_add_widget(layout, auto_cast sm_group)
+
+	adv_note := qt.label_create(nil, "Also bound: QItemSelectionModel, QIdentityProxyModel, QConcatenateTablesProxyModel, QScroller/QScrollerProperties, QLockFile, QLibrary, QSharedMemory, QSystemSemaphore, QEventLoop")
+	qt.label_set_word_wrap(adv_note, 1)
+	qt.widget_set_style_sheet(auto_cast adv_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast adv_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -1568,6 +2787,14 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_syntax_highlighting_tab(), "Syntax HL")
 	_ = qt.tab_widget_add_tab(tabs, build_animations_tab(), "Animations")
 	_ = qt.tab_widget_add_tab(tabs, build_drag_drop_tab(), "Drag && Drop")
+	_ = qt.tab_widget_add_tab(tabs, build_extra_widgets_tab(), "Extra Widgets")
+	_ = qt.tab_widget_add_tab(tabs, build_mdi_wizard_tab(), "MDI && Wizard")
+	_ = qt.tab_widget_add_tab(tabs, build_graphics_scene_tab(), "Graphics Scene")
+	_ = qt.tab_widget_add_tab(tabs, build_undo_mapping_tab(), "Undo && Mapping")
+	_ = qt.tab_widget_add_tab(tabs, build_qtgui_objects_tab(), "QtGui Objects")
+	_ = qt.tab_widget_add_tab(tabs, build_file_data_tab(), "File && Data")
+	_ = qt.tab_widget_add_tab(tabs, build_core_utilities_tab(), "Core Utilities")
+	_ = qt.tab_widget_add_tab(tabs, build_advanced_models_tab(), "Adv. Models")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
