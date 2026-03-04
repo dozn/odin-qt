@@ -210,6 +210,33 @@ void  qt_text_edit_set_html(void *text_edit, const char *html);
 char *qt_text_edit_get_html(void *text_edit);
 void  qt_text_edit_append(void *text_edit, const char *text);
 void  qt_text_edit_insert_plain_text(void *text_edit, const char *text);
+void  qt_text_edit_set_tab_stop_distance(void *text_edit, double distance);
+double qt_text_edit_get_tab_stop_distance(void *text_edit);
+void  qt_text_edit_set_line_wrap_mode(void *text_edit, int mode);
+void  qt_text_edit_set_word_wrap_mode(void *text_edit, int mode);
+void  qt_text_edit_set_accept_rich_text(void *text_edit, int is_accept);
+int   qt_text_edit_find(void *text_edit, const char *text, int flags);
+void  qt_text_edit_undo(void *text_edit);
+void  qt_text_edit_redo(void *text_edit);
+void  qt_text_edit_zoom_in(void *text_edit, int range);
+void  qt_text_edit_zoom_out(void *text_edit, int range);
+void *qt_text_edit_get_text_cursor(void *text_edit);
+void *qt_text_edit_get_document(void *text_edit);
+void  qt_text_edit_set_current_font(void *text_edit, void *font);
+void  qt_text_edit_set_font_weight(void *text_edit, int weight);
+void  qt_text_edit_set_font_italic(void *text_edit, int is_italic);
+void  qt_text_edit_set_font_underline(void *text_edit, int is_underline);
+void  qt_text_edit_set_font_point_size(void *text_edit, double size);
+void  qt_text_edit_set_font_family(void *text_edit, const char *family);
+void  qt_text_edit_set_text_colour(void *text_edit, void *colour);
+void  qt_text_edit_set_text_background_colour(void *text_edit, void *colour);
+void  qt_text_edit_set_alignment(void *text_edit, int alignment);
+void  qt_text_edit_move_cursor(void *text_edit, int operation, int mode);
+void  qt_text_edit_ensure_cursor_visible(void *text_edit);
+void  qt_text_edit_set_overwrite_mode(void *text_edit, int is_overwrite);
+int   qt_text_edit_can_paste(void *text_edit);
+void *qt_text_edit_get_vertical_scroll_bar(void *text_edit);
+void *qt_text_edit_get_horizontal_scroll_bar(void *text_edit);
 
 /* ── QPlainTextEdit ─────────────────────────────────────────────────── */
 
@@ -221,6 +248,23 @@ int   qt_plain_text_edit_is_read_only(void *text_edit);
 void  qt_plain_text_edit_clear(void *text_edit);
 void  qt_plain_text_edit_append_plain_text(void *text_edit, const char *text);
 void  qt_plain_text_edit_insert_plain_text(void *text_edit, const char *text);
+void  qt_plain_text_edit_set_tab_stop_distance(void *text_edit, double distance);
+double qt_plain_text_edit_get_tab_stop_distance(void *text_edit);
+void  qt_plain_text_edit_set_line_wrap_mode(void *text_edit, int mode);
+int   qt_plain_text_edit_find(void *text_edit, const char *text, int flags);
+void  qt_plain_text_edit_undo(void *text_edit);
+void  qt_plain_text_edit_redo(void *text_edit);
+void  qt_plain_text_edit_zoom_in(void *text_edit, int range);
+void  qt_plain_text_edit_zoom_out(void *text_edit, int range);
+void *qt_plain_text_edit_get_text_cursor(void *text_edit);
+void *qt_plain_text_edit_get_document(void *text_edit);
+int   qt_plain_text_edit_get_block_count(void *text_edit);
+void  qt_plain_text_edit_set_maximum_block_count(void *text_edit, int count);
+void  qt_plain_text_edit_move_cursor(void *text_edit, int operation, int mode);
+void  qt_plain_text_edit_ensure_cursor_visible(void *text_edit);
+void  qt_plain_text_edit_set_overwrite_mode(void *text_edit, int is_overwrite);
+void *qt_plain_text_edit_get_vertical_scroll_bar(void *text_edit);
+void *qt_plain_text_edit_get_horizontal_scroll_bar(void *text_edit);
 
 /* ── QCheckBox ──────────────────────────────────────────────────────── */
 
@@ -810,6 +854,19 @@ int qt_dial_connect_value_changed(void *dial, qt_int_callback_t callback, void *
 int qt_progress_dialog_connect_canceled(void *dialog, qt_callback_t callback, void *user_data);
 int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t callback, void *user_data);
 int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data);
+
+/* New signals for QTextEdit and QPlainTextEdit */
+int qt_text_edit_connect_cursor_position_changed(void *text_edit, qt_callback_t callback, void *user_data);
+int qt_text_edit_connect_selection_changed(void *text_edit, qt_callback_t callback, void *user_data);
+int qt_text_edit_connect_copy_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_cursor_position_changed(void *text_edit, qt_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_selection_changed(void *text_edit, qt_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_block_count_changed(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_copy_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+int qt_plain_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
 
 /* ── QSettings ──────────────────────────────────────────────────────── */
 

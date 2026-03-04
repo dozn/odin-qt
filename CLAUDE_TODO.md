@@ -64,48 +64,6 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ### Missing Methods/Signals on Existing Classes
 
-#### QTextEdit
-- `setTabStopDistance` / `getTabStopDistance`
-- `setLineWrapMode`
-- `setWordWrapMode`
-- `setAcceptRichText`
-- `find` -- text search
-- `undo` / `redo`
-- `zoomIn` / `zoomOut`
-- `getTextCursor` -- getter (setter exists)
-- `getDocument` -- getter
-- `setCurrentFont` / `setFontWeight` / `setFontItalic` / `setFontUnderline`
-- `setFontPointSize` / `setFontFamily`
-- `setTextColour` / `setTextBackgroundColour`
-- `setAlignment` -- paragraph alignment
-- `moveCursor` / `ensureCursorVisible`
-- `setOverwriteMode`
-- `canPaste`
-- `verticalScrollBar` / `horizontalScrollBar` -- access scroll bars
-- Signal: `cursorPositionChanged`
-- Signal: `selectionChanged`
-- Signal: `copyAvailable`
-- Signal: `undoAvailable` / `redoAvailable`
-
-#### QPlainTextEdit
-- `setTabStopDistance` / `getTabStopDistance`
-- `setLineWrapMode`
-- `find` -- text search
-- `undo` / `redo`
-- `zoomIn` / `zoomOut`
-- `getTextCursor` -- getter (setter exists)
-- `getDocument` -- getter
-- `getBlockCount`
-- `setMaximumBlockCount`
-- `moveCursor` / `ensureCursorVisible`
-- `setOverwriteMode`
-- `verticalScrollBar` / `horizontalScrollBar`
-- Signal: `cursorPositionChanged`
-- Signal: `selectionChanged`
-- Signal: `blockCountChanged`
-- Signal: `copyAvailable`
-- Signal: `undoAvailable` / `redoAvailable`
-
 #### QComboBox
 - `addItems` -- batch add from string array
 - `insertItems` -- batch insert

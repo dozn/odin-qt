@@ -1228,6 +1228,115 @@ void qt_text_edit_insert_plain_text(void *text_edit, const char *text) {
     static_cast<QTextEdit *>(text_edit)->insertPlainText(QString::fromUtf8(text));
 }
 
+void qt_text_edit_set_tab_stop_distance(void *text_edit, double distance) {
+    static_cast<QTextEdit *>(text_edit)->setTabStopDistance(distance);
+}
+
+double qt_text_edit_get_tab_stop_distance(void *text_edit) {
+    return static_cast<QTextEdit *>(text_edit)->tabStopDistance();
+}
+
+void qt_text_edit_set_line_wrap_mode(void *text_edit, int mode) {
+    static_cast<QTextEdit *>(text_edit)->setLineWrapMode(static_cast<QTextEdit::LineWrapMode>(mode));
+}
+
+void qt_text_edit_set_word_wrap_mode(void *text_edit, int mode) {
+    static_cast<QTextEdit *>(text_edit)->setWordWrapMode(static_cast<QTextOption::WrapMode>(mode));
+}
+
+void qt_text_edit_set_accept_rich_text(void *text_edit, int is_accept) {
+    static_cast<QTextEdit *>(text_edit)->setAcceptRichText(is_accept != 0);
+}
+
+int qt_text_edit_find(void *text_edit, const char *text, int flags) {
+    return static_cast<QTextEdit *>(text_edit)->find(QString::fromUtf8(text), static_cast<QTextDocument::FindFlags>(flags)) ? 1 : 0;
+}
+
+void qt_text_edit_undo(void *text_edit) {
+    static_cast<QTextEdit *>(text_edit)->undo();
+}
+
+void qt_text_edit_redo(void *text_edit) {
+    static_cast<QTextEdit *>(text_edit)->redo();
+}
+
+void qt_text_edit_zoom_in(void *text_edit, int range) {
+    static_cast<QTextEdit *>(text_edit)->zoomIn(range);
+}
+
+void qt_text_edit_zoom_out(void *text_edit, int range) {
+    static_cast<QTextEdit *>(text_edit)->zoomOut(range);
+}
+
+void *qt_text_edit_get_text_cursor(void *text_edit) {
+    QTextCursor *cursor = new QTextCursor(static_cast<QTextEdit *>(text_edit)->textCursor());
+    return static_cast<void *>(cursor);
+}
+
+void *qt_text_edit_get_document(void *text_edit) {
+    return static_cast<void *>(static_cast<QTextEdit *>(text_edit)->document());
+}
+
+void qt_text_edit_set_current_font(void *text_edit, void *font) {
+    static_cast<QTextEdit *>(text_edit)->setCurrentFont(*static_cast<QFont *>(font));
+}
+
+void qt_text_edit_set_font_weight(void *text_edit, int weight) {
+    static_cast<QTextEdit *>(text_edit)->setFontWeight(weight);
+}
+
+void qt_text_edit_set_font_italic(void *text_edit, int is_italic) {
+    static_cast<QTextEdit *>(text_edit)->setFontItalic(is_italic != 0);
+}
+
+void qt_text_edit_set_font_underline(void *text_edit, int is_underline) {
+    static_cast<QTextEdit *>(text_edit)->setFontUnderline(is_underline != 0);
+}
+
+void qt_text_edit_set_font_point_size(void *text_edit, double size) {
+    static_cast<QTextEdit *>(text_edit)->setFontPointSize(size);
+}
+
+void qt_text_edit_set_font_family(void *text_edit, const char *family) {
+    static_cast<QTextEdit *>(text_edit)->setFontFamily(QString::fromUtf8(family));
+}
+
+void qt_text_edit_set_text_colour(void *text_edit, void *colour) {
+    static_cast<QTextEdit *>(text_edit)->setTextColor(*static_cast<QColor *>(colour));
+}
+
+void qt_text_edit_set_text_background_colour(void *text_edit, void *colour) {
+    static_cast<QTextEdit *>(text_edit)->setTextBackgroundColor(*static_cast<QColor *>(colour));
+}
+
+void qt_text_edit_set_alignment(void *text_edit, int alignment) {
+    static_cast<QTextEdit *>(text_edit)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+void qt_text_edit_move_cursor(void *text_edit, int operation, int mode) {
+    static_cast<QTextEdit *>(text_edit)->moveCursor(static_cast<QTextCursor::MoveOperation>(operation), static_cast<QTextCursor::MoveMode>(mode));
+}
+
+void qt_text_edit_ensure_cursor_visible(void *text_edit) {
+    static_cast<QTextEdit *>(text_edit)->ensureCursorVisible();
+}
+
+void qt_text_edit_set_overwrite_mode(void *text_edit, int is_overwrite) {
+    static_cast<QTextEdit *>(text_edit)->setOverwriteMode(is_overwrite != 0);
+}
+
+int qt_text_edit_can_paste(void *text_edit) {
+    return static_cast<QTextEdit *>(text_edit)->canPaste() ? 1 : 0;
+}
+
+void *qt_text_edit_get_vertical_scroll_bar(void *text_edit) {
+    return static_cast<void *>(static_cast<QTextEdit *>(text_edit)->verticalScrollBar());
+}
+
+void *qt_text_edit_get_horizontal_scroll_bar(void *text_edit) {
+    return static_cast<void *>(static_cast<QTextEdit *>(text_edit)->horizontalScrollBar());
+}
+
 /* ── QPlainTextEdit ─────────────────────────────────────────────────── */
 
 void *qt_plain_text_edit_create(void *parent) {
@@ -1260,6 +1369,75 @@ void qt_plain_text_edit_append_plain_text(void *text_edit, const char *text) {
 
 void qt_plain_text_edit_insert_plain_text(void *text_edit, const char *text) {
     static_cast<QPlainTextEdit *>(text_edit)->insertPlainText(QString::fromUtf8(text));
+}
+
+void qt_plain_text_edit_set_tab_stop_distance(void *text_edit, double distance) {
+    static_cast<QPlainTextEdit *>(text_edit)->setTabStopDistance(distance);
+}
+
+double qt_plain_text_edit_get_tab_stop_distance(void *text_edit) {
+    return static_cast<QPlainTextEdit *>(text_edit)->tabStopDistance();
+}
+
+void qt_plain_text_edit_set_line_wrap_mode(void *text_edit, int mode) {
+    static_cast<QPlainTextEdit *>(text_edit)->setLineWrapMode(static_cast<QPlainTextEdit::LineWrapMode>(mode));
+}
+
+int qt_plain_text_edit_find(void *text_edit, const char *text, int flags) {
+    return static_cast<QPlainTextEdit *>(text_edit)->find(QString::fromUtf8(text), static_cast<QTextDocument::FindFlags>(flags)) ? 1 : 0;
+}
+
+void qt_plain_text_edit_undo(void *text_edit) {
+    static_cast<QPlainTextEdit *>(text_edit)->undo();
+}
+
+void qt_plain_text_edit_redo(void *text_edit) {
+    static_cast<QPlainTextEdit *>(text_edit)->redo();
+}
+
+void qt_plain_text_edit_zoom_in(void *text_edit, int range) {
+    static_cast<QPlainTextEdit *>(text_edit)->zoomIn(range);
+}
+
+void qt_plain_text_edit_zoom_out(void *text_edit, int range) {
+    static_cast<QPlainTextEdit *>(text_edit)->zoomOut(range);
+}
+
+void *qt_plain_text_edit_get_text_cursor(void *text_edit) {
+    QTextCursor *cursor = new QTextCursor(static_cast<QPlainTextEdit *>(text_edit)->textCursor());
+    return static_cast<void *>(cursor);
+}
+
+void *qt_plain_text_edit_get_document(void *text_edit) {
+    return static_cast<void *>(static_cast<QPlainTextEdit *>(text_edit)->document());
+}
+
+int qt_plain_text_edit_get_block_count(void *text_edit) {
+    return static_cast<QPlainTextEdit *>(text_edit)->blockCount();
+}
+
+void qt_plain_text_edit_set_maximum_block_count(void *text_edit, int count) {
+    static_cast<QPlainTextEdit *>(text_edit)->setMaximumBlockCount(count);
+}
+
+void qt_plain_text_edit_move_cursor(void *text_edit, int operation, int mode) {
+    static_cast<QPlainTextEdit *>(text_edit)->moveCursor(static_cast<QTextCursor::MoveOperation>(operation), static_cast<QTextCursor::MoveMode>(mode));
+}
+
+void qt_plain_text_edit_ensure_cursor_visible(void *text_edit) {
+    static_cast<QPlainTextEdit *>(text_edit)->ensureCursorVisible();
+}
+
+void qt_plain_text_edit_set_overwrite_mode(void *text_edit, int is_overwrite) {
+    static_cast<QPlainTextEdit *>(text_edit)->setOverwriteMode(is_overwrite != 0);
+}
+
+void *qt_plain_text_edit_get_vertical_scroll_bar(void *text_edit) {
+    return static_cast<void *>(static_cast<QPlainTextEdit *>(text_edit)->verticalScrollBar());
+}
+
+void *qt_plain_text_edit_get_horizontal_scroll_bar(void *text_edit) {
+    return static_cast<void *>(static_cast<QPlainTextEdit *>(text_edit)->horizontalScrollBar());
 }
 
 /* ── QCheckBox ──────────────────────────────────────────────────────── */
@@ -3864,6 +4042,83 @@ int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t c
 int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data) {
     auto conn = QObject::connect(static_cast<QSystemTrayIcon *>(tray_icon), &QSystemTrayIcon::activated, [callback, user_data](QSystemTrayIcon::ActivationReason reason) {
         callback(static_cast<int>(reason), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_edit_connect_cursor_position_changed(void *text_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextEdit *>(text_edit), &QTextEdit::cursorPositionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_edit_connect_selection_changed(void *text_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextEdit *>(text_edit), &QTextEdit::selectionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_edit_connect_copy_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextEdit *>(text_edit), &QTextEdit::copyAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextEdit *>(text_edit), &QTextEdit::undoAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTextEdit *>(text_edit), &QTextEdit::redoAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_cursor_position_changed(void *text_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::cursorPositionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_selection_changed(void *text_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::selectionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_block_count_changed(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::blockCountChanged, [callback, user_data](int count) {
+        callback(count, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_copy_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::copyAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::undoAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_plain_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::redoAvailable, [callback, user_data](bool available) {
+        callback(available ? 1 : 0, user_data);
     });
     return store_connection(conn);
 }

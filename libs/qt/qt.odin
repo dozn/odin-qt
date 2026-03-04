@@ -928,6 +928,32 @@ Text_Cursor_Selection_Type :: enum c.int {
 	Document = 3,
 }
 
+Find_Flag :: enum c.int {
+	Backward = 1,
+	Case_Sensitively = 2,
+	Whole_Words = 4,
+}
+
+Text_Edit_Line_Wrap_Mode :: enum c.int {
+	No_Wrap = 0,
+	Widget_Width = 1,
+	Fixed_Pixel_Width = 2,
+	Fixed_Column_Width = 3,
+}
+
+Plain_Text_Edit_Line_Wrap_Mode :: enum c.int {
+	No_Wrap = 0,
+	Widget_Width = 1,
+}
+
+Word_Wrap_Mode :: enum c.int {
+	No_Wrap = 0,
+	Word_Wrap = 1,
+	Manual_Wrap = 2,
+	Wrap_Anywhere = 3,
+	Wrap_At_Word_Boundary_Or_Anywhere = 4,
+}
+
 Key_Sequence_Standard_Key :: enum c.int {
 	Unknown_Key = 0,
 	Help_Contents = 1,
@@ -1695,6 +1721,33 @@ foreign qt_lib {
 	@(require_results) text_edit_get_html :: proc(text_edit: Text_Edit) -> cstring ---
 	text_edit_append :: proc(text_edit: Text_Edit, text: cstring) ---
 	text_edit_insert_plain_text :: proc(text_edit: Text_Edit, text: cstring) ---
+	text_edit_set_tab_stop_distance :: proc(text_edit: Text_Edit, distance: c.double) ---
+	@(require_results) text_edit_get_tab_stop_distance :: proc(text_edit: Text_Edit) -> c.double ---
+	text_edit_set_line_wrap_mode :: proc(text_edit: Text_Edit, mode: Text_Edit_Line_Wrap_Mode) ---
+	text_edit_set_word_wrap_mode :: proc(text_edit: Text_Edit, mode: Word_Wrap_Mode) ---
+	text_edit_set_accept_rich_text :: proc(text_edit: Text_Edit, is_accept: c.int) ---
+	@(require_results) text_edit_find :: proc(text_edit: Text_Edit, text: cstring, flags: c.int) -> c.int ---
+	text_edit_undo :: proc(text_edit: Text_Edit) ---
+	text_edit_redo :: proc(text_edit: Text_Edit) ---
+	text_edit_zoom_in :: proc(text_edit: Text_Edit, range: c.int) ---
+	text_edit_zoom_out :: proc(text_edit: Text_Edit, range: c.int) ---
+	@(require_results) text_edit_get_text_cursor :: proc(text_edit: Text_Edit) -> Text_Cursor ---
+	@(require_results) text_edit_get_document :: proc(text_edit: Text_Edit) -> Text_Document ---
+	text_edit_set_current_font :: proc(text_edit: Text_Edit, font: Font_Handle) ---
+	text_edit_set_font_weight :: proc(text_edit: Text_Edit, weight: c.int) ---
+	text_edit_set_font_italic :: proc(text_edit: Text_Edit, is_italic: c.int) ---
+	text_edit_set_font_underline :: proc(text_edit: Text_Edit, is_underline: c.int) ---
+	text_edit_set_font_point_size :: proc(text_edit: Text_Edit, size: c.double) ---
+	text_edit_set_font_family :: proc(text_edit: Text_Edit, family: cstring) ---
+	text_edit_set_text_colour :: proc(text_edit: Text_Edit, colour: Colour_Handle) ---
+	text_edit_set_text_background_colour :: proc(text_edit: Text_Edit, colour: Colour_Handle) ---
+	text_edit_set_alignment :: proc(text_edit: Text_Edit, alignment: c.int) ---
+	text_edit_move_cursor :: proc(text_edit: Text_Edit, operation: Text_Cursor_Move_Operation, mode: Text_Cursor_Move_Mode) ---
+	text_edit_ensure_cursor_visible :: proc(text_edit: Text_Edit) ---
+	text_edit_set_overwrite_mode :: proc(text_edit: Text_Edit, is_overwrite: c.int) ---
+	@(require_results) text_edit_can_paste :: proc(text_edit: Text_Edit) -> c.int ---
+	@(require_results) text_edit_get_vertical_scroll_bar :: proc(text_edit: Text_Edit) -> Scroll_Bar ---
+	@(require_results) text_edit_get_horizontal_scroll_bar :: proc(text_edit: Text_Edit) -> Scroll_Bar ---
 
 	/* QPlainTextEdit */
 
@@ -1706,6 +1759,23 @@ foreign qt_lib {
 	plain_text_edit_clear :: proc(plain_text_edit: Plain_Text_Edit) ---
 	plain_text_edit_append_plain_text :: proc(plain_text_edit: Plain_Text_Edit, text: cstring) ---
 	plain_text_edit_insert_plain_text :: proc(plain_text_edit: Plain_Text_Edit, text: cstring) ---
+	plain_text_edit_set_tab_stop_distance :: proc(plain_text_edit: Plain_Text_Edit, distance: c.double) ---
+	@(require_results) plain_text_edit_get_tab_stop_distance :: proc(plain_text_edit: Plain_Text_Edit) -> c.double ---
+	plain_text_edit_set_line_wrap_mode :: proc(plain_text_edit: Plain_Text_Edit, mode: Plain_Text_Edit_Line_Wrap_Mode) ---
+	@(require_results) plain_text_edit_find :: proc(plain_text_edit: Plain_Text_Edit, text: cstring, flags: c.int) -> c.int ---
+	plain_text_edit_undo :: proc(plain_text_edit: Plain_Text_Edit) ---
+	plain_text_edit_redo :: proc(plain_text_edit: Plain_Text_Edit) ---
+	plain_text_edit_zoom_in :: proc(plain_text_edit: Plain_Text_Edit, range: c.int) ---
+	plain_text_edit_zoom_out :: proc(plain_text_edit: Plain_Text_Edit, range: c.int) ---
+	@(require_results) plain_text_edit_get_text_cursor :: proc(plain_text_edit: Plain_Text_Edit) -> Text_Cursor ---
+	@(require_results) plain_text_edit_get_document :: proc(plain_text_edit: Plain_Text_Edit) -> Text_Document ---
+	@(require_results) plain_text_edit_get_block_count :: proc(plain_text_edit: Plain_Text_Edit) -> c.int ---
+	plain_text_edit_set_maximum_block_count :: proc(plain_text_edit: Plain_Text_Edit, count: c.int) ---
+	plain_text_edit_move_cursor :: proc(plain_text_edit: Plain_Text_Edit, operation: Text_Cursor_Move_Operation, mode: Text_Cursor_Move_Mode) ---
+	plain_text_edit_ensure_cursor_visible :: proc(plain_text_edit: Plain_Text_Edit) ---
+	plain_text_edit_set_overwrite_mode :: proc(plain_text_edit: Plain_Text_Edit, is_overwrite: c.int) ---
+	@(require_results) plain_text_edit_get_vertical_scroll_bar :: proc(plain_text_edit: Plain_Text_Edit) -> Scroll_Bar ---
+	@(require_results) plain_text_edit_get_horizontal_scroll_bar :: proc(plain_text_edit: Plain_Text_Edit) -> Scroll_Bar ---
 
 	/* QCheckBox */
 
@@ -2371,6 +2441,23 @@ foreign qt_lib {
 	progress_dialog_connect_canceled :: proc(progress_dialog: Progress_Dialog, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	text_browser_connect_anchor_clicked :: proc(text_browser: Text_Browser, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
 	system_tray_icon_connect_activated :: proc(system_tray_icon: System_Tray_Icon, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QTextEdit signals */
+
+	text_edit_connect_cursor_position_changed :: proc(text_edit: Text_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	text_edit_connect_selection_changed :: proc(text_edit: Text_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	text_edit_connect_copy_available :: proc(text_edit: Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	text_edit_connect_undo_available :: proc(text_edit: Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	text_edit_connect_redo_available :: proc(text_edit: Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QPlainTextEdit signals */
+
+	plain_text_edit_connect_cursor_position_changed :: proc(plain_text_edit: Plain_Text_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	plain_text_edit_connect_selection_changed :: proc(plain_text_edit: Plain_Text_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	plain_text_edit_connect_block_count_changed :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	plain_text_edit_connect_copy_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	plain_text_edit_connect_undo_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	plain_text_edit_connect_redo_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* Signal disconnection */
 
