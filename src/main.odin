@@ -46,10 +46,13 @@ Demo_State :: struct {
 	// MDI tab
 	mdi_area: qt.Mdi_Area,
 	mdi_counter: c.int,
+	mdi_activated_label: qt.Label,
 	// Undo tab
 	undo_stack: qt.Undo_Stack,
 	undo_counter: c.int,
 	undo_label: qt.Label,
+	// Model/View tab
+	model_signal_log: qt.Plain_Text_Edit,
 	// Advanced Models tab
 	signal_mapper: qt.Signal_Mapper,
 	time_line: qt.Time_Line,
@@ -1266,6 +1269,75 @@ build_model_view_tab :: proc() -> qt.Widget {
 	qt.splitter_add_widget(splitter, auto_cast right_group)
 
 	qt.layout_add_widget(layout, auto_cast splitter)
+
+	// Model signal monitoring (dataChanged, rowsInserted, rowsRemoved)
+	signal_group := qt.group_box_create(nil, "Model Signals (dataChanged / rowsInserted / rowsRemoved)")
+	signal_layout := qt.vbox_layout_create(auto_cast signal_group)
+
+	signal_desc := qt.label_create(nil, "Edit a cell in the table above or click Add Row to see live model signals:")
+	qt.label_set_word_wrap(signal_desc, 1)
+	qt.layout_add_widget(signal_layout, auto_cast signal_desc)
+
+	demo_state.model_signal_log = qt.plain_text_edit_create(nil)
+	qt.plain_text_edit_set_read_only(demo_state.model_signal_log, 1)
+	qt.widget_set_font(auto_cast demo_state.model_signal_log, "Consolas", 9, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.widget_set_maximum_height(auto_cast demo_state.model_signal_log, 100)
+	qt.plain_text_edit_set_plain_text(demo_state.model_signal_log, "(waiting for signals...)")
+	qt.layout_add_widget(signal_layout, auto_cast demo_state.model_signal_log)
+
+	// Connect model signals
+	_ = qt.model_connect_data_changed(auto_cast model, proc"c"(top_left: qt.Model_Index, bottom_right: qt.Model_Index, user_data: rawptr) {
+		context = runtime.default_context()
+		tl_row := qt.model_index_get_row(top_left)
+		tl_col := qt.model_index_get_column(top_left)
+		br_row := qt.model_index_get_row(bottom_right)
+		br_col := qt.model_index_get_column(bottom_right)
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "dataChanged: (%d,%d) to (%d,%d)", tl_row, tl_col, br_row, br_col)
+		buf[len(msg)] = 0
+		qt.plain_text_edit_append_plain_text(demo_state.model_signal_log, cstring(raw_data(buf[:])))
+	}, nil)
+
+	_ = qt.model_connect_rows_inserted(auto_cast model, proc"c"(parent: qt.Model_Index, first: c.int, last: c.int, user_data: rawptr) {
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "rowsInserted: rows %d to %d", first, last)
+		buf[len(msg)] = 0
+		qt.plain_text_edit_append_plain_text(demo_state.model_signal_log, cstring(raw_data(buf[:])))
+	}, nil)
+
+	_ = qt.model_connect_rows_removed(auto_cast model, proc"c"(parent: qt.Model_Index, first: c.int, last: c.int, user_data: rawptr) {
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "rowsRemoved: rows %d to %d", first, last)
+		buf[len(msg)] = 0
+		qt.plain_text_edit_append_plain_text(demo_state.model_signal_log, cstring(raw_data(buf[:])))
+	}, nil)
+
+	// Add Row button to trigger rowsInserted signal
+	signal_btn_row := qt.widget_create(nil)
+	signal_btn_layout := qt.hbox_layout_create(signal_btn_row)
+	add_row_btn := qt.push_button_create(nil, "Add Row")
+	qt.push_button_connect_clicked(add_row_btn, proc"c"(user_data: rawptr) {
+		model_ptr: qt.Standard_Item_Model = auto_cast user_data
+		new_row := [3]qt.Standard_Item{
+			qt.standard_item_create("New"),
+			qt.standard_item_create("Language"),
+			qt.standard_item_create("?/5"),
+		}
+		qt.standard_item_model_append_row(model_ptr, raw_data(new_row[:]), 3)
+		statusbar_show("Row added (check signal log)")
+	}, auto_cast model)
+	qt.layout_add_widget(signal_btn_layout, auto_cast add_row_btn)
+
+	clear_log_btn := qt.push_button_create(nil, "Clear Log")
+	qt.push_button_connect_clicked(clear_log_btn, proc"c"(user_data: rawptr) {
+		qt.plain_text_edit_set_plain_text(demo_state.model_signal_log, "")
+	}, nil)
+	qt.layout_add_widget(signal_btn_layout, auto_cast clear_log_btn)
+	qt.layout_add_widget(signal_layout, signal_btn_row)
+
+	qt.layout_add_widget(layout, auto_cast signal_group)
 	return page
 }
 
@@ -1920,6 +1992,25 @@ build_mdi_wizard_tab :: proc() -> qt.Widget {
 
 	qt.layout_add_widget(mdi_layout, mdi_btn_row)
 	qt.layout_add_widget(mdi_layout, auto_cast demo_state.mdi_area)
+
+	// Sub-window activated signal with pointer
+	demo_state.mdi_activated_label = qt.label_create(nil, "Active sub-window: (none)")
+	qt.widget_set_style_sheet(auto_cast demo_state.mdi_activated_label, "QLabel { padding: 4px; background: #f0f0f0; border: 1px solid #ccc; }")
+	_ = qt.mdi_area_connect_sub_window_activated_with_ptr(demo_state.mdi_area, proc"c"(item: rawptr, column: c.int, user_data: rawptr) {
+		context = runtime.default_context()
+		label: qt.Label = auto_cast user_data
+		if item != nil {
+			title := qt.widget_get_window_title(auto_cast item)
+			buf: [128]u8
+			msg := fmt.bprintf(buf[:], "Active sub-window: \"%s\"", title)
+			buf[len(msg)] = 0
+			qt.label_set_text(label, cstring(raw_data(buf[:])))
+			if title != nil do qt.free_string(title)
+		} else {
+			qt.label_set_text(label, "Active sub-window: (none)")
+		}
+	}, auto_cast demo_state.mdi_activated_label)
+	qt.layout_add_widget(mdi_layout, auto_cast demo_state.mdi_activated_label)
 	qt.layout_add_widget(layout, auto_cast mdi_group)
 
 	// QWizard + QActionGroup
@@ -2513,6 +2604,39 @@ build_core_utilities_tab :: proc() -> qt.Widget {
 	qt.label_set_word_wrap(url_output, 1)
 	qt.layout_add_widget(url_layout, auto_cast url_output)
 	qt.layout_add_widget(layout, auto_cast url_group)
+
+	// QRegularExpressionMatch — match once, query multiple times
+	match_group := qt.group_box_create(nil, "QRegularExpressionMatch \xe2\x80\x94 Match Once, Query Many")
+	match_layout := qt.vbox_layout_create(auto_cast match_group)
+	match_output := qt.label_create(nil, "")
+	{
+		regex := qt.regex_create("(?P<user>\\w+)@(?P<domain>\\w+)\\.(?P<tld>\\w+)")
+		match := qt.regex_match_create(regex, "alice@example.com")
+		has_match := qt.regex_match_has_match(match)
+		captured_count := qt.regex_match_get_captured_count(match)
+		full_match := qt.regex_match_get_captured(match, 0)
+		user_group := qt.regex_match_get_captured_by_name(match, "user")
+		domain_group := qt.regex_match_get_captured_by_name(match, "domain")
+		tld_group := qt.regex_match_get_captured_by_name(match, "tld")
+		user_start := qt.regex_match_get_captured_start(match, 1)
+		user_end := qt.regex_match_get_captured_end(match, 1)
+		user_length := qt.regex_match_get_captured_length(match, 1)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "Pattern: (?P<user>\\w+)@(?P<domain>\\w+)\\.(?P<tld>\\w+)\nSubject: alice@example.com\nHas match: %d, Capture count: %d\nFull: '%s'\nNamed: user='%s', domain='%s', tld='%s'\nGroup 1 position: start=%d, end=%d, length=%d", has_match, captured_count, full_match, user_group, domain_group, tld_group, user_start, user_end, user_length)
+		buf[len(msg)] = 0
+		qt.label_set_text(match_output, cstring(raw_data(buf[:])))
+
+		if full_match != nil do qt.free_string(full_match)
+		if user_group != nil do qt.free_string(user_group)
+		if domain_group != nil do qt.free_string(domain_group)
+		if tld_group != nil do qt.free_string(tld_group)
+		qt.regex_match_destroy(match)
+		qt.regex_destroy(regex)
+	}
+	qt.label_set_word_wrap(match_output, 1)
+	qt.layout_add_widget(match_layout, auto_cast match_output)
+	qt.layout_add_widget(layout, auto_cast match_group)
 
 	// QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber
 	crypto_group := qt.group_box_create(nil, "QCryptographicHash, QElapsedTimer, QRandomGenerator, QVersionNumber")
