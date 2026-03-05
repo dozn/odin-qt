@@ -57,18 +57,11 @@ QStyle, QStyleFactory, QScroller, QScrollerProperties,
 QIdentityProxyModel, QTransposeProxyModel, QConcatenateTablesProxyModel,
 QSignalMapper, QLockFile, QTimeLine, QCalendar, QRandomGenerator,
 QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore,
-QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF
+QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF,
+QPdfWriter, QTextStream, QDataStream, QTextTable, QTextTableCell,
+QTextList, QTextFrame, QDeadlineTimer, QCollator,
+QAbstractItemModel helper (CCustomItemModel)
 
 ---
 
-## Not Yet Implemented
-
-### New Classes to Wrap
-
-#### Medium Priority
-- `QPdfWriter` -- PDF generation
-- `QTextStream` / `QDataStream` -- stream-based I/O
-- `QTextTable` / `QTextList` / `QTextFrame` -- rich text structure manipulation
-- `QDeadlineTimer` -- timeout management with deadline semantics
-- `QCollator` -- locale-aware string comparison and sorting
-- `QAbstractItemModel` helper class -- custom model support (like CPaintableWidget pattern for models)
+All classes have been implemented.

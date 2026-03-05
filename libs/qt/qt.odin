@@ -250,6 +250,15 @@ Event_Loop :: distinct rawptr
 Library :: distinct rawptr
 Shared_Memory :: distinct rawptr
 System_Semaphore :: distinct rawptr
+Deadline_Timer :: distinct rawptr
+Collator :: distinct rawptr
+Pdf_Writer :: distinct rawptr
+Text_Stream :: distinct rawptr
+Data_Stream :: distinct rawptr
+Text_Table :: distinct rawptr
+Text_List :: distinct rawptr
+Text_Frame :: distinct rawptr
+Custom_Item_Model :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -278,6 +287,11 @@ Drag_Enter_Callback :: #type proc"c"(mime_text: cstring, user_data: rawptr) -> c
 Drop_Callback :: #type proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr)
 Four_Int_Callback :: #type proc"c"(a: c.int, b: c.int, c_val: c.int, d: c.int, user_data: rawptr)
 Two_Pointer_Callback :: #type proc"c"(first: rawptr, second: rawptr, user_data: rawptr)
+Model_Row_Count_Callback :: #type proc"c"(parent_index: rawptr, user_data: rawptr) -> c.int
+Model_Column_Count_Callback :: #type proc"c"(parent_index: rawptr, user_data: rawptr) -> c.int
+Model_Data_Callback :: #type proc"c"(index: rawptr, role: c.int, user_data: rawptr) -> cstring
+Model_Flags_Callback :: #type proc"c"(index: rawptr, user_data: rawptr) -> c.int
+Model_Header_Data_Callback :: #type proc"c"(section: c.int, orientation: c.int, role: c.int, user_data: rawptr) -> cstring
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -1731,6 +1745,43 @@ Colour_Spec :: enum c.int {
 Fill_Rule :: enum c.int {
 	Odd_Even = 0,
 	Winding = 1,
+}
+
+Timer_Type :: enum c.int {
+	Precise = 0,
+	Coarse = 1,
+	Very_Coarse = 2,
+}
+
+Text_Stream_Status :: enum c.int {
+	Ok = 0,
+	Read_Past_End = 1,
+	Read_Corrupt_Data = 2,
+	Write_Failed = 3,
+}
+
+Data_Stream_Status :: enum c.int {
+	Ok = 0,
+	Read_Past_End = 1,
+	Read_Corrupt_Data = 2,
+	Write_Failed = 3,
+	Size_Limit_Exceeded = 4,
+}
+
+Data_Stream_Byte_Order :: enum c.int {
+	Big_Endian = 0,
+	Little_Endian = 1,
+}
+
+Data_Stream_Floating_Point_Precision :: enum c.int {
+	Single_Precision = 0,
+	Double_Precision = 1,
+}
+
+Pdf_Version :: enum c.int {
+	Version_1_4 = 0,
+	Version_A1b = 1,
+	Version_1_6 = 2,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -4785,4 +4836,158 @@ foreign qt_lib {
 	@(require_results) system_semaphore_get_error_string :: proc(sem: System_Semaphore) -> cstring ---
 	@(require_results) system_semaphore_get_error :: proc(sem: System_Semaphore) -> System_Semaphore_Error ---
 	system_semaphore_set_key :: proc(sem: System_Semaphore, key: cstring, initial_value: c.int, mode: System_Semaphore_Access_Mode) ---
+
+	/* QDeadlineTimer */
+
+	@(require_results) deadline_timer_create :: proc(msecs: c.longlong, timer_type: Timer_Type) -> Deadline_Timer ---
+	@(require_results) deadline_timer_create_forever :: proc(timer_type: Timer_Type) -> Deadline_Timer ---
+	deadline_timer_destroy :: proc(timer: Deadline_Timer) ---
+	@(require_results) deadline_timer_has_expired :: proc(timer: Deadline_Timer) -> c.int ---
+	@(require_results) deadline_timer_is_forever :: proc(timer: Deadline_Timer) -> c.int ---
+	@(require_results) deadline_timer_get_remaining_time :: proc(timer: Deadline_Timer) -> c.longlong ---
+	@(require_results) deadline_timer_get_remaining_time_nsecs :: proc(timer: Deadline_Timer) -> c.longlong ---
+	@(require_results) deadline_timer_get_deadline :: proc(timer: Deadline_Timer) -> c.longlong ---
+	@(require_results) deadline_timer_get_deadline_nsecs :: proc(timer: Deadline_Timer) -> c.longlong ---
+	deadline_timer_set_remaining_time :: proc(timer: Deadline_Timer, msecs: c.longlong, timer_type: Timer_Type) ---
+	deadline_timer_set_deadline :: proc(timer: Deadline_Timer, msecs: c.longlong, timer_type: Timer_Type) ---
+	deadline_timer_set_timer_type :: proc(timer: Deadline_Timer, timer_type: Timer_Type) ---
+	@(require_results) deadline_timer_get_timer_type :: proc(timer: Deadline_Timer) -> c.int ---
+
+	/* QCollator */
+
+	@(require_results) collator_create :: proc(locale_name: cstring) -> Collator ---
+	collator_destroy :: proc(collator: Collator) ---
+	collator_set_locale :: proc(collator: Collator, locale_name: cstring) ---
+	@(require_results) collator_get_locale :: proc(collator: Collator) -> cstring ---
+	collator_set_case_sensitivity :: proc(collator: Collator, cs: c.int) ---
+	@(require_results) collator_get_case_sensitivity :: proc(collator: Collator) -> c.int ---
+	collator_set_numeric_mode :: proc(collator: Collator, is_on: c.int) ---
+	@(require_results) collator_is_numeric_mode :: proc(collator: Collator) -> c.int ---
+	collator_set_ignore_punctuation :: proc(collator: Collator, is_on: c.int) ---
+	@(require_results) collator_does_ignore_punctuation :: proc(collator: Collator) -> c.int ---
+	@(require_results) collator_compare :: proc(collator: Collator, s1: cstring, s2: cstring) -> c.int ---
+
+	/* QPdfWriter */
+
+	@(require_results) pdf_writer_create :: proc(filename: cstring) -> Pdf_Writer ---
+	pdf_writer_destroy :: proc(writer: Pdf_Writer) ---
+	pdf_writer_set_title :: proc(writer: Pdf_Writer, title: cstring) ---
+	@(require_results) pdf_writer_get_title :: proc(writer: Pdf_Writer) -> cstring ---
+	pdf_writer_set_creator :: proc(writer: Pdf_Writer, creator: cstring) ---
+	@(require_results) pdf_writer_get_creator :: proc(writer: Pdf_Writer) -> cstring ---
+	@(require_results) pdf_writer_new_page :: proc(writer: Pdf_Writer) -> c.int ---
+	pdf_writer_set_resolution :: proc(writer: Pdf_Writer, dpi: c.int) ---
+	@(require_results) pdf_writer_get_resolution :: proc(writer: Pdf_Writer) -> c.int ---
+	pdf_writer_set_page_size :: proc(writer: Pdf_Writer, page_size_id: c.int) ---
+	pdf_writer_set_page_orientation :: proc(writer: Pdf_Writer, orientation: c.int) ---
+	pdf_writer_set_page_margins :: proc(writer: Pdf_Writer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) ---
+	pdf_writer_set_pdf_version :: proc(writer: Pdf_Writer, version: Pdf_Version) ---
+	@(require_results) pdf_writer_get_pdf_version :: proc(writer: Pdf_Writer) -> c.int ---
+
+	/* QTextStream */
+
+	@(require_results) text_stream_create_file :: proc(filename: cstring, mode: c.int) -> Text_Stream ---
+	@(require_results) text_stream_create_string :: proc() -> Text_Stream ---
+	text_stream_destroy :: proc(stream: Text_Stream) ---
+	text_stream_write_string :: proc(stream: Text_Stream, text: cstring) ---
+	text_stream_write_int :: proc(stream: Text_Stream, value: c.int) ---
+	text_stream_write_double :: proc(stream: Text_Stream, value: c.double) ---
+	@(require_results) text_stream_read_line :: proc(stream: Text_Stream) -> cstring ---
+	@(require_results) text_stream_read_all :: proc(stream: Text_Stream) -> cstring ---
+	@(require_results) text_stream_is_at_end :: proc(stream: Text_Stream) -> c.int ---
+	text_stream_flush :: proc(stream: Text_Stream) ---
+	text_stream_seek :: proc(stream: Text_Stream, pos: c.longlong) ---
+	@(require_results) text_stream_get_pos :: proc(stream: Text_Stream) -> c.longlong ---
+	@(require_results) text_stream_get_status :: proc(stream: Text_Stream) -> Text_Stream_Status ---
+	text_stream_reset_status :: proc(stream: Text_Stream) ---
+	@(require_results) text_stream_get_string :: proc(stream: Text_Stream) -> cstring ---
+
+	/* QDataStream */
+
+	@(require_results) data_stream_create_file :: proc(filename: cstring, mode: c.int) -> Data_Stream ---
+	@(require_results) data_stream_create_buffer :: proc() -> Data_Stream ---
+	data_stream_destroy :: proc(stream: Data_Stream) ---
+	data_stream_write_int8 :: proc(stream: Data_Stream, value: c.int) ---
+	data_stream_write_int16 :: proc(stream: Data_Stream, value: c.int) ---
+	data_stream_write_int32 :: proc(stream: Data_Stream, value: c.int) ---
+	data_stream_write_int64 :: proc(stream: Data_Stream, value: c.longlong) ---
+	data_stream_write_float :: proc(stream: Data_Stream, value: c.float) ---
+	data_stream_write_double :: proc(stream: Data_Stream, value: c.double) ---
+	data_stream_write_string :: proc(stream: Data_Stream, text: cstring) ---
+	@(require_results) data_stream_read_int8 :: proc(stream: Data_Stream) -> c.int ---
+	@(require_results) data_stream_read_int16 :: proc(stream: Data_Stream) -> c.int ---
+	@(require_results) data_stream_read_int32 :: proc(stream: Data_Stream) -> c.int ---
+	@(require_results) data_stream_read_int64 :: proc(stream: Data_Stream) -> c.longlong ---
+	@(require_results) data_stream_read_float :: proc(stream: Data_Stream) -> c.float ---
+	@(require_results) data_stream_read_double :: proc(stream: Data_Stream) -> c.double ---
+	@(require_results) data_stream_read_string :: proc(stream: Data_Stream) -> cstring ---
+	@(require_results) data_stream_is_at_end :: proc(stream: Data_Stream) -> c.int ---
+	@(require_results) data_stream_get_status :: proc(stream: Data_Stream) -> Data_Stream_Status ---
+	data_stream_reset_status :: proc(stream: Data_Stream) ---
+	data_stream_set_byte_order :: proc(stream: Data_Stream, order: Data_Stream_Byte_Order) ---
+	@(require_results) data_stream_get_byte_order :: proc(stream: Data_Stream) -> Data_Stream_Byte_Order ---
+	data_stream_set_version :: proc(stream: Data_Stream, version: c.int) ---
+	@(require_results) data_stream_get_version :: proc(stream: Data_Stream) -> c.int ---
+	@(require_results) data_stream_get_buffer :: proc(stream: Data_Stream) -> rawptr ---
+
+	/* QTextTable */
+
+	text_table_resize :: proc(table: Text_Table, rows: c.int, cols: c.int) ---
+	text_table_insert_rows :: proc(table: Text_Table, pos: c.int, count: c.int) ---
+	text_table_insert_columns :: proc(table: Text_Table, pos: c.int, count: c.int) ---
+	text_table_append_rows :: proc(table: Text_Table, count: c.int) ---
+	text_table_append_columns :: proc(table: Text_Table, count: c.int) ---
+	text_table_remove_rows :: proc(table: Text_Table, pos: c.int, count: c.int) ---
+	text_table_remove_columns :: proc(table: Text_Table, pos: c.int, count: c.int) ---
+	text_table_merge_cells :: proc(table: Text_Table, row: c.int, col: c.int, num_rows: c.int, num_cols: c.int) ---
+	text_table_split_cell :: proc(table: Text_Table, row: c.int, col: c.int, num_rows: c.int, num_cols: c.int) ---
+	@(require_results) text_table_get_rows :: proc(table: Text_Table) -> c.int ---
+	@(require_results) text_table_get_columns :: proc(table: Text_Table) -> c.int ---
+
+	/* QTextTableCell */
+
+	@(require_results) text_table_cell_get_row :: proc(table: Text_Table, row: c.int, col: c.int) -> c.int ---
+	@(require_results) text_table_cell_get_column :: proc(table: Text_Table, row: c.int, col: c.int) -> c.int ---
+	@(require_results) text_table_cell_get_row_span :: proc(table: Text_Table, row: c.int, col: c.int) -> c.int ---
+	@(require_results) text_table_cell_get_column_span :: proc(table: Text_Table, row: c.int, col: c.int) -> c.int ---
+	@(require_results) text_table_cell_is_valid :: proc(table: Text_Table, row: c.int, col: c.int) -> c.int ---
+	@(require_results) text_table_cell_get_first_cursor_position :: proc(table: Text_Table, row: c.int, col: c.int) -> Text_Cursor ---
+	@(require_results) text_table_cell_get_last_cursor_position :: proc(table: Text_Table, row: c.int, col: c.int) -> Text_Cursor ---
+
+	/* QTextList */
+
+	@(require_results) text_list_get_count :: proc(list: Text_List) -> c.int ---
+	@(require_results) text_list_get_item :: proc(list: Text_List, index: c.int) -> Text_Block ---
+	@(require_results) text_list_get_item_number :: proc(list: Text_List, block: Text_Block) -> c.int ---
+	@(require_results) text_list_get_item_text :: proc(list: Text_List, block: Text_Block) -> cstring ---
+	text_list_remove_item :: proc(list: Text_List, index: c.int) ---
+	text_list_add :: proc(list: Text_List, block: Text_Block) ---
+	text_list_set_style :: proc(list: Text_List, style: Text_List_Style) ---
+	@(require_results) text_list_get_style :: proc(list: Text_List) -> Text_List_Style ---
+
+	/* QTextFrame */
+
+	@(require_results) text_frame_get_first_cursor_position :: proc(frame: Text_Frame) -> Text_Cursor ---
+	@(require_results) text_frame_get_last_cursor_position :: proc(frame: Text_Frame) -> Text_Cursor ---
+	@(require_results) text_frame_get_first_position :: proc(frame: Text_Frame) -> c.int ---
+	@(require_results) text_frame_get_last_position :: proc(frame: Text_Frame) -> c.int ---
+	@(require_results) text_frame_get_parent_frame :: proc(frame: Text_Frame) -> Text_Frame ---
+	text_frame_get_child_frames :: proc(frame: Text_Frame, out_items: ^rawptr, out_count: ^c.int) ---
+
+	/* QAbstractItemModel helper (CCustomItemModel) */
+
+	@(require_results) custom_item_model_create :: proc(row_count_cb: Model_Row_Count_Callback, column_count_cb: Model_Column_Count_Callback, data_cb: Model_Data_Callback, flags_cb: Model_Flags_Callback, header_data_cb: Model_Header_Data_Callback, user_data: rawptr) -> Custom_Item_Model ---
+	custom_item_model_destroy :: proc(model: Custom_Item_Model) ---
+	custom_item_model_begin_reset :: proc(model: Custom_Item_Model) ---
+	custom_item_model_end_reset :: proc(model: Custom_Item_Model) ---
+	custom_item_model_begin_insert_rows :: proc(model: Custom_Item_Model, parent: rawptr, first: c.int, last: c.int) ---
+	custom_item_model_end_insert_rows :: proc(model: Custom_Item_Model) ---
+	custom_item_model_begin_remove_rows :: proc(model: Custom_Item_Model, parent: rawptr, first: c.int, last: c.int) ---
+	custom_item_model_end_remove_rows :: proc(model: Custom_Item_Model) ---
+	custom_item_model_begin_insert_columns :: proc(model: Custom_Item_Model, parent: rawptr, first: c.int, last: c.int) ---
+	custom_item_model_end_insert_columns :: proc(model: Custom_Item_Model) ---
+	custom_item_model_begin_remove_columns :: proc(model: Custom_Item_Model, parent: rawptr, first: c.int, last: c.int) ---
+	custom_item_model_end_remove_columns :: proc(model: Custom_Item_Model) ---
+	custom_item_model_emit_data_changed :: proc(model: Custom_Item_Model, top_left: rawptr, bottom_right: rawptr) ---
+	@(require_results) custom_item_model_create_index :: proc(model: Custom_Item_Model, row: c.int, column: c.int, parent: rawptr) -> rawptr ---
 }

@@ -227,6 +227,11 @@
 #include <QLibrary>
 #include <QSharedMemory>
 #include <QSystemSemaphore>
+#include <QDeadlineTimer>
+#include <QCollator>
+#include <QPdfWriter>
+#include <QTextStream>
+#include <QDataStream>
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
@@ -12096,6 +12101,764 @@ void qt_system_semaphore_set_key(void *sem, const char *key, int initial_value, 
     static_cast<QSystemSemaphore *>(sem)->setKey(
         QString::fromUtf8(key), initial_value,
         static_cast<QSystemSemaphore::AccessMode>(mode));
+}
+
+/* ── QDeadlineTimer ────────────────────────────────────────────────── */
+
+void *qt_deadline_timer_create(long long msecs, int timer_type) {
+    return static_cast<void *>(new QDeadlineTimer(msecs, static_cast<Qt::TimerType>(timer_type)));
+}
+
+void *qt_deadline_timer_create_forever(int timer_type) {
+    return static_cast<void *>(new QDeadlineTimer(QDeadlineTimer::Forever, static_cast<Qt::TimerType>(timer_type)));
+}
+
+void qt_deadline_timer_destroy(void *timer) {
+    delete static_cast<QDeadlineTimer *>(timer);
+}
+
+int qt_deadline_timer_has_expired(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->hasExpired() ? 1 : 0;
+}
+
+int qt_deadline_timer_is_forever(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->isForever() ? 1 : 0;
+}
+
+long long qt_deadline_timer_get_remaining_time(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->remainingTime();
+}
+
+long long qt_deadline_timer_get_remaining_time_nsecs(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->remainingTimeNSecs();
+}
+
+long long qt_deadline_timer_get_deadline(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->deadline();
+}
+
+long long qt_deadline_timer_get_deadline_nsecs(void *timer) {
+    return static_cast<QDeadlineTimer *>(timer)->deadlineNSecs();
+}
+
+void qt_deadline_timer_set_remaining_time(void *timer, long long msecs, int timer_type) {
+    static_cast<QDeadlineTimer *>(timer)->setRemainingTime(msecs, static_cast<Qt::TimerType>(timer_type));
+}
+
+void qt_deadline_timer_set_deadline(void *timer, long long msecs, int timer_type) {
+    static_cast<QDeadlineTimer *>(timer)->setDeadline(msecs, static_cast<Qt::TimerType>(timer_type));
+}
+
+void qt_deadline_timer_set_timer_type(void *timer, int timer_type) {
+    static_cast<QDeadlineTimer *>(timer)->setTimerType(static_cast<Qt::TimerType>(timer_type));
+}
+
+int qt_deadline_timer_get_timer_type(void *timer) {
+    return static_cast<int>(static_cast<QDeadlineTimer *>(timer)->timerType());
+}
+
+/* ── QCollator ─────────────────────────────────────────────────────── */
+
+void *qt_collator_create(const char *locale_name) {
+    if (locale_name && locale_name[0])
+        return static_cast<void *>(new QCollator(QLocale(QString::fromUtf8(locale_name))));
+    return static_cast<void *>(new QCollator());
+}
+
+void qt_collator_destroy(void *collator) {
+    delete static_cast<QCollator *>(collator);
+}
+
+void qt_collator_set_locale(void *collator, const char *locale_name) {
+    static_cast<QCollator *>(collator)->setLocale(QLocale(QString::fromUtf8(locale_name)));
+}
+
+char *qt_collator_get_locale(void *collator) {
+    return qstring_to_heap_utf8(static_cast<QCollator *>(collator)->locale().name());
+}
+
+void qt_collator_set_case_sensitivity(void *collator, int cs) {
+    static_cast<QCollator *>(collator)->setCaseSensitivity(static_cast<Qt::CaseSensitivity>(cs));
+}
+
+int qt_collator_get_case_sensitivity(void *collator) {
+    return static_cast<int>(static_cast<QCollator *>(collator)->caseSensitivity());
+}
+
+void qt_collator_set_numeric_mode(void *collator, int is_on) {
+    static_cast<QCollator *>(collator)->setNumericMode(is_on != 0);
+}
+
+int qt_collator_is_numeric_mode(void *collator) {
+    return static_cast<QCollator *>(collator)->numericMode() ? 1 : 0;
+}
+
+void qt_collator_set_ignore_punctuation(void *collator, int is_on) {
+    static_cast<QCollator *>(collator)->setIgnorePunctuation(is_on != 0);
+}
+
+int qt_collator_does_ignore_punctuation(void *collator) {
+    return static_cast<QCollator *>(collator)->ignorePunctuation() ? 1 : 0;
+}
+
+int qt_collator_compare(void *collator, const char *s1, const char *s2) {
+    return static_cast<QCollator *>(collator)->compare(
+        QString::fromUtf8(s1), QString::fromUtf8(s2));
+}
+
+/* ── QPdfWriter ────────────────────────────────────────────────────── */
+
+void *qt_pdf_writer_create(const char *filename) {
+    return static_cast<void *>(new QPdfWriter(QString::fromUtf8(filename)));
+}
+
+void qt_pdf_writer_destroy(void *writer) {
+    delete static_cast<QPdfWriter *>(writer);
+}
+
+void qt_pdf_writer_set_title(void *writer, const char *title) {
+    static_cast<QPdfWriter *>(writer)->setTitle(QString::fromUtf8(title));
+}
+
+char *qt_pdf_writer_get_title(void *writer) {
+    return qstring_to_heap_utf8(static_cast<QPdfWriter *>(writer)->title());
+}
+
+void qt_pdf_writer_set_creator(void *writer, const char *creator) {
+    static_cast<QPdfWriter *>(writer)->setCreator(QString::fromUtf8(creator));
+}
+
+char *qt_pdf_writer_get_creator(void *writer) {
+    return qstring_to_heap_utf8(static_cast<QPdfWriter *>(writer)->creator());
+}
+
+int qt_pdf_writer_new_page(void *writer) {
+    return static_cast<QPdfWriter *>(writer)->newPage() ? 1 : 0;
+}
+
+void qt_pdf_writer_set_resolution(void *writer, int dpi) {
+    static_cast<QPdfWriter *>(writer)->setResolution(dpi);
+}
+
+int qt_pdf_writer_get_resolution(void *writer) {
+    return static_cast<QPdfWriter *>(writer)->resolution();
+}
+
+void qt_pdf_writer_set_page_size(void *writer, int page_size_id) {
+    static_cast<QPdfWriter *>(writer)->setPageSize(QPageSize(static_cast<QPageSize::PageSizeId>(page_size_id)));
+}
+
+void qt_pdf_writer_set_page_orientation(void *writer, int orientation) {
+    static_cast<QPdfWriter *>(writer)->setPageOrientation(static_cast<QPageLayout::Orientation>(orientation));
+}
+
+void qt_pdf_writer_set_page_margins(void *writer, double left, double top, double right, double bottom, int unit) {
+    static_cast<QPdfWriter *>(writer)->setPageMargins(
+        QMarginsF(left, top, right, bottom),
+        static_cast<QPageLayout::Unit>(unit));
+}
+
+void qt_pdf_writer_set_pdf_version(void *writer, int version) {
+    static_cast<QPdfWriter *>(writer)->setPdfVersion(
+        static_cast<QPagedPaintDevice::PdfVersion>(version));
+}
+
+int qt_pdf_writer_get_pdf_version(void *writer) {
+    return static_cast<int>(static_cast<QPdfWriter *>(writer)->pdfVersion());
+}
+
+/* ── QTextStream ───────────────────────────────────────────────────── */
+
+struct CTextStreamWrapper {
+    QFile *file;
+    QString *string_buf;
+    QTextStream *stream;
+};
+
+void *qt_text_stream_create_file(const char *filename, int mode) {
+    auto *w = new CTextStreamWrapper();
+    w->file = new QFile(QString::fromUtf8(filename));
+    w->file->open(static_cast<QIODevice::OpenMode>(mode));
+    w->string_buf = nullptr;
+    w->stream = new QTextStream(w->file);
+    return static_cast<void *>(w);
+}
+
+void *qt_text_stream_create_string(void) {
+    auto *w = new CTextStreamWrapper();
+    w->file = nullptr;
+    w->string_buf = new QString();
+    w->stream = new QTextStream(w->string_buf, QIODevice::ReadWrite);
+    return static_cast<void *>(w);
+}
+
+void qt_text_stream_destroy(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    delete w->stream;
+    if (w->file) {
+        w->file->close();
+        delete w->file;
+    }
+    delete w->string_buf;
+    delete w;
+}
+
+void qt_text_stream_write_string(void *stream, const char *text) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    *w->stream << QString::fromUtf8(text);
+}
+
+void qt_text_stream_write_int(void *stream, int value) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    *w->stream << value;
+}
+
+void qt_text_stream_write_double(void *stream, double value) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    *w->stream << value;
+}
+
+char *qt_text_stream_read_line(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    return qstring_to_heap_utf8(w->stream->readLine());
+}
+
+char *qt_text_stream_read_all(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    return qstring_to_heap_utf8(w->stream->readAll());
+}
+
+int qt_text_stream_is_at_end(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    return w->stream->atEnd() ? 1 : 0;
+}
+
+void qt_text_stream_flush(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    w->stream->flush();
+}
+
+void qt_text_stream_seek(void *stream, long long pos) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    w->stream->seek(pos);
+}
+
+long long qt_text_stream_get_pos(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    return w->stream->pos();
+}
+
+int qt_text_stream_get_status(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    return static_cast<int>(w->stream->status());
+}
+
+void qt_text_stream_reset_status(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    w->stream->resetStatus();
+}
+
+char *qt_text_stream_get_string(void *stream) {
+    auto *w = static_cast<CTextStreamWrapper *>(stream);
+    if (w->string_buf)
+        return qstring_to_heap_utf8(*w->string_buf);
+    return qstring_to_heap_utf8(QString());
+}
+
+/* ── QDataStream ───────────────────────────────────────────────────── */
+
+struct CDataStreamWrapper {
+    QFile *file;
+    QBuffer *buffer;
+    QByteArray *byte_array;
+    QDataStream *stream;
+};
+
+void *qt_data_stream_create_file(const char *filename, int mode) {
+    auto *w = new CDataStreamWrapper();
+    w->file = new QFile(QString::fromUtf8(filename));
+    w->file->open(static_cast<QIODevice::OpenMode>(mode));
+    w->buffer = nullptr;
+    w->byte_array = nullptr;
+    w->stream = new QDataStream(w->file);
+    return static_cast<void *>(w);
+}
+
+void *qt_data_stream_create_buffer(void) {
+    auto *w = new CDataStreamWrapper();
+    w->file = nullptr;
+    w->byte_array = new QByteArray();
+    w->buffer = new QBuffer(w->byte_array);
+    w->buffer->open(QIODevice::ReadWrite);
+    w->stream = new QDataStream(w->buffer);
+    return static_cast<void *>(w);
+}
+
+void qt_data_stream_destroy(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    delete w->stream;
+    if (w->file) {
+        w->file->close();
+        delete w->file;
+    }
+    delete w->buffer;
+    delete w->byte_array;
+    delete w;
+}
+
+void qt_data_stream_write_int8(void *stream, int value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << static_cast<qint8>(value);
+}
+
+void qt_data_stream_write_int16(void *stream, int value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << static_cast<qint16>(value);
+}
+
+void qt_data_stream_write_int32(void *stream, int value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << static_cast<qint32>(value);
+}
+
+void qt_data_stream_write_int64(void *stream, long long value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << static_cast<qint64>(value);
+}
+
+void qt_data_stream_write_float(void *stream, float value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << value;
+}
+
+void qt_data_stream_write_double(void *stream, double value) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << value;
+}
+
+void qt_data_stream_write_string(void *stream, const char *text) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    *w->stream << QString::fromUtf8(text);
+}
+
+int qt_data_stream_read_int8(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    qint8 val = 0;
+    *w->stream >> val;
+    return static_cast<int>(val);
+}
+
+int qt_data_stream_read_int16(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    qint16 val = 0;
+    *w->stream >> val;
+    return static_cast<int>(val);
+}
+
+int qt_data_stream_read_int32(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    qint32 val = 0;
+    *w->stream >> val;
+    return static_cast<int>(val);
+}
+
+long long qt_data_stream_read_int64(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    qint64 val = 0;
+    *w->stream >> val;
+    return static_cast<long long>(val);
+}
+
+float qt_data_stream_read_float(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    float val = 0.0f;
+    *w->stream >> val;
+    return val;
+}
+
+double qt_data_stream_read_double(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    double val = 0.0;
+    *w->stream >> val;
+    return val;
+}
+
+char *qt_data_stream_read_string(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    QString val;
+    *w->stream >> val;
+    return qstring_to_heap_utf8(val);
+}
+
+int qt_data_stream_is_at_end(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    return w->stream->atEnd() ? 1 : 0;
+}
+
+int qt_data_stream_get_status(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    return static_cast<int>(w->stream->status());
+}
+
+void qt_data_stream_reset_status(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    w->stream->resetStatus();
+}
+
+void qt_data_stream_set_byte_order(void *stream, int order) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    w->stream->setByteOrder(static_cast<QDataStream::ByteOrder>(order));
+}
+
+int qt_data_stream_get_byte_order(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    return static_cast<int>(w->stream->byteOrder());
+}
+
+void qt_data_stream_set_version(void *stream, int version) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    w->stream->setVersion(version);
+}
+
+int qt_data_stream_get_version(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    return w->stream->version();
+}
+
+void *qt_data_stream_get_buffer(void *stream) {
+    auto *w = static_cast<CDataStreamWrapper *>(stream);
+    if (w->byte_array) {
+        QByteArray data = *w->byte_array;
+        int size = data.size();
+        char *result = static_cast<char *>(malloc(size));
+        if (result)
+            memcpy(result, data.constData(), size);
+        return static_cast<void *>(result);
+    }
+    return nullptr;
+}
+
+/* ── QTextTable ────────────────────────────────────────────────────── */
+
+void qt_text_table_resize(void *table, int rows, int cols) {
+    static_cast<QTextTable *>(table)->resize(rows, cols);
+}
+
+void qt_text_table_insert_rows(void *table, int pos, int count) {
+    static_cast<QTextTable *>(table)->insertRows(pos, count);
+}
+
+void qt_text_table_insert_columns(void *table, int pos, int count) {
+    static_cast<QTextTable *>(table)->insertColumns(pos, count);
+}
+
+void qt_text_table_append_rows(void *table, int count) {
+    static_cast<QTextTable *>(table)->appendRows(count);
+}
+
+void qt_text_table_append_columns(void *table, int count) {
+    static_cast<QTextTable *>(table)->appendColumns(count);
+}
+
+void qt_text_table_remove_rows(void *table, int pos, int count) {
+    static_cast<QTextTable *>(table)->removeRows(pos, count);
+}
+
+void qt_text_table_remove_columns(void *table, int pos, int count) {
+    static_cast<QTextTable *>(table)->removeColumns(pos, count);
+}
+
+void qt_text_table_merge_cells(void *table, int row, int col, int num_rows, int num_cols) {
+    static_cast<QTextTable *>(table)->mergeCells(row, col, num_rows, num_cols);
+}
+
+void qt_text_table_split_cell(void *table, int row, int col, int num_rows, int num_cols) {
+    static_cast<QTextTable *>(table)->splitCell(row, col, num_rows, num_cols);
+}
+
+int qt_text_table_get_rows(void *table) {
+    return static_cast<QTextTable *>(table)->rows();
+}
+
+int qt_text_table_get_columns(void *table) {
+    return static_cast<QTextTable *>(table)->columns();
+}
+
+/* ── QTextTableCell ────────────────────────────────────────────────── */
+
+int qt_text_table_cell_get_row(void *table, int row, int col) {
+    return static_cast<QTextTable *>(table)->cellAt(row, col).row();
+}
+
+int qt_text_table_cell_get_column(void *table, int row, int col) {
+    return static_cast<QTextTable *>(table)->cellAt(row, col).column();
+}
+
+int qt_text_table_cell_get_row_span(void *table, int row, int col) {
+    return static_cast<QTextTable *>(table)->cellAt(row, col).rowSpan();
+}
+
+int qt_text_table_cell_get_column_span(void *table, int row, int col) {
+    return static_cast<QTextTable *>(table)->cellAt(row, col).columnSpan();
+}
+
+int qt_text_table_cell_is_valid(void *table, int row, int col) {
+    return static_cast<QTextTable *>(table)->cellAt(row, col).isValid() ? 1 : 0;
+}
+
+void *qt_text_table_cell_get_first_cursor_position(void *table, int row, int col) {
+    QTextCursor cursor = static_cast<QTextTable *>(table)->cellAt(row, col).firstCursorPosition();
+    return static_cast<void *>(new QTextCursor(cursor));
+}
+
+void *qt_text_table_cell_get_last_cursor_position(void *table, int row, int col) {
+    QTextCursor cursor = static_cast<QTextTable *>(table)->cellAt(row, col).lastCursorPosition();
+    return static_cast<void *>(new QTextCursor(cursor));
+}
+
+/* ── QTextList ─────────────────────────────────────────────────────── */
+
+int qt_text_list_get_count(void *list) {
+    return static_cast<QTextList *>(list)->count();
+}
+
+void *qt_text_list_get_item(void *list, int index) {
+    QTextBlock block = static_cast<QTextList *>(list)->item(index);
+    return static_cast<void *>(new QTextBlock(block));
+}
+
+int qt_text_list_get_item_number(void *list, void *block) {
+    return static_cast<QTextList *>(list)->itemNumber(*static_cast<QTextBlock *>(block));
+}
+
+char *qt_text_list_get_item_text(void *list, void *block) {
+    return qstring_to_heap_utf8(static_cast<QTextList *>(list)->itemText(*static_cast<QTextBlock *>(block)));
+}
+
+void qt_text_list_remove_item(void *list, int index) {
+    static_cast<QTextList *>(list)->removeItem(index);
+}
+
+void qt_text_list_add(void *list, void *block) {
+    static_cast<QTextList *>(list)->add(*static_cast<QTextBlock *>(block));
+}
+
+void qt_text_list_set_style(void *list, int style) {
+    QTextListFormat fmt = static_cast<QTextList *>(list)->format();
+    fmt.setStyle(static_cast<QTextListFormat::Style>(style));
+    static_cast<QTextList *>(list)->setFormat(fmt);
+}
+
+int qt_text_list_get_style(void *list) {
+    return static_cast<int>(static_cast<QTextList *>(list)->format().style());
+}
+
+/* ── QTextFrame ────────────────────────────────────────────────────── */
+
+void *qt_text_frame_get_first_cursor_position(void *frame) {
+    QTextCursor cursor = static_cast<QTextFrame *>(frame)->firstCursorPosition();
+    return static_cast<void *>(new QTextCursor(cursor));
+}
+
+void *qt_text_frame_get_last_cursor_position(void *frame) {
+    QTextCursor cursor = static_cast<QTextFrame *>(frame)->lastCursorPosition();
+    return static_cast<void *>(new QTextCursor(cursor));
+}
+
+int qt_text_frame_get_first_position(void *frame) {
+    return static_cast<QTextFrame *>(frame)->firstPosition();
+}
+
+int qt_text_frame_get_last_position(void *frame) {
+    return static_cast<QTextFrame *>(frame)->lastPosition();
+}
+
+void *qt_text_frame_get_parent_frame(void *frame) {
+    return static_cast<void *>(static_cast<QTextFrame *>(frame)->parentFrame());
+}
+
+void qt_text_frame_get_child_frames(void *frame, void **out_items, int *out_count) {
+    QList<QTextFrame *> frames = static_cast<QTextFrame *>(frame)->childFrames();
+    *out_count = frames.size();
+    if (*out_count > 0) {
+        void **arr = static_cast<void **>(malloc(sizeof(void *) * (*out_count)));
+        for (int i = 0; i < *out_count; ++i)
+            arr[i] = static_cast<void *>(frames[i]);
+        *out_items = reinterpret_cast<void *>(arr);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+/* ── QAbstractItemModel helper (CCustomItemModel) ──────────────────── */
+
+class CCustomItemModel : public QAbstractItemModel {
+public:
+    CCustomItemModel(
+        qt_model_row_count_callback_t    row_count_cb,
+        qt_model_column_count_callback_t column_count_cb,
+        qt_model_data_callback_t         data_cb,
+        qt_model_flags_callback_t        flags_cb,
+        qt_model_header_data_callback_t  header_data_cb,
+        void *user_data)
+        : m_row_count_cb(row_count_cb)
+        , m_column_count_cb(column_count_cb)
+        , m_data_cb(data_cb)
+        , m_flags_cb(flags_cb)
+        , m_header_data_cb(header_data_cb)
+        , m_user_data(user_data) {}
+
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override {
+        if (!hasIndex(row, column, parent))
+            return QModelIndex();
+        return createIndex(row, column);
+    }
+
+    QModelIndex parent(const QModelIndex &) const override {
+        return QModelIndex();
+    }
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override {
+        if (!m_row_count_cb) return 0;
+        QModelIndex *heap_parent = new QModelIndex(parent);
+        int result = m_row_count_cb(static_cast<void *>(heap_parent), m_user_data);
+        delete heap_parent;
+        return result;
+    }
+
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override {
+        if (!m_column_count_cb) return 0;
+        QModelIndex *heap_parent = new QModelIndex(parent);
+        int result = m_column_count_cb(static_cast<void *>(heap_parent), m_user_data);
+        delete heap_parent;
+        return result;
+    }
+
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override {
+        if (!m_data_cb || !index.isValid()) return QVariant();
+        QModelIndex *heap_index = new QModelIndex(index);
+        char *result = m_data_cb(static_cast<void *>(heap_index), role, m_user_data);
+        delete heap_index;
+        if (result) {
+            QString str = QString::fromUtf8(result);
+            free(result);
+            return str;
+        }
+        return QVariant();
+    }
+
+    Qt::ItemFlags flags(const QModelIndex &index) const override {
+        if (!m_flags_cb)
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+        QModelIndex *heap_index = new QModelIndex(index);
+        int result = m_flags_cb(static_cast<void *>(heap_index), m_user_data);
+        delete heap_index;
+        return static_cast<Qt::ItemFlags>(result);
+    }
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override {
+        if (!m_header_data_cb) return QVariant();
+        char *result = m_header_data_cb(section, static_cast<int>(orientation), role, m_user_data);
+        if (result) {
+            QString str = QString::fromUtf8(result);
+            free(result);
+            return str;
+        }
+        return QVariant();
+    }
+
+    void publicBeginResetModel() { beginResetModel(); }
+    void publicEndResetModel() { endResetModel(); }
+    void publicBeginInsertRows(const QModelIndex &parent, int first, int last) { beginInsertRows(parent, first, last); }
+    void publicEndInsertRows() { endInsertRows(); }
+    void publicBeginRemoveRows(const QModelIndex &parent, int first, int last) { beginRemoveRows(parent, first, last); }
+    void publicEndRemoveRows() { endRemoveRows(); }
+    void publicBeginInsertColumns(const QModelIndex &parent, int first, int last) { beginInsertColumns(parent, first, last); }
+    void publicEndInsertColumns() { endInsertColumns(); }
+    void publicBeginRemoveColumns(const QModelIndex &parent, int first, int last) { beginRemoveColumns(parent, first, last); }
+    void publicEndRemoveColumns() { endRemoveColumns(); }
+    void publicEmitDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight) { emit dataChanged(topLeft, bottomRight); }
+    QModelIndex publicCreateIndex(int row, int column) { return createIndex(row, column); }
+
+private:
+    qt_model_row_count_callback_t    m_row_count_cb;
+    qt_model_column_count_callback_t m_column_count_cb;
+    qt_model_data_callback_t         m_data_cb;
+    qt_model_flags_callback_t        m_flags_cb;
+    qt_model_header_data_callback_t  m_header_data_cb;
+    void *m_user_data;
+};
+
+void *qt_custom_item_model_create(
+    qt_model_row_count_callback_t    row_count_cb,
+    qt_model_column_count_callback_t column_count_cb,
+    qt_model_data_callback_t         data_cb,
+    qt_model_flags_callback_t        flags_cb,
+    qt_model_header_data_callback_t  header_data_cb,
+    void *user_data)
+{
+    return static_cast<void *>(new CCustomItemModel(
+        row_count_cb, column_count_cb, data_cb, flags_cb, header_data_cb, user_data));
+}
+
+void qt_custom_item_model_destroy(void *model) {
+    delete static_cast<CCustomItemModel *>(model);
+}
+
+void qt_custom_item_model_begin_reset(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicBeginResetModel();
+}
+
+void qt_custom_item_model_end_reset(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicEndResetModel();
+}
+
+void qt_custom_item_model_begin_insert_rows(void *model, void *parent, int first, int last) {
+    QModelIndex parent_idx = parent ? *static_cast<QModelIndex *>(parent) : QModelIndex();
+    static_cast<CCustomItemModel *>(model)->publicBeginInsertRows(parent_idx, first, last);
+}
+
+void qt_custom_item_model_end_insert_rows(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicEndInsertRows();
+}
+
+void qt_custom_item_model_begin_remove_rows(void *model, void *parent, int first, int last) {
+    QModelIndex parent_idx = parent ? *static_cast<QModelIndex *>(parent) : QModelIndex();
+    static_cast<CCustomItemModel *>(model)->publicBeginRemoveRows(parent_idx, first, last);
+}
+
+void qt_custom_item_model_end_remove_rows(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicEndRemoveRows();
+}
+
+void qt_custom_item_model_begin_insert_columns(void *model, void *parent, int first, int last) {
+    QModelIndex parent_idx = parent ? *static_cast<QModelIndex *>(parent) : QModelIndex();
+    static_cast<CCustomItemModel *>(model)->publicBeginInsertColumns(parent_idx, first, last);
+}
+
+void qt_custom_item_model_end_insert_columns(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicEndInsertColumns();
+}
+
+void qt_custom_item_model_begin_remove_columns(void *model, void *parent, int first, int last) {
+    QModelIndex parent_idx = parent ? *static_cast<QModelIndex *>(parent) : QModelIndex();
+    static_cast<CCustomItemModel *>(model)->publicBeginRemoveColumns(parent_idx, first, last);
+}
+
+void qt_custom_item_model_end_remove_columns(void *model) {
+    static_cast<CCustomItemModel *>(model)->publicEndRemoveColumns();
+}
+
+void qt_custom_item_model_emit_data_changed(void *model, void *top_left, void *bottom_right) {
+    QModelIndex tl = top_left ? *static_cast<QModelIndex *>(top_left) : QModelIndex();
+    QModelIndex br = bottom_right ? *static_cast<QModelIndex *>(bottom_right) : QModelIndex();
+    static_cast<CCustomItemModel *>(model)->publicEmitDataChanged(tl, br);
+}
+
+void *qt_custom_item_model_create_index(void *model, int row, int column, void *parent) {
+    (void)parent;
+    QModelIndex idx = static_cast<CCustomItemModel *>(model)->publicCreateIndex(row, column);
+    return static_cast<void *>(new QModelIndex(idx));
 }
 
 } /* extern "C" */

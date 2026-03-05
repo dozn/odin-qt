@@ -3078,6 +3078,172 @@ char *qt_system_semaphore_get_error_string(void *sem);
 int   qt_system_semaphore_get_error(void *sem);
 void  qt_system_semaphore_set_key(void *sem, const char *key, int initial_value, int mode);
 
+/* ── QDeadlineTimer ────────────────────────────────────────────────── */
+
+void *qt_deadline_timer_create(long long msecs, int timer_type);
+void *qt_deadline_timer_create_forever(int timer_type);
+void  qt_deadline_timer_destroy(void *timer);
+int   qt_deadline_timer_has_expired(void *timer);
+int   qt_deadline_timer_is_forever(void *timer);
+long long qt_deadline_timer_get_remaining_time(void *timer);
+long long qt_deadline_timer_get_remaining_time_nsecs(void *timer);
+long long qt_deadline_timer_get_deadline(void *timer);
+long long qt_deadline_timer_get_deadline_nsecs(void *timer);
+void  qt_deadline_timer_set_remaining_time(void *timer, long long msecs, int timer_type);
+void  qt_deadline_timer_set_deadline(void *timer, long long msecs, int timer_type);
+void  qt_deadline_timer_set_timer_type(void *timer, int timer_type);
+int   qt_deadline_timer_get_timer_type(void *timer);
+
+/* ── QCollator ─────────────────────────────────────────────────────── */
+
+void *qt_collator_create(const char *locale_name);
+void  qt_collator_destroy(void *collator);
+void  qt_collator_set_locale(void *collator, const char *locale_name);
+char *qt_collator_get_locale(void *collator);
+void  qt_collator_set_case_sensitivity(void *collator, int cs);
+int   qt_collator_get_case_sensitivity(void *collator);
+void  qt_collator_set_numeric_mode(void *collator, int is_on);
+int   qt_collator_is_numeric_mode(void *collator);
+void  qt_collator_set_ignore_punctuation(void *collator, int is_on);
+int   qt_collator_does_ignore_punctuation(void *collator);
+int   qt_collator_compare(void *collator, const char *s1, const char *s2);
+
+/* ── QPdfWriter ────────────────────────────────────────────────────── */
+
+void *qt_pdf_writer_create(const char *filename);
+void  qt_pdf_writer_destroy(void *writer);
+void  qt_pdf_writer_set_title(void *writer, const char *title);
+char *qt_pdf_writer_get_title(void *writer);
+void  qt_pdf_writer_set_creator(void *writer, const char *creator);
+char *qt_pdf_writer_get_creator(void *writer);
+int   qt_pdf_writer_new_page(void *writer);
+void  qt_pdf_writer_set_resolution(void *writer, int dpi);
+int   qt_pdf_writer_get_resolution(void *writer);
+void  qt_pdf_writer_set_page_size(void *writer, int page_size_id);
+void  qt_pdf_writer_set_page_orientation(void *writer, int orientation);
+void  qt_pdf_writer_set_page_margins(void *writer, double left, double top, double right, double bottom, int unit);
+void  qt_pdf_writer_set_pdf_version(void *writer, int version);
+int   qt_pdf_writer_get_pdf_version(void *writer);
+
+/* ── QTextStream ───────────────────────────────────────────────────── */
+
+void *qt_text_stream_create_file(const char *filename, int mode);
+void *qt_text_stream_create_string(void);
+void  qt_text_stream_destroy(void *stream);
+void  qt_text_stream_write_string(void *stream, const char *text);
+void  qt_text_stream_write_int(void *stream, int value);
+void  qt_text_stream_write_double(void *stream, double value);
+char *qt_text_stream_read_line(void *stream);
+char *qt_text_stream_read_all(void *stream);
+int   qt_text_stream_is_at_end(void *stream);
+void  qt_text_stream_flush(void *stream);
+void  qt_text_stream_seek(void *stream, long long pos);
+long long qt_text_stream_get_pos(void *stream);
+int   qt_text_stream_get_status(void *stream);
+void  qt_text_stream_reset_status(void *stream);
+char *qt_text_stream_get_string(void *stream);
+
+/* ── QDataStream ───────────────────────────────────────────────────── */
+
+void *qt_data_stream_create_file(const char *filename, int mode);
+void *qt_data_stream_create_buffer(void);
+void  qt_data_stream_destroy(void *stream);
+void  qt_data_stream_write_int8(void *stream, int value);
+void  qt_data_stream_write_int16(void *stream, int value);
+void  qt_data_stream_write_int32(void *stream, int value);
+void  qt_data_stream_write_int64(void *stream, long long value);
+void  qt_data_stream_write_float(void *stream, float value);
+void  qt_data_stream_write_double(void *stream, double value);
+void  qt_data_stream_write_string(void *stream, const char *text);
+int   qt_data_stream_read_int8(void *stream);
+int   qt_data_stream_read_int16(void *stream);
+int   qt_data_stream_read_int32(void *stream);
+long long qt_data_stream_read_int64(void *stream);
+float qt_data_stream_read_float(void *stream);
+double qt_data_stream_read_double(void *stream);
+char *qt_data_stream_read_string(void *stream);
+int   qt_data_stream_is_at_end(void *stream);
+int   qt_data_stream_get_status(void *stream);
+void  qt_data_stream_reset_status(void *stream);
+void  qt_data_stream_set_byte_order(void *stream, int order);
+int   qt_data_stream_get_byte_order(void *stream);
+void  qt_data_stream_set_version(void *stream, int version);
+int   qt_data_stream_get_version(void *stream);
+void *qt_data_stream_get_buffer(void *stream);
+
+/* ── QTextTable ────────────────────────────────────────────────────── */
+
+void  qt_text_table_resize(void *table, int rows, int cols);
+void  qt_text_table_insert_rows(void *table, int pos, int count);
+void  qt_text_table_insert_columns(void *table, int pos, int count);
+void  qt_text_table_append_rows(void *table, int count);
+void  qt_text_table_append_columns(void *table, int count);
+void  qt_text_table_remove_rows(void *table, int pos, int count);
+void  qt_text_table_remove_columns(void *table, int pos, int count);
+void  qt_text_table_merge_cells(void *table, int row, int col, int num_rows, int num_cols);
+void  qt_text_table_split_cell(void *table, int row, int col, int num_rows, int num_cols);
+int   qt_text_table_get_rows(void *table);
+int   qt_text_table_get_columns(void *table);
+
+/* ── QTextTableCell ────────────────────────────────────────────────── */
+
+int   qt_text_table_cell_get_row(void *table, int row, int col);
+int   qt_text_table_cell_get_column(void *table, int row, int col);
+int   qt_text_table_cell_get_row_span(void *table, int row, int col);
+int   qt_text_table_cell_get_column_span(void *table, int row, int col);
+int   qt_text_table_cell_is_valid(void *table, int row, int col);
+void *qt_text_table_cell_get_first_cursor_position(void *table, int row, int col);
+void *qt_text_table_cell_get_last_cursor_position(void *table, int row, int col);
+
+/* ── QTextList ─────────────────────────────────────────────────────── */
+
+int   qt_text_list_get_count(void *list);
+void *qt_text_list_get_item(void *list, int index);
+int   qt_text_list_get_item_number(void *list, void *block);
+char *qt_text_list_get_item_text(void *list, void *block);
+void  qt_text_list_remove_item(void *list, int index);
+void  qt_text_list_add(void *list, void *block);
+void  qt_text_list_set_style(void *list, int style);
+int   qt_text_list_get_style(void *list);
+
+/* ── QTextFrame ────────────────────────────────────────────────────── */
+
+void *qt_text_frame_get_first_cursor_position(void *frame);
+void *qt_text_frame_get_last_cursor_position(void *frame);
+int   qt_text_frame_get_first_position(void *frame);
+int   qt_text_frame_get_last_position(void *frame);
+void *qt_text_frame_get_parent_frame(void *frame);
+void  qt_text_frame_get_child_frames(void *frame, void **out_items, int *out_count);
+
+/* ── QAbstractItemModel helper (CCustomItemModel) ──────────────────── */
+
+typedef int   (*qt_model_row_count_callback_t)(void *parent_index, void *user_data);
+typedef int   (*qt_model_column_count_callback_t)(void *parent_index, void *user_data);
+typedef char *(*qt_model_data_callback_t)(void *index, int role, void *user_data);
+typedef int   (*qt_model_flags_callback_t)(void *index, void *user_data);
+typedef char *(*qt_model_header_data_callback_t)(int section, int orientation, int role, void *user_data);
+
+void *qt_custom_item_model_create(
+    qt_model_row_count_callback_t    row_count_cb,
+    qt_model_column_count_callback_t column_count_cb,
+    qt_model_data_callback_t         data_cb,
+    qt_model_flags_callback_t        flags_cb,
+    qt_model_header_data_callback_t  header_data_cb,
+    void *user_data);
+void  qt_custom_item_model_destroy(void *model);
+void  qt_custom_item_model_begin_reset(void *model);
+void  qt_custom_item_model_end_reset(void *model);
+void  qt_custom_item_model_begin_insert_rows(void *model, void *parent, int first, int last);
+void  qt_custom_item_model_end_insert_rows(void *model);
+void  qt_custom_item_model_begin_remove_rows(void *model, void *parent, int first, int last);
+void  qt_custom_item_model_end_remove_rows(void *model);
+void  qt_custom_item_model_begin_insert_columns(void *model, void *parent, int first, int last);
+void  qt_custom_item_model_end_insert_columns(void *model);
+void  qt_custom_item_model_begin_remove_columns(void *model, void *parent, int first, int last);
+void  qt_custom_item_model_end_remove_columns(void *model);
+void  qt_custom_item_model_emit_data_changed(void *model, void *top_left, void *bottom_right);
+void *qt_custom_item_model_create_index(void *model, int row, int column, void *parent);
+
 #ifdef __cplusplus
 }
 #endif
