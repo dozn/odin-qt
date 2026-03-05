@@ -230,6 +230,8 @@ Graphics_Text_Item :: distinct rawptr
 Graphics_Line_Item :: distinct rawptr
 Graphics_Pixmap_Item :: distinct rawptr
 Graphics_Path_Item :: distinct rawptr
+Graphics_Polygon_Item :: distinct rawptr
+Graphics_Simple_Text_Item :: distinct rawptr
 Graphics_Item_Group :: distinct rawptr
 Graphics_Proxy_Widget :: distinct rawptr
 Graphics_Effect :: distinct rawptr
@@ -4670,6 +4672,24 @@ foreign qt_lib {
 	graphics_path_item_set_path :: proc(item: Graphics_Path_Item, path: Painter_Path) ---
 	graphics_path_item_set_pen :: proc(item: Graphics_Path_Item, pen: Pen) ---
 	graphics_path_item_set_brush :: proc(item: Graphics_Path_Item, brush: Brush) ---
+
+	/* QGraphicsPolygonItem */
+
+	@(require_results) graphics_polygon_item_create :: proc(polygon_f: Polygon_F, parent: Graphics_Item) -> Graphics_Polygon_Item ---
+	graphics_polygon_item_set_polygon :: proc(item: Graphics_Polygon_Item, polygon_f: Polygon_F) ---
+	graphics_polygon_item_set_pen :: proc(item: Graphics_Polygon_Item, pen: Pen) ---
+	graphics_polygon_item_set_brush :: proc(item: Graphics_Polygon_Item, brush: Brush) ---
+	graphics_polygon_item_set_fill_rule :: proc(item: Graphics_Polygon_Item, fill_rule: Fill_Rule) ---
+	@(require_results) graphics_polygon_item_get_fill_rule :: proc(item: Graphics_Polygon_Item) -> Fill_Rule ---
+
+	/* QGraphicsSimpleTextItem */
+
+	@(require_results) graphics_simple_text_item_create :: proc(text: cstring, parent: Graphics_Item) -> Graphics_Simple_Text_Item ---
+	graphics_simple_text_item_set_text :: proc(item: Graphics_Simple_Text_Item, text: cstring) ---
+	@(require_results) graphics_simple_text_item_get_text :: proc(item: Graphics_Simple_Text_Item) -> cstring ---
+	graphics_simple_text_item_set_font :: proc(item: Graphics_Simple_Text_Item, font: Font_Handle) ---
+	graphics_simple_text_item_set_pen :: proc(item: Graphics_Simple_Text_Item, pen: Pen) ---
+	graphics_simple_text_item_set_brush :: proc(item: Graphics_Simple_Text_Item, brush: Brush) ---
 
 	/* QGraphicsItemGroup */
 

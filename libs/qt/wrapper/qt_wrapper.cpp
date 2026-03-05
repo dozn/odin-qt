@@ -11533,6 +11533,59 @@ void qt_graphics_path_item_set_brush(void *item, void *brush) {
     static_cast<QGraphicsPathItem *>(item)->setBrush(*static_cast<QBrush *>(brush));
 }
 
+/* ── QGraphicsPolygonItem ──────────────────────────────────────────── */
+
+void *qt_graphics_polygon_item_create(void *polygon_f, void *parent) {
+    QPolygonF poly = polygon_f ? *static_cast<QPolygonF *>(polygon_f) : QPolygonF();
+    return static_cast<void *>(new QGraphicsPolygonItem(poly, static_cast<QGraphicsItem *>(parent)));
+}
+
+void qt_graphics_polygon_item_set_polygon(void *item, void *polygon_f) {
+    static_cast<QGraphicsPolygonItem *>(item)->setPolygon(*static_cast<QPolygonF *>(polygon_f));
+}
+
+void qt_graphics_polygon_item_set_pen(void *item, void *pen) {
+    static_cast<QGraphicsPolygonItem *>(item)->setPen(*static_cast<QPen *>(pen));
+}
+
+void qt_graphics_polygon_item_set_brush(void *item, void *brush) {
+    static_cast<QGraphicsPolygonItem *>(item)->setBrush(*static_cast<QBrush *>(brush));
+}
+
+void qt_graphics_polygon_item_set_fill_rule(void *item, int fill_rule) {
+    static_cast<QGraphicsPolygonItem *>(item)->setFillRule(static_cast<Qt::FillRule>(fill_rule));
+}
+
+int qt_graphics_polygon_item_get_fill_rule(void *item) {
+    return static_cast<int>(static_cast<QGraphicsPolygonItem *>(item)->fillRule());
+}
+
+/* ── QGraphicsSimpleTextItem ───────────────────────────────────────── */
+
+void *qt_graphics_simple_text_item_create(const char *text, void *parent) {
+    return static_cast<void *>(new QGraphicsSimpleTextItem(QString::fromUtf8(text), static_cast<QGraphicsItem *>(parent)));
+}
+
+void qt_graphics_simple_text_item_set_text(void *item, const char *text) {
+    static_cast<QGraphicsSimpleTextItem *>(item)->setText(QString::fromUtf8(text));
+}
+
+char *qt_graphics_simple_text_item_get_text(void *item) {
+    return qstring_to_heap_utf8(static_cast<QGraphicsSimpleTextItem *>(item)->text());
+}
+
+void qt_graphics_simple_text_item_set_font(void *item, void *font) {
+    static_cast<QGraphicsSimpleTextItem *>(item)->setFont(*static_cast<QFont *>(font));
+}
+
+void qt_graphics_simple_text_item_set_pen(void *item, void *pen) {
+    static_cast<QGraphicsSimpleTextItem *>(item)->setPen(*static_cast<QPen *>(pen));
+}
+
+void qt_graphics_simple_text_item_set_brush(void *item, void *brush) {
+    static_cast<QGraphicsSimpleTextItem *>(item)->setBrush(*static_cast<QBrush *>(brush));
+}
+
 /* ── QGraphicsItemGroup ────────────────────────────────────────────── */
 
 void *qt_graphics_item_group_create(void *parent) {

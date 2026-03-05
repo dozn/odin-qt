@@ -62,17 +62,14 @@ QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF,
 QPdfWriter, QTextStream, QDataStream, QTextTable, QTextTableCell,
 QTextList, QTextFrame, QDeadlineTimer, QCollator,
 QAbstractItemModel helper (CCustomItemModel),
-QListWidgetItem, QMimeData
+QListWidgetItem, QMimeData,
+QGraphicsPolygonItem, QGraphicsSimpleTextItem
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Graphics scene gaps:**
-- QGraphicsPolygonItem — polygon shape in scene (completes the shape family)
-- QGraphicsSimpleTextItem — lightweight plain text in scene
 
 **Drawing:**
 - QPainterPathStroker — convert path to stroke outline (hit testing, outlines)

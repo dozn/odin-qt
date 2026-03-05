@@ -2908,6 +2908,24 @@ void  qt_graphics_path_item_set_path(void *item, void *path);
 void  qt_graphics_path_item_set_pen(void *item, void *pen);
 void  qt_graphics_path_item_set_brush(void *item, void *brush);
 
+/* ── QGraphicsPolygonItem ──────────────────────────────────────────── */
+
+void *qt_graphics_polygon_item_create(void *polygon_f, void *parent);
+void  qt_graphics_polygon_item_set_polygon(void *item, void *polygon_f);
+void  qt_graphics_polygon_item_set_pen(void *item, void *pen);
+void  qt_graphics_polygon_item_set_brush(void *item, void *brush);
+void  qt_graphics_polygon_item_set_fill_rule(void *item, int fill_rule);
+int   qt_graphics_polygon_item_get_fill_rule(void *item);
+
+/* ── QGraphicsSimpleTextItem ───────────────────────────────────────── */
+
+void *qt_graphics_simple_text_item_create(const char *text, void *parent);
+void  qt_graphics_simple_text_item_set_text(void *item, const char *text);
+char *qt_graphics_simple_text_item_get_text(void *item);
+void  qt_graphics_simple_text_item_set_font(void *item, void *font);
+void  qt_graphics_simple_text_item_set_pen(void *item, void *pen);
+void  qt_graphics_simple_text_item_set_brush(void *item, void *brush);
+
 /* ── QGraphicsItemGroup ────────────────────────────────────────────── */
 
 void *qt_graphics_item_group_create(void *parent);
