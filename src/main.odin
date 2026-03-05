@@ -697,6 +697,7 @@ build_text_tab :: proc() -> qt.Widget {
 	heading := qt.label_create(nil, "Text Editing Demo")
 	qt.label_set_alignment(heading, .Centre)
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.widget_set_size_policy(auto_cast heading, .Preferred, .Fixed)
 	qt.layout_add_widget(layout, auto_cast heading)
 
 	// TextEdit and PlainTextEdit side by side
