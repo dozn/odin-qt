@@ -3042,7 +3042,7 @@ build_rich_text_tab :: proc() -> qt.Widget {
 
 		block := qt.text_document_get_first_block(document)
 		block_idx := 0
-		for qt.text_block_is_valid(block) != 0 && block_idx < 6 {
+		for block != nil && qt.text_block_is_valid(block) != 0 && block_idx < 6 {
 			text := qt.text_block_get_text(block)
 			block_num := qt.text_block_get_block_number(block)
 			block_len := qt.text_block_get_length(block)
@@ -3057,7 +3057,7 @@ build_rich_text_tab :: proc() -> qt.Widget {
 			block = next_block
 			block_idx += 1
 		}
-		if qt.text_block_is_valid(block) != 0 do qt.text_block_destroy(block)
+		if block != nil && qt.text_block_is_valid(block) != 0 do qt.text_block_destroy(block)
 
 		buf[len(written)] = 0
 		qt.label_set_text(demo_state.block_output, cstring(raw_data(buf[:])))

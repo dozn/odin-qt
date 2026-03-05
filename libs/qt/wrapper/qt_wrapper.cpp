@@ -8021,6 +8021,7 @@ void qt_text_block_destroy(void *block) {
 }
 
 int qt_text_block_is_valid(void *block) {
+    if (!block) return 0;
     return static_cast<QTextBlock *>(block)->isValid() ? 1 : 0;
 }
 
