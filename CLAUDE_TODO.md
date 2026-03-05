@@ -95,7 +95,11 @@ QFileDialog (object), QMessageBox (object), QColorDialog (object), QFontDialog (
 QAbstractItemView properties (delegate, selection model, drag/drop, edit triggers, scrollTo),
 QMdiArea sub-window activated with pointer, QToolTip appearance (font/palette),
 QLabel scaled pixmap convenience, QRegularExpressionMatch,
-QAbstractItemModel signals (dataChanged, rowsInserted, rowsRemoved)
+QAbstractItemModel signals (dataChanged, rowsInserted, rowsRemoved),
+QInputDialog, QLayout (base class), QLayoutItem, QBoxLayout, QSpacerItem,
+QTextCharFormat, QGradient (base class),
+Memory management utilities (qt_free_string, qt_free_string_array, qt_free_item_array),
+Signal disconnection (qt_disconnect)
 
 ---
 
