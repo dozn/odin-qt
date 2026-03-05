@@ -202,6 +202,7 @@ Date :: distinct rawptr
 Time_Handle :: distinct rawptr
 Locale :: distinct rawptr
 Regex :: distinct rawptr
+Regex_Match :: distinct rawptr
 Url :: distinct rawptr
 Uuid :: distinct rawptr
 Elapsed_Timer :: distinct rawptr
@@ -353,6 +354,10 @@ Opengl_Buffer :: distinct rawptr
 Opengl_Vao :: distinct rawptr
 Opengl_Fbo :: distinct rawptr
 Opengl_Texture :: distinct rawptr
+File_Dialog :: distinct rawptr
+Message_Box :: distinct rawptr
+Colour_Dialog :: distinct rawptr
+Font_Dialog :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -386,6 +391,12 @@ Model_Column_Count_Callback :: #type proc"c"(parent_index: rawptr, user_data: ra
 Model_Data_Callback :: #type proc"c"(index: rawptr, role: c.int, user_data: rawptr) -> cstring
 Model_Flags_Callback :: #type proc"c"(index: rawptr, user_data: rawptr) -> c.int
 Model_Header_Data_Callback :: #type proc"c"(section: c.int, orientation: c.int, role: c.int, user_data: rawptr) -> cstring
+Wheel_Event_Callback :: #type proc"c"(x: c.int, y: c.int, global_x: c.int, global_y: c.int, angle_delta_x: c.int, angle_delta_y: c.int, modifiers: c.int, is_inverted: c.int, user_data: rawptr) -> c.int
+Resize_Event_Callback :: #type proc"c"(old_width: c.int, old_height: c.int, new_width: c.int, new_height: c.int, user_data: rawptr) -> c.int
+Focus_Event_Callback :: #type proc"c"(event_type: c.int, reason: c.int, user_data: rawptr) -> c.int
+Hover_Event_Callback :: #type proc"c"(event_type: c.int, x: c.int, y: c.int, old_x: c.int, old_y: c.int, user_data: rawptr) -> c.int
+Model_Data_Changed_Callback :: #type proc"c"(top_left: Model_Index, bottom_right: Model_Index, user_data: rawptr)
+Model_Rows_Callback :: #type proc"c"(parent: Model_Index, first: c.int, last: c.int, user_data: rawptr)
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -6477,4 +6488,173 @@ foreign qt_lib {
 	opengl_texture_generate_mip_maps :: proc(texture: Opengl_Texture) ---
 	opengl_texture_set_min_mag_filters :: proc(texture: Opengl_Texture, min_filter: c.int, mag_filter: c.int) ---
 	opengl_texture_set_wrap_mode :: proc(texture: Opengl_Texture, wrap_mode: c.int) ---
+
+	/* ══════════════════════════════════════════════════════════════════
+	   TODO Gap Implementations
+	   ══════════════════════════════════════════════════════════════════ */
+
+	/* Event filter: Wheel */
+
+	@(require_results) wheel_event_filter_create :: proc(callback: Wheel_Event_Callback, user_data: rawptr) -> Event_Filter ---
+
+	/* Event filter: Resize */
+
+	@(require_results) resize_event_filter_create :: proc(callback: Resize_Event_Callback, user_data: rawptr) -> Event_Filter ---
+
+	/* Event filter: Focus */
+
+	@(require_results) focus_event_filter_create :: proc(callback: Focus_Event_Callback, user_data: rawptr) -> Event_Filter ---
+
+	/* Event filter: Hover */
+
+	@(require_results) hover_event_filter_create :: proc(callback: Hover_Event_Callback, user_data: rawptr) -> Event_Filter ---
+
+	/* Widget Accessors */
+
+	@(require_results) tab_widget_get_tab_bar :: proc(tab_widget: Tab_Widget) -> Tab_Bar ---
+	widget_set_whats_this :: proc(widget: Widget, text: cstring) ---
+	@(require_results) widget_get_whats_this :: proc(widget: Widget) -> cstring ---
+	widget_set_accessible_name :: proc(widget: Widget, name: cstring) ---
+	@(require_results) widget_get_accessible_name :: proc(widget: Widget) -> cstring ---
+	widget_set_accessible_description :: proc(widget: Widget, description: cstring) ---
+	@(require_results) widget_get_accessible_description :: proc(widget: Widget) -> cstring ---
+	@(require_results) widget_child_at :: proc(widget: Widget, x: c.int, y: c.int) -> Widget ---
+	@(require_results) widget_get_window :: proc(widget: Widget) -> Widget ---
+	@(require_results) widget_get_native_parent_widget :: proc(widget: Widget) -> Widget ---
+	widget_get_actions :: proc(widget: Widget, out_actions: ^[^]rawptr, out_count: ^c.int) ---
+	widget_set_graphics_effect :: proc(widget: Widget, effect: Graphics_Effect) ---
+	@(require_results) widget_get_font :: proc(widget: Widget) -> Font_Handle ---
+
+	/* Application-Level */
+
+	application_set_override_cursor :: proc(cursor_shape: c.int) ---
+	application_restore_override_cursor :: proc() ---
+	@(require_results) application_get_screen_count :: proc() -> c.int ---
+	application_get_screen_geometry :: proc(screen_index: c.int, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+	@(require_results) application_get_screen_name :: proc(screen_index: c.int) -> cstring ---
+	@(require_results) application_get_screen_device_pixel_ratio :: proc(screen_index: c.int) -> c.double ---
+	clipboard_set_pixmap :: proc(pixmap: Pixmap) ---
+	@(require_results) clipboard_get_pixmap :: proc() -> Pixmap ---
+	@(require_results) clipboard_has_image :: proc() -> c.int ---
+	application_beep :: proc() ---
+	application_about_qt :: proc() ---
+	@(require_results) application_get_top_level_widget_count :: proc() -> c.int ---
+	application_get_top_level_widgets :: proc(out_widgets: ^[^]rawptr, out_count: ^c.int) ---
+
+	/* Missing Constructors / Factories */
+
+	@(require_results) pixmap_create :: proc(width: c.int, height: c.int) -> Pixmap ---
+	@(require_results) pixmap_create_from_data :: proc(data: [^]u8, size: c.int) -> Pixmap ---
+	@(require_results) action_create :: proc(parent: rawptr) -> Action ---
+	@(require_results) action_create_with_text :: proc(text: cstring, parent: rawptr) -> Action ---
+
+	/* Style System */
+
+	@(require_results) style_get_standard_icon :: proc(style: Style, standard_icon: c.int) -> Icon ---
+	@(require_results) style_get_standard_pixmap :: proc(style: Style, standard_pixmap: c.int) -> Pixmap ---
+	@(require_results) style_factory_get_keys :: proc(out_keys: ^[^]cstring, out_count: ^c.int) -> c.int ---
+	@(require_results) widget_get_style :: proc(widget: Widget) -> Style ---
+
+	/* Configurable Dialog Objects */
+
+	/* QFileDialog as object */
+	@(require_results) file_dialog_create :: proc(parent: Widget) -> File_Dialog ---
+	file_dialog_set_accept_mode :: proc(dialog: File_Dialog, mode: c.int) ---
+	file_dialog_set_file_mode :: proc(dialog: File_Dialog, mode: c.int) ---
+	file_dialog_set_name_filter :: proc(dialog: File_Dialog, filter: cstring) ---
+	file_dialog_set_name_filters :: proc(dialog: File_Dialog, filters: [^]cstring, count: c.int) ---
+	file_dialog_set_directory :: proc(dialog: File_Dialog, dir: cstring) ---
+	@(require_results) file_dialog_get_directory :: proc(dialog: File_Dialog) -> cstring ---
+	file_dialog_set_default_suffix :: proc(dialog: File_Dialog, suffix: cstring) ---
+	@(require_results) file_dialog_get_selected_files :: proc(dialog: File_Dialog, out_files: ^[^]cstring, out_count: ^c.int) -> c.int ---
+	file_dialog_set_view_mode :: proc(dialog: File_Dialog, mode: c.int) ---
+	file_dialog_set_option :: proc(dialog: File_Dialog, option: c.int, is_on: c.int) ---
+
+	/* QMessageBox as object */
+	@(require_results) message_box_create :: proc(parent: Widget) -> Message_Box ---
+	message_box_set_text :: proc(msg_box: Message_Box, text: cstring) ---
+	message_box_set_informative_text :: proc(msg_box: Message_Box, text: cstring) ---
+	message_box_set_detailed_text :: proc(msg_box: Message_Box, text: cstring) ---
+	message_box_set_icon :: proc(msg_box: Message_Box, icon: c.int) ---
+	message_box_set_standard_buttons :: proc(msg_box: Message_Box, buttons: c.int) ---
+	message_box_set_default_button :: proc(msg_box: Message_Box, button: c.int) ---
+	message_box_set_window_title :: proc(msg_box: Message_Box, title: cstring) ---
+	message_box_set_icon_pixmap :: proc(msg_box: Message_Box, pixmap: Pixmap) ---
+
+	/* QColorDialog as object */
+	@(require_results) colour_dialog_create :: proc(parent: Widget) -> Colour_Dialog ---
+	colour_dialog_set_current_colour :: proc(dialog: Colour_Dialog, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	colour_dialog_get_current_colour :: proc(dialog: Colour_Dialog, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+	colour_dialog_set_option :: proc(dialog: Colour_Dialog, option: c.int, is_on: c.int) ---
+
+	/* QFontDialog as object */
+	@(require_results) font_dialog_create :: proc(parent: Widget) -> Font_Dialog ---
+	font_dialog_set_current_font :: proc(dialog: Font_Dialog, font: Font_Handle) ---
+	@(require_results) font_dialog_get_current_font :: proc(dialog: Font_Dialog) -> Font_Handle ---
+	font_dialog_set_option :: proc(dialog: Font_Dialog, option: c.int, is_on: c.int) ---
+
+	/* Abstract View Properties */
+
+	abstract_item_view_set_item_delegate :: proc(view: rawptr, delegate: rawptr) ---
+	abstract_item_view_set_selection_model :: proc(view: rawptr, selection_model: Item_Selection_Model) ---
+	@(require_results) abstract_item_view_get_selection_model :: proc(view: rawptr) -> Item_Selection_Model ---
+	@(require_results) abstract_item_view_get_current_index :: proc(view: rawptr) -> Model_Index ---
+	abstract_item_view_set_current_index :: proc(view: rawptr, index: Model_Index) ---
+	abstract_item_view_set_drag_enabled :: proc(view: rawptr, is_enabled: c.int) ---
+	abstract_item_view_set_drag_drop_mode :: proc(view: rawptr, mode: c.int) ---
+	abstract_item_view_set_edit_triggers :: proc(view: rawptr, triggers: c.int) ---
+	abstract_item_view_scroll_to :: proc(view: rawptr, index: Model_Index, scroll_hint: c.int) ---
+
+	/* Model/View Signal Gaps */
+
+	@(require_results) standard_item_model_connect_item_changed :: proc(model: Standard_Item_Model, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	standard_item_model_find_items :: proc(model: Standard_Item_Model, text: cstring, flags: c.int, column: c.int, out_items: ^[^]rawptr, out_count: ^c.int) ---
+
+	/* Missing Signals on Existing Widgets */
+
+	@(require_results) check_box_connect_state_changed :: proc(check_box: Check_Box, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) spin_box_connect_text_changed :: proc(spin_box: Spin_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) double_spin_box_connect_text_changed :: proc(spin_box: Double_Spin_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) line_edit_connect_selection_changed :: proc(line_edit: Line_Edit, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) line_edit_connect_cursor_position_changed :: proc(line_edit: Line_Edit, callback: Cell_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* Miscellaneous */
+
+	@(require_results) splitter_get_handle :: proc(splitter: Splitter, index: c.int) -> Splitter_Handle ---
+	tab_bar_set_tab_button :: proc(tab_bar: Tab_Bar, index: c.int, position: c.int, widget: Widget) ---
+	@(require_results) tab_bar_get_tab_button :: proc(tab_bar: Tab_Bar, index: c.int, position: c.int) -> Widget ---
+	@(require_results) object_find_child :: proc(object: rawptr, name: cstring, options: c.int) -> Widget ---
+
+	/* QMdiArea sub-window activated with pointer */
+
+	@(require_results) mdi_area_connect_sub_window_activated_with_ptr :: proc(mdi_area: Mdi_Area, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QToolTip appearance */
+
+	@(require_results) tooltip_get_font :: proc() -> Font_Handle ---
+	tooltip_set_palette :: proc(palette: Palette) ---
+
+	/* QLabel scaled pixmap convenience */
+
+	label_set_pixmap_scaled :: proc(label: Label, pixmap: Pixmap, w: c.int, h: c.int, aspect_mode: c.int, transform_mode: c.int) ---
+
+	/* QRegularExpressionMatch */
+
+	@(require_results) regex_match_create :: proc(regex: Regex, subject: cstring) -> Regex_Match ---
+	@(require_results) regex_match_create_with_offset :: proc(regex: Regex, subject: cstring, offset: c.int) -> Regex_Match ---
+	regex_match_destroy :: proc(match: Regex_Match) ---
+	@(require_results) regex_match_has_match :: proc(match: Regex_Match) -> c.int ---
+	@(require_results) regex_match_get_captured :: proc(match: Regex_Match, group: c.int) -> cstring ---
+	@(require_results) regex_match_get_captured_by_name :: proc(match: Regex_Match, name: cstring) -> cstring ---
+	@(require_results) regex_match_get_captured_start :: proc(match: Regex_Match, group: c.int) -> c.int ---
+	@(require_results) regex_match_get_captured_end :: proc(match: Regex_Match, group: c.int) -> c.int ---
+	@(require_results) regex_match_get_captured_length :: proc(match: Regex_Match, group: c.int) -> c.int ---
+	@(require_results) regex_match_get_captured_count :: proc(match: Regex_Match) -> c.int ---
+	@(require_results) regex_match_get_last_captured_index :: proc(match: Regex_Match) -> c.int ---
+
+	/* QAbstractItemModel signals */
+
+	@(require_results) model_connect_data_changed :: proc(model: rawptr, callback: Model_Data_Changed_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) model_connect_rows_inserted :: proc(model: rawptr, callback: Model_Rows_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) model_connect_rows_removed :: proc(model: rawptr, callback: Model_Rows_Callback, user_data: rawptr) -> Connection_Id ---
 }

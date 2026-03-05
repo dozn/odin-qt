@@ -21,7 +21,7 @@ QDial, QProgressDialog, QTextBrowser,
 QHeaderView, QSystemTrayIcon,
 Clipboard, QSettings, QDesktopServices, QStandardPaths, QScreen, QFontMetrics,
 QCompleter, QValidator (Int/Double/Regex), QToolTip,
-Event filters (generic/close/key/mouse),
+Event filters (generic/close/key/mouse/wheel/resize/focus/hover),
 QStandardItem, QStandardItemModel, QFileSystemModel, QSortFilterProxyModel,
 QTreeView, QTableView, QListView, Model Index,
 QPainter (custom drawing), Paintable Widget,
@@ -90,10 +90,16 @@ DockWidget, GroupBox, TitleBar, TabWidgetFrame, TabBarBase, ToolBar,
 RubberBand, SizeGrip, Complex),
 QCommonStyle, QRhiWidget,
 QOpenGLWindow, QOpenGLShaderProgram, QOpenGLBuffer,
-QOpenGLVertexArrayObject, QOpenGLFramebufferObject, QOpenGLTexture
+QOpenGLVertexArrayObject, QOpenGLFramebufferObject, QOpenGLTexture,
+QFileDialog (object), QMessageBox (object), QColorDialog (object), QFontDialog (object),
+QAbstractItemView properties (delegate, selection model, drag/drop, edit triggers, scrollTo),
+QMdiArea sub-window activated with pointer, QToolTip appearance (font/palette),
+QLabel scaled pixmap convenience, QRegularExpressionMatch,
+QAbstractItemModel signals (dataChanged, rowsInserted, rowsRemoved)
 
 ---
 
 ## Not Yet Wrapped
 
-All items have been wrapped. The TODO list is complete.
+### Printing (if enabled)
+- **QPrinter** — not available (print support was disabled in the Qt build)

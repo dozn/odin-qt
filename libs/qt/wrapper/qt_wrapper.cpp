@@ -92,10 +92,15 @@
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
+#include <QResizeEvent>
+#include <QFocusEvent>
+#include <QHoverEvent>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
+#include <QAbstractItemView>
 #include <QTreeView>
 #include <QTableView>
 #include <QListView>
@@ -17635,6 +17640,691 @@ void qt_opengl_texture_set_min_mag_filters(void *texture, int min_filter, int ma
 
 void qt_opengl_texture_set_wrap_mode(void *texture, int wrap_mode) {
     static_cast<QOpenGLTexture *>(texture)->setWrapMode(static_cast<QOpenGLTexture::WrapMode>(wrap_mode));
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TODO Gap Implementations
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Event filter: Wheel ───────────────────────────────────────────── */
+
+void *qt_wheel_event_filter_create(qt_wheel_event_callback_t callback, void *user_data) {
+    class CWheelEventFilter : public QObject {
+    public:
+        CWheelEventFilter(qt_wheel_event_callback_t cb, void *ud) : m_cb(cb), m_ud(ud) {}
+        bool eventFilter(QObject *, QEvent *event) override {
+            if (event->type() == QEvent::Wheel) {
+                auto *we = static_cast<QWheelEvent *>(event);
+                QPointF pos = we->position();
+                QPointF gpos = we->globalPosition();
+                QPoint delta = we->angleDelta();
+                int handled = m_cb(
+                    static_cast<int>(pos.x()), static_cast<int>(pos.y()),
+                    static_cast<int>(gpos.x()), static_cast<int>(gpos.y()),
+                    delta.x(), delta.y(),
+                    static_cast<int>(we->modifiers()),
+                    we->inverted() ? 1 : 0,
+                    m_ud);
+                return handled != 0;
+            }
+            return false;
+        }
+    private:
+        qt_wheel_event_callback_t m_cb;
+        void *m_ud;
+    };
+    return static_cast<void *>(new CWheelEventFilter(callback, user_data));
+}
+
+/* ── Event filter: Resize ──────────────────────────────────────────── */
+
+void *qt_resize_event_filter_create(qt_resize_event_callback_t callback, void *user_data) {
+    class CResizeEventFilter : public QObject {
+    public:
+        CResizeEventFilter(qt_resize_event_callback_t cb, void *ud) : m_cb(cb), m_ud(ud) {}
+        bool eventFilter(QObject *, QEvent *event) override {
+            if (event->type() == QEvent::Resize) {
+                auto *re = static_cast<QResizeEvent *>(event);
+                int handled = m_cb(
+                    re->oldSize().width(), re->oldSize().height(),
+                    re->size().width(), re->size().height(),
+                    m_ud);
+                return handled != 0;
+            }
+            return false;
+        }
+    private:
+        qt_resize_event_callback_t m_cb;
+        void *m_ud;
+    };
+    return static_cast<void *>(new CResizeEventFilter(callback, user_data));
+}
+
+/* ── Event filter: Focus ───────────────────────────────────────────── */
+
+void *qt_focus_event_filter_create(qt_focus_event_callback_t callback, void *user_data) {
+    class CFocusEventFilter : public QObject {
+    public:
+        CFocusEventFilter(qt_focus_event_callback_t cb, void *ud) : m_cb(cb), m_ud(ud) {}
+        bool eventFilter(QObject *, QEvent *event) override {
+            if (event->type() == QEvent::FocusIn || event->type() == QEvent::FocusOut) {
+                auto *fe = static_cast<QFocusEvent *>(event);
+                int handled = m_cb(
+                    static_cast<int>(event->type()),
+                    static_cast<int>(fe->reason()),
+                    m_ud);
+                return handled != 0;
+            }
+            return false;
+        }
+    private:
+        qt_focus_event_callback_t m_cb;
+        void *m_ud;
+    };
+    return static_cast<void *>(new CFocusEventFilter(callback, user_data));
+}
+
+/* ── Event filter: Hover ───────────────────────────────────────────── */
+
+void *qt_hover_event_filter_create(qt_hover_event_callback_t callback, void *user_data) {
+    class CHoverEventFilter : public QObject {
+    public:
+        CHoverEventFilter(qt_hover_event_callback_t cb, void *ud) : m_cb(cb), m_ud(ud) {}
+        bool eventFilter(QObject *, QEvent *event) override {
+            switch (event->type()) {
+            case QEvent::HoverEnter:
+            case QEvent::HoverLeave:
+            case QEvent::HoverMove: {
+                auto *he = static_cast<QHoverEvent *>(event);
+                QPointF pos = he->position();
+                QPointF oldPos = he->oldPosF();
+                int handled = m_cb(
+                    static_cast<int>(event->type()),
+                    static_cast<int>(pos.x()), static_cast<int>(pos.y()),
+                    static_cast<int>(oldPos.x()), static_cast<int>(oldPos.y()),
+                    m_ud);
+                return handled != 0;
+            }
+            default:
+                return false;
+            }
+        }
+    private:
+        qt_hover_event_callback_t m_cb;
+        void *m_ud;
+    };
+    return static_cast<void *>(new CHoverEventFilter(callback, user_data));
+}
+
+/* ── Widget Accessors ──────────────────────────────────────────────── */
+
+void *qt_tab_widget_get_tab_bar(void *tab_widget) {
+    return static_cast<void *>(static_cast<QTabWidget *>(tab_widget)->tabBar());
+}
+
+void qt_widget_set_whats_this(void *widget, const char *text) {
+    static_cast<QWidget *>(widget)->setWhatsThis(QString::fromUtf8(text));
+}
+
+char *qt_widget_get_whats_this(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->whatsThis());
+}
+
+void qt_widget_set_accessible_name(void *widget, const char *name) {
+    static_cast<QWidget *>(widget)->setAccessibleName(QString::fromUtf8(name));
+}
+
+char *qt_widget_get_accessible_name(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->accessibleName());
+}
+
+void qt_widget_set_accessible_description(void *widget, const char *description) {
+    static_cast<QWidget *>(widget)->setAccessibleDescription(QString::fromUtf8(description));
+}
+
+char *qt_widget_get_accessible_description(void *widget) {
+    return qstring_to_heap_utf8(static_cast<QWidget *>(widget)->accessibleDescription());
+}
+
+void *qt_widget_child_at(void *widget, int x, int y) {
+    return static_cast<void *>(static_cast<QWidget *>(widget)->childAt(x, y));
+}
+
+void *qt_widget_get_window(void *widget) {
+    return static_cast<void *>(static_cast<QWidget *>(widget)->window());
+}
+
+void *qt_widget_get_native_parent_widget(void *widget) {
+    return static_cast<void *>(static_cast<QWidget *>(widget)->nativeParentWidget());
+}
+
+void qt_widget_get_actions(void *widget, void ***out_actions, int *out_count) {
+    QList<QAction *> actions = static_cast<QWidget *>(widget)->actions();
+    *out_count = actions.size();
+    if (actions.isEmpty()) {
+        *out_actions = nullptr;
+        return;
+    }
+    *out_actions = static_cast<void **>(malloc(sizeof(void *) * actions.size()));
+    for (int i = 0; i < actions.size(); ++i) {
+        (*out_actions)[i] = static_cast<void *>(actions[i]);
+    }
+}
+
+void qt_widget_set_graphics_effect(void *widget, void *effect) {
+    static_cast<QWidget *>(widget)->setGraphicsEffect(static_cast<QGraphicsEffect *>(effect));
+}
+
+void *qt_widget_get_font(void *widget) {
+    QFont *f = new QFont(static_cast<QWidget *>(widget)->font());
+    return static_cast<void *>(f);
+}
+
+/* ── Application-Level ─────────────────────────────────────────────── */
+
+void qt_application_set_override_cursor(int cursor_shape) {
+    QApplication::setOverrideCursor(QCursor(static_cast<Qt::CursorShape>(cursor_shape)));
+}
+
+void qt_application_restore_override_cursor(void) {
+    QApplication::restoreOverrideCursor();
+}
+
+int qt_application_get_screen_count(void) {
+    return QApplication::screens().size();
+}
+
+void qt_application_get_screen_geometry(int screen_index, int *x, int *y, int *width, int *height) {
+    QList<QScreen *> screens = QApplication::screens();
+    if (screen_index < 0 || screen_index >= screens.size()) return;
+    QRect geom = screens[screen_index]->geometry();
+    if (x) *x = geom.x();
+    if (y) *y = geom.y();
+    if (width) *width = geom.width();
+    if (height) *height = geom.height();
+}
+
+char *qt_application_get_screen_name(int screen_index) {
+    QList<QScreen *> screens = QApplication::screens();
+    if (screen_index < 0 || screen_index >= screens.size()) return nullptr;
+    return qstring_to_heap_utf8(screens[screen_index]->name());
+}
+
+double qt_application_get_screen_device_pixel_ratio(int screen_index) {
+    QList<QScreen *> screens = QApplication::screens();
+    if (screen_index < 0 || screen_index >= screens.size()) return 1.0;
+    return screens[screen_index]->devicePixelRatio();
+}
+
+void qt_clipboard_set_pixmap(void *pixmap) {
+    QApplication::clipboard()->setPixmap(*static_cast<QPixmap *>(pixmap));
+}
+
+void *qt_clipboard_get_pixmap(void) {
+    QPixmap pm = QApplication::clipboard()->pixmap();
+    if (pm.isNull()) return nullptr;
+    return static_cast<void *>(new QPixmap(pm));
+}
+
+int qt_clipboard_has_image(void) {
+    return QApplication::clipboard()->mimeData()->hasImage() ? 1 : 0;
+}
+
+void qt_application_beep(void) {
+    QApplication::beep();
+}
+
+void qt_application_about_qt(void) {
+    QApplication::aboutQt();
+}
+
+int qt_application_get_top_level_widget_count(void) {
+    return QApplication::topLevelWidgets().size();
+}
+
+void qt_application_get_top_level_widgets(void ***out_widgets, int *out_count) {
+    QWidgetList widgets = QApplication::topLevelWidgets();
+    *out_count = widgets.size();
+    if (widgets.isEmpty()) {
+        *out_widgets = nullptr;
+        return;
+    }
+    *out_widgets = static_cast<void **>(malloc(sizeof(void *) * widgets.size()));
+    for (int i = 0; i < widgets.size(); ++i) {
+        (*out_widgets)[i] = static_cast<void *>(widgets[i]);
+    }
+}
+
+/* ── Missing Constructors / Factories ──────────────────────────────── */
+
+void *qt_pixmap_create(int width, int height) {
+    return static_cast<void *>(new QPixmap(width, height));
+}
+
+void *qt_pixmap_create_from_data(const unsigned char *data, int size) {
+    QPixmap *pm = new QPixmap();
+    pm->loadFromData(data, size);
+    return static_cast<void *>(pm);
+}
+
+void *qt_action_create(void *parent) {
+    return static_cast<void *>(new QAction(static_cast<QObject *>(parent)));
+}
+
+void *qt_action_create_with_text(const char *text, void *parent) {
+    return static_cast<void *>(new QAction(QString::fromUtf8(text), static_cast<QObject *>(parent)));
+}
+
+/* ── Style System ──────────────────────────────────────────────────── */
+
+void *qt_style_get_standard_icon(void *style, int standard_icon) {
+    QIcon icon = static_cast<QStyle *>(style)->standardIcon(static_cast<QStyle::StandardPixmap>(standard_icon));
+    return static_cast<void *>(new QIcon(icon));
+}
+
+void *qt_style_get_standard_pixmap(void *style, int standard_pixmap) {
+    QPixmap pm = static_cast<QStyle *>(style)->standardPixmap(static_cast<QStyle::StandardPixmap>(standard_pixmap));
+    return static_cast<void *>(new QPixmap(pm));
+}
+
+int qt_style_factory_get_keys(char ***out_keys, int *out_count) {
+    QStringList keys = QStyleFactory::keys();
+    *out_count = keys.size();
+    if (keys.isEmpty()) {
+        *out_keys = nullptr;
+        return 0;
+    }
+    *out_keys = static_cast<char **>(malloc(sizeof(char *) * keys.size()));
+    for (int i = 0; i < keys.size(); ++i) {
+        (*out_keys)[i] = qstring_to_heap_utf8(keys[i]);
+    }
+    return keys.size();
+}
+
+void *qt_widget_get_style(void *widget) {
+    return static_cast<void *>(static_cast<QWidget *>(widget)->style());
+}
+
+/* ── Configurable Dialog Objects ───────────────────────────────────── */
+
+void *qt_file_dialog_create(void *parent) {
+    return static_cast<void *>(new QFileDialog(static_cast<QWidget *>(parent)));
+}
+
+void qt_file_dialog_set_accept_mode(void *dialog, int mode) {
+    static_cast<QFileDialog *>(dialog)->setAcceptMode(static_cast<QFileDialog::AcceptMode>(mode));
+}
+
+void qt_file_dialog_set_file_mode(void *dialog, int mode) {
+    static_cast<QFileDialog *>(dialog)->setFileMode(static_cast<QFileDialog::FileMode>(mode));
+}
+
+void qt_file_dialog_set_name_filter(void *dialog, const char *filter) {
+    static_cast<QFileDialog *>(dialog)->setNameFilter(QString::fromUtf8(filter));
+}
+
+void qt_file_dialog_set_name_filters(void *dialog, const char **filters, int count) {
+    QStringList list;
+    for (int i = 0; i < count; ++i)
+        list.append(QString::fromUtf8(filters[i]));
+    static_cast<QFileDialog *>(dialog)->setNameFilters(list);
+}
+
+void qt_file_dialog_set_directory(void *dialog, const char *dir) {
+    static_cast<QFileDialog *>(dialog)->setDirectory(QString::fromUtf8(dir));
+}
+
+char *qt_file_dialog_get_directory(void *dialog) {
+    return qstring_to_heap_utf8(static_cast<QFileDialog *>(dialog)->directory().absolutePath());
+}
+
+void qt_file_dialog_set_default_suffix(void *dialog, const char *suffix) {
+    static_cast<QFileDialog *>(dialog)->setDefaultSuffix(QString::fromUtf8(suffix));
+}
+
+int qt_file_dialog_get_selected_files(void *dialog, char ***out_files, int *out_count) {
+    QStringList files = static_cast<QFileDialog *>(dialog)->selectedFiles();
+    *out_count = files.size();
+    if (files.isEmpty()) {
+        *out_files = nullptr;
+        return 0;
+    }
+    *out_files = static_cast<char **>(malloc(sizeof(char *) * files.size()));
+    for (int i = 0; i < files.size(); ++i) {
+        (*out_files)[i] = qstring_to_heap_utf8(files[i]);
+    }
+    return files.size();
+}
+
+void qt_file_dialog_set_view_mode(void *dialog, int mode) {
+    static_cast<QFileDialog *>(dialog)->setViewMode(static_cast<QFileDialog::ViewMode>(mode));
+}
+
+void qt_file_dialog_set_option(void *dialog, int option, int is_on) {
+    static_cast<QFileDialog *>(dialog)->setOption(static_cast<QFileDialog::Option>(option), is_on != 0);
+}
+
+void *qt_message_box_create(void *parent) {
+    return static_cast<void *>(new QMessageBox(static_cast<QWidget *>(parent)));
+}
+
+void qt_message_box_set_text(void *msg_box, const char *text) {
+    static_cast<QMessageBox *>(msg_box)->setText(QString::fromUtf8(text));
+}
+
+void qt_message_box_set_informative_text(void *msg_box, const char *text) {
+    static_cast<QMessageBox *>(msg_box)->setInformativeText(QString::fromUtf8(text));
+}
+
+void qt_message_box_set_detailed_text(void *msg_box, const char *text) {
+    static_cast<QMessageBox *>(msg_box)->setDetailedText(QString::fromUtf8(text));
+}
+
+void qt_message_box_set_icon(void *msg_box, int icon) {
+    static_cast<QMessageBox *>(msg_box)->setIcon(static_cast<QMessageBox::Icon>(icon));
+}
+
+void qt_message_box_set_standard_buttons(void *msg_box, int buttons) {
+    static_cast<QMessageBox *>(msg_box)->setStandardButtons(static_cast<QMessageBox::StandardButtons>(buttons));
+}
+
+void qt_message_box_set_default_button(void *msg_box, int button) {
+    static_cast<QMessageBox *>(msg_box)->setDefaultButton(static_cast<QMessageBox::StandardButton>(button));
+}
+
+void qt_message_box_set_window_title(void *msg_box, const char *title) {
+    static_cast<QMessageBox *>(msg_box)->setWindowTitle(QString::fromUtf8(title));
+}
+
+void qt_message_box_set_icon_pixmap(void *msg_box, void *pixmap) {
+    static_cast<QMessageBox *>(msg_box)->setIconPixmap(*static_cast<QPixmap *>(pixmap));
+}
+
+void *qt_colour_dialog_create(void *parent) {
+    return static_cast<void *>(new QColorDialog(static_cast<QWidget *>(parent)));
+}
+
+void qt_colour_dialog_set_current_colour(void *dialog, int r, int g, int b, int a) {
+    static_cast<QColorDialog *>(dialog)->setCurrentColor(QColor(r, g, b, a));
+}
+
+void qt_colour_dialog_get_current_colour(void *dialog, int *r, int *g, int *b, int *a) {
+    QColor c = static_cast<QColorDialog *>(dialog)->currentColor();
+    if (r) *r = c.red();
+    if (g) *g = c.green();
+    if (b) *b = c.blue();
+    if (a) *a = c.alpha();
+}
+
+void qt_colour_dialog_set_option(void *dialog, int option, int is_on) {
+    static_cast<QColorDialog *>(dialog)->setOption(static_cast<QColorDialog::ColorDialogOption>(option), is_on != 0);
+}
+
+void *qt_font_dialog_create(void *parent) {
+    return static_cast<void *>(new QFontDialog(static_cast<QWidget *>(parent)));
+}
+
+void qt_font_dialog_set_current_font(void *dialog, void *font) {
+    static_cast<QFontDialog *>(dialog)->setCurrentFont(*static_cast<QFont *>(font));
+}
+
+void *qt_font_dialog_get_current_font(void *dialog) {
+    return static_cast<void *>(new QFont(static_cast<QFontDialog *>(dialog)->currentFont()));
+}
+
+void qt_font_dialog_set_option(void *dialog, int option, int is_on) {
+    static_cast<QFontDialog *>(dialog)->setOption(static_cast<QFontDialog::FontDialogOption>(option), is_on != 0);
+}
+
+/* ── Abstract View Properties ──────────────────────────────────────── */
+
+void qt_abstract_item_view_set_item_delegate(void *view, void *delegate) {
+    static_cast<QAbstractItemView *>(view)->setItemDelegate(static_cast<QAbstractItemDelegate *>(delegate));
+}
+
+void qt_abstract_item_view_set_selection_model(void *view, void *selection_model) {
+    static_cast<QAbstractItemView *>(view)->setSelectionModel(static_cast<QItemSelectionModel *>(selection_model));
+}
+
+void *qt_abstract_item_view_get_selection_model(void *view) {
+    return static_cast<void *>(static_cast<QAbstractItemView *>(view)->selectionModel());
+}
+
+void *qt_abstract_item_view_get_current_index(void *view) {
+    QModelIndex idx = static_cast<QAbstractItemView *>(view)->currentIndex();
+    if (!idx.isValid()) return nullptr;
+    return static_cast<void *>(new QPersistentModelIndex(idx));
+}
+
+void qt_abstract_item_view_set_current_index(void *view, void *index) {
+    static_cast<QAbstractItemView *>(view)->setCurrentIndex(*static_cast<QPersistentModelIndex *>(index));
+}
+
+void qt_abstract_item_view_set_drag_enabled(void *view, int is_enabled) {
+    static_cast<QAbstractItemView *>(view)->setDragEnabled(is_enabled != 0);
+}
+
+void qt_abstract_item_view_set_drag_drop_mode(void *view, int mode) {
+    static_cast<QAbstractItemView *>(view)->setDragDropMode(static_cast<QAbstractItemView::DragDropMode>(mode));
+}
+
+void qt_abstract_item_view_set_edit_triggers(void *view, int triggers) {
+    static_cast<QAbstractItemView *>(view)->setEditTriggers(static_cast<QAbstractItemView::EditTriggers>(triggers));
+}
+
+void qt_abstract_item_view_scroll_to(void *view, void *index, int scroll_hint) {
+    static_cast<QAbstractItemView *>(view)->scrollTo(*static_cast<QPersistentModelIndex *>(index), static_cast<QAbstractItemView::ScrollHint>(scroll_hint));
+}
+
+/* ── Model/View Signal Gaps ────────────────────────────────────────── */
+
+int qt_standard_item_model_connect_item_changed(void *model, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QStandardItemModel *>(model), &QStandardItemModel::itemChanged,
+        [callback, user_data](QStandardItem *item) {
+            callback(static_cast<void *>(item), 0, user_data);
+        });
+    return store_connection(conn);
+}
+
+void qt_standard_item_model_find_items(void *model, const char *text, int flags, int column, void ***out_items, int *out_count) {
+    QList<QStandardItem *> items = static_cast<QStandardItemModel *>(model)->findItems(
+        QString::fromUtf8(text), static_cast<Qt::MatchFlags>(flags), column);
+    *out_count = items.size();
+    if (items.isEmpty()) {
+        *out_items = nullptr;
+        return;
+    }
+    *out_items = static_cast<void **>(malloc(sizeof(void *) * items.size()));
+    for (int i = 0; i < items.size(); ++i) {
+        (*out_items)[i] = static_cast<void *>(items[i]);
+    }
+}
+
+/* ── Missing Signals on Existing Widgets ───────────────────────────── */
+
+int qt_check_box_connect_state_changed(void *check_box, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QCheckBox *>(check_box), &QCheckBox::checkStateChanged,
+        [callback, user_data](Qt::CheckState state) {
+            callback(static_cast<int>(state), user_data);
+        });
+    return store_connection(conn);
+}
+
+int qt_spin_box_connect_text_changed(void *spin_box, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSpinBox *>(spin_box), &QSpinBox::textChanged,
+        [callback, user_data](const QString &text) {
+            QByteArray utf8 = text.toUtf8();
+            callback(utf8.constData(), user_data);
+        });
+    return store_connection(conn);
+}
+
+int qt_double_spin_box_connect_text_changed(void *spin_box, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QDoubleSpinBox *>(spin_box), &QDoubleSpinBox::textChanged,
+        [callback, user_data](const QString &text) {
+            QByteArray utf8 = text.toUtf8();
+            callback(utf8.constData(), user_data);
+        });
+    return store_connection(conn);
+}
+
+int qt_line_edit_connect_selection_changed(void *line_edit, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QLineEdit *>(line_edit), &QLineEdit::selectionChanged,
+        [callback, user_data]() {
+            callback(user_data);
+        });
+    return store_connection(conn);
+}
+
+int qt_line_edit_connect_cursor_position_changed(void *line_edit, qt_cell_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QLineEdit *>(line_edit), &QLineEdit::cursorPositionChanged,
+        [callback, user_data](int old_pos, int new_pos) {
+            callback(old_pos, new_pos, user_data);
+        });
+    return store_connection(conn);
+}
+
+/* ── Miscellaneous ─────────────────────────────────────────────────── */
+
+void *qt_splitter_get_handle(void *splitter, int index) {
+    return static_cast<void *>(static_cast<QSplitter *>(splitter)->handle(index));
+}
+
+void qt_tab_bar_set_tab_button(void *tab_bar, int index, int position, void *widget) {
+    static_cast<QTabBar *>(tab_bar)->setTabButton(index, static_cast<QTabBar::ButtonPosition>(position), static_cast<QWidget *>(widget));
+}
+
+void *qt_tab_bar_get_tab_button(void *tab_bar, int index, int position) {
+    return static_cast<void *>(static_cast<QTabBar *>(tab_bar)->tabButton(index, static_cast<QTabBar::ButtonPosition>(position)));
+}
+
+void *qt_object_find_child(void *object, const char *name, int options) {
+    return static_cast<void *>(
+        static_cast<QObject *>(object)->findChild<QWidget *>(
+            QString::fromUtf8(name),
+            static_cast<Qt::FindChildOptions>(options)));
+}
+
+/* ── QMdiArea sub-window activated with pointer ────────────────────── */
+
+int qt_mdi_area_connect_sub_window_activated_with_ptr(void *mdi_area, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMdiArea *>(mdi_area), &QMdiArea::subWindowActivated,
+        [callback, user_data](QMdiSubWindow *sub_window) {
+            callback(static_cast<void *>(sub_window), 0, user_data);
+        });
+    return store_connection(conn);
+}
+
+/* ── QToolTip appearance ───────────────────────────────────────────── */
+
+void *qt_tooltip_get_font(void) {
+    return static_cast<void *>(new QFont(QToolTip::font()));
+}
+
+void qt_tooltip_set_palette(void *palette) {
+    QToolTip::setPalette(*static_cast<QPalette *>(palette));
+}
+
+/* ── QLabel scaled pixmap convenience ──────────────────────────────── */
+
+void qt_label_set_pixmap_scaled(void *label, void *pixmap, int w, int h, int aspect_mode, int transform_mode) {
+    QPixmap scaled = static_cast<QPixmap *>(pixmap)->scaled(
+        w, h,
+        static_cast<Qt::AspectRatioMode>(aspect_mode),
+        static_cast<Qt::TransformationMode>(transform_mode));
+    static_cast<QLabel *>(label)->setPixmap(scaled);
+}
+
+/* ── QRegularExpressionMatch ───────────────────────────────────────── */
+
+void *qt_regex_match_create(void *regex, const char *subject) {
+    return static_cast<void *>(new QRegularExpressionMatch(
+        static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject))));
+}
+
+void *qt_regex_match_create_with_offset(void *regex, const char *subject, int offset) {
+    return static_cast<void *>(new QRegularExpressionMatch(
+        static_cast<QRegularExpression *>(regex)->match(QString::fromUtf8(subject), offset)));
+}
+
+void qt_regex_match_destroy(void *match) {
+    delete static_cast<QRegularExpressionMatch *>(match);
+}
+
+int qt_regex_match_has_match(void *match) {
+    return static_cast<QRegularExpressionMatch *>(match)->hasMatch() ? 1 : 0;
+}
+
+char *qt_regex_match_get_captured(void *match, int group) {
+    QRegularExpressionMatch *m = static_cast<QRegularExpressionMatch *>(match);
+    if (!m->hasMatch()) return nullptr;
+    return qstring_to_heap_utf8(m->captured(group));
+}
+
+char *qt_regex_match_get_captured_by_name(void *match, const char *name) {
+    QRegularExpressionMatch *m = static_cast<QRegularExpressionMatch *>(match);
+    if (!m->hasMatch()) return nullptr;
+    return qstring_to_heap_utf8(m->captured(QString::fromUtf8(name)));
+}
+
+int qt_regex_match_get_captured_start(void *match, int group) {
+    QRegularExpressionMatch *m = static_cast<QRegularExpressionMatch *>(match);
+    if (!m->hasMatch()) return -1;
+    return static_cast<int>(m->capturedStart(group));
+}
+
+int qt_regex_match_get_captured_end(void *match, int group) {
+    QRegularExpressionMatch *m = static_cast<QRegularExpressionMatch *>(match);
+    if (!m->hasMatch()) return -1;
+    return static_cast<int>(m->capturedEnd(group));
+}
+
+int qt_regex_match_get_captured_length(void *match, int group) {
+    QRegularExpressionMatch *m = static_cast<QRegularExpressionMatch *>(match);
+    if (!m->hasMatch()) return -1;
+    return static_cast<int>(m->capturedLength(group));
+}
+
+int qt_regex_match_get_captured_count(void *match) {
+    return static_cast<QRegularExpressionMatch *>(match)->lastCapturedIndex() + 1;
+}
+
+int qt_regex_match_get_last_captured_index(void *match) {
+    return static_cast<QRegularExpressionMatch *>(match)->lastCapturedIndex();
+}
+
+/* ── QAbstractItemModel signals ────────────────────────────────────── */
+
+int qt_model_connect_data_changed(void *model, qt_model_data_changed_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QAbstractItemModel *>(model), &QAbstractItemModel::dataChanged,
+        [callback, user_data](const QModelIndex &top_left, const QModelIndex &bottom_right, const QList<int> &) {
+            QModelIndex *tl = new QModelIndex(top_left);
+            QModelIndex *br = new QModelIndex(bottom_right);
+            callback(static_cast<void *>(tl), static_cast<void *>(br), user_data);
+            delete tl;
+            delete br;
+        });
+    return store_connection(conn);
+}
+
+int qt_model_connect_rows_inserted(void *model, qt_model_rows_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QAbstractItemModel *>(model), &QAbstractItemModel::rowsInserted,
+        [callback, user_data](const QModelIndex &parent, int first, int last) {
+            QModelIndex *p = new QModelIndex(parent);
+            callback(static_cast<void *>(p), first, last, user_data);
+            delete p;
+        });
+    return store_connection(conn);
+}
+
+int qt_model_connect_rows_removed(void *model, qt_model_rows_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QAbstractItemModel *>(model), &QAbstractItemModel::rowsRemoved,
+        [callback, user_data](const QModelIndex &parent, int first, int last) {
+            QModelIndex *p = new QModelIndex(parent);
+            callback(static_cast<void *>(p), first, last, user_data);
+            delete p;
+        });
+    return store_connection(conn);
 }
 
 } /* extern "C" */

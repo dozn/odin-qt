@@ -20,6 +20,8 @@ typedef int  (*qt_key_event_callback_t)(int event_type, int key, int modifiers, 
 typedef int  (*qt_mouse_event_callback_t)(int event_type, int button, int x, int y, int global_x, int global_y, int modifiers, void *user_data);
 typedef void (*qt_four_int_callback_t)(int a, int b, int c, int d, void *user_data);
 typedef void (*qt_two_pointer_callback_t)(void *first, void *second, void *user_data);
+typedef void (*qt_model_data_changed_callback_t)(void *top_left, void *bottom_right, void *user_data);
+typedef void (*qt_model_rows_callback_t)(void *parent, int first, int last, void *user_data);
 
 /* ── QApplication ──────────────────────────────────────────────────── */
 
@@ -4547,6 +4549,182 @@ void  qt_opengl_texture_set_data_2d(void *texture, int level, int pixel_format, 
 void  qt_opengl_texture_generate_mip_maps(void *texture);
 void  qt_opengl_texture_set_min_mag_filters(void *texture, int min_filter, int mag_filter);
 void  qt_opengl_texture_set_wrap_mode(void *texture, int wrap_mode);
+
+/* ══════════════════════════════════════════════════════════════════════
+   TODO Gap Implementations
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── New callback types for event filters ──────────────────────────── */
+
+typedef int  (*qt_wheel_event_callback_t)(int x, int y, int global_x, int global_y, int angle_delta_x, int angle_delta_y, int modifiers, int is_inverted, void *user_data);
+typedef int  (*qt_resize_event_callback_t)(int old_width, int old_height, int new_width, int new_height, void *user_data);
+typedef int  (*qt_focus_event_callback_t)(int event_type, int reason, void *user_data);
+typedef int  (*qt_hover_event_callback_t)(int event_type, int x, int y, int old_x, int old_y, void *user_data);
+
+/* ── Event filter: Wheel ───────────────────────────────────────────── */
+
+void *qt_wheel_event_filter_create(qt_wheel_event_callback_t callback, void *user_data);
+
+/* ── Event filter: Resize ──────────────────────────────────────────── */
+
+void *qt_resize_event_filter_create(qt_resize_event_callback_t callback, void *user_data);
+
+/* ── Event filter: Focus ───────────────────────────────────────────── */
+
+void *qt_focus_event_filter_create(qt_focus_event_callback_t callback, void *user_data);
+
+/* ── Event filter: Hover ───────────────────────────────────────────── */
+
+void *qt_hover_event_filter_create(qt_hover_event_callback_t callback, void *user_data);
+
+/* ── Widget Accessors ──────────────────────────────────────────────── */
+
+void *qt_tab_widget_get_tab_bar(void *tab_widget);
+void  qt_widget_set_whats_this(void *widget, const char *text);
+char *qt_widget_get_whats_this(void *widget);
+void  qt_widget_set_accessible_name(void *widget, const char *name);
+char *qt_widget_get_accessible_name(void *widget);
+void  qt_widget_set_accessible_description(void *widget, const char *description);
+char *qt_widget_get_accessible_description(void *widget);
+void *qt_widget_child_at(void *widget, int x, int y);
+void *qt_widget_get_window(void *widget);
+void *qt_widget_get_native_parent_widget(void *widget);
+void  qt_widget_get_actions(void *widget, void ***out_actions, int *out_count);
+void  qt_widget_set_graphics_effect(void *widget, void *effect);
+void *qt_widget_get_font(void *widget);
+
+/* ── Application-Level ─────────────────────────────────────────────── */
+
+void  qt_application_set_override_cursor(int cursor_shape);
+void  qt_application_restore_override_cursor(void);
+int   qt_application_get_screen_count(void);
+void  qt_application_get_screen_geometry(int screen_index, int *x, int *y, int *width, int *height);
+char *qt_application_get_screen_name(int screen_index);
+double qt_application_get_screen_device_pixel_ratio(int screen_index);
+void  qt_clipboard_set_pixmap(void *pixmap);
+void *qt_clipboard_get_pixmap(void);
+int   qt_clipboard_has_image(void);
+void  qt_application_beep(void);
+void  qt_application_about_qt(void);
+int   qt_application_get_top_level_widget_count(void);
+void  qt_application_get_top_level_widgets(void ***out_widgets, int *out_count);
+
+/* ── Missing Constructors / Factories ──────────────────────────────── */
+
+void *qt_pixmap_create(int width, int height);
+void *qt_pixmap_create_from_data(const unsigned char *data, int size);
+void *qt_action_create(void *parent);
+void *qt_action_create_with_text(const char *text, void *parent);
+
+/* ── Style System ──────────────────────────────────────────────────── */
+
+void *qt_style_get_standard_icon(void *style, int standard_icon);
+void *qt_style_get_standard_pixmap(void *style, int standard_pixmap);
+int   qt_style_factory_get_keys(char ***out_keys, int *out_count);
+void *qt_widget_get_style(void *widget);
+
+/* ── Configurable Dialog Objects ───────────────────────────────────── */
+
+/* QFileDialog as object */
+void *qt_file_dialog_create(void *parent);
+void  qt_file_dialog_set_accept_mode(void *dialog, int mode);
+void  qt_file_dialog_set_file_mode(void *dialog, int mode);
+void  qt_file_dialog_set_name_filter(void *dialog, const char *filter);
+void  qt_file_dialog_set_name_filters(void *dialog, const char **filters, int count);
+void  qt_file_dialog_set_directory(void *dialog, const char *dir);
+char *qt_file_dialog_get_directory(void *dialog);
+void  qt_file_dialog_set_default_suffix(void *dialog, const char *suffix);
+int   qt_file_dialog_get_selected_files(void *dialog, char ***out_files, int *out_count);
+void  qt_file_dialog_set_view_mode(void *dialog, int mode);
+void  qt_file_dialog_set_option(void *dialog, int option, int is_on);
+
+/* QMessageBox as object */
+void *qt_message_box_create(void *parent);
+void  qt_message_box_set_text(void *msg_box, const char *text);
+void  qt_message_box_set_informative_text(void *msg_box, const char *text);
+void  qt_message_box_set_detailed_text(void *msg_box, const char *text);
+void  qt_message_box_set_icon(void *msg_box, int icon);
+void  qt_message_box_set_standard_buttons(void *msg_box, int buttons);
+void  qt_message_box_set_default_button(void *msg_box, int button);
+void  qt_message_box_set_window_title(void *msg_box, const char *title);
+void  qt_message_box_set_icon_pixmap(void *msg_box, void *pixmap);
+
+/* QColorDialog as object */
+void *qt_colour_dialog_create(void *parent);
+void  qt_colour_dialog_set_current_colour(void *dialog, int r, int g, int b, int a);
+void  qt_colour_dialog_get_current_colour(void *dialog, int *r, int *g, int *b, int *a);
+void  qt_colour_dialog_set_option(void *dialog, int option, int is_on);
+
+/* QFontDialog as object */
+void *qt_font_dialog_create(void *parent);
+void  qt_font_dialog_set_current_font(void *dialog, void *font);
+void *qt_font_dialog_get_current_font(void *dialog);
+void  qt_font_dialog_set_option(void *dialog, int option, int is_on);
+
+/* ── Abstract View Properties ──────────────────────────────────────── */
+
+void  qt_abstract_item_view_set_item_delegate(void *view, void *delegate);
+void  qt_abstract_item_view_set_selection_model(void *view, void *selection_model);
+void *qt_abstract_item_view_get_selection_model(void *view);
+void *qt_abstract_item_view_get_current_index(void *view);
+void  qt_abstract_item_view_set_current_index(void *view, void *index);
+void  qt_abstract_item_view_set_drag_enabled(void *view, int is_enabled);
+void  qt_abstract_item_view_set_drag_drop_mode(void *view, int mode);
+void  qt_abstract_item_view_set_edit_triggers(void *view, int triggers);
+void  qt_abstract_item_view_scroll_to(void *view, void *index, int scroll_hint);
+
+/* ── Model/View Signal Gaps ────────────────────────────────────────── */
+
+int   qt_standard_item_model_connect_item_changed(void *model, qt_item_callback_t callback, void *user_data);
+void  qt_standard_item_model_find_items(void *model, const char *text, int flags, int column, void ***out_items, int *out_count);
+
+/* ── Missing Signals on Existing Widgets ───────────────────────────── */
+
+int   qt_check_box_connect_state_changed(void *check_box, qt_int_callback_t callback, void *user_data);
+int   qt_spin_box_connect_text_changed(void *spin_box, qt_string_callback_t callback, void *user_data);
+int   qt_double_spin_box_connect_text_changed(void *spin_box, qt_string_callback_t callback, void *user_data);
+int   qt_line_edit_connect_selection_changed(void *line_edit, qt_callback_t callback, void *user_data);
+int   qt_line_edit_connect_cursor_position_changed(void *line_edit, qt_cell_callback_t callback, void *user_data);
+
+/* ── Miscellaneous ─────────────────────────────────────────────────── */
+
+void *qt_splitter_get_handle(void *splitter, int index);
+void  qt_tab_bar_set_tab_button(void *tab_bar, int index, int position, void *widget);
+void *qt_tab_bar_get_tab_button(void *tab_bar, int index, int position);
+void *qt_object_find_child(void *object, const char *name, int options);
+
+/* ── QMdiArea sub-window activated with pointer ────────────────────── */
+
+int   qt_mdi_area_connect_sub_window_activated_with_ptr(void *mdi_area, qt_item_callback_t callback, void *user_data);
+
+/* ── QToolTip appearance ───────────────────────────────────────────── */
+
+void *qt_tooltip_get_font(void);
+void  qt_tooltip_set_palette(void *palette);
+
+/* ── QLabel scaled pixmap convenience ──────────────────────────────── */
+
+void  qt_label_set_pixmap_scaled(void *label, void *pixmap, int w, int h, int aspect_mode, int transform_mode);
+
+/* ── QRegularExpressionMatch ───────────────────────────────────────── */
+
+void *qt_regex_match_create(void *regex, const char *subject);
+void *qt_regex_match_create_with_offset(void *regex, const char *subject, int offset);
+void  qt_regex_match_destroy(void *match);
+int   qt_regex_match_has_match(void *match);
+char *qt_regex_match_get_captured(void *match, int group);
+char *qt_regex_match_get_captured_by_name(void *match, const char *name);
+int   qt_regex_match_get_captured_start(void *match, int group);
+int   qt_regex_match_get_captured_end(void *match, int group);
+int   qt_regex_match_get_captured_length(void *match, int group);
+int   qt_regex_match_get_captured_count(void *match);
+int   qt_regex_match_get_last_captured_index(void *match);
+
+/* ── QAbstractItemModel signals ────────────────────────────────────── */
+
+int   qt_model_connect_data_changed(void *model, qt_model_data_changed_callback_t callback, void *user_data);
+int   qt_model_connect_rows_inserted(void *model, qt_model_rows_callback_t callback, void *user_data);
+int   qt_model_connect_rows_removed(void *model, qt_model_rows_callback_t callback, void *user_data);
 
 #ifdef __cplusplus
 }
