@@ -1027,6 +1027,17 @@ Word_Wrap_Mode :: enum c.int {
 	Wrap_At_Word_Boundary_Or_Anywhere = 4,
 }
 
+Text_List_Style :: enum c.int {
+	Disc = -1,
+	Circle = -2,
+	Square = -3,
+	Decimal = -4,
+	Lower_Alpha = -5,
+	Upper_Alpha = -6,
+	Lower_Roman = -7,
+	Upper_Roman = -8,
+}
+
 Key_Sequence_Standard_Key :: enum c.int {
 	Unknown_Key = 0,
 	Help_Contents = 1,
@@ -3569,6 +3580,16 @@ foreign qt_lib {
 	@(require_results) text_cursor_at_end :: proc(cursor: Text_Cursor) -> c.int ---
 	@(require_results) text_cursor_get_block_number :: proc(cursor: Text_Cursor) -> c.int ---
 	@(require_results) text_cursor_get_column_number :: proc(cursor: Text_Cursor) -> c.int ---
+	text_cursor_insert_block :: proc(cursor: Text_Cursor) ---
+	text_cursor_insert_image :: proc(cursor: Text_Cursor, file_path: cstring) ---
+	@(require_results) text_cursor_insert_table :: proc(cursor: Text_Cursor, rows: c.int, cols: c.int) -> rawptr ---
+	text_cursor_insert_list :: proc(cursor: Text_Cursor, style: Text_List_Style) ---
+	text_cursor_delete_char :: proc(cursor: Text_Cursor) ---
+	text_cursor_delete_previous_char :: proc(cursor: Text_Cursor) ---
+	text_cursor_clear_selection :: proc(cursor: Text_Cursor) ---
+	@(require_results) text_cursor_get_selection_start :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_get_selection_end :: proc(cursor: Text_Cursor) -> c.int ---
+	@(require_results) text_cursor_get_block :: proc(cursor: Text_Cursor, out_position: ^c.int, out_length: ^c.int) -> c.int ---
 	text_edit_set_text_cursor :: proc(text_edit: Text_Edit, cursor: Text_Cursor) ---
 	plain_text_edit_set_text_cursor :: proc(text_edit: Plain_Text_Edit, cursor: Text_Cursor) ---
 
@@ -3594,6 +3615,18 @@ foreign qt_lib {
 	@(require_results) text_document_is_redo_available :: proc(document: Text_Document) -> c.int ---
 	text_document_clear_undo_redo_stacks :: proc(document: Text_Document) ---
 	text_document_set_maximum_block_count :: proc(document: Text_Document, maximum: c.int) ---
+	@(require_results) text_document_find :: proc(document: Text_Document, text: cstring, position: c.int, flags: c.int) -> Text_Cursor ---
+	text_document_set_default_style_sheet :: proc(document: Text_Document, sheet: cstring) ---
+	text_document_set_page_size :: proc(document: Text_Document, w: c.double, h: c.double) ---
+	text_document_get_page_size :: proc(document: Text_Document, out_w: ^c.double, out_h: ^c.double) ---
+	text_document_set_text_width :: proc(document: Text_Document, width: c.double) ---
+	@(require_results) text_document_get_text_width :: proc(document: Text_Document) -> c.double ---
+	@(require_results) text_document_get_ideal_width :: proc(document: Text_Document) -> c.double ---
+	@(require_results) text_document_get_line_count :: proc(document: Text_Document) -> c.int ---
+	@(require_results) text_document_connect_contents_changed :: proc(document: Text_Document, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) text_document_connect_modification_changed :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) text_document_connect_undo_available :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) text_document_connect_redo_available :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* QFontDatabase */
 
@@ -4257,6 +4290,18 @@ foreign qt_lib {
 	graphics_scene_set_selection_area :: proc(scene: Graphics_Scene, path: Painter_Path) ---
 	graphics_scene_clear_selection :: proc(scene: Graphics_Scene) ---
 	graphics_scene_connect_selection_changed :: proc(scene: Graphics_Scene, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) graphics_scene_item_at :: proc(scene: Graphics_Scene, x: c.double, y: c.double, transform: Transform) -> Graphics_Item ---
+	graphics_scene_get_items :: proc(scene: Graphics_Scene, out_items: ^[^]Graphics_Item, out_count: ^c.int) ---
+	graphics_scene_get_items_in_rect :: proc(scene: Graphics_Scene, x: c.double, y: c.double, w: c.double, h: c.double, out_items: ^[^]Graphics_Item, out_count: ^c.int) ---
+	graphics_scene_get_colliding_items :: proc(scene: Graphics_Scene, item: Graphics_Item, out_items: ^[^]Graphics_Item, out_count: ^c.int) ---
+	graphics_scene_render :: proc(scene: Graphics_Scene, painter: Painter) ---
+	@(require_results) graphics_scene_get_width :: proc(scene: Graphics_Scene) -> c.double ---
+	@(require_results) graphics_scene_get_height :: proc(scene: Graphics_Scene) -> c.double ---
+	graphics_scene_invalidate :: proc(scene: Graphics_Scene) ---
+	graphics_scene_advance :: proc(scene: Graphics_Scene) ---
+	graphics_scene_set_focus_item :: proc(scene: Graphics_Scene, item: Graphics_Item) ---
+	@(require_results) graphics_scene_get_focus_item :: proc(scene: Graphics_Scene) -> Graphics_Item ---
+	@(require_results) graphics_scene_connect_scene_rect_changed :: proc(scene: Graphics_Scene, callback: Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* QGraphicsView */
 
@@ -4281,6 +4326,14 @@ foreign qt_lib {
 	graphics_view_ensure_visible :: proc(view: Graphics_View, x: c.double, y: c.double, w: c.double, h: c.double, x_margin: c.int, y_margin: c.int) ---
 	graphics_view_set_transformation_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) ---
 	graphics_view_set_resize_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) ---
+	graphics_view_set_viewport :: proc(view: Graphics_View, viewport_widget: Widget) ---
+	graphics_view_set_background_brush :: proc(view: Graphics_View, brush: Brush) ---
+	graphics_view_set_foreground_brush :: proc(view: Graphics_View, brush: Brush) ---
+	graphics_view_set_transform :: proc(view: Graphics_View, transform: Transform, is_combine: c.int) ---
+	@(require_results) graphics_view_get_transform :: proc(view: Graphics_View) -> Transform ---
+	graphics_view_get_items :: proc(view: Graphics_View, out_items: ^[^]Graphics_Item, out_count: ^c.int) ---
+	@(require_results) graphics_view_get_item_at :: proc(view: Graphics_View, x: c.int, y: c.int) -> Graphics_Item ---
+	@(require_results) graphics_view_get_viewport :: proc(view: Graphics_View) -> Widget ---
 
 	/* QGraphicsItem (base operations) */
 
@@ -4312,6 +4365,21 @@ foreign qt_lib {
 	@(require_results) graphics_item_collides_with_item :: proc(item: Graphics_Item, other: Graphics_Item) -> c.int ---
 	graphics_item_set_cursor :: proc(item: Graphics_Item, shape: Cursor_Shape) ---
 	graphics_item_unset_cursor :: proc(item: Graphics_Item) ---
+	graphics_item_set_transform :: proc(item: Graphics_Item, transform: Transform, is_combine: c.int) ---
+	@(require_results) graphics_item_get_transform :: proc(item: Graphics_Item) -> Transform ---
+	graphics_item_set_transform_origin_point :: proc(item: Graphics_Item, x: c.double, y: c.double) ---
+	graphics_item_map_to_scene :: proc(item: Graphics_Item, x: c.double, y: c.double, out_x: ^c.double, out_y: ^c.double) ---
+	graphics_item_map_from_scene :: proc(item: Graphics_Item, x: c.double, y: c.double, out_x: ^c.double, out_y: ^c.double) ---
+	graphics_item_map_to_parent :: proc(item: Graphics_Item, x: c.double, y: c.double, out_x: ^c.double, out_y: ^c.double) ---
+	graphics_item_map_from_parent :: proc(item: Graphics_Item, x: c.double, y: c.double, out_x: ^c.double, out_y: ^c.double) ---
+	@(require_results) graphics_item_collides_with_path :: proc(item: Graphics_Item, path: Painter_Path) -> c.int ---
+	@(require_results) graphics_item_contains :: proc(item: Graphics_Item, x: c.double, y: c.double) -> c.int ---
+	@(require_results) graphics_item_get_shape :: proc(item: Graphics_Item) -> Painter_Path ---
+	graphics_item_update :: proc(item: Graphics_Item) ---
+	graphics_item_get_child_items :: proc(item: Graphics_Item, out_items: ^[^]Graphics_Item, out_count: ^c.int) ---
+	graphics_item_get_scene_bounding_rect :: proc(item: Graphics_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	graphics_item_set_accept_hover_events :: proc(item: Graphics_Item, is_enabled: c.int) ---
+	graphics_item_set_accept_drops :: proc(item: Graphics_Item, is_enabled: c.int) ---
 
 	/* QGraphicsRectItem */
 

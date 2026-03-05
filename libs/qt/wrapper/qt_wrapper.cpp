@@ -144,6 +144,8 @@
 #include <QTextCursor>
 #include <QTextDocument>
 #include <QTextBlock>
+#include <QTextList>
+#include <QTextTable>
 #include <QFontDatabase>
 #include <QMovie>
 #include <QImageReader>
@@ -7672,6 +7674,52 @@ int qt_text_cursor_get_column_number(void *cursor) {
     return static_cast<QTextCursor *>(cursor)->columnNumber();
 }
 
+void qt_text_cursor_insert_block(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->insertBlock();
+}
+
+void qt_text_cursor_insert_image(void *cursor, const char *file_path) {
+    QTextImageFormat fmt;
+    fmt.setName(QString::fromUtf8(file_path));
+    static_cast<QTextCursor *>(cursor)->insertImage(fmt);
+}
+
+void *qt_text_cursor_insert_table(void *cursor, int rows, int cols) {
+    return static_cast<void *>(static_cast<QTextCursor *>(cursor)->insertTable(rows, cols));
+}
+
+void qt_text_cursor_insert_list(void *cursor, int style) {
+    static_cast<QTextCursor *>(cursor)->insertList(static_cast<QTextListFormat::Style>(style));
+}
+
+void qt_text_cursor_delete_char(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->deleteChar();
+}
+
+void qt_text_cursor_delete_previous_char(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->deletePreviousChar();
+}
+
+void qt_text_cursor_clear_selection(void *cursor) {
+    static_cast<QTextCursor *>(cursor)->clearSelection();
+}
+
+int qt_text_cursor_get_selection_start(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->selectionStart();
+}
+
+int qt_text_cursor_get_selection_end(void *cursor) {
+    return static_cast<QTextCursor *>(cursor)->selectionEnd();
+}
+
+int qt_text_cursor_get_block(void *cursor, int *out_position, int *out_length) {
+    QTextBlock block = static_cast<QTextCursor *>(cursor)->block();
+    if (!block.isValid()) return 0;
+    *out_position = block.position();
+    *out_length = block.length();
+    return block.blockNumber();
+}
+
 void qt_text_edit_set_text_cursor(void *text_edit, void *cursor) {
     static_cast<QTextEdit *>(text_edit)->setTextCursor(*static_cast<QTextCursor *>(cursor));
 }
@@ -7760,6 +7808,75 @@ void qt_text_document_clear_undo_redo_stacks(void *document) {
 
 void qt_text_document_set_maximum_block_count(void *document, int maximum) {
     static_cast<QTextDocument *>(document)->setMaximumBlockCount(maximum);
+}
+
+void *qt_text_document_find(void *document, const char *text, int position, int flags) {
+    auto *doc = static_cast<QTextDocument *>(document);
+    QTextCursor result = doc->find(QString::fromUtf8(text), position, static_cast<QTextDocument::FindFlags>(flags));
+    if (result.isNull()) return nullptr;
+    return static_cast<void *>(new QTextCursor(result));
+}
+
+void qt_text_document_set_default_style_sheet(void *document, const char *sheet) {
+    static_cast<QTextDocument *>(document)->setDefaultStyleSheet(QString::fromUtf8(sheet));
+}
+
+void qt_text_document_set_page_size(void *document, double w, double h) {
+    static_cast<QTextDocument *>(document)->setPageSize(QSizeF(w, h));
+}
+
+void qt_text_document_get_page_size(void *document, double *out_w, double *out_h) {
+    QSizeF s = static_cast<QTextDocument *>(document)->pageSize();
+    *out_w = s.width();
+    *out_h = s.height();
+}
+
+void qt_text_document_set_text_width(void *document, double width) {
+    static_cast<QTextDocument *>(document)->setTextWidth(width);
+}
+
+double qt_text_document_get_text_width(void *document) {
+    return static_cast<QTextDocument *>(document)->textWidth();
+}
+
+double qt_text_document_get_ideal_width(void *document) {
+    return static_cast<QTextDocument *>(document)->idealWidth();
+}
+
+int qt_text_document_get_line_count(void *document) {
+    return static_cast<QTextDocument *>(document)->lineCount();
+}
+
+int qt_text_document_connect_contents_changed(void *document, qt_callback_t callback, void *user_data) {
+    auto *doc = static_cast<QTextDocument *>(document);
+    auto conn = QObject::connect(doc, &QTextDocument::contentsChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_document_connect_modification_changed(void *document, qt_int_callback_t callback, void *user_data) {
+    auto *doc = static_cast<QTextDocument *>(document);
+    auto conn = QObject::connect(doc, &QTextDocument::modificationChanged, [callback, user_data](bool is_modified) {
+        callback(is_modified ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_document_connect_undo_available(void *document, qt_int_callback_t callback, void *user_data) {
+    auto *doc = static_cast<QTextDocument *>(document);
+    auto conn = QObject::connect(doc, &QTextDocument::undoAvailable, [callback, user_data](bool is_available) {
+        callback(is_available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_text_document_connect_redo_available(void *document, qt_int_callback_t callback, void *user_data) {
+    auto *doc = static_cast<QTextDocument *>(document);
+    auto conn = QObject::connect(doc, &QTextDocument::redoAvailable, [callback, user_data](bool is_available) {
+        callback(is_available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
 }
 
 /* ── QFontDatabase ──────────────────────────────────────────────────── */
@@ -10114,6 +10231,84 @@ int qt_graphics_scene_connect_selection_changed(void *scene, qt_callback_t callb
     return store_connection(conn);
 }
 
+void *qt_graphics_scene_item_at(void *scene, double x, double y, void *transform) {
+    auto *s = static_cast<QGraphicsScene *>(scene);
+    QTransform t = transform ? *static_cast<QTransform *>(transform) : QTransform();
+    return static_cast<void *>(s->itemAt(x, y, t));
+}
+
+void qt_graphics_scene_get_items(void *scene, void ***out_items, int *out_count) {
+    QList<QGraphicsItem *> items = static_cast<QGraphicsScene *>(scene)->items();
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++)
+            (*out_items)[i] = static_cast<void *>(items[i]);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_graphics_scene_get_items_in_rect(void *scene, double x, double y, double w, double h, void ***out_items, int *out_count) {
+    QList<QGraphicsItem *> items = static_cast<QGraphicsScene *>(scene)->items(QRectF(x, y, w, h));
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++)
+            (*out_items)[i] = static_cast<void *>(items[i]);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_graphics_scene_get_colliding_items(void *scene, void *item, void ***out_items, int *out_count) {
+    (void)scene;
+    QList<QGraphicsItem *> items = static_cast<QGraphicsItem *>(item)->collidingItems();
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++)
+            (*out_items)[i] = static_cast<void *>(items[i]);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_graphics_scene_render(void *scene, void *painter) {
+    static_cast<QGraphicsScene *>(scene)->render(static_cast<QPainter *>(painter));
+}
+
+double qt_graphics_scene_get_width(void *scene) {
+    return static_cast<QGraphicsScene *>(scene)->width();
+}
+
+double qt_graphics_scene_get_height(void *scene) {
+    return static_cast<QGraphicsScene *>(scene)->height();
+}
+
+void qt_graphics_scene_invalidate(void *scene) {
+    static_cast<QGraphicsScene *>(scene)->invalidate();
+}
+
+void qt_graphics_scene_advance(void *scene) {
+    static_cast<QGraphicsScene *>(scene)->advance();
+}
+
+void qt_graphics_scene_set_focus_item(void *scene, void *item) {
+    static_cast<QGraphicsScene *>(scene)->setFocusItem(static_cast<QGraphicsItem *>(item));
+}
+
+void *qt_graphics_scene_get_focus_item(void *scene) {
+    return static_cast<void *>(static_cast<QGraphicsScene *>(scene)->focusItem());
+}
+
+int qt_graphics_scene_connect_scene_rect_changed(void *scene, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QGraphicsScene *>(scene), &QGraphicsScene::sceneRectChanged, [callback, user_data](const QRectF &) {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
 /* ── QGraphicsView ─────────────────────────────────────────────────── */
 
 void *qt_graphics_view_create(void *parent) {
@@ -10205,6 +10400,46 @@ void qt_graphics_view_set_transformation_anchor(void *view, int anchor) {
 void qt_graphics_view_set_resize_anchor(void *view, int anchor) {
     static_cast<QGraphicsView *>(view)->setResizeAnchor(
         static_cast<QGraphicsView::ViewportAnchor>(anchor));
+}
+
+void qt_graphics_view_set_viewport(void *view, void *viewport_widget) {
+    static_cast<QGraphicsView *>(view)->setViewport(static_cast<QWidget *>(viewport_widget));
+}
+
+void qt_graphics_view_set_background_brush(void *view, void *brush) {
+    static_cast<QGraphicsView *>(view)->setBackgroundBrush(*static_cast<QBrush *>(brush));
+}
+
+void qt_graphics_view_set_foreground_brush(void *view, void *brush) {
+    static_cast<QGraphicsView *>(view)->setForegroundBrush(*static_cast<QBrush *>(brush));
+}
+
+void qt_graphics_view_set_transform(void *view, void *transform, int is_combine) {
+    static_cast<QGraphicsView *>(view)->setTransform(*static_cast<QTransform *>(transform), is_combine != 0);
+}
+
+void *qt_graphics_view_get_transform(void *view) {
+    return static_cast<void *>(new QTransform(static_cast<QGraphicsView *>(view)->transform()));
+}
+
+void qt_graphics_view_get_items(void *view, void ***out_items, int *out_count) {
+    QList<QGraphicsItem *> items = static_cast<QGraphicsView *>(view)->items();
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++)
+            (*out_items)[i] = static_cast<void *>(items[i]);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void *qt_graphics_view_get_item_at(void *view, int x, int y) {
+    return static_cast<void *>(static_cast<QGraphicsView *>(view)->itemAt(x, y));
+}
+
+void *qt_graphics_view_get_viewport(void *view) {
+    return static_cast<void *>(static_cast<QGraphicsView *>(view)->viewport());
 }
 
 /* ── QGraphicsItem (base operations) ───────────────────────────────── */
@@ -10328,6 +10563,86 @@ void qt_graphics_item_set_cursor(void *item, int shape) {
 
 void qt_graphics_item_unset_cursor(void *item) {
     static_cast<QGraphicsItem *>(item)->unsetCursor();
+}
+
+void qt_graphics_item_set_transform(void *item, void *transform, int is_combine) {
+    static_cast<QGraphicsItem *>(item)->setTransform(*static_cast<QTransform *>(transform), is_combine != 0);
+}
+
+void *qt_graphics_item_get_transform(void *item) {
+    return static_cast<void *>(new QTransform(static_cast<QGraphicsItem *>(item)->transform()));
+}
+
+void qt_graphics_item_set_transform_origin_point(void *item, double x, double y) {
+    static_cast<QGraphicsItem *>(item)->setTransformOriginPoint(x, y);
+}
+
+void qt_graphics_item_map_to_scene(void *item, double x, double y, double *out_x, double *out_y) {
+    QPointF p = static_cast<QGraphicsItem *>(item)->mapToScene(x, y);
+    *out_x = p.x();
+    *out_y = p.y();
+}
+
+void qt_graphics_item_map_from_scene(void *item, double x, double y, double *out_x, double *out_y) {
+    QPointF p = static_cast<QGraphicsItem *>(item)->mapFromScene(x, y);
+    *out_x = p.x();
+    *out_y = p.y();
+}
+
+void qt_graphics_item_map_to_parent(void *item, double x, double y, double *out_x, double *out_y) {
+    QPointF p = static_cast<QGraphicsItem *>(item)->mapToParent(x, y);
+    *out_x = p.x();
+    *out_y = p.y();
+}
+
+void qt_graphics_item_map_from_parent(void *item, double x, double y, double *out_x, double *out_y) {
+    QPointF p = static_cast<QGraphicsItem *>(item)->mapFromParent(x, y);
+    *out_x = p.x();
+    *out_y = p.y();
+}
+
+int qt_graphics_item_collides_with_path(void *item, void *path) {
+    return static_cast<QGraphicsItem *>(item)->collidesWithPath(*static_cast<QPainterPath *>(path)) ? 1 : 0;
+}
+
+int qt_graphics_item_contains(void *item, double x, double y) {
+    return static_cast<QGraphicsItem *>(item)->contains(QPointF(x, y)) ? 1 : 0;
+}
+
+void *qt_graphics_item_get_shape(void *item) {
+    return static_cast<void *>(new QPainterPath(static_cast<QGraphicsItem *>(item)->shape()));
+}
+
+void qt_graphics_item_update(void *item) {
+    static_cast<QGraphicsItem *>(item)->update();
+}
+
+void qt_graphics_item_get_child_items(void *item, void ***out_items, int *out_count) {
+    QList<QGraphicsItem *> children = static_cast<QGraphicsItem *>(item)->childItems();
+    *out_count = children.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++)
+            (*out_items)[i] = static_cast<void *>(children[i]);
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_graphics_item_get_scene_bounding_rect(void *item, double *x, double *y, double *w, double *h) {
+    QRectF r = static_cast<QGraphicsItem *>(item)->sceneBoundingRect();
+    *x = r.x();
+    *y = r.y();
+    *w = r.width();
+    *h = r.height();
+}
+
+void qt_graphics_item_set_accept_hover_events(void *item, int is_enabled) {
+    static_cast<QGraphicsItem *>(item)->setAcceptHoverEvents(is_enabled != 0);
+}
+
+void qt_graphics_item_set_accept_drops(void *item, int is_enabled) {
+    static_cast<QGraphicsItem *>(item)->setAcceptDrops(is_enabled != 0);
 }
 
 /* ── QGraphicsRectItem ─────────────────────────────────────────────── */

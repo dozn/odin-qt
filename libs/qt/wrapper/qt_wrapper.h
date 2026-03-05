@@ -1882,6 +1882,16 @@ int   qt_text_cursor_at_start(void *cursor);
 int   qt_text_cursor_at_end(void *cursor);
 int   qt_text_cursor_get_block_number(void *cursor);
 int   qt_text_cursor_get_column_number(void *cursor);
+void  qt_text_cursor_insert_block(void *cursor);
+void  qt_text_cursor_insert_image(void *cursor, const char *file_path);
+void *qt_text_cursor_insert_table(void *cursor, int rows, int cols);
+void  qt_text_cursor_insert_list(void *cursor, int style);
+void  qt_text_cursor_delete_char(void *cursor);
+void  qt_text_cursor_delete_previous_char(void *cursor);
+void  qt_text_cursor_clear_selection(void *cursor);
+int   qt_text_cursor_get_selection_start(void *cursor);
+int   qt_text_cursor_get_selection_end(void *cursor);
+int   qt_text_cursor_get_block(void *cursor, int *out_position, int *out_length);
 void  qt_text_edit_set_text_cursor(void *text_edit, void *cursor);
 void  qt_plain_text_edit_set_text_cursor(void *text_edit, void *cursor);
 
@@ -1907,6 +1917,18 @@ int   qt_text_document_is_undo_available(void *document);
 int   qt_text_document_is_redo_available(void *document);
 void  qt_text_document_clear_undo_redo_stacks(void *document);
 void  qt_text_document_set_maximum_block_count(void *document, int maximum);
+void *qt_text_document_find(void *document, const char *text, int position, int flags);
+void  qt_text_document_set_default_style_sheet(void *document, const char *sheet);
+void  qt_text_document_set_page_size(void *document, double w, double h);
+void  qt_text_document_get_page_size(void *document, double *out_w, double *out_h);
+void  qt_text_document_set_text_width(void *document, double width);
+double qt_text_document_get_text_width(void *document);
+double qt_text_document_get_ideal_width(void *document);
+int   qt_text_document_get_line_count(void *document);
+int   qt_text_document_connect_contents_changed(void *document, qt_callback_t callback, void *user_data);
+int   qt_text_document_connect_modification_changed(void *document, qt_int_callback_t callback, void *user_data);
+int   qt_text_document_connect_undo_available(void *document, qt_int_callback_t callback, void *user_data);
+int   qt_text_document_connect_redo_available(void *document, qt_int_callback_t callback, void *user_data);
 
 /* ── QFontDatabase ──────────────────────────────────────────────────── */
 
@@ -2568,6 +2590,18 @@ int   qt_graphics_scene_get_item_count(void *scene);
 void  qt_graphics_scene_set_selection_area(void *scene, void *path);
 void  qt_graphics_scene_clear_selection(void *scene);
 int   qt_graphics_scene_connect_selection_changed(void *scene, qt_callback_t callback, void *user_data);
+void *qt_graphics_scene_item_at(void *scene, double x, double y, void *transform);
+void  qt_graphics_scene_get_items(void *scene, void ***out_items, int *out_count);
+void  qt_graphics_scene_get_items_in_rect(void *scene, double x, double y, double w, double h, void ***out_items, int *out_count);
+void  qt_graphics_scene_get_colliding_items(void *scene, void *item, void ***out_items, int *out_count);
+void  qt_graphics_scene_render(void *scene, void *painter);
+double qt_graphics_scene_get_width(void *scene);
+double qt_graphics_scene_get_height(void *scene);
+void  qt_graphics_scene_invalidate(void *scene);
+void  qt_graphics_scene_advance(void *scene);
+void  qt_graphics_scene_set_focus_item(void *scene, void *item);
+void *qt_graphics_scene_get_focus_item(void *scene);
+int   qt_graphics_scene_connect_scene_rect_changed(void *scene, qt_callback_t callback, void *user_data);
 
 /* ── QGraphicsView ─────────────────────────────────────────────────── */
 
@@ -2592,6 +2626,14 @@ void  qt_graphics_view_set_scene_rect(void *view, double x, double y, double w, 
 void  qt_graphics_view_ensure_visible(void *view, double x, double y, double w, double h, int x_margin, int y_margin);
 void  qt_graphics_view_set_transformation_anchor(void *view, int anchor);
 void  qt_graphics_view_set_resize_anchor(void *view, int anchor);
+void  qt_graphics_view_set_viewport(void *view, void *viewport_widget);
+void  qt_graphics_view_set_background_brush(void *view, void *brush);
+void  qt_graphics_view_set_foreground_brush(void *view, void *brush);
+void  qt_graphics_view_set_transform(void *view, void *transform, int is_combine);
+void *qt_graphics_view_get_transform(void *view);
+void  qt_graphics_view_get_items(void *view, void ***out_items, int *out_count);
+void *qt_graphics_view_get_item_at(void *view, int x, int y);
+void *qt_graphics_view_get_viewport(void *view);
 
 /* ── QGraphicsItem (base operations) ───────────────────────────────── */
 
@@ -2623,6 +2665,21 @@ void  qt_graphics_item_get_bounding_rect(void *item, double *x, double *y, doubl
 int   qt_graphics_item_collides_with_item(void *item, void *other);
 void  qt_graphics_item_set_cursor(void *item, int shape);
 void  qt_graphics_item_unset_cursor(void *item);
+void  qt_graphics_item_set_transform(void *item, void *transform, int is_combine);
+void *qt_graphics_item_get_transform(void *item);
+void  qt_graphics_item_set_transform_origin_point(void *item, double x, double y);
+void  qt_graphics_item_map_to_scene(void *item, double x, double y, double *out_x, double *out_y);
+void  qt_graphics_item_map_from_scene(void *item, double x, double y, double *out_x, double *out_y);
+void  qt_graphics_item_map_to_parent(void *item, double x, double y, double *out_x, double *out_y);
+void  qt_graphics_item_map_from_parent(void *item, double x, double y, double *out_x, double *out_y);
+int   qt_graphics_item_collides_with_path(void *item, void *path);
+int   qt_graphics_item_contains(void *item, double x, double y);
+void *qt_graphics_item_get_shape(void *item);
+void  qt_graphics_item_update(void *item);
+void  qt_graphics_item_get_child_items(void *item, void ***out_items, int *out_count);
+void  qt_graphics_item_get_scene_bounding_rect(void *item, double *x, double *y, double *w, double *h);
+void  qt_graphics_item_set_accept_hover_events(void *item, int is_enabled);
+void  qt_graphics_item_set_accept_drops(void *item, int is_enabled);
 
 /* ── QGraphicsRectItem ─────────────────────────────────────────────── */
 
