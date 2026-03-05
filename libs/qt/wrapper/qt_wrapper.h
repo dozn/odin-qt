@@ -3276,6 +3276,53 @@ void  qt_graphics_grid_layout_set_column_minimum_width(void *layout, int col, do
 void  qt_graphics_grid_layout_set_spacing(void *layout, double spacing);
 int   qt_graphics_grid_layout_get_count(void *layout);
 
+/* ── QGraphicsObject ──────────────────────────────────────────────── */
+
+void *qt_graphics_object_from_item(void *item);
+double qt_graphics_object_get_x(void *obj);
+double qt_graphics_object_get_y(void *obj);
+void  qt_graphics_object_set_x(void *obj, double x);
+void  qt_graphics_object_set_y(void *obj, double y);
+double qt_graphics_object_get_opacity(void *obj);
+void  qt_graphics_object_set_opacity(void *obj, double opacity);
+double qt_graphics_object_get_rotation(void *obj);
+void  qt_graphics_object_set_rotation(void *obj, double rotation);
+double qt_graphics_object_get_scale(void *obj);
+void  qt_graphics_object_set_scale(void *obj, double scale);
+int   qt_graphics_object_is_enabled(void *obj);
+void  qt_graphics_object_set_enabled(void *obj, int is_enabled);
+int   qt_graphics_object_is_visible(void *obj);
+void  qt_graphics_object_set_visible(void *obj, int is_visible);
+
+/* ── QGraphicsAnchorLayout ───────────────────────────────────────── */
+
+void *qt_graphics_anchor_layout_create(void *parent);
+void  qt_graphics_anchor_layout_destroy(void *layout);
+void *qt_graphics_anchor_layout_add_anchor(void *layout, void *first_item, int first_edge, void *second_item, int second_edge);
+void  qt_graphics_anchor_layout_add_corner_anchors(void *layout, void *first_item, int first_corner, void *second_item, int second_corner);
+void  qt_graphics_anchor_layout_add_anchors(void *layout, void *first_item, void *second_item, int orientations);
+void  qt_graphics_anchor_layout_set_horizontal_spacing(void *layout, double spacing);
+void  qt_graphics_anchor_layout_set_vertical_spacing(void *layout, double spacing);
+void  qt_graphics_anchor_layout_set_spacing(void *layout, double spacing);
+int   qt_graphics_anchor_layout_get_count(void *layout);
+void  qt_graphics_anchor_set_spacing(void *anchor, double spacing);
+double qt_graphics_anchor_get_spacing(void *anchor);
+
+/* ── QGraphicsItemAnimation ──────────────────────────────────────── */
+
+void *qt_graphics_item_animation_create(void *parent);
+void  qt_graphics_item_animation_destroy(void *animation);
+void  qt_graphics_item_animation_set_item(void *animation, void *item);
+void *qt_graphics_item_animation_get_item(void *animation);
+void  qt_graphics_item_animation_set_timeline(void *animation, void *timeline);
+void *qt_graphics_item_animation_get_timeline(void *animation);
+void  qt_graphics_item_animation_set_pos_at(void *animation, double step, double x, double y);
+void  qt_graphics_item_animation_set_rotation_at(void *animation, double step, double angle);
+void  qt_graphics_item_animation_set_scale_at(void *animation, double step, double sx, double sy);
+void  qt_graphics_item_animation_set_shear_at(void *animation, double step, double sh, double sv);
+void  qt_graphics_item_animation_set_translation_at(void *animation, double step, double dx, double dy);
+void  qt_graphics_item_animation_clear(void *animation);
+
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */
 
 void  qt_graphics_effect_set_enabled(void *effect, int is_enabled);

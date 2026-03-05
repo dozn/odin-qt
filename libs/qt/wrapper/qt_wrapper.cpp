@@ -232,6 +232,9 @@
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
+#include <QGraphicsAnchorLayout>
+#include <QGraphicsObject>
+#include <QGraphicsItemAnimation>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
@@ -12831,6 +12834,185 @@ void qt_graphics_grid_layout_set_spacing(void *layout, double spacing) {
 
 int qt_graphics_grid_layout_get_count(void *layout) {
     return static_cast<QGraphicsGridLayout *>(layout)->count();
+}
+
+/* ── QGraphicsObject ──────────────────────────────────────────────── */
+
+void *qt_graphics_object_from_item(void *item) {
+    QGraphicsItem *gi = static_cast<QGraphicsItem *>(item);
+    return static_cast<void *>(gi->toGraphicsObject());
+}
+
+double qt_graphics_object_get_x(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->x();
+}
+
+double qt_graphics_object_get_y(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->y();
+}
+
+void qt_graphics_object_set_x(void *obj, double x) {
+    static_cast<QGraphicsObject *>(obj)->setX(x);
+}
+
+void qt_graphics_object_set_y(void *obj, double y) {
+    static_cast<QGraphicsObject *>(obj)->setY(y);
+}
+
+double qt_graphics_object_get_opacity(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->opacity();
+}
+
+void qt_graphics_object_set_opacity(void *obj, double opacity) {
+    static_cast<QGraphicsObject *>(obj)->setOpacity(opacity);
+}
+
+double qt_graphics_object_get_rotation(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->rotation();
+}
+
+void qt_graphics_object_set_rotation(void *obj, double rotation) {
+    static_cast<QGraphicsObject *>(obj)->setRotation(rotation);
+}
+
+double qt_graphics_object_get_scale(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->scale();
+}
+
+void qt_graphics_object_set_scale(void *obj, double scale) {
+    static_cast<QGraphicsObject *>(obj)->setScale(scale);
+}
+
+int qt_graphics_object_is_enabled(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->isEnabled() ? 1 : 0;
+}
+
+void qt_graphics_object_set_enabled(void *obj, int is_enabled) {
+    static_cast<QGraphicsObject *>(obj)->setEnabled(is_enabled != 0);
+}
+
+int qt_graphics_object_is_visible(void *obj) {
+    return static_cast<QGraphicsObject *>(obj)->isVisible() ? 1 : 0;
+}
+
+void qt_graphics_object_set_visible(void *obj, int is_visible) {
+    static_cast<QGraphicsObject *>(obj)->setVisible(is_visible != 0);
+}
+
+/* ── QGraphicsAnchorLayout ───────────────────────────────────────── */
+
+void *qt_graphics_anchor_layout_create(void *parent) {
+    return static_cast<void *>(new QGraphicsAnchorLayout(
+        parent ? static_cast<QGraphicsLayoutItem *>(parent) : nullptr));
+}
+
+void qt_graphics_anchor_layout_destroy(void *layout) {
+    delete static_cast<QGraphicsAnchorLayout *>(layout);
+}
+
+void *qt_graphics_anchor_layout_add_anchor(void *layout, void *first_item, int first_edge,
+                                           void *second_item, int second_edge) {
+    return static_cast<void *>(
+        static_cast<QGraphicsAnchorLayout *>(layout)->addAnchor(
+            static_cast<QGraphicsLayoutItem *>(first_item),
+            static_cast<Qt::AnchorPoint>(first_edge),
+            static_cast<QGraphicsLayoutItem *>(second_item),
+            static_cast<Qt::AnchorPoint>(second_edge)));
+}
+
+void qt_graphics_anchor_layout_add_corner_anchors(void *layout, void *first_item, int first_corner,
+                                                   void *second_item, int second_corner) {
+    static_cast<QGraphicsAnchorLayout *>(layout)->addCornerAnchors(
+        static_cast<QGraphicsLayoutItem *>(first_item),
+        static_cast<Qt::Corner>(first_corner),
+        static_cast<QGraphicsLayoutItem *>(second_item),
+        static_cast<Qt::Corner>(second_corner));
+}
+
+void qt_graphics_anchor_layout_add_anchors(void *layout, void *first_item, void *second_item, int orientations) {
+    static_cast<QGraphicsAnchorLayout *>(layout)->addAnchors(
+        static_cast<QGraphicsLayoutItem *>(first_item),
+        static_cast<QGraphicsLayoutItem *>(second_item),
+        static_cast<Qt::Orientations>(orientations));
+}
+
+void qt_graphics_anchor_layout_set_horizontal_spacing(void *layout, double spacing) {
+    static_cast<QGraphicsAnchorLayout *>(layout)->setHorizontalSpacing(spacing);
+}
+
+void qt_graphics_anchor_layout_set_vertical_spacing(void *layout, double spacing) {
+    static_cast<QGraphicsAnchorLayout *>(layout)->setVerticalSpacing(spacing);
+}
+
+void qt_graphics_anchor_layout_set_spacing(void *layout, double spacing) {
+    static_cast<QGraphicsAnchorLayout *>(layout)->setSpacing(spacing);
+}
+
+int qt_graphics_anchor_layout_get_count(void *layout) {
+    return static_cast<QGraphicsAnchorLayout *>(layout)->count();
+}
+
+void qt_graphics_anchor_set_spacing(void *anchor, double spacing) {
+    static_cast<QGraphicsAnchor *>(anchor)->setSpacing(spacing);
+}
+
+double qt_graphics_anchor_get_spacing(void *anchor) {
+    return static_cast<QGraphicsAnchor *>(anchor)->spacing();
+}
+
+/* ── QGraphicsItemAnimation ──────────────────────────────────────── */
+
+void *qt_graphics_item_animation_create(void *parent) {
+    return static_cast<void *>(new QGraphicsItemAnimation(
+        parent ? static_cast<QObject *>(parent) : nullptr));
+}
+
+void qt_graphics_item_animation_destroy(void *animation) {
+    delete static_cast<QGraphicsItemAnimation *>(animation);
+}
+
+void qt_graphics_item_animation_set_item(void *animation, void *item) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setItem(
+        static_cast<QGraphicsItem *>(item));
+}
+
+void *qt_graphics_item_animation_get_item(void *animation) {
+    return static_cast<void *>(
+        static_cast<QGraphicsItemAnimation *>(animation)->item());
+}
+
+void qt_graphics_item_animation_set_timeline(void *animation, void *timeline) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setTimeLine(
+        static_cast<QTimeLine *>(timeline));
+}
+
+void *qt_graphics_item_animation_get_timeline(void *animation) {
+    return static_cast<void *>(
+        static_cast<QGraphicsItemAnimation *>(animation)->timeLine());
+}
+
+void qt_graphics_item_animation_set_pos_at(void *animation, double step, double x, double y) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setPosAt(step, QPointF(x, y));
+}
+
+void qt_graphics_item_animation_set_rotation_at(void *animation, double step, double angle) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setRotationAt(step, angle);
+}
+
+void qt_graphics_item_animation_set_scale_at(void *animation, double step, double sx, double sy) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setScaleAt(step, sx, sy);
+}
+
+void qt_graphics_item_animation_set_shear_at(void *animation, double step, double sh, double sv) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setShearAt(step, sh, sv);
+}
+
+void qt_graphics_item_animation_set_translation_at(void *animation, double step, double dx, double dy) {
+    static_cast<QGraphicsItemAnimation *>(animation)->setTranslationAt(step, dx, dy);
+}
+
+void qt_graphics_item_animation_clear(void *animation) {
+    static_cast<QGraphicsItemAnimation *>(animation)->clear();
 }
 
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */

@@ -72,7 +72,8 @@ QProxyStyle, QDirIterator, QTimeZone,
 QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout,
 QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider,
 QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery,
-QColorSpace, QColorTransform, QTextLayout, QTextLine
+QColorSpace, QColorTransform, QTextLayout, QTextLine,
+QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation
 
 ---
 
@@ -83,9 +84,6 @@ QColorSpace, QColorTransform, QTextLayout, QTextLine
 ### Medium Priority — Useful but less commonly needed
 
 **Graphics scene (advanced):**
-- QGraphicsObject — QObject-based graphics item (signals/slots on items)
-- QGraphicsAnchorLayout — anchor-based scene layout
-- QGraphicsItemAnimation — timeline-driven animation of scene items
 - QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
 
 **Gestures:**

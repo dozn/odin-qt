@@ -287,6 +287,10 @@ Colour_Space :: distinct rawptr
 Colour_Transform :: distinct rawptr
 Text_Layout :: distinct rawptr
 Text_Line :: distinct rawptr
+Graphics_Object :: distinct rawptr
+Graphics_Anchor_Layout :: distinct rawptr
+Graphics_Anchor :: distinct rawptr
+Graphics_Item_Animation :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1545,6 +1549,15 @@ Corner :: enum c.int {
 	Top_Right = 0x00001,
 	Bottom_Left = 0x00002,
 	Bottom_Right = 0x00003,
+}
+
+Anchor_Point :: enum c.int {
+	Left = 0,
+	Horizontal_Centre = 1,
+	Right = 2,
+	Top = 3,
+	Vertical_Centre = 4,
+	Bottom = 5,
 }
 
 Scroller_Gesture_Type :: enum c.int {
@@ -5088,6 +5101,53 @@ foreign qt_lib {
 	graphics_grid_layout_set_column_minimum_width :: proc(layout: Graphics_Grid_Layout, col: c.int, width: c.double) ---
 	graphics_grid_layout_set_spacing :: proc(layout: Graphics_Grid_Layout, spacing: c.double) ---
 	@(require_results) graphics_grid_layout_get_count :: proc(layout: Graphics_Grid_Layout) -> c.int ---
+
+	/* QGraphicsObject */
+
+	@(require_results) graphics_object_from_item :: proc(item: Graphics_Item) -> Graphics_Object ---
+	@(require_results) graphics_object_get_x :: proc(obj: Graphics_Object) -> c.double ---
+	@(require_results) graphics_object_get_y :: proc(obj: Graphics_Object) -> c.double ---
+	graphics_object_set_x :: proc(obj: Graphics_Object, x: c.double) ---
+	graphics_object_set_y :: proc(obj: Graphics_Object, y: c.double) ---
+	@(require_results) graphics_object_get_opacity :: proc(obj: Graphics_Object) -> c.double ---
+	graphics_object_set_opacity :: proc(obj: Graphics_Object, opacity: c.double) ---
+	@(require_results) graphics_object_get_rotation :: proc(obj: Graphics_Object) -> c.double ---
+	graphics_object_set_rotation :: proc(obj: Graphics_Object, rotation: c.double) ---
+	@(require_results) graphics_object_get_scale :: proc(obj: Graphics_Object) -> c.double ---
+	graphics_object_set_scale :: proc(obj: Graphics_Object, scale: c.double) ---
+	@(require_results) graphics_object_is_enabled :: proc(obj: Graphics_Object) -> c.int ---
+	graphics_object_set_enabled :: proc(obj: Graphics_Object, is_enabled: c.int) ---
+	@(require_results) graphics_object_is_visible :: proc(obj: Graphics_Object) -> c.int ---
+	graphics_object_set_visible :: proc(obj: Graphics_Object, is_visible: c.int) ---
+
+	/* QGraphicsAnchorLayout */
+
+	@(require_results) graphics_anchor_layout_create :: proc(parent: rawptr) -> Graphics_Anchor_Layout ---
+	graphics_anchor_layout_destroy :: proc(layout: Graphics_Anchor_Layout) ---
+	@(require_results) graphics_anchor_layout_add_anchor :: proc(layout: Graphics_Anchor_Layout, first_item: rawptr, first_edge: Anchor_Point, second_item: rawptr, second_edge: Anchor_Point) -> Graphics_Anchor ---
+	graphics_anchor_layout_add_corner_anchors :: proc(layout: Graphics_Anchor_Layout, first_item: rawptr, first_corner: Corner, second_item: rawptr, second_corner: Corner) ---
+	graphics_anchor_layout_add_anchors :: proc(layout: Graphics_Anchor_Layout, first_item: rawptr, second_item: rawptr, orientations: c.int) ---
+	graphics_anchor_layout_set_horizontal_spacing :: proc(layout: Graphics_Anchor_Layout, spacing: c.double) ---
+	graphics_anchor_layout_set_vertical_spacing :: proc(layout: Graphics_Anchor_Layout, spacing: c.double) ---
+	graphics_anchor_layout_set_spacing :: proc(layout: Graphics_Anchor_Layout, spacing: c.double) ---
+	@(require_results) graphics_anchor_layout_get_count :: proc(layout: Graphics_Anchor_Layout) -> c.int ---
+	graphics_anchor_set_spacing :: proc(anchor: Graphics_Anchor, spacing: c.double) ---
+	@(require_results) graphics_anchor_get_spacing :: proc(anchor: Graphics_Anchor) -> c.double ---
+
+	/* QGraphicsItemAnimation */
+
+	@(require_results) graphics_item_animation_create :: proc(parent: rawptr) -> Graphics_Item_Animation ---
+	graphics_item_animation_destroy :: proc(animation: Graphics_Item_Animation) ---
+	graphics_item_animation_set_item :: proc(animation: Graphics_Item_Animation, item: Graphics_Item) ---
+	@(require_results) graphics_item_animation_get_item :: proc(animation: Graphics_Item_Animation) -> Graphics_Item ---
+	graphics_item_animation_set_timeline :: proc(animation: Graphics_Item_Animation, timeline: Time_Line) ---
+	@(require_results) graphics_item_animation_get_timeline :: proc(animation: Graphics_Item_Animation) -> Time_Line ---
+	graphics_item_animation_set_pos_at :: proc(animation: Graphics_Item_Animation, step: c.double, x: c.double, y: c.double) ---
+	graphics_item_animation_set_rotation_at :: proc(animation: Graphics_Item_Animation, step: c.double, angle: c.double) ---
+	graphics_item_animation_set_scale_at :: proc(animation: Graphics_Item_Animation, step: c.double, sx: c.double, sy: c.double) ---
+	graphics_item_animation_set_shear_at :: proc(animation: Graphics_Item_Animation, step: c.double, sh: c.double, sv: c.double) ---
+	graphics_item_animation_set_translation_at :: proc(animation: Graphics_Item_Animation, step: c.double, dx: c.double, dy: c.double) ---
+	graphics_item_animation_clear :: proc(animation: Graphics_Item_Animation) ---
 
 	/* QGraphicsEffect (base + subclasses) */
 
