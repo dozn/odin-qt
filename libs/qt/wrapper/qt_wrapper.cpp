@@ -7775,6 +7775,65 @@ void qt_painter_stroke_path(void *painter, void *path, void *pen) {
     static_cast<QPainter *>(painter)->strokePath(*static_cast<QPainterPath *>(path), *static_cast<QPen *>(pen));
 }
 
+/* ── QPainterPathStroker ───────────────────────────────────────────── */
+
+void *qt_painter_path_stroker_create(void) {
+    return static_cast<void *>(new QPainterPathStroker());
+}
+
+void qt_painter_path_stroker_destroy(void *stroker) {
+    delete static_cast<QPainterPathStroker *>(stroker);
+}
+
+void qt_painter_path_stroker_set_width(void *stroker, double width) {
+    static_cast<QPainterPathStroker *>(stroker)->setWidth(width);
+}
+
+double qt_painter_path_stroker_get_width(void *stroker) {
+    return static_cast<QPainterPathStroker *>(stroker)->width();
+}
+
+void qt_painter_path_stroker_set_cap_style(void *stroker, int style) {
+    static_cast<QPainterPathStroker *>(stroker)->setCapStyle(static_cast<Qt::PenCapStyle>(style));
+}
+
+int qt_painter_path_stroker_get_cap_style(void *stroker) {
+    return static_cast<int>(static_cast<QPainterPathStroker *>(stroker)->capStyle());
+}
+
+void qt_painter_path_stroker_set_join_style(void *stroker, int style) {
+    static_cast<QPainterPathStroker *>(stroker)->setJoinStyle(static_cast<Qt::PenJoinStyle>(style));
+}
+
+int qt_painter_path_stroker_get_join_style(void *stroker) {
+    return static_cast<int>(static_cast<QPainterPathStroker *>(stroker)->joinStyle());
+}
+
+void qt_painter_path_stroker_set_miter_limit(void *stroker, double limit) {
+    static_cast<QPainterPathStroker *>(stroker)->setMiterLimit(limit);
+}
+
+double qt_painter_path_stroker_get_miter_limit(void *stroker) {
+    return static_cast<QPainterPathStroker *>(stroker)->miterLimit();
+}
+
+void qt_painter_path_stroker_set_dash_pattern(void *stroker, int style) {
+    static_cast<QPainterPathStroker *>(stroker)->setDashPattern(static_cast<Qt::PenStyle>(style));
+}
+
+void qt_painter_path_stroker_set_dash_offset(void *stroker, double offset) {
+    static_cast<QPainterPathStroker *>(stroker)->setDashOffset(offset);
+}
+
+double qt_painter_path_stroker_get_dash_offset(void *stroker) {
+    return static_cast<QPainterPathStroker *>(stroker)->dashOffset();
+}
+
+void *qt_painter_path_stroker_create_stroke(void *stroker, void *path) {
+    QPainterPath result = static_cast<QPainterPathStroker *>(stroker)->createStroke(*static_cast<QPainterPath *>(path));
+    return static_cast<void *>(new QPainterPath(result));
+}
+
 /* ── QTransform ─────────────────────────────────────────────────────── */
 
 void *qt_transform_create(void) {

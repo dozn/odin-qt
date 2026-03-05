@@ -1897,6 +1897,23 @@ void  qt_painter_set_clip_path(void *painter, void *path);
 void  qt_painter_fill_path(void *painter, void *path, int r, int g, int b, int a);
 void  qt_painter_stroke_path(void *painter, void *path, void *pen);
 
+/* ── QPainterPathStroker ───────────────────────────────────────────── */
+
+void *qt_painter_path_stroker_create(void);
+void  qt_painter_path_stroker_destroy(void *stroker);
+void  qt_painter_path_stroker_set_width(void *stroker, double width);
+double qt_painter_path_stroker_get_width(void *stroker);
+void  qt_painter_path_stroker_set_cap_style(void *stroker, int style);
+int   qt_painter_path_stroker_get_cap_style(void *stroker);
+void  qt_painter_path_stroker_set_join_style(void *stroker, int style);
+int   qt_painter_path_stroker_get_join_style(void *stroker);
+void  qt_painter_path_stroker_set_miter_limit(void *stroker, double limit);
+double qt_painter_path_stroker_get_miter_limit(void *stroker);
+void  qt_painter_path_stroker_set_dash_pattern(void *stroker, int style);
+void  qt_painter_path_stroker_set_dash_offset(void *stroker, double offset);
+double qt_painter_path_stroker_get_dash_offset(void *stroker);
+void *qt_painter_path_stroker_create_stroke(void *stroker, void *path);
+
 /* ── QTransform ─────────────────────────────────────────────────────── */
 
 void  *qt_transform_create(void);

@@ -63,16 +63,14 @@ QPdfWriter, QTextStream, QDataStream, QTextTable, QTextTableCell,
 QTextList, QTextFrame, QDeadlineTimer, QCollator,
 QAbstractItemModel helper (CCustomItemModel),
 QListWidgetItem, QMimeData,
-QGraphicsPolygonItem, QGraphicsSimpleTextItem
+QGraphicsPolygonItem, QGraphicsSimpleTextItem,
+QPainterPathStroker
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Drawing:**
-- QPainterPathStroker — convert path to stroke outline (hit testing, outlines)
 
 **Rich text formatting:**
 - QTextBlockFormat — paragraph-level formatting (alignment, indent, line spacing)

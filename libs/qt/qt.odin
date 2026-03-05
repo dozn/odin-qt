@@ -263,6 +263,7 @@ Text_List :: distinct rawptr
 Text_Frame :: distinct rawptr
 Custom_Item_Model :: distinct rawptr
 Mime_Data :: distinct rawptr
+Painter_Path_Stroker :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -3657,6 +3658,23 @@ foreign qt_lib {
 	painter_set_clip_path :: proc(painter: Painter, path: Painter_Path) ---
 	painter_fill_path :: proc(painter: Painter, path: Painter_Path, r: c.int, g: c.int, b: c.int, a: c.int) ---
 	painter_stroke_path :: proc(painter: Painter, path: Painter_Path, pen: Pen) ---
+
+	/* QPainterPathStroker */
+
+	@(require_results) painter_path_stroker_create :: proc() -> Painter_Path_Stroker ---
+	painter_path_stroker_destroy :: proc(stroker: Painter_Path_Stroker) ---
+	painter_path_stroker_set_width :: proc(stroker: Painter_Path_Stroker, width: c.double) ---
+	@(require_results) painter_path_stroker_get_width :: proc(stroker: Painter_Path_Stroker) -> c.double ---
+	painter_path_stroker_set_cap_style :: proc(stroker: Painter_Path_Stroker, style: Pen_Cap_Style) ---
+	@(require_results) painter_path_stroker_get_cap_style :: proc(stroker: Painter_Path_Stroker) -> Pen_Cap_Style ---
+	painter_path_stroker_set_join_style :: proc(stroker: Painter_Path_Stroker, style: Pen_Join_Style) ---
+	@(require_results) painter_path_stroker_get_join_style :: proc(stroker: Painter_Path_Stroker) -> Pen_Join_Style ---
+	painter_path_stroker_set_miter_limit :: proc(stroker: Painter_Path_Stroker, limit: c.double) ---
+	@(require_results) painter_path_stroker_get_miter_limit :: proc(stroker: Painter_Path_Stroker) -> c.double ---
+	painter_path_stroker_set_dash_pattern :: proc(stroker: Painter_Path_Stroker, style: Pen_Style) ---
+	painter_path_stroker_set_dash_offset :: proc(stroker: Painter_Path_Stroker, offset: c.double) ---
+	@(require_results) painter_path_stroker_get_dash_offset :: proc(stroker: Painter_Path_Stroker) -> c.double ---
+	@(require_results) painter_path_stroker_create_stroke :: proc(stroker: Painter_Path_Stroker, path: Painter_Path) -> Painter_Path ---
 
 	/* QTransform */
 
