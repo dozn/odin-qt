@@ -58,8 +58,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Directory Structure
 ```
 odin-qt/
+  CLAUDE_TODO.md             # Tracks which Qt classes have been wrapped
   src/
-    main.odin               # Application entry point
+    main.odin               # Application entry point (demo app)
   libs/
     qt/
       qt.odin               # Odin bindings package (import qt "../libs/qt")
@@ -67,11 +68,13 @@ odin-qt/
         qt_wrapper.h         # C header for the Qt wrapper
         qt_wrapper.cpp       # C++ implementation (thin extern "C" layer over Qt)
         build.bat            # Compiles wrapper into a static .lib
-        qt_wrapper.lib       # Build output (checked in or rebuilt locally)
+        compile_flags.txt    # Compiler flags for IDE/tooling
+        qt_wrapper.lib       # Build output (gitignored; rebuild via build.bat)
     qt6-static/              # Static Qt 6.8.3 install (headers + .lib files)
     qt6-static-build/        # CMake build tree (can be deleted after install)
     qtbase-everywhere-src-*/ # Qt source (can be deleted after build)
     vcpkg/                   # vcpkg checkout (unused; Qt was built from source)
+    vcpkg_installed/         # vcpkg installed packages (unused)
 ```
 
 ## Build & Run Commands
@@ -135,7 +138,7 @@ Qt is a C++ library. Odin can only bind to C ABI functions. The binding uses thr
 2. **Static library** (`libs/qt/wrapper/qt_wrapper.lib`) — the compiled wrapper plus Qt resource `.obj` files, archived via `lib.exe`.
 3. **Odin bindings** (`libs/qt/qt.odin`) — `foreign import` block that references the wrapper `.lib`, all Qt static `.lib` files, and all required Windows system `.lib` files.
 
-Opaque handle types (`Application`, `Main_Window`, `Widget`) are `distinct rawptr` for type safety on the Odin side.
+Opaque handle types (e.g. `Application`, `Main_Window`, `Widget`, `Label`, `Push_Button`, etc.) are `distinct rawptr` for type safety on the Odin side. See `CLAUDE_TODO.md` for the full list of wrapped Qt classes.
 
 ### Adding New Qt Wrapper Functions
 1. Add the C function declaration to `qt_wrapper.h`
