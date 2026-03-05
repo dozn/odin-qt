@@ -308,6 +308,13 @@ Bit_Array :: distinct rawptr
 Text_Boundary_Finder :: distinct rawptr
 Wait_Condition :: distinct rawptr
 Thread_Pool :: distinct rawptr
+Page_Ranges :: distinct rawptr
+File_Selector :: distinct rawptr
+Plugin_Loader :: distinct rawptr
+Logging_Category :: distinct rawptr
+Cbor_Value :: distinct rawptr
+Cbor_Map :: distinct rawptr
+Cbor_Array :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -5783,4 +5790,109 @@ foreign qt_lib {
 
 	@(require_results) widget_grab_gesture :: proc(widget: Widget, gesture_type: Gesture_Type, flags: c.int) -> c.int ---
 	widget_ungrab_gesture :: proc(widget: Widget, gesture_type: Gesture_Type) ---
+
+	/* QPageRanges */
+
+	@(require_results) page_ranges_create :: proc() -> Page_Ranges ---
+	page_ranges_destroy :: proc(ranges: Page_Ranges) ---
+	page_ranges_add_page :: proc(ranges: Page_Ranges, page: c.int) ---
+	page_ranges_add_range :: proc(ranges: Page_Ranges, from: c.int, to: c.int) ---
+	@(require_results) page_ranges_contains :: proc(ranges: Page_Ranges, page: c.int) -> c.int ---
+	@(require_results) page_ranges_is_empty :: proc(ranges: Page_Ranges) -> c.int ---
+	@(require_results) page_ranges_get_first_page :: proc(ranges: Page_Ranges) -> c.int ---
+	@(require_results) page_ranges_get_last_page :: proc(ranges: Page_Ranges) -> c.int ---
+	page_ranges_clear :: proc(ranges: Page_Ranges) ---
+	@(require_results) page_ranges_to_string :: proc(ranges: Page_Ranges) -> cstring ---
+	@(require_results) page_ranges_from_string :: proc(ranges_string: cstring) -> Page_Ranges ---
+
+	/* QFileSelector */
+
+	@(require_results) file_selector_create :: proc(parent: rawptr) -> File_Selector ---
+	file_selector_destroy :: proc(selector: File_Selector) ---
+	@(require_results) file_selector_select :: proc(selector: File_Selector, file_path: cstring) -> cstring ---
+	@(require_results) file_selector_select_url :: proc(selector: File_Selector, url: Url) -> Url ---
+	file_selector_set_extra_selectors :: proc(selector: File_Selector, selectors: [^]cstring, count: c.int) ---
+
+	/* QPluginLoader */
+
+	@(require_results) plugin_loader_create :: proc(file_name: cstring, parent: rawptr) -> Plugin_Loader ---
+	plugin_loader_destroy :: proc(loader: Plugin_Loader) ---
+	@(require_results) plugin_loader_load :: proc(loader: Plugin_Loader) -> c.int ---
+	@(require_results) plugin_loader_unload :: proc(loader: Plugin_Loader) -> c.int ---
+	@(require_results) plugin_loader_is_loaded :: proc(loader: Plugin_Loader) -> c.int ---
+	@(require_results) plugin_loader_get_error_string :: proc(loader: Plugin_Loader) -> cstring ---
+	@(require_results) plugin_loader_get_file_name :: proc(loader: Plugin_Loader) -> cstring ---
+	plugin_loader_set_file_name :: proc(loader: Plugin_Loader, file_name: cstring) ---
+	plugin_loader_set_load_hints :: proc(loader: Plugin_Loader, hints: c.int) ---
+
+	/* QLoggingCategory */
+
+	@(require_results) logging_category_create :: proc(category: cstring) -> Logging_Category ---
+	logging_category_destroy :: proc(category: Logging_Category) ---
+	@(require_results) logging_category_is_debug_enabled :: proc(category: Logging_Category) -> c.int ---
+	@(require_results) logging_category_is_info_enabled :: proc(category: Logging_Category) -> c.int ---
+	@(require_results) logging_category_is_warning_enabled :: proc(category: Logging_Category) -> c.int ---
+	@(require_results) logging_category_is_critical_enabled :: proc(category: Logging_Category) -> c.int ---
+	@(require_results) logging_category_get_category_name :: proc(category: Logging_Category) -> cstring ---
+	logging_category_set_filter_rules :: proc(rules: cstring) ---
+
+	/* QCborValue */
+
+	@(require_results) cbor_value_create_integer :: proc(value: c.longlong) -> Cbor_Value ---
+	@(require_results) cbor_value_create_double :: proc(value: c.double) -> Cbor_Value ---
+	@(require_results) cbor_value_create_bool :: proc(value: c.int) -> Cbor_Value ---
+	@(require_results) cbor_value_create_string :: proc(text: cstring) -> Cbor_Value ---
+	@(require_results) cbor_value_create_byte_array :: proc(data: [^]u8, size: c.int) -> Cbor_Value ---
+	@(require_results) cbor_value_create_null :: proc() -> Cbor_Value ---
+	@(require_results) cbor_value_create_undefined :: proc() -> Cbor_Value ---
+	@(require_results) cbor_value_create_from_map :: proc(map_val: Cbor_Map) -> Cbor_Value ---
+	@(require_results) cbor_value_create_from_array :: proc(array: Cbor_Array) -> Cbor_Value ---
+	cbor_value_destroy :: proc(value: Cbor_Value) ---
+	@(require_results) cbor_value_get_type :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_integer :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_double :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_string :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_byte_array :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_map :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_array :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_bool :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_is_null :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_to_integer :: proc(value: Cbor_Value) -> c.longlong ---
+	@(require_results) cbor_value_to_double :: proc(value: Cbor_Value) -> c.double ---
+	@(require_results) cbor_value_to_string :: proc(value: Cbor_Value) -> cstring ---
+	@(require_results) cbor_value_to_bool :: proc(value: Cbor_Value) -> c.int ---
+	@(require_results) cbor_value_to_map :: proc(value: Cbor_Value) -> Cbor_Map ---
+	@(require_results) cbor_value_to_array :: proc(value: Cbor_Value) -> Cbor_Array ---
+	cbor_value_to_byte_array :: proc(value: Cbor_Value, out_data: ^[^]u8, out_size: ^c.int) ---
+	cbor_value_free_byte_array :: proc(data: [^]u8) ---
+	@(require_results) cbor_value_to_cbor :: proc(value: Cbor_Value, out_size: ^c.int) -> rawptr ---
+	@(require_results) cbor_value_from_cbor :: proc(data: [^]u8, size: c.int) -> Cbor_Value ---
+
+	/* QCborMap */
+
+	@(require_results) cbor_map_create :: proc() -> Cbor_Map ---
+	cbor_map_destroy :: proc(map_val: Cbor_Map) ---
+	@(require_results) cbor_map_get_size :: proc(map_val: Cbor_Map) -> c.int ---
+	@(require_results) cbor_map_is_empty :: proc(map_val: Cbor_Map) -> c.int ---
+	cbor_map_insert_integer :: proc(map_val: Cbor_Map, key: cstring, value: c.longlong) ---
+	cbor_map_insert_double :: proc(map_val: Cbor_Map, key: cstring, value: c.double) ---
+	cbor_map_insert_string :: proc(map_val: Cbor_Map, key: cstring, value: cstring) ---
+	cbor_map_insert_bool :: proc(map_val: Cbor_Map, key: cstring, value: c.int) ---
+	cbor_map_insert_value :: proc(map_val: Cbor_Map, key: cstring, value: Cbor_Value) ---
+	@(require_results) cbor_map_get_value :: proc(map_val: Cbor_Map, key: cstring) -> Cbor_Value ---
+	@(require_results) cbor_map_contains :: proc(map_val: Cbor_Map, key: cstring) -> c.int ---
+	cbor_map_remove :: proc(map_val: Cbor_Map, key: cstring) ---
+
+	/* QCborArray */
+
+	@(require_results) cbor_array_create :: proc() -> Cbor_Array ---
+	cbor_array_destroy :: proc(array: Cbor_Array) ---
+	@(require_results) cbor_array_get_size :: proc(array: Cbor_Array) -> c.int ---
+	@(require_results) cbor_array_is_empty :: proc(array: Cbor_Array) -> c.int ---
+	cbor_array_append_value :: proc(array: Cbor_Array, value: Cbor_Value) ---
+	cbor_array_append_integer :: proc(array: Cbor_Array, value: c.longlong) ---
+	cbor_array_append_double :: proc(array: Cbor_Array, value: c.double) ---
+	cbor_array_append_string :: proc(array: Cbor_Array, text: cstring) ---
+	cbor_array_append_bool :: proc(array: Cbor_Array, value: c.int) ---
+	@(require_results) cbor_array_get_value_at :: proc(array: Cbor_Array, index: c.int) -> Cbor_Value ---
 }

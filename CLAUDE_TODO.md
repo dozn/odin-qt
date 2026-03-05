@@ -79,7 +79,9 @@ QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent,
 QGesture, QPanGesture, QPinchGesture, QSwipeGesture,
 QTapGesture, QTapAndHoldGesture, QGestureEvent,
 QBasicTimer, QBitArray, QTextBoundaryFinder,
-QWaitCondition, QThreadPool (with QRunnable callback wrapper)
+QWaitCondition, QThreadPool (with QRunnable callback wrapper),
+QPageRanges, QFileSelector, QPluginLoader, QLoggingCategory,
+QCborValue, QCborMap, QCborArray
 
 ---
 
@@ -92,11 +94,7 @@ QWaitCondition, QThreadPool (with QRunnable callback wrapper)
 ### Low Priority — Niche or rarely needed
 
 **Core:**
-- QCBOR* — CBOR binary format
-- QFileSelector — platform-specific file overrides
-- QPluginLoader — dynamic library/plugin loading
-- QLoggingCategory — structured logging
-- QPageRanges — page range specification for printing
+(all core items wrapped)
 
 **Widgets:**
 - QRhiWidget — RHI-based custom rendering (newer Qt 6 GPU widget)

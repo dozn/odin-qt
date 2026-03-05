@@ -3904,6 +3904,107 @@ void  qt_gesture_event_set_accepted(void *event, int gesture_type, int is_accept
 int   qt_widget_grab_gesture(void *widget, int gesture_type, int flags);
 void  qt_widget_ungrab_gesture(void *widget, int gesture_type);
 
+/* ── QPageRanges ─────────────────────────────────────────────────── */
+
+void *qt_page_ranges_create(void);
+void  qt_page_ranges_destroy(void *ranges);
+void  qt_page_ranges_add_page(void *ranges, int page);
+void  qt_page_ranges_add_range(void *ranges, int from, int to);
+int   qt_page_ranges_contains(void *ranges, int page);
+int   qt_page_ranges_is_empty(void *ranges);
+int   qt_page_ranges_get_first_page(void *ranges);
+int   qt_page_ranges_get_last_page(void *ranges);
+void  qt_page_ranges_clear(void *ranges);
+char *qt_page_ranges_to_string(void *ranges);
+void *qt_page_ranges_from_string(const char *ranges_string);
+
+/* ── QFileSelector ───────────────────────────────────────────────── */
+
+void *qt_file_selector_create(void *parent);
+void  qt_file_selector_destroy(void *selector);
+char *qt_file_selector_select(void *selector, const char *file_path);
+void *qt_file_selector_select_url(void *selector, void *url);
+void  qt_file_selector_set_extra_selectors(void *selector, const char **selectors, int count);
+
+/* ── QPluginLoader ───────────────────────────────────────────────── */
+
+void *qt_plugin_loader_create(const char *file_name, void *parent);
+void  qt_plugin_loader_destroy(void *loader);
+int   qt_plugin_loader_load(void *loader);
+int   qt_plugin_loader_unload(void *loader);
+int   qt_plugin_loader_is_loaded(void *loader);
+char *qt_plugin_loader_get_error_string(void *loader);
+char *qt_plugin_loader_get_file_name(void *loader);
+void  qt_plugin_loader_set_file_name(void *loader, const char *file_name);
+void  qt_plugin_loader_set_load_hints(void *loader, int hints);
+
+/* ── QLoggingCategory ────────────────────────────────────────────── */
+
+void *qt_logging_category_create(const char *category);
+void  qt_logging_category_destroy(void *category);
+int   qt_logging_category_is_debug_enabled(void *category);
+int   qt_logging_category_is_info_enabled(void *category);
+int   qt_logging_category_is_warning_enabled(void *category);
+int   qt_logging_category_is_critical_enabled(void *category);
+char *qt_logging_category_get_category_name(void *category);
+void  qt_logging_category_set_filter_rules(const char *rules);
+
+/* ── QCborValue / QCborMap / QCborArray ──────────────────────────── */
+
+void *qt_cbor_value_create_integer(long long value);
+void *qt_cbor_value_create_double(double value);
+void *qt_cbor_value_create_bool(int value);
+void *qt_cbor_value_create_string(const char *text);
+void *qt_cbor_value_create_byte_array(const unsigned char *data, int size);
+void *qt_cbor_value_create_null(void);
+void *qt_cbor_value_create_undefined(void);
+void *qt_cbor_value_create_from_map(void *map);
+void *qt_cbor_value_create_from_array(void *array);
+void  qt_cbor_value_destroy(void *value);
+int   qt_cbor_value_get_type(void *value);
+int   qt_cbor_value_is_integer(void *value);
+int   qt_cbor_value_is_double(void *value);
+int   qt_cbor_value_is_string(void *value);
+int   qt_cbor_value_is_byte_array(void *value);
+int   qt_cbor_value_is_map(void *value);
+int   qt_cbor_value_is_array(void *value);
+int   qt_cbor_value_is_bool(void *value);
+int   qt_cbor_value_is_null(void *value);
+long long qt_cbor_value_to_integer(void *value);
+double qt_cbor_value_to_double(void *value);
+char *qt_cbor_value_to_string(void *value);
+int   qt_cbor_value_to_bool(void *value);
+void *qt_cbor_value_to_map(void *value);
+void *qt_cbor_value_to_array(void *value);
+void  qt_cbor_value_to_byte_array(void *value, unsigned char **out_data, int *out_size);
+void  qt_cbor_value_free_byte_array(unsigned char *data);
+void *qt_cbor_value_to_cbor(void *value, int *out_size);
+void *qt_cbor_value_from_cbor(const unsigned char *data, int size);
+
+void *qt_cbor_map_create(void);
+void  qt_cbor_map_destroy(void *map);
+int   qt_cbor_map_get_size(void *map);
+int   qt_cbor_map_is_empty(void *map);
+void  qt_cbor_map_insert_integer(void *map, const char *key, long long value);
+void  qt_cbor_map_insert_double(void *map, const char *key, double value);
+void  qt_cbor_map_insert_string(void *map, const char *key, const char *value);
+void  qt_cbor_map_insert_bool(void *map, const char *key, int value);
+void  qt_cbor_map_insert_value(void *map, const char *key, void *value);
+void *qt_cbor_map_get_value(void *map, const char *key);
+int   qt_cbor_map_contains(void *map, const char *key);
+void  qt_cbor_map_remove(void *map, const char *key);
+
+void *qt_cbor_array_create(void);
+void  qt_cbor_array_destroy(void *array);
+int   qt_cbor_array_get_size(void *array);
+int   qt_cbor_array_is_empty(void *array);
+void  qt_cbor_array_append_value(void *array, void *value);
+void  qt_cbor_array_append_integer(void *array, long long value);
+void  qt_cbor_array_append_double(void *array, double value);
+void  qt_cbor_array_append_string(void *array, const char *text);
+void  qt_cbor_array_append_bool(void *array, int value);
+void *qt_cbor_array_get_value_at(void *array, int index);
+
 #ifdef __cplusplus
 }
 #endif

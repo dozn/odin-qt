@@ -174,6 +174,13 @@
 #include <QPicture>
 #include <QPageLayout>
 #include <QPageSize>
+#include <QPageRanges>
+#include <QFileSelector>
+#include <QPluginLoader>
+#include <QLoggingCategory>
+#include <QCborValue>
+#include <QCborMap>
+#include <QCborArray>
 #include <QFile>
 #include <QFileInfo>
 #include <QFileIconProvider>
@@ -15232,6 +15239,376 @@ int qt_widget_grab_gesture(void *widget, int gesture_type, int flags) {
 void qt_widget_ungrab_gesture(void *widget, int gesture_type) {
     static_cast<QWidget *>(widget)->ungrabGesture(
         static_cast<Qt::GestureType>(gesture_type));
+}
+
+/* ── QPageRanges ─────────────────────────────────────────────────── */
+
+void *qt_page_ranges_create(void) {
+    return static_cast<void *>(new QPageRanges());
+}
+
+void qt_page_ranges_destroy(void *ranges) {
+    delete static_cast<QPageRanges *>(ranges);
+}
+
+void qt_page_ranges_add_page(void *ranges, int page) {
+    static_cast<QPageRanges *>(ranges)->addPage(page);
+}
+
+void qt_page_ranges_add_range(void *ranges, int from, int to) {
+    static_cast<QPageRanges *>(ranges)->addRange(from, to);
+}
+
+int qt_page_ranges_contains(void *ranges, int page) {
+    return static_cast<QPageRanges *>(ranges)->contains(page) ? 1 : 0;
+}
+
+int qt_page_ranges_is_empty(void *ranges) {
+    return static_cast<QPageRanges *>(ranges)->isEmpty() ? 1 : 0;
+}
+
+int qt_page_ranges_get_first_page(void *ranges) {
+    return static_cast<QPageRanges *>(ranges)->firstPage();
+}
+
+int qt_page_ranges_get_last_page(void *ranges) {
+    return static_cast<QPageRanges *>(ranges)->lastPage();
+}
+
+void qt_page_ranges_clear(void *ranges) {
+    static_cast<QPageRanges *>(ranges)->clear();
+}
+
+char *qt_page_ranges_to_string(void *ranges) {
+    return qstring_to_heap_utf8(static_cast<QPageRanges *>(ranges)->toString());
+}
+
+void *qt_page_ranges_from_string(const char *ranges_string) {
+    QPageRanges result = QPageRanges::fromString(QString::fromUtf8(ranges_string));
+    return static_cast<void *>(new QPageRanges(result));
+}
+
+/* ── QFileSelector ───────────────────────────────────────────────── */
+
+void *qt_file_selector_create(void *parent) {
+    return static_cast<void *>(new QFileSelector(
+        parent ? static_cast<QObject *>(parent) : nullptr));
+}
+
+void qt_file_selector_destroy(void *selector) {
+    delete static_cast<QFileSelector *>(selector);
+}
+
+char *qt_file_selector_select(void *selector, const char *file_path) {
+    return qstring_to_heap_utf8(
+        static_cast<QFileSelector *>(selector)->select(QString::fromUtf8(file_path)));
+}
+
+void *qt_file_selector_select_url(void *selector, void *url) {
+    QUrl result = static_cast<QFileSelector *>(selector)->select(*static_cast<QUrl *>(url));
+    return static_cast<void *>(new QUrl(result));
+}
+
+void qt_file_selector_set_extra_selectors(void *selector, const char **selectors, int count) {
+    QStringList list;
+    for (int i = 0; i < count; i++) {
+        list.append(QString::fromUtf8(selectors[i]));
+    }
+    static_cast<QFileSelector *>(selector)->setExtraSelectors(list);
+}
+
+/* ── QPluginLoader ───────────────────────────────────────────────── */
+
+void *qt_plugin_loader_create(const char *file_name, void *parent) {
+    return static_cast<void *>(new QPluginLoader(
+        QString::fromUtf8(file_name),
+        parent ? static_cast<QObject *>(parent) : nullptr));
+}
+
+void qt_plugin_loader_destroy(void *loader) {
+    delete static_cast<QPluginLoader *>(loader);
+}
+
+int qt_plugin_loader_load(void *loader) {
+    return static_cast<QPluginLoader *>(loader)->load() ? 1 : 0;
+}
+
+int qt_plugin_loader_unload(void *loader) {
+    return static_cast<QPluginLoader *>(loader)->unload() ? 1 : 0;
+}
+
+int qt_plugin_loader_is_loaded(void *loader) {
+    return static_cast<QPluginLoader *>(loader)->isLoaded() ? 1 : 0;
+}
+
+char *qt_plugin_loader_get_error_string(void *loader) {
+    return qstring_to_heap_utf8(static_cast<QPluginLoader *>(loader)->errorString());
+}
+
+char *qt_plugin_loader_get_file_name(void *loader) {
+    return qstring_to_heap_utf8(static_cast<QPluginLoader *>(loader)->fileName());
+}
+
+void qt_plugin_loader_set_file_name(void *loader, const char *file_name) {
+    static_cast<QPluginLoader *>(loader)->setFileName(QString::fromUtf8(file_name));
+}
+
+void qt_plugin_loader_set_load_hints(void *loader, int hints) {
+    static_cast<QPluginLoader *>(loader)->setLoadHints(
+        static_cast<QLibrary::LoadHints>(hints));
+}
+
+/* ── QLoggingCategory ────────────────────────────────────────────── */
+
+void *qt_logging_category_create(const char *category) {
+    return static_cast<void *>(new QLoggingCategory(category));
+}
+
+void qt_logging_category_destroy(void *category) {
+    delete static_cast<QLoggingCategory *>(category);
+}
+
+int qt_logging_category_is_debug_enabled(void *category) {
+    return static_cast<QLoggingCategory *>(category)->isDebugEnabled() ? 1 : 0;
+}
+
+int qt_logging_category_is_info_enabled(void *category) {
+    return static_cast<QLoggingCategory *>(category)->isInfoEnabled() ? 1 : 0;
+}
+
+int qt_logging_category_is_warning_enabled(void *category) {
+    return static_cast<QLoggingCategory *>(category)->isWarningEnabled() ? 1 : 0;
+}
+
+int qt_logging_category_is_critical_enabled(void *category) {
+    return static_cast<QLoggingCategory *>(category)->isCriticalEnabled() ? 1 : 0;
+}
+
+char *qt_logging_category_get_category_name(void *category) {
+    const char *name = static_cast<QLoggingCategory *>(category)->categoryName();
+    char *result = static_cast<char *>(malloc(strlen(name) + 1));
+    strcpy(result, name);
+    return result;
+}
+
+void qt_logging_category_set_filter_rules(const char *rules) {
+    QLoggingCategory::setFilterRules(QString::fromUtf8(rules));
+}
+
+/* ── QCborValue / QCborMap / QCborArray ──────────────────────────── */
+
+void *qt_cbor_value_create_integer(long long value) {
+    return static_cast<void *>(new QCborValue(static_cast<qint64>(value)));
+}
+
+void *qt_cbor_value_create_double(double value) {
+    return static_cast<void *>(new QCborValue(value));
+}
+
+void *qt_cbor_value_create_bool(int value) {
+    return static_cast<void *>(new QCborValue(value != 0));
+}
+
+void *qt_cbor_value_create_string(const char *text) {
+    return static_cast<void *>(new QCborValue(QString::fromUtf8(text)));
+}
+
+void *qt_cbor_value_create_byte_array(const unsigned char *data, int size) {
+    return static_cast<void *>(new QCborValue(QByteArray(reinterpret_cast<const char *>(data), size)));
+}
+
+void *qt_cbor_value_create_null(void) {
+    return static_cast<void *>(new QCborValue(QCborValue::Null));
+}
+
+void *qt_cbor_value_create_undefined(void) {
+    return static_cast<void *>(new QCborValue(QCborValue::Undefined));
+}
+
+void *qt_cbor_value_create_from_map(void *map) {
+    return static_cast<void *>(new QCborValue(*static_cast<QCborMap *>(map)));
+}
+
+void *qt_cbor_value_create_from_array(void *array) {
+    return static_cast<void *>(new QCborValue(*static_cast<QCborArray *>(array)));
+}
+
+void qt_cbor_value_destroy(void *value) {
+    delete static_cast<QCborValue *>(value);
+}
+
+int qt_cbor_value_get_type(void *value) {
+    return static_cast<int>(static_cast<QCborValue *>(value)->type());
+}
+
+int qt_cbor_value_is_integer(void *value) {
+    return static_cast<QCborValue *>(value)->isInteger() ? 1 : 0;
+}
+
+int qt_cbor_value_is_double(void *value) {
+    return static_cast<QCborValue *>(value)->isDouble() ? 1 : 0;
+}
+
+int qt_cbor_value_is_string(void *value) {
+    return static_cast<QCborValue *>(value)->isString() ? 1 : 0;
+}
+
+int qt_cbor_value_is_byte_array(void *value) {
+    return static_cast<QCborValue *>(value)->isByteArray() ? 1 : 0;
+}
+
+int qt_cbor_value_is_map(void *value) {
+    return static_cast<QCborValue *>(value)->isMap() ? 1 : 0;
+}
+
+int qt_cbor_value_is_array(void *value) {
+    return static_cast<QCborValue *>(value)->isArray() ? 1 : 0;
+}
+
+int qt_cbor_value_is_bool(void *value) {
+    return static_cast<QCborValue *>(value)->isBool() ? 1 : 0;
+}
+
+int qt_cbor_value_is_null(void *value) {
+    return static_cast<QCborValue *>(value)->isNull() ? 1 : 0;
+}
+
+long long qt_cbor_value_to_integer(void *value) {
+    return static_cast<long long>(static_cast<QCborValue *>(value)->toInteger());
+}
+
+double qt_cbor_value_to_double(void *value) {
+    return static_cast<QCborValue *>(value)->toDouble();
+}
+
+char *qt_cbor_value_to_string(void *value) {
+    return qstring_to_heap_utf8(static_cast<QCborValue *>(value)->toString());
+}
+
+int qt_cbor_value_to_bool(void *value) {
+    return static_cast<QCborValue *>(value)->toBool() ? 1 : 0;
+}
+
+void *qt_cbor_value_to_map(void *value) {
+    return static_cast<void *>(new QCborMap(static_cast<QCborValue *>(value)->toMap()));
+}
+
+void *qt_cbor_value_to_array(void *value) {
+    return static_cast<void *>(new QCborArray(static_cast<QCborValue *>(value)->toArray()));
+}
+
+void qt_cbor_value_to_byte_array(void *value, unsigned char **out_data, int *out_size) {
+    QByteArray ba = static_cast<QCborValue *>(value)->toByteArray();
+    *out_size = ba.size();
+    *out_data = static_cast<unsigned char *>(malloc(ba.size()));
+    memcpy(*out_data, ba.constData(), ba.size());
+}
+
+void qt_cbor_value_free_byte_array(unsigned char *data) {
+    free(data);
+}
+
+void *qt_cbor_value_to_cbor(void *value, int *out_size) {
+    QByteArray ba = static_cast<QCborValue *>(value)->toCbor();
+    *out_size = ba.size();
+    unsigned char *result = static_cast<unsigned char *>(malloc(ba.size()));
+    memcpy(result, ba.constData(), ba.size());
+    return static_cast<void *>(result);
+}
+
+void *qt_cbor_value_from_cbor(const unsigned char *data, int size) {
+    QCborValue val = QCborValue::fromCbor(QByteArray(reinterpret_cast<const char *>(data), size));
+    return static_cast<void *>(new QCborValue(val));
+}
+
+void *qt_cbor_map_create(void) {
+    return static_cast<void *>(new QCborMap());
+}
+
+void qt_cbor_map_destroy(void *map) {
+    delete static_cast<QCborMap *>(map);
+}
+
+int qt_cbor_map_get_size(void *map) {
+    return static_cast<int>(static_cast<QCborMap *>(map)->size());
+}
+
+int qt_cbor_map_is_empty(void *map) {
+    return static_cast<QCborMap *>(map)->isEmpty() ? 1 : 0;
+}
+
+void qt_cbor_map_insert_integer(void *map, const char *key, long long value) {
+    static_cast<QCborMap *>(map)->insert(QString::fromUtf8(key), static_cast<qint64>(value));
+}
+
+void qt_cbor_map_insert_double(void *map, const char *key, double value) {
+    static_cast<QCborMap *>(map)->insert(QString::fromUtf8(key), value);
+}
+
+void qt_cbor_map_insert_string(void *map, const char *key, const char *value) {
+    static_cast<QCborMap *>(map)->insert(QString::fromUtf8(key), QString::fromUtf8(value));
+}
+
+void qt_cbor_map_insert_bool(void *map, const char *key, int value) {
+    static_cast<QCborMap *>(map)->insert(QString::fromUtf8(key), value != 0);
+}
+
+void qt_cbor_map_insert_value(void *map, const char *key, void *value) {
+    static_cast<QCborMap *>(map)->insert(QString::fromUtf8(key), *static_cast<QCborValue *>(value));
+}
+
+void *qt_cbor_map_get_value(void *map, const char *key) {
+    QCborValue val = static_cast<QCborMap *>(map)->value(QString::fromUtf8(key));
+    return static_cast<void *>(new QCborValue(val));
+}
+
+int qt_cbor_map_contains(void *map, const char *key) {
+    return static_cast<QCborMap *>(map)->contains(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+void qt_cbor_map_remove(void *map, const char *key) {
+    static_cast<QCborMap *>(map)->remove(QString::fromUtf8(key));
+}
+
+void *qt_cbor_array_create(void) {
+    return static_cast<void *>(new QCborArray());
+}
+
+void qt_cbor_array_destroy(void *array) {
+    delete static_cast<QCborArray *>(array);
+}
+
+int qt_cbor_array_get_size(void *array) {
+    return static_cast<int>(static_cast<QCborArray *>(array)->size());
+}
+
+int qt_cbor_array_is_empty(void *array) {
+    return static_cast<QCborArray *>(array)->isEmpty() ? 1 : 0;
+}
+
+void qt_cbor_array_append_value(void *array, void *value) {
+    static_cast<QCborArray *>(array)->append(*static_cast<QCborValue *>(value));
+}
+
+void qt_cbor_array_append_integer(void *array, long long value) {
+    static_cast<QCborArray *>(array)->append(static_cast<qint64>(value));
+}
+
+void qt_cbor_array_append_double(void *array, double value) {
+    static_cast<QCborArray *>(array)->append(value);
+}
+
+void qt_cbor_array_append_string(void *array, const char *text) {
+    static_cast<QCborArray *>(array)->append(QString::fromUtf8(text));
+}
+
+void qt_cbor_array_append_bool(void *array, int value) {
+    static_cast<QCborArray *>(array)->append(value != 0);
+}
+
+void *qt_cbor_array_get_value_at(void *array, int index) {
+    QCborValue val = static_cast<QCborArray *>(array)->at(index);
+    return static_cast<void *>(new QCborValue(val));
 }
 
 } /* extern "C" */
