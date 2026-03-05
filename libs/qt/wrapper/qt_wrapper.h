@@ -2605,6 +2605,30 @@ void  qt_semaphore_release(void *semaphore, int n);
 int   qt_semaphore_available(void *semaphore);
 int   qt_semaphore_try_acquire(void *semaphore, int n);
 
+/* ── QWaitCondition ───────────────────────────────────────────────── */
+
+void *qt_wait_condition_create(void);
+void  qt_wait_condition_destroy(void *condition);
+int   qt_wait_condition_wait_mutex(void *condition, void *mutex, unsigned long time_msec);
+int   qt_wait_condition_wait_read_write_lock(void *condition, void *lock, unsigned long time_msec);
+void  qt_wait_condition_wake_one(void *condition);
+void  qt_wait_condition_wake_all(void *condition);
+
+/* ── QThreadPool ──────────────────────────────────────────────────── */
+
+void *qt_thread_pool_global_instance(void);
+void *qt_thread_pool_create(void *parent);
+void  qt_thread_pool_destroy(void *pool);
+void  qt_thread_pool_start_callback(void *pool, qt_callback_t callback, void *user_data, int priority);
+int   qt_thread_pool_try_start_callback(void *pool, qt_callback_t callback, void *user_data);
+int   qt_thread_pool_get_max_thread_count(void *pool);
+void  qt_thread_pool_set_max_thread_count(void *pool, int count);
+int   qt_thread_pool_get_active_thread_count(void *pool);
+void  qt_thread_pool_release_thread(void *pool);
+void  qt_thread_pool_reserve_thread(void *pool);
+int   qt_thread_pool_wait_for_done(void *pool, int msecs);
+void  qt_thread_pool_clear(void *pool);
+
 /* ── QBuffer ────────────────────────────────────────────────────────── */
 
 void *qt_buffer_create(void);

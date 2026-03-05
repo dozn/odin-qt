@@ -306,6 +306,8 @@ Gesture_Event :: distinct rawptr
 Basic_Timer :: distinct rawptr
 Bit_Array :: distinct rawptr
 Text_Boundary_Finder :: distinct rawptr
+Wait_Condition :: distinct rawptr
+Thread_Pool :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -4494,6 +4496,30 @@ foreign qt_lib {
 	semaphore_release :: proc(semaphore: Semaphore, n: c.int) ---
 	@(require_results) semaphore_available :: proc(semaphore: Semaphore) -> c.int ---
 	@(require_results) semaphore_try_acquire :: proc(semaphore: Semaphore, n: c.int) -> c.int ---
+
+	/* QWaitCondition */
+
+	@(require_results) wait_condition_create :: proc() -> Wait_Condition ---
+	wait_condition_destroy :: proc(condition: Wait_Condition) ---
+	@(require_results) wait_condition_wait_mutex :: proc(condition: Wait_Condition, mutex: Mutex, time_msec: c.ulong) -> c.int ---
+	@(require_results) wait_condition_wait_read_write_lock :: proc(condition: Wait_Condition, lock: Read_Write_Lock, time_msec: c.ulong) -> c.int ---
+	wait_condition_wake_one :: proc(condition: Wait_Condition) ---
+	wait_condition_wake_all :: proc(condition: Wait_Condition) ---
+
+	/* QThreadPool */
+
+	@(require_results) thread_pool_global_instance :: proc() -> Thread_Pool ---
+	@(require_results) thread_pool_create :: proc(parent: rawptr) -> Thread_Pool ---
+	thread_pool_destroy :: proc(pool: Thread_Pool) ---
+	thread_pool_start_callback :: proc(pool: Thread_Pool, callback: Callback, user_data: rawptr, priority: c.int) ---
+	@(require_results) thread_pool_try_start_callback :: proc(pool: Thread_Pool, callback: Callback, user_data: rawptr) -> c.int ---
+	@(require_results) thread_pool_get_max_thread_count :: proc(pool: Thread_Pool) -> c.int ---
+	thread_pool_set_max_thread_count :: proc(pool: Thread_Pool, count: c.int) ---
+	@(require_results) thread_pool_get_active_thread_count :: proc(pool: Thread_Pool) -> c.int ---
+	thread_pool_release_thread :: proc(pool: Thread_Pool) ---
+	thread_pool_reserve_thread :: proc(pool: Thread_Pool) ---
+	@(require_results) thread_pool_wait_for_done :: proc(pool: Thread_Pool, msecs: c.int) -> c.int ---
+	thread_pool_clear :: proc(pool: Thread_Pool) ---
 
 	/* QBuffer */
 

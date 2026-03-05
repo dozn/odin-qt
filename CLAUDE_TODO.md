@@ -78,7 +78,8 @@ QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent, QGraphicsSceneWheelEvent,
 QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent,
 QGesture, QPanGesture, QPinchGesture, QSwipeGesture,
 QTapGesture, QTapAndHoldGesture, QGestureEvent,
-QBasicTimer, QBitArray, QTextBoundaryFinder
+QBasicTimer, QBitArray, QTextBoundaryFinder,
+QWaitCondition, QThreadPool (with QRunnable callback wrapper)
 
 ---
 
@@ -91,8 +92,6 @@ QBasicTimer, QBitArray, QTextBoundaryFinder
 ### Low Priority — Niche or rarely needed
 
 **Core:**
-- QRunnable / QThreadPool — task-based threading
-- QWaitCondition — thread synchronization
 - QCBOR* — CBOR binary format
 - QFileSelector — platform-specific file overrides
 - QPluginLoader — dynamic library/plugin loading

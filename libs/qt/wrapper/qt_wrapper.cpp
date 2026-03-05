@@ -185,6 +185,9 @@
 #include <QMutex>
 #include <QReadWriteLock>
 #include <QSemaphore>
+#include <QWaitCondition>
+#include <QThreadPool>
+#include <QRunnable>
 #include <QBuffer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -10380,6 +10383,101 @@ int qt_semaphore_available(void *semaphore) {
 
 int qt_semaphore_try_acquire(void *semaphore, int n) {
     return static_cast<QSemaphore *>(semaphore)->tryAcquire(n) ? 1 : 0;
+}
+
+/* ── QWaitCondition ───────────────────────────────────────────────── */
+
+void *qt_wait_condition_create(void) {
+    return static_cast<void *>(new QWaitCondition());
+}
+
+void qt_wait_condition_destroy(void *condition) {
+    delete static_cast<QWaitCondition *>(condition);
+}
+
+int qt_wait_condition_wait_mutex(void *condition, void *mutex, unsigned long time_msec) {
+    return static_cast<QWaitCondition *>(condition)->wait(
+        static_cast<QMutex *>(mutex), time_msec) ? 1 : 0;
+}
+
+int qt_wait_condition_wait_read_write_lock(void *condition, void *lock, unsigned long time_msec) {
+    return static_cast<QWaitCondition *>(condition)->wait(
+        static_cast<QReadWriteLock *>(lock), time_msec) ? 1 : 0;
+}
+
+void qt_wait_condition_wake_one(void *condition) {
+    static_cast<QWaitCondition *>(condition)->wakeOne();
+}
+
+void qt_wait_condition_wake_all(void *condition) {
+    static_cast<QWaitCondition *>(condition)->wakeAll();
+}
+
+/* ── QThreadPool ──────────────────────────────────────────────────── */
+
+class CCallbackRunnable : public QRunnable {
+public:
+    CCallbackRunnable(qt_callback_t callback, void *user_data)
+        : m_callback(callback), m_user_data(user_data) {
+        setAutoDelete(true);
+    }
+    void run() override {
+        if (m_callback) m_callback(m_user_data);
+    }
+private:
+    qt_callback_t m_callback;
+    void *m_user_data;
+};
+
+void *qt_thread_pool_global_instance(void) {
+    return static_cast<void *>(QThreadPool::globalInstance());
+}
+
+void *qt_thread_pool_create(void *parent) {
+    return static_cast<void *>(new QThreadPool(
+        parent ? static_cast<QObject *>(parent) : nullptr));
+}
+
+void qt_thread_pool_destroy(void *pool) {
+    delete static_cast<QThreadPool *>(pool);
+}
+
+void qt_thread_pool_start_callback(void *pool, qt_callback_t callback, void *user_data, int priority) {
+    static_cast<QThreadPool *>(pool)->start(
+        new CCallbackRunnable(callback, user_data), priority);
+}
+
+int qt_thread_pool_try_start_callback(void *pool, qt_callback_t callback, void *user_data) {
+    return static_cast<QThreadPool *>(pool)->tryStart(
+        new CCallbackRunnable(callback, user_data)) ? 1 : 0;
+}
+
+int qt_thread_pool_get_max_thread_count(void *pool) {
+    return static_cast<QThreadPool *>(pool)->maxThreadCount();
+}
+
+void qt_thread_pool_set_max_thread_count(void *pool, int count) {
+    static_cast<QThreadPool *>(pool)->setMaxThreadCount(count);
+}
+
+int qt_thread_pool_get_active_thread_count(void *pool) {
+    return static_cast<QThreadPool *>(pool)->activeThreadCount();
+}
+
+void qt_thread_pool_release_thread(void *pool) {
+    static_cast<QThreadPool *>(pool)->releaseThread();
+}
+
+void qt_thread_pool_reserve_thread(void *pool) {
+    static_cast<QThreadPool *>(pool)->reserveThread();
+}
+
+int qt_thread_pool_wait_for_done(void *pool, int msecs) {
+    return static_cast<QThreadPool *>(pool)->waitForDone(msecs) ? 1 : 0;
+}
+
+void qt_thread_pool_clear(void *pool) {
+    static_cast<QThreadPool *>(pool)->clear();
 }
 
 /* ── QBuffer ────────────────────────────────────────────────────────── */
