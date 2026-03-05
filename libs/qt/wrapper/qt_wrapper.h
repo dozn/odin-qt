@@ -2047,6 +2047,124 @@ void *qt_text_document_get_first_block(void *document);
 void *qt_text_document_get_last_block(void *document);
 void *qt_text_document_find_block_by_number(void *document, int block_number);
 
+/* ── QTextBlockFormat ──────────────────────────────────────────────── */
+
+void *qt_text_block_format_create(void);
+void  qt_text_block_format_destroy(void *fmt);
+void  qt_text_block_format_set_alignment(void *fmt, int alignment);
+int   qt_text_block_format_get_alignment(void *fmt);
+void  qt_text_block_format_set_indent(void *fmt, int indent);
+int   qt_text_block_format_get_indent(void *fmt);
+void  qt_text_block_format_set_text_indent(void *fmt, double indent);
+double qt_text_block_format_get_text_indent(void *fmt);
+void  qt_text_block_format_set_top_margin(void *fmt, double margin);
+double qt_text_block_format_get_top_margin(void *fmt);
+void  qt_text_block_format_set_bottom_margin(void *fmt, double margin);
+double qt_text_block_format_get_bottom_margin(void *fmt);
+void  qt_text_block_format_set_left_margin(void *fmt, double margin);
+double qt_text_block_format_get_left_margin(void *fmt);
+void  qt_text_block_format_set_right_margin(void *fmt, double margin);
+double qt_text_block_format_get_right_margin(void *fmt);
+void  qt_text_block_format_set_line_height(void *fmt, double height, int height_type);
+double qt_text_block_format_get_line_height(void *fmt);
+int   qt_text_block_format_get_line_height_type(void *fmt);
+void  qt_text_cursor_set_block_format(void *cursor, void *fmt);
+void  qt_text_cursor_merge_block_format(void *cursor, void *fmt);
+
+/* ── QTextListFormat ──────────────────────────────────────────────── */
+
+void *qt_text_list_format_create(void);
+void  qt_text_list_format_destroy(void *fmt);
+void  qt_text_list_format_set_style(void *fmt, int style);
+int   qt_text_list_format_get_style(void *fmt);
+void  qt_text_list_format_set_indent(void *fmt, int indent);
+int   qt_text_list_format_get_indent(void *fmt);
+void  qt_text_list_format_set_number_prefix(void *fmt, const char *prefix);
+char *qt_text_list_format_get_number_prefix(void *fmt);
+void  qt_text_list_format_set_number_suffix(void *fmt, const char *suffix);
+char *qt_text_list_format_get_number_suffix(void *fmt);
+void  qt_text_cursor_insert_list_with_format(void *cursor, void *fmt);
+
+/* ── QTextImageFormat ─────────────────────────────────────────────── */
+
+void *qt_text_image_format_create(void);
+void  qt_text_image_format_destroy(void *fmt);
+void  qt_text_image_format_set_name(void *fmt, const char *name);
+char *qt_text_image_format_get_name(void *fmt);
+void  qt_text_image_format_set_width(void *fmt, double width);
+double qt_text_image_format_get_width(void *fmt);
+void  qt_text_image_format_set_height(void *fmt, double height);
+double qt_text_image_format_get_height(void *fmt);
+void  qt_text_cursor_insert_image_with_format(void *cursor, void *fmt);
+
+/* ── QTextFrameFormat ─────────────────────────────────────────────── */
+
+void *qt_text_frame_format_create(void);
+void  qt_text_frame_format_destroy(void *fmt);
+void  qt_text_frame_format_set_border(void *fmt, double border);
+double qt_text_frame_format_get_border(void *fmt);
+void  qt_text_frame_format_set_border_style(void *fmt, int style);
+int   qt_text_frame_format_get_border_style(void *fmt);
+void  qt_text_frame_format_set_margin(void *fmt, double margin);
+double qt_text_frame_format_get_margin(void *fmt);
+void  qt_text_frame_format_set_padding(void *fmt, double padding);
+double qt_text_frame_format_get_padding(void *fmt);
+void  qt_text_frame_format_set_width(void *fmt, double width, int type);
+void  qt_text_frame_format_set_height(void *fmt, double height, int type);
+void  qt_text_frame_format_set_position(void *fmt, int position);
+int   qt_text_frame_format_get_position(void *fmt);
+void  qt_text_frame_set_frame_format(void *frame, void *fmt);
+
+/* ── QTextTableFormat ─────────────────────────────────────────────── */
+
+void *qt_text_table_format_create(void);
+void  qt_text_table_format_destroy(void *fmt);
+void  qt_text_table_format_set_columns(void *fmt, int columns);
+int   qt_text_table_format_get_columns(void *fmt);
+void  qt_text_table_format_set_cell_padding(void *fmt, double padding);
+double qt_text_table_format_get_cell_padding(void *fmt);
+void  qt_text_table_format_set_cell_spacing(void *fmt, double spacing);
+double qt_text_table_format_get_cell_spacing(void *fmt);
+void  qt_text_table_format_set_alignment(void *fmt, int alignment);
+int   qt_text_table_format_get_alignment(void *fmt);
+void  qt_text_table_format_set_border(void *fmt, double border);
+void  qt_text_table_format_set_border_style(void *fmt, int style);
+void  qt_text_table_set_format(void *table, void *fmt);
+void *qt_text_cursor_insert_table_with_format(void *cursor, int rows, int cols, void *fmt);
+
+/* ── QTextTableCellFormat ─────────────────────────────────────────── */
+
+void *qt_text_table_cell_format_create(void);
+void  qt_text_table_cell_format_destroy(void *fmt);
+void  qt_text_table_cell_format_set_top_padding(void *fmt, double padding);
+double qt_text_table_cell_format_get_top_padding(void *fmt);
+void  qt_text_table_cell_format_set_bottom_padding(void *fmt, double padding);
+double qt_text_table_cell_format_get_bottom_padding(void *fmt);
+void  qt_text_table_cell_format_set_left_padding(void *fmt, double padding);
+double qt_text_table_cell_format_get_left_padding(void *fmt);
+void  qt_text_table_cell_format_set_right_padding(void *fmt, double padding);
+double qt_text_table_cell_format_get_right_padding(void *fmt);
+void  qt_text_table_cell_format_set_background(void *fmt, int r, int g, int b, int a);
+void  qt_text_table_cell_format_set_border_brush(void *fmt, int r, int g, int b, int a);
+void  qt_text_table_cell_set_format(void *table, int row, int col, void *fmt);
+
+/* ── QTextDocumentFragment ────────────────────────────────────────── */
+
+void *qt_text_document_fragment_from_plain_text(const char *text);
+void *qt_text_document_fragment_from_html(const char *html);
+void *qt_text_document_fragment_from_selection(void *cursor);
+void  qt_text_document_fragment_destroy(void *fragment);
+char *qt_text_document_fragment_to_plain_text(void *fragment);
+char *qt_text_document_fragment_to_html(void *fragment);
+void  qt_text_cursor_insert_fragment(void *cursor, void *fragment);
+
+/* ── QTextDocumentWriter ──────────────────────────────────────────── */
+
+void *qt_text_document_writer_create(const char *file_path, const char *format);
+void  qt_text_document_writer_destroy(void *writer);
+void  qt_text_document_writer_set_format(void *writer, const char *format);
+int   qt_text_document_writer_write(void *writer, void *document);
+
 /* ── QTextOption ───────────────────────────────────────────────────── */
 
 void *qt_text_option_create(void);

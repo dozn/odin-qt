@@ -264,6 +264,14 @@ Text_Frame :: distinct rawptr
 Custom_Item_Model :: distinct rawptr
 Mime_Data :: distinct rawptr
 Painter_Path_Stroker :: distinct rawptr
+Text_Block_Format :: distinct rawptr
+Text_List_Format :: distinct rawptr
+Text_Image_Format :: distinct rawptr
+Text_Frame_Format :: distinct rawptr
+Text_Table_Format :: distinct rawptr
+Text_Table_Cell_Format :: distinct rawptr
+Text_Document_Fragment :: distinct rawptr
+Text_Document_Writer :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -3808,6 +3816,124 @@ foreign qt_lib {
 	@(require_results) text_document_get_first_block :: proc(document: Text_Document) -> Text_Block ---
 	@(require_results) text_document_get_last_block :: proc(document: Text_Document) -> Text_Block ---
 	@(require_results) text_document_find_block_by_number :: proc(document: Text_Document, block_number: c.int) -> Text_Block ---
+
+	/* QTextBlockFormat */
+
+	@(require_results) text_block_format_create :: proc() -> Text_Block_Format ---
+	text_block_format_destroy :: proc(fmt: Text_Block_Format) ---
+	text_block_format_set_alignment :: proc(fmt: Text_Block_Format, alignment: Alignment) ---
+	@(require_results) text_block_format_get_alignment :: proc(fmt: Text_Block_Format) -> Alignment ---
+	text_block_format_set_indent :: proc(fmt: Text_Block_Format, indent: c.int) ---
+	@(require_results) text_block_format_get_indent :: proc(fmt: Text_Block_Format) -> c.int ---
+	text_block_format_set_text_indent :: proc(fmt: Text_Block_Format, indent: c.double) ---
+	@(require_results) text_block_format_get_text_indent :: proc(fmt: Text_Block_Format) -> c.double ---
+	text_block_format_set_top_margin :: proc(fmt: Text_Block_Format, margin: c.double) ---
+	@(require_results) text_block_format_get_top_margin :: proc(fmt: Text_Block_Format) -> c.double ---
+	text_block_format_set_bottom_margin :: proc(fmt: Text_Block_Format, margin: c.double) ---
+	@(require_results) text_block_format_get_bottom_margin :: proc(fmt: Text_Block_Format) -> c.double ---
+	text_block_format_set_left_margin :: proc(fmt: Text_Block_Format, margin: c.double) ---
+	@(require_results) text_block_format_get_left_margin :: proc(fmt: Text_Block_Format) -> c.double ---
+	text_block_format_set_right_margin :: proc(fmt: Text_Block_Format, margin: c.double) ---
+	@(require_results) text_block_format_get_right_margin :: proc(fmt: Text_Block_Format) -> c.double ---
+	text_block_format_set_line_height :: proc(fmt: Text_Block_Format, height: c.double, height_type: c.int) ---
+	@(require_results) text_block_format_get_line_height :: proc(fmt: Text_Block_Format) -> c.double ---
+	@(require_results) text_block_format_get_line_height_type :: proc(fmt: Text_Block_Format) -> c.int ---
+	text_cursor_set_block_format :: proc(cursor: Text_Cursor, fmt: Text_Block_Format) ---
+	text_cursor_merge_block_format :: proc(cursor: Text_Cursor, fmt: Text_Block_Format) ---
+
+	/* QTextListFormat */
+
+	@(require_results) text_list_format_create :: proc() -> Text_List_Format ---
+	text_list_format_destroy :: proc(fmt: Text_List_Format) ---
+	text_list_format_set_style :: proc(fmt: Text_List_Format, style: c.int) ---
+	@(require_results) text_list_format_get_style :: proc(fmt: Text_List_Format) -> c.int ---
+	text_list_format_set_indent :: proc(fmt: Text_List_Format, indent: c.int) ---
+	@(require_results) text_list_format_get_indent :: proc(fmt: Text_List_Format) -> c.int ---
+	text_list_format_set_number_prefix :: proc(fmt: Text_List_Format, prefix: cstring) ---
+	@(require_results) text_list_format_get_number_prefix :: proc(fmt: Text_List_Format) -> cstring ---
+	text_list_format_set_number_suffix :: proc(fmt: Text_List_Format, suffix: cstring) ---
+	@(require_results) text_list_format_get_number_suffix :: proc(fmt: Text_List_Format) -> cstring ---
+	text_cursor_insert_list_with_format :: proc(cursor: Text_Cursor, fmt: Text_List_Format) ---
+
+	/* QTextImageFormat */
+
+	@(require_results) text_image_format_create :: proc() -> Text_Image_Format ---
+	text_image_format_destroy :: proc(fmt: Text_Image_Format) ---
+	text_image_format_set_name :: proc(fmt: Text_Image_Format, name: cstring) ---
+	@(require_results) text_image_format_get_name :: proc(fmt: Text_Image_Format) -> cstring ---
+	text_image_format_set_width :: proc(fmt: Text_Image_Format, width: c.double) ---
+	@(require_results) text_image_format_get_width :: proc(fmt: Text_Image_Format) -> c.double ---
+	text_image_format_set_height :: proc(fmt: Text_Image_Format, height: c.double) ---
+	@(require_results) text_image_format_get_height :: proc(fmt: Text_Image_Format) -> c.double ---
+	text_cursor_insert_image_with_format :: proc(cursor: Text_Cursor, fmt: Text_Image_Format) ---
+
+	/* QTextFrameFormat */
+
+	@(require_results) text_frame_format_create :: proc() -> Text_Frame_Format ---
+	text_frame_format_destroy :: proc(fmt: Text_Frame_Format) ---
+	text_frame_format_set_border :: proc(fmt: Text_Frame_Format, border: c.double) ---
+	@(require_results) text_frame_format_get_border :: proc(fmt: Text_Frame_Format) -> c.double ---
+	text_frame_format_set_border_style :: proc(fmt: Text_Frame_Format, style: c.int) ---
+	@(require_results) text_frame_format_get_border_style :: proc(fmt: Text_Frame_Format) -> c.int ---
+	text_frame_format_set_margin :: proc(fmt: Text_Frame_Format, margin: c.double) ---
+	@(require_results) text_frame_format_get_margin :: proc(fmt: Text_Frame_Format) -> c.double ---
+	text_frame_format_set_padding :: proc(fmt: Text_Frame_Format, padding: c.double) ---
+	@(require_results) text_frame_format_get_padding :: proc(fmt: Text_Frame_Format) -> c.double ---
+	text_frame_format_set_width :: proc(fmt: Text_Frame_Format, width: c.double, length_type: c.int) ---
+	text_frame_format_set_height :: proc(fmt: Text_Frame_Format, height: c.double, length_type: c.int) ---
+	text_frame_format_set_position :: proc(fmt: Text_Frame_Format, position: c.int) ---
+	@(require_results) text_frame_format_get_position :: proc(fmt: Text_Frame_Format) -> c.int ---
+	text_frame_set_frame_format :: proc(frame: Text_Frame, fmt: Text_Frame_Format) ---
+
+	/* QTextTableFormat */
+
+	@(require_results) text_table_format_create :: proc() -> Text_Table_Format ---
+	text_table_format_destroy :: proc(fmt: Text_Table_Format) ---
+	text_table_format_set_columns :: proc(fmt: Text_Table_Format, columns: c.int) ---
+	@(require_results) text_table_format_get_columns :: proc(fmt: Text_Table_Format) -> c.int ---
+	text_table_format_set_cell_padding :: proc(fmt: Text_Table_Format, padding: c.double) ---
+	@(require_results) text_table_format_get_cell_padding :: proc(fmt: Text_Table_Format) -> c.double ---
+	text_table_format_set_cell_spacing :: proc(fmt: Text_Table_Format, spacing: c.double) ---
+	@(require_results) text_table_format_get_cell_spacing :: proc(fmt: Text_Table_Format) -> c.double ---
+	text_table_format_set_alignment :: proc(fmt: Text_Table_Format, alignment: Alignment) ---
+	@(require_results) text_table_format_get_alignment :: proc(fmt: Text_Table_Format) -> Alignment ---
+	text_table_format_set_border :: proc(fmt: Text_Table_Format, border: c.double) ---
+	text_table_format_set_border_style :: proc(fmt: Text_Table_Format, style: c.int) ---
+	text_table_set_format :: proc(table: Text_Table, fmt: Text_Table_Format) ---
+	@(require_results) text_cursor_insert_table_with_format :: proc(cursor: Text_Cursor, rows: c.int, cols: c.int, fmt: Text_Table_Format) -> Text_Table ---
+
+	/* QTextTableCellFormat */
+
+	@(require_results) text_table_cell_format_create :: proc() -> Text_Table_Cell_Format ---
+	text_table_cell_format_destroy :: proc(fmt: Text_Table_Cell_Format) ---
+	text_table_cell_format_set_top_padding :: proc(fmt: Text_Table_Cell_Format, padding: c.double) ---
+	@(require_results) text_table_cell_format_get_top_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double ---
+	text_table_cell_format_set_bottom_padding :: proc(fmt: Text_Table_Cell_Format, padding: c.double) ---
+	@(require_results) text_table_cell_format_get_bottom_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double ---
+	text_table_cell_format_set_left_padding :: proc(fmt: Text_Table_Cell_Format, padding: c.double) ---
+	@(require_results) text_table_cell_format_get_left_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double ---
+	text_table_cell_format_set_right_padding :: proc(fmt: Text_Table_Cell_Format, padding: c.double) ---
+	@(require_results) text_table_cell_format_get_right_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double ---
+	text_table_cell_format_set_background :: proc(fmt: Text_Table_Cell_Format, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	text_table_cell_format_set_border_brush :: proc(fmt: Text_Table_Cell_Format, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	text_table_cell_set_format :: proc(table: Text_Table, row: c.int, col: c.int, fmt: Text_Table_Cell_Format) ---
+
+	/* QTextDocumentFragment */
+
+	@(require_results) text_document_fragment_from_plain_text :: proc(text: cstring) -> Text_Document_Fragment ---
+	@(require_results) text_document_fragment_from_html :: proc(html: cstring) -> Text_Document_Fragment ---
+	@(require_results) text_document_fragment_from_selection :: proc(cursor: Text_Cursor) -> Text_Document_Fragment ---
+	text_document_fragment_destroy :: proc(fragment: Text_Document_Fragment) ---
+	@(require_results) text_document_fragment_to_plain_text :: proc(fragment: Text_Document_Fragment) -> cstring ---
+	@(require_results) text_document_fragment_to_html :: proc(fragment: Text_Document_Fragment) -> cstring ---
+	text_cursor_insert_fragment :: proc(cursor: Text_Cursor, fragment: Text_Document_Fragment) ---
+
+	/* QTextDocumentWriter */
+
+	@(require_results) text_document_writer_create :: proc(file_path: cstring, format: cstring) -> Text_Document_Writer ---
+	text_document_writer_destroy :: proc(writer: Text_Document_Writer) ---
+	text_document_writer_set_format :: proc(writer: Text_Document_Writer, format: cstring) ---
+	@(require_results) text_document_writer_write :: proc(writer: Text_Document_Writer, document: Text_Document) -> c.int ---
 
 	/* QTextOption */
 

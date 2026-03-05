@@ -64,22 +64,16 @@ QTextList, QTextFrame, QDeadlineTimer, QCollator,
 QAbstractItemModel helper (CCustomItemModel),
 QListWidgetItem, QMimeData,
 QGraphicsPolygonItem, QGraphicsSimpleTextItem,
-QPainterPathStroker
+QPainterPathStroker,
+QTextBlockFormat, QTextListFormat, QTextImageFormat, QTextFrameFormat,
+QTextTableFormat, QTextTableCellFormat,
+QTextDocumentFragment, QTextDocumentWriter
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Rich text formatting:**
-- QTextBlockFormat — paragraph-level formatting (alignment, indent, line spacing)
-- QTextListFormat — list bullet/numbering style
-- QTextTableFormat / QTextTableCellFormat — table formatting in rich text
-- QTextImageFormat — embedding images in rich text documents
-- QTextFrameFormat — frame formatting
-- QTextDocumentFragment — inserting/extracting document snippets
-- QTextDocumentWriter — exporting QTextDocument to HTML/ODF/plaintext
 
 **Styling/theming:**
 - QProxyStyle — overlay to customize specific style elements without rewriting everything

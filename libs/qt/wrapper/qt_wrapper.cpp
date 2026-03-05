@@ -137,6 +137,7 @@
 #include <QFont>
 #include <QPalette>
 #include <QPainterPath>
+#include <QPainterPathStroker>
 #include <QTransform>
 #include <QRegion>
 #include <QLinearGradient>
@@ -144,9 +145,16 @@
 #include <QConicalGradient>
 #include <QTextCursor>
 #include <QTextDocument>
+#include <QTextDocumentFragment>
+#include <QTextDocumentWriter>
 #include <QTextBlock>
+#include <QTextBlockFormat>
 #include <QTextList>
+#include <QTextListFormat>
 #include <QTextTable>
+#include <QTextTableFormat>
+#include <QTextImageFormat>
+#include <QTextFrameFormat>
 #include <QTextOption>
 #include <QFontDatabase>
 #include <QMovie>
@@ -206,6 +214,8 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsPathItem>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsSimpleTextItem>
 #include <QGraphicsItemGroup>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
@@ -8343,6 +8353,402 @@ void *qt_text_document_find_block_by_number(void *document, int block_number) {
     QTextBlock b = static_cast<QTextDocument *>(document)->findBlockByNumber(block_number);
     if (!b.isValid()) return nullptr;
     return static_cast<void *>(new QTextBlock(b));
+}
+
+/* ── QTextBlockFormat ──────────────────────────────────────────────── */
+
+void *qt_text_block_format_create(void) {
+    return static_cast<void *>(new QTextBlockFormat());
+}
+
+void qt_text_block_format_destroy(void *fmt) {
+    delete static_cast<QTextBlockFormat *>(fmt);
+}
+
+void qt_text_block_format_set_alignment(void *fmt, int alignment) {
+    static_cast<QTextBlockFormat *>(fmt)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_text_block_format_get_alignment(void *fmt) {
+    return static_cast<int>(static_cast<QTextBlockFormat *>(fmt)->alignment());
+}
+
+void qt_text_block_format_set_indent(void *fmt, int indent) {
+    static_cast<QTextBlockFormat *>(fmt)->setIndent(indent);
+}
+
+int qt_text_block_format_get_indent(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->indent();
+}
+
+void qt_text_block_format_set_text_indent(void *fmt, double indent) {
+    static_cast<QTextBlockFormat *>(fmt)->setTextIndent(indent);
+}
+
+double qt_text_block_format_get_text_indent(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->textIndent();
+}
+
+void qt_text_block_format_set_top_margin(void *fmt, double margin) {
+    static_cast<QTextBlockFormat *>(fmt)->setTopMargin(margin);
+}
+
+double qt_text_block_format_get_top_margin(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->topMargin();
+}
+
+void qt_text_block_format_set_bottom_margin(void *fmt, double margin) {
+    static_cast<QTextBlockFormat *>(fmt)->setBottomMargin(margin);
+}
+
+double qt_text_block_format_get_bottom_margin(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->bottomMargin();
+}
+
+void qt_text_block_format_set_left_margin(void *fmt, double margin) {
+    static_cast<QTextBlockFormat *>(fmt)->setLeftMargin(margin);
+}
+
+double qt_text_block_format_get_left_margin(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->leftMargin();
+}
+
+void qt_text_block_format_set_right_margin(void *fmt, double margin) {
+    static_cast<QTextBlockFormat *>(fmt)->setRightMargin(margin);
+}
+
+double qt_text_block_format_get_right_margin(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->rightMargin();
+}
+
+void qt_text_block_format_set_line_height(void *fmt, double height, int height_type) {
+    static_cast<QTextBlockFormat *>(fmt)->setLineHeight(height, height_type);
+}
+
+double qt_text_block_format_get_line_height(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->lineHeight();
+}
+
+int qt_text_block_format_get_line_height_type(void *fmt) {
+    return static_cast<QTextBlockFormat *>(fmt)->lineHeightType();
+}
+
+void qt_text_cursor_set_block_format(void *cursor, void *fmt) {
+    static_cast<QTextCursor *>(cursor)->setBlockFormat(*static_cast<QTextBlockFormat *>(fmt));
+}
+
+void qt_text_cursor_merge_block_format(void *cursor, void *fmt) {
+    static_cast<QTextCursor *>(cursor)->mergeBlockFormat(*static_cast<QTextBlockFormat *>(fmt));
+}
+
+/* ── QTextListFormat ──────────────────────────────────────────────── */
+
+void *qt_text_list_format_create(void) {
+    return static_cast<void *>(new QTextListFormat());
+}
+
+void qt_text_list_format_destroy(void *fmt) {
+    delete static_cast<QTextListFormat *>(fmt);
+}
+
+void qt_text_list_format_set_style(void *fmt, int style) {
+    static_cast<QTextListFormat *>(fmt)->setStyle(static_cast<QTextListFormat::Style>(style));
+}
+
+int qt_text_list_format_get_style(void *fmt) {
+    return static_cast<int>(static_cast<QTextListFormat *>(fmt)->style());
+}
+
+void qt_text_list_format_set_indent(void *fmt, int indent) {
+    static_cast<QTextListFormat *>(fmt)->setIndent(indent);
+}
+
+int qt_text_list_format_get_indent(void *fmt) {
+    return static_cast<QTextListFormat *>(fmt)->indent();
+}
+
+void qt_text_list_format_set_number_prefix(void *fmt, const char *prefix) {
+    static_cast<QTextListFormat *>(fmt)->setNumberPrefix(QString::fromUtf8(prefix));
+}
+
+char *qt_text_list_format_get_number_prefix(void *fmt) {
+    return qstring_to_heap_utf8(static_cast<QTextListFormat *>(fmt)->numberPrefix());
+}
+
+void qt_text_list_format_set_number_suffix(void *fmt, const char *suffix) {
+    static_cast<QTextListFormat *>(fmt)->setNumberSuffix(QString::fromUtf8(suffix));
+}
+
+char *qt_text_list_format_get_number_suffix(void *fmt) {
+    return qstring_to_heap_utf8(static_cast<QTextListFormat *>(fmt)->numberSuffix());
+}
+
+void qt_text_cursor_insert_list_with_format(void *cursor, void *fmt) {
+    static_cast<QTextCursor *>(cursor)->insertList(*static_cast<QTextListFormat *>(fmt));
+}
+
+/* ── QTextImageFormat ─────────────────────────────────────────────── */
+
+void *qt_text_image_format_create(void) {
+    return static_cast<void *>(new QTextImageFormat());
+}
+
+void qt_text_image_format_destroy(void *fmt) {
+    delete static_cast<QTextImageFormat *>(fmt);
+}
+
+void qt_text_image_format_set_name(void *fmt, const char *name) {
+    static_cast<QTextImageFormat *>(fmt)->setName(QString::fromUtf8(name));
+}
+
+char *qt_text_image_format_get_name(void *fmt) {
+    return qstring_to_heap_utf8(static_cast<QTextImageFormat *>(fmt)->name());
+}
+
+void qt_text_image_format_set_width(void *fmt, double width) {
+    static_cast<QTextImageFormat *>(fmt)->setWidth(width);
+}
+
+double qt_text_image_format_get_width(void *fmt) {
+    return static_cast<QTextImageFormat *>(fmt)->width();
+}
+
+void qt_text_image_format_set_height(void *fmt, double height) {
+    static_cast<QTextImageFormat *>(fmt)->setHeight(height);
+}
+
+double qt_text_image_format_get_height(void *fmt) {
+    return static_cast<QTextImageFormat *>(fmt)->height();
+}
+
+void qt_text_cursor_insert_image_with_format(void *cursor, void *fmt) {
+    static_cast<QTextCursor *>(cursor)->insertImage(*static_cast<QTextImageFormat *>(fmt));
+}
+
+/* ── QTextFrameFormat ─────────────────────────────────────────────── */
+
+void *qt_text_frame_format_create(void) {
+    return static_cast<void *>(new QTextFrameFormat());
+}
+
+void qt_text_frame_format_destroy(void *fmt) {
+    delete static_cast<QTextFrameFormat *>(fmt);
+}
+
+void qt_text_frame_format_set_border(void *fmt, double border) {
+    static_cast<QTextFrameFormat *>(fmt)->setBorder(border);
+}
+
+double qt_text_frame_format_get_border(void *fmt) {
+    return static_cast<QTextFrameFormat *>(fmt)->border();
+}
+
+void qt_text_frame_format_set_border_style(void *fmt, int style) {
+    static_cast<QTextFrameFormat *>(fmt)->setBorderStyle(static_cast<QTextFrameFormat::BorderStyle>(style));
+}
+
+int qt_text_frame_format_get_border_style(void *fmt) {
+    return static_cast<int>(static_cast<QTextFrameFormat *>(fmt)->borderStyle());
+}
+
+void qt_text_frame_format_set_margin(void *fmt, double margin) {
+    static_cast<QTextFrameFormat *>(fmt)->setMargin(margin);
+}
+
+double qt_text_frame_format_get_margin(void *fmt) {
+    return static_cast<QTextFrameFormat *>(fmt)->margin();
+}
+
+void qt_text_frame_format_set_padding(void *fmt, double padding) {
+    static_cast<QTextFrameFormat *>(fmt)->setPadding(padding);
+}
+
+double qt_text_frame_format_get_padding(void *fmt) {
+    return static_cast<QTextFrameFormat *>(fmt)->padding();
+}
+
+void qt_text_frame_format_set_width(void *fmt, double width, int type) {
+    static_cast<QTextFrameFormat *>(fmt)->setWidth(QTextLength(static_cast<QTextLength::Type>(type), width));
+}
+
+void qt_text_frame_format_set_height(void *fmt, double height, int type) {
+    static_cast<QTextFrameFormat *>(fmt)->setHeight(QTextLength(static_cast<QTextLength::Type>(type), height));
+}
+
+void qt_text_frame_format_set_position(void *fmt, int position) {
+    static_cast<QTextFrameFormat *>(fmt)->setPosition(static_cast<QTextFrameFormat::Position>(position));
+}
+
+int qt_text_frame_format_get_position(void *fmt) {
+    return static_cast<int>(static_cast<QTextFrameFormat *>(fmt)->position());
+}
+
+void qt_text_frame_set_frame_format(void *frame, void *fmt) {
+    static_cast<QTextFrame *>(frame)->setFrameFormat(*static_cast<QTextFrameFormat *>(fmt));
+}
+
+/* ── QTextTableFormat ─────────────────────────────────────────────── */
+
+void *qt_text_table_format_create(void) {
+    return static_cast<void *>(new QTextTableFormat());
+}
+
+void qt_text_table_format_destroy(void *fmt) {
+    delete static_cast<QTextTableFormat *>(fmt);
+}
+
+void qt_text_table_format_set_columns(void *fmt, int columns) {
+    static_cast<QTextTableFormat *>(fmt)->setColumns(columns);
+}
+
+int qt_text_table_format_get_columns(void *fmt) {
+    return static_cast<QTextTableFormat *>(fmt)->columns();
+}
+
+void qt_text_table_format_set_cell_padding(void *fmt, double padding) {
+    static_cast<QTextTableFormat *>(fmt)->setCellPadding(padding);
+}
+
+double qt_text_table_format_get_cell_padding(void *fmt) {
+    return static_cast<QTextTableFormat *>(fmt)->cellPadding();
+}
+
+void qt_text_table_format_set_cell_spacing(void *fmt, double spacing) {
+    static_cast<QTextTableFormat *>(fmt)->setCellSpacing(spacing);
+}
+
+double qt_text_table_format_get_cell_spacing(void *fmt) {
+    return static_cast<QTextTableFormat *>(fmt)->cellSpacing();
+}
+
+void qt_text_table_format_set_alignment(void *fmt, int alignment) {
+    static_cast<QTextTableFormat *>(fmt)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_text_table_format_get_alignment(void *fmt) {
+    return static_cast<int>(static_cast<QTextTableFormat *>(fmt)->alignment());
+}
+
+void qt_text_table_format_set_border(void *fmt, double border) {
+    static_cast<QTextTableFormat *>(fmt)->setBorder(border);
+}
+
+void qt_text_table_format_set_border_style(void *fmt, int style) {
+    static_cast<QTextTableFormat *>(fmt)->setBorderStyle(static_cast<QTextFrameFormat::BorderStyle>(style));
+}
+
+void qt_text_table_set_format(void *table, void *fmt) {
+    static_cast<QTextTable *>(table)->setFormat(*static_cast<QTextTableFormat *>(fmt));
+}
+
+void *qt_text_cursor_insert_table_with_format(void *cursor, int rows, int cols, void *fmt) {
+    return static_cast<void *>(static_cast<QTextCursor *>(cursor)->insertTable(rows, cols, *static_cast<QTextTableFormat *>(fmt)));
+}
+
+/* ── QTextTableCellFormat ─────────────────────────────────────────── */
+
+void *qt_text_table_cell_format_create(void) {
+    return static_cast<void *>(new QTextTableCellFormat());
+}
+
+void qt_text_table_cell_format_destroy(void *fmt) {
+    delete static_cast<QTextTableCellFormat *>(fmt);
+}
+
+void qt_text_table_cell_format_set_top_padding(void *fmt, double padding) {
+    static_cast<QTextTableCellFormat *>(fmt)->setTopPadding(padding);
+}
+
+double qt_text_table_cell_format_get_top_padding(void *fmt) {
+    return static_cast<QTextTableCellFormat *>(fmt)->topPadding();
+}
+
+void qt_text_table_cell_format_set_bottom_padding(void *fmt, double padding) {
+    static_cast<QTextTableCellFormat *>(fmt)->setBottomPadding(padding);
+}
+
+double qt_text_table_cell_format_get_bottom_padding(void *fmt) {
+    return static_cast<QTextTableCellFormat *>(fmt)->bottomPadding();
+}
+
+void qt_text_table_cell_format_set_left_padding(void *fmt, double padding) {
+    static_cast<QTextTableCellFormat *>(fmt)->setLeftPadding(padding);
+}
+
+double qt_text_table_cell_format_get_left_padding(void *fmt) {
+    return static_cast<QTextTableCellFormat *>(fmt)->leftPadding();
+}
+
+void qt_text_table_cell_format_set_right_padding(void *fmt, double padding) {
+    static_cast<QTextTableCellFormat *>(fmt)->setRightPadding(padding);
+}
+
+double qt_text_table_cell_format_get_right_padding(void *fmt) {
+    return static_cast<QTextTableCellFormat *>(fmt)->rightPadding();
+}
+
+void qt_text_table_cell_format_set_background(void *fmt, int r, int g, int b, int a) {
+    static_cast<QTextTableCellFormat *>(fmt)->setBackground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_text_table_cell_format_set_border_brush(void *fmt, int r, int g, int b, int a) {
+    static_cast<QTextTableCellFormat *>(fmt)->setBorderBrush(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_text_table_cell_set_format(void *table, int row, int col, void *fmt) {
+    QTextTable *t = static_cast<QTextTable *>(table);
+    QTextTableCell cell = t->cellAt(row, col);
+    if (cell.isValid()) {
+        cell.setFormat(*static_cast<QTextTableCellFormat *>(fmt));
+    }
+}
+
+/* ── QTextDocumentFragment ────────────────────────────────────────── */
+
+void *qt_text_document_fragment_from_plain_text(const char *text) {
+    return static_cast<void *>(new QTextDocumentFragment(QTextDocumentFragment::fromPlainText(QString::fromUtf8(text))));
+}
+
+void *qt_text_document_fragment_from_html(const char *html) {
+    return static_cast<void *>(new QTextDocumentFragment(QTextDocumentFragment::fromHtml(QString::fromUtf8(html))));
+}
+
+void *qt_text_document_fragment_from_selection(void *cursor) {
+    return static_cast<void *>(new QTextDocumentFragment(*static_cast<QTextCursor *>(cursor)));
+}
+
+void qt_text_document_fragment_destroy(void *fragment) {
+    delete static_cast<QTextDocumentFragment *>(fragment);
+}
+
+char *qt_text_document_fragment_to_plain_text(void *fragment) {
+    return qstring_to_heap_utf8(static_cast<QTextDocumentFragment *>(fragment)->toPlainText());
+}
+
+char *qt_text_document_fragment_to_html(void *fragment) {
+    return qstring_to_heap_utf8(static_cast<QTextDocumentFragment *>(fragment)->toHtml());
+}
+
+void qt_text_cursor_insert_fragment(void *cursor, void *fragment) {
+    static_cast<QTextCursor *>(cursor)->insertFragment(*static_cast<QTextDocumentFragment *>(fragment));
+}
+
+/* ── QTextDocumentWriter ──────────────────────────────────────────── */
+
+void *qt_text_document_writer_create(const char *file_path, const char *format) {
+    return static_cast<void *>(new QTextDocumentWriter(QString::fromUtf8(file_path), QByteArray(format)));
+}
+
+void qt_text_document_writer_destroy(void *writer) {
+    delete static_cast<QTextDocumentWriter *>(writer);
+}
+
+void qt_text_document_writer_set_format(void *writer, const char *format) {
+    static_cast<QTextDocumentWriter *>(writer)->setFormat(QByteArray(format));
+}
+
+int qt_text_document_writer_write(void *writer, void *document) {
+    return static_cast<QTextDocumentWriter *>(writer)->write(static_cast<QTextDocument *>(document)) ? 1 : 0;
 }
 
 /* ── QTextOption ───────────────────────────────────────────────────── */
