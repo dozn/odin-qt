@@ -532,6 +532,31 @@ void  qt_table_widget_find_items(void *table, const char *text, int flags, void 
 void  qt_table_widget_set_word_wrap(void *table, int is_word_wrap);
 void  qt_table_widget_set_corner_button_enabled(void *table, int is_enabled);
 
+/* QTableWidgetItem */
+void *qt_table_widget_item_create(const char *text);
+void  qt_table_widget_item_set_text(void *item, const char *text);
+char *qt_table_widget_item_get_text(void *item);
+void  qt_table_widget_item_set_font(void *item, const char *family, int point_size, int weight, int is_italic);
+void  qt_table_widget_item_set_foreground(void *item, int r, int g, int b, int a);
+void  qt_table_widget_item_set_background(void *item, int r, int g, int b, int a);
+void  qt_table_widget_item_set_icon(void *item, void *icon);
+void  qt_table_widget_item_set_flags(void *item, int flags);
+int   qt_table_widget_item_get_flags(void *item);
+void  qt_table_widget_item_set_text_alignment(void *item, int alignment);
+int   qt_table_widget_item_get_text_alignment(void *item);
+void  qt_table_widget_item_set_tool_tip(void *item, const char *tooltip);
+char *qt_table_widget_item_get_tool_tip(void *item);
+void  qt_table_widget_item_set_check_state(void *item, int state);
+int   qt_table_widget_item_get_check_state(void *item);
+void  qt_table_widget_item_set_data(void *item, int role, const char *value);
+char *qt_table_widget_item_get_data(void *item, int role);
+void  qt_table_widget_item_set_size_hint(void *item, int w, int h);
+int   qt_table_widget_item_get_row(void *item);
+int   qt_table_widget_item_get_column(void *item);
+void  qt_table_widget_item_set_selected(void *item, int is_selected);
+int   qt_table_widget_item_is_selected(void *item);
+void  qt_table_widget_set_item_object(void *table, int row, int col, void *item);
+
 /* ── QScrollArea ────────────────────────────────────────────────────── */
 
 void *qt_scroll_area_create(void *parent);

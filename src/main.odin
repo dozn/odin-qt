@@ -795,22 +795,56 @@ build_data_views_tab :: proc() -> qt.Widget {
 
 	qt.splitter_add_widget(data_splitter, auto_cast demo_state.data_tree)
 
-	// TableWidget
+	// TableWidget with per-item styling via QTableWidgetItem
 	demo_state.data_table = qt.table_widget_create(4, 3, nil)
 	table_headers := [?]cstring{"Name", "Age", "City"}
 	qt.table_widget_set_horizontal_header_labels(demo_state.data_table, raw_data(table_headers[:]), 3)
-	qt.table_widget_set_item(demo_state.data_table, 0, 0, "Alice")
-	qt.table_widget_set_item(demo_state.data_table, 0, 1, "30")
-	qt.table_widget_set_item(demo_state.data_table, 0, 2, "Toronto")
-	qt.table_widget_set_item(demo_state.data_table, 1, 0, "Bob")
-	qt.table_widget_set_item(demo_state.data_table, 1, 1, "25")
-	qt.table_widget_set_item(demo_state.data_table, 1, 2, "Vancouver")
-	qt.table_widget_set_item(demo_state.data_table, 2, 0, "Charlie")
-	qt.table_widget_set_item(demo_state.data_table, 2, 1, "35")
-	qt.table_widget_set_item(demo_state.data_table, 2, 2, "Montreal")
-	qt.table_widget_set_item(demo_state.data_table, 3, 0, "Diana")
-	qt.table_widget_set_item(demo_state.data_table, 3, 1, "28")
-	qt.table_widget_set_item(demo_state.data_table, 3, 2, "Ottawa")
+
+	// Row 0: bold name, centre-aligned age, blue city
+	item_alice := qt.table_widget_item_create("Alice")
+	qt.table_widget_item_set_font(item_alice, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.table_widget_set_item_object(demo_state.data_table, 0, 0, item_alice)
+	item_age_30 := qt.table_widget_item_create("30")
+	qt.table_widget_item_set_text_alignment(item_age_30, cast(c.int)qt.Alignment.Centre)
+	qt.table_widget_set_item_object(demo_state.data_table, 0, 1, item_age_30)
+	item_toronto := qt.table_widget_item_create("Toronto")
+	qt.table_widget_item_set_foreground(item_toronto, 0, 80, 180, 255)
+	qt.table_widget_set_item_object(demo_state.data_table, 0, 2, item_toronto)
+
+	// Row 1: italic name, green background on city
+	item_bob := qt.table_widget_item_create("Bob")
+	qt.table_widget_item_set_font(item_bob, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Normal, 1)
+	qt.table_widget_set_item_object(demo_state.data_table, 1, 0, item_bob)
+	item_age_25 := qt.table_widget_item_create("25")
+	qt.table_widget_item_set_text_alignment(item_age_25, cast(c.int)qt.Alignment.Centre)
+	qt.table_widget_set_item_object(demo_state.data_table, 1, 1, item_age_25)
+	item_vancouver := qt.table_widget_item_create("Vancouver")
+	qt.table_widget_item_set_background(item_vancouver, 200, 240, 200, 255)
+	qt.table_widget_item_set_tool_tip(item_vancouver, "West coast city")
+	qt.table_widget_set_item_object(demo_state.data_table, 1, 2, item_vancouver)
+
+	// Row 2: red foreground on name, right-aligned age
+	item_charlie := qt.table_widget_item_create("Charlie")
+	qt.table_widget_item_set_foreground(item_charlie, 180, 40, 40, 255)
+	qt.table_widget_set_item_object(demo_state.data_table, 2, 0, item_charlie)
+	item_age_35 := qt.table_widget_item_create("35")
+	qt.table_widget_item_set_text_alignment(item_age_35, cast(c.int)qt.Alignment.Right)
+	qt.table_widget_set_item_object(demo_state.data_table, 2, 1, item_age_35)
+	item_montreal := qt.table_widget_item_create("Montreal")
+	qt.table_widget_set_item_object(demo_state.data_table, 2, 2, item_montreal)
+
+	// Row 3: highlighted background on name, bold+blue city
+	item_diana := qt.table_widget_item_create("Diana")
+	qt.table_widget_item_set_background(item_diana, 255, 240, 200, 255)
+	qt.table_widget_set_item_object(demo_state.data_table, 3, 0, item_diana)
+	item_age_28 := qt.table_widget_item_create("28")
+	qt.table_widget_item_set_text_alignment(item_age_28, cast(c.int)qt.Alignment.Centre)
+	qt.table_widget_set_item_object(demo_state.data_table, 3, 1, item_age_28)
+	item_ottawa := qt.table_widget_item_create("Ottawa")
+	qt.table_widget_item_set_font(item_ottawa, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.table_widget_item_set_foreground(item_ottawa, 0, 80, 180, 255)
+	qt.table_widget_set_item_object(demo_state.data_table, 3, 2, item_ottawa)
+
 	qt.splitter_add_widget(data_splitter, auto_cast demo_state.data_table)
 
 	qt.layout_add_widget(layout, auto_cast data_splitter)

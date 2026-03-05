@@ -84,6 +84,7 @@ List_Widget_Item :: distinct rawptr
 Tree_Widget :: distinct rawptr
 Tree_Widget_Item :: distinct rawptr
 Table_Widget :: distinct rawptr
+Table_Widget_Item :: distinct rawptr
 Scroll_Area :: distinct rawptr
 Splitter :: distinct rawptr
 Stacked_Widget :: distinct rawptr
@@ -2288,18 +2289,44 @@ foreign qt_lib {
 	table_widget_resize_rows_to_contents :: proc(table_widget: Table_Widget) ---
 	table_widget_set_cell_widget :: proc(table_widget: Table_Widget, row: c.int, col: c.int, widget: Widget) ---
 	@(require_results) table_widget_get_cell_widget :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> Widget ---
-	@(require_results) table_widget_get_item :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> rawptr ---
-	@(require_results) table_widget_get_current_item :: proc(table_widget: Table_Widget) -> rawptr ---
+	@(require_results) table_widget_get_item :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> Table_Widget_Item ---
+	@(require_results) table_widget_get_current_item :: proc(table_widget: Table_Widget) -> Table_Widget_Item ---
 	table_widget_set_current_cell :: proc(table_widget: Table_Widget, row: c.int, col: c.int) ---
-	table_widget_get_selected_items :: proc(table_widget: Table_Widget, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	table_widget_get_selected_items :: proc(table_widget: Table_Widget, out_items: ^[^]Table_Widget_Item, out_count: ^c.int) ---
 	table_widget_set_show_grid :: proc(table_widget: Table_Widget, is_show: c.int) ---
 	table_widget_set_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int, row_span: c.int, col_span: c.int) ---
 	@(require_results) table_widget_get_row_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int ---
 	@(require_results) table_widget_get_column_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int ---
-	table_widget_scroll_to_item :: proc(table_widget: Table_Widget, item: rawptr, scroll_hint: Scroll_Hint) ---
-	table_widget_find_items :: proc(table_widget: Table_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	table_widget_scroll_to_item :: proc(table_widget: Table_Widget, item: Table_Widget_Item, scroll_hint: Scroll_Hint) ---
+	table_widget_find_items :: proc(table_widget: Table_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]Table_Widget_Item, out_count: ^c.int) ---
 	table_widget_set_word_wrap :: proc(table_widget: Table_Widget, is_word_wrap: c.int) ---
 	table_widget_set_corner_button_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) ---
+
+	/* QTableWidgetItem */
+
+	@(require_results) table_widget_item_create :: proc(text: cstring) -> Table_Widget_Item ---
+	table_widget_item_set_text :: proc(item: Table_Widget_Item, text: cstring) ---
+	@(require_results) table_widget_item_get_text :: proc(item: Table_Widget_Item) -> cstring ---
+	table_widget_item_set_font :: proc(item: Table_Widget_Item, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) ---
+	table_widget_item_set_foreground :: proc(item: Table_Widget_Item, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	table_widget_item_set_background :: proc(item: Table_Widget_Item, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	table_widget_item_set_icon :: proc(item: Table_Widget_Item, icon: Icon) ---
+	table_widget_item_set_flags :: proc(item: Table_Widget_Item, flags: c.int) ---
+	@(require_results) table_widget_item_get_flags :: proc(item: Table_Widget_Item) -> c.int ---
+	table_widget_item_set_text_alignment :: proc(item: Table_Widget_Item, alignment: c.int) ---
+	@(require_results) table_widget_item_get_text_alignment :: proc(item: Table_Widget_Item) -> c.int ---
+	table_widget_item_set_tool_tip :: proc(item: Table_Widget_Item, tooltip: cstring) ---
+	@(require_results) table_widget_item_get_tool_tip :: proc(item: Table_Widget_Item) -> cstring ---
+	table_widget_item_set_check_state :: proc(item: Table_Widget_Item, state: Check_State) ---
+	@(require_results) table_widget_item_get_check_state :: proc(item: Table_Widget_Item) -> Check_State ---
+	table_widget_item_set_data :: proc(item: Table_Widget_Item, role: c.int, value: cstring) ---
+	@(require_results) table_widget_item_get_data :: proc(item: Table_Widget_Item, role: c.int) -> cstring ---
+	table_widget_item_set_size_hint :: proc(item: Table_Widget_Item, w: c.int, h: c.int) ---
+	@(require_results) table_widget_item_get_row :: proc(item: Table_Widget_Item) -> c.int ---
+	@(require_results) table_widget_item_get_column :: proc(item: Table_Widget_Item) -> c.int ---
+	table_widget_item_set_selected :: proc(item: Table_Widget_Item, is_selected: c.int) ---
+	@(require_results) table_widget_item_is_selected :: proc(item: Table_Widget_Item) -> c.int ---
+	table_widget_set_item_object :: proc(table_widget: Table_Widget, row: c.int, col: c.int, item: Table_Widget_Item) ---
 
 	/* QScrollArea */
 

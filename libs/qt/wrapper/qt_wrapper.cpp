@@ -2558,6 +2558,103 @@ void qt_table_widget_set_corner_button_enabled(void *table, int is_enabled) {
     static_cast<QTableWidget *>(table)->setCornerButtonEnabled(is_enabled != 0);
 }
 
+/* QTableWidgetItem */
+
+void *qt_table_widget_item_create(const char *text) {
+    return static_cast<void *>(new QTableWidgetItem(QString::fromUtf8(text)));
+}
+
+void qt_table_widget_item_set_text(void *item, const char *text) {
+    static_cast<QTableWidgetItem *>(item)->setText(QString::fromUtf8(text));
+}
+
+char *qt_table_widget_item_get_text(void *item) {
+    return qstring_to_heap_utf8(static_cast<QTableWidgetItem *>(item)->text());
+}
+
+void qt_table_widget_item_set_font(void *item, const char *family, int point_size, int weight, int is_italic) {
+    QFont f(QString::fromUtf8(family), point_size, weight, is_italic != 0);
+    static_cast<QTableWidgetItem *>(item)->setFont(f);
+}
+
+void qt_table_widget_item_set_foreground(void *item, int r, int g, int b, int a) {
+    static_cast<QTableWidgetItem *>(item)->setForeground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_table_widget_item_set_background(void *item, int r, int g, int b, int a) {
+    static_cast<QTableWidgetItem *>(item)->setBackground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_table_widget_item_set_icon(void *item, void *icon) {
+    static_cast<QTableWidgetItem *>(item)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_table_widget_item_set_flags(void *item, int flags) {
+    static_cast<QTableWidgetItem *>(item)->setFlags(static_cast<Qt::ItemFlags>(flags));
+}
+
+int qt_table_widget_item_get_flags(void *item) {
+    return static_cast<int>(static_cast<QTableWidgetItem *>(item)->flags());
+}
+
+void qt_table_widget_item_set_text_alignment(void *item, int alignment) {
+    static_cast<QTableWidgetItem *>(item)->setTextAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_table_widget_item_get_text_alignment(void *item) {
+    return static_cast<int>(static_cast<QTableWidgetItem *>(item)->textAlignment());
+}
+
+void qt_table_widget_item_set_tool_tip(void *item, const char *tooltip) {
+    static_cast<QTableWidgetItem *>(item)->setToolTip(QString::fromUtf8(tooltip));
+}
+
+char *qt_table_widget_item_get_tool_tip(void *item) {
+    return qstring_to_heap_utf8(static_cast<QTableWidgetItem *>(item)->toolTip());
+}
+
+void qt_table_widget_item_set_check_state(void *item, int state) {
+    static_cast<QTableWidgetItem *>(item)->setCheckState(static_cast<Qt::CheckState>(state));
+}
+
+int qt_table_widget_item_get_check_state(void *item) {
+    return static_cast<int>(static_cast<QTableWidgetItem *>(item)->checkState());
+}
+
+void qt_table_widget_item_set_data(void *item, int role, const char *value) {
+    static_cast<QTableWidgetItem *>(item)->setData(role, QString::fromUtf8(value));
+}
+
+char *qt_table_widget_item_get_data(void *item, int role) {
+    QVariant v = static_cast<QTableWidgetItem *>(item)->data(role);
+    if (!v.isValid()) return nullptr;
+    return qstring_to_heap_utf8(v.toString());
+}
+
+void qt_table_widget_item_set_size_hint(void *item, int w, int h) {
+    static_cast<QTableWidgetItem *>(item)->setSizeHint(QSize(w, h));
+}
+
+int qt_table_widget_item_get_row(void *item) {
+    return static_cast<QTableWidgetItem *>(item)->row();
+}
+
+int qt_table_widget_item_get_column(void *item) {
+    return static_cast<QTableWidgetItem *>(item)->column();
+}
+
+void qt_table_widget_item_set_selected(void *item, int is_selected) {
+    static_cast<QTableWidgetItem *>(item)->setSelected(is_selected != 0);
+}
+
+int qt_table_widget_item_is_selected(void *item) {
+    return static_cast<QTableWidgetItem *>(item)->isSelected() ? 1 : 0;
+}
+
+void qt_table_widget_set_item_object(void *table, int row, int col, void *item) {
+    static_cast<QTableWidget *>(table)->setItem(row, col, static_cast<QTableWidgetItem *>(item));
+}
+
 /* ── QScrollArea ────────────────────────────────────────────────────── */
 
 void *qt_scroll_area_create(void *parent) {
