@@ -4084,6 +4084,20 @@ build_print_support_tab :: proc() -> qt.Widget {
 			qt.painter_set_pen_width(painter, 2 * scale)
 			qt.painter_draw_rect(painter, 80 * scale, 80 * scale, 500 * scale, 300 * scale)
 
+			qt.painter_set_brush_colour(painter, 70, 130, 180, 180)
+			qt.painter_set_pen_colour(painter, 30, 60, 100, 255)
+			qt.painter_set_pen_width(painter, 2 * scale)
+			qt.painter_draw_ellipse(painter, 100 * scale, 420 * scale, 120 * scale, 80 * scale)
+
+			qt.painter_set_brush_colour(painter, 255, 165, 0, 160)
+			qt.painter_set_pen_colour(painter, 180, 100, 0, 255)
+			scale_f := cast(c.double)scale
+			qt.painter_draw_rounded_rect(painter, 280 * scale, 420 * scale, 140 * scale, 80 * scale, 15.0 * scale_f, 15.0 * scale_f)
+
+			qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+			qt.painter_set_font(painter, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Normal, 1)
+			qt.painter_draw_text(painter, 100 * scale, 560 * scale, "Shapes rendered at printer resolution.")
+
 			_ = qt.painter_end(painter)
 		}
 		qt.painter_destroy(painter)
