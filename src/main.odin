@@ -3234,28 +3234,39 @@ build_new_classes_tab :: proc() -> qt.Widget {
 			qt.label_set_text(label, "Error: could not get temp directory")
 			return
 		}
-		buf: [512]u8
-		path_msg := fmt.bprintf(buf[:], "%s/odin_qt_test.pdf", temp_path)
-		buf[len(path_msg)] = 0
-		pdf_path := cstring(raw_data(buf[:]))
+		path_buf: [512]u8
+		path_msg := fmt.bprintf(path_buf[:], "%s/odin_qt_test.pdf", temp_path)
+		path_buf[len(path_msg)] = 0
+		pdf_path := cstring(raw_data(path_buf[:]))
 
 		writer := qt.pdf_writer_create(pdf_path)
 		qt.pdf_writer_set_title(writer, "Odin + Qt Test PDF")
 		qt.pdf_writer_set_creator(writer, "Odin Qt Demo")
 		qt.pdf_writer_set_resolution(writer, 300)
 
-		title := qt.pdf_writer_get_title(writer)
-		creator := qt.pdf_writer_get_creator(writer)
-		resolution := qt.pdf_writer_get_resolution(writer)
+		painter := qt.painter_create()
+		if qt.painter_begin(painter, auto_cast writer) != 0 {
+			qt.painter_set_font(painter, "Segoe UI", 24, cast(c.int)qt.Font_Weight.Bold, 0)
+			qt.painter_draw_text(painter, 200, 300, "Odin + Qt PDF Demo")
+
+			qt.painter_set_font(painter, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Normal, 0)
+			qt.painter_draw_text(painter, 200, 500, "Generated from the Odin Qt bindings demo application.")
+			qt.painter_draw_text(painter, 200, 650, "QPdfWriter produces vector PDF output via QPainter.")
+
+			qt.painter_set_pen_colour(painter, 0, 100, 200, 255)
+			qt.painter_set_pen_width(painter, 4)
+			qt.painter_draw_rect(painter, 150, 180, 2400, 600)
+
+			_ = qt.painter_end(painter)
+		}
+		qt.painter_destroy(painter)
 
 		out_buf: [512]u8
-		out_msg := fmt.bprintf(out_buf[:], "PDF created: %s\nTitle: %s, Creator: %s\nResolution: %d DPI\n(QPainter can draw to this device for full PDF output)", pdf_path, title, creator, resolution)
+		out_msg := fmt.bprintf(out_buf[:], "PDF written to: %s\nTitle: Odin + Qt Test PDF\nResolution: 300 DPI", pdf_path)
 		out_buf[len(out_msg)] = 0
 		qt.label_set_text(label, cstring(raw_data(out_buf[:])))
-		statusbar_show("PDF writer created!")
+		statusbar_show("PDF generated!")
 
-		if title != nil do qt.free_string(title)
-		if creator != nil do qt.free_string(creator)
 		qt.pdf_writer_destroy(writer)
 		qt.free_string(temp_path)
 	}, auto_cast pdf_output)
