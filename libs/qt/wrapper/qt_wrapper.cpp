@@ -220,6 +220,9 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsSimpleTextItem>
 #include <QGraphicsItemGroup>
+#include <QGraphicsWidget>
+#include <QGraphicsLinearLayout>
+#include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
@@ -12199,6 +12202,165 @@ void qt_graphics_proxy_widget_set_widget(void *proxy, void *widget) {
 
 void *qt_graphics_proxy_widget_get_widget(void *proxy) {
     return static_cast<void *>(static_cast<QGraphicsProxyWidget *>(static_cast<QGraphicsItem *>(proxy))->widget());
+}
+
+/* ── QGraphicsWidget ───────────────────────────────────────────────── */
+
+void *qt_graphics_widget_create(void *parent) {
+    return static_cast<void *>(new QGraphicsWidget(static_cast<QGraphicsItem *>(parent)));
+}
+
+void qt_graphics_widget_set_layout(void *widget, void *layout) {
+    static_cast<QGraphicsWidget *>(widget)->setLayout(static_cast<QGraphicsLayout *>(layout));
+}
+
+void *qt_graphics_widget_get_layout(void *widget) {
+    return static_cast<void *>(static_cast<QGraphicsWidget *>(widget)->layout());
+}
+
+void qt_graphics_widget_set_geometry(void *widget, double x, double y, double w, double h) {
+    static_cast<QGraphicsWidget *>(widget)->setGeometry(x, y, w, h);
+}
+
+void qt_graphics_widget_set_minimum_size(void *widget, double w, double h) {
+    static_cast<QGraphicsWidget *>(widget)->setMinimumSize(w, h);
+}
+
+void qt_graphics_widget_set_maximum_size(void *widget, double w, double h) {
+    static_cast<QGraphicsWidget *>(widget)->setMaximumSize(w, h);
+}
+
+void qt_graphics_widget_set_preferred_size(void *widget, double w, double h) {
+    static_cast<QGraphicsWidget *>(widget)->setPreferredSize(w, h);
+}
+
+void qt_graphics_widget_set_size_policy(void *widget, int horizontal, int vertical) {
+    static_cast<QGraphicsWidget *>(widget)->setSizePolicy(
+        static_cast<QSizePolicy::Policy>(horizontal),
+        static_cast<QSizePolicy::Policy>(vertical));
+}
+
+void qt_graphics_widget_set_window_title(void *widget, const char *title) {
+    static_cast<QGraphicsWidget *>(widget)->setWindowTitle(QString::fromUtf8(title));
+}
+
+void qt_graphics_widget_set_window_flags(void *widget, int flags) {
+    static_cast<QGraphicsWidget *>(widget)->setWindowFlags(static_cast<Qt::WindowFlags>(flags));
+}
+
+void qt_graphics_widget_set_palette(void *widget, void *palette) {
+    static_cast<QGraphicsWidget *>(widget)->setPalette(*static_cast<QPalette *>(palette));
+}
+
+void qt_graphics_widget_set_font(void *widget, void *font) {
+    static_cast<QGraphicsWidget *>(widget)->setFont(*static_cast<QFont *>(font));
+}
+
+void qt_graphics_widget_set_style(void *widget, void *style) {
+    static_cast<QGraphicsWidget *>(widget)->setStyle(static_cast<QStyle *>(style));
+}
+
+void qt_graphics_widget_resize(void *widget, double w, double h) {
+    static_cast<QGraphicsWidget *>(widget)->resize(w, h);
+}
+
+void qt_graphics_widget_set_auto_fill_background(void *widget, int is_enabled) {
+    static_cast<QGraphicsWidget *>(widget)->setAutoFillBackground(is_enabled != 0);
+}
+
+/* ── QGraphicsLinearLayout ─────────────────────────────────────────── */
+
+void *qt_graphics_linear_layout_create(int orientation, void *parent) {
+    return static_cast<void *>(new QGraphicsLinearLayout(
+        static_cast<Qt::Orientation>(orientation),
+        static_cast<QGraphicsLayoutItem *>(parent)));
+}
+
+void qt_graphics_linear_layout_destroy(void *layout) {
+    delete static_cast<QGraphicsLinearLayout *>(layout);
+}
+
+void qt_graphics_linear_layout_add_item(void *layout, void *item) {
+    static_cast<QGraphicsLinearLayout *>(layout)->addItem(static_cast<QGraphicsLayoutItem *>(item));
+}
+
+void qt_graphics_linear_layout_insert_item(void *layout, int index, void *item) {
+    static_cast<QGraphicsLinearLayout *>(layout)->insertItem(index, static_cast<QGraphicsLayoutItem *>(item));
+}
+
+void qt_graphics_linear_layout_remove_item(void *layout, void *item) {
+    static_cast<QGraphicsLinearLayout *>(layout)->removeItem(static_cast<QGraphicsLayoutItem *>(item));
+}
+
+void qt_graphics_linear_layout_add_stretch(void *layout, int stretch) {
+    static_cast<QGraphicsLinearLayout *>(layout)->addStretch(stretch);
+}
+
+void qt_graphics_linear_layout_set_spacing(void *layout, double spacing) {
+    static_cast<QGraphicsLinearLayout *>(layout)->setSpacing(spacing);
+}
+
+double qt_graphics_linear_layout_get_spacing(void *layout) {
+    return static_cast<QGraphicsLinearLayout *>(layout)->spacing();
+}
+
+void qt_graphics_linear_layout_set_alignment(void *layout, void *item, int alignment) {
+    static_cast<QGraphicsLinearLayout *>(layout)->setAlignment(
+        static_cast<QGraphicsLayoutItem *>(item),
+        static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_graphics_linear_layout_get_count(void *layout) {
+    return static_cast<QGraphicsLinearLayout *>(layout)->count();
+}
+
+/* ── QGraphicsGridLayout ───────────────────────────────────────────── */
+
+void *qt_graphics_grid_layout_create(void *parent) {
+    return static_cast<void *>(new QGraphicsGridLayout(static_cast<QGraphicsLayoutItem *>(parent)));
+}
+
+void qt_graphics_grid_layout_destroy(void *layout) {
+    delete static_cast<QGraphicsGridLayout *>(layout);
+}
+
+void qt_graphics_grid_layout_add_item(void *layout, void *item, int row, int col, int row_span, int col_span, int alignment) {
+    static_cast<QGraphicsGridLayout *>(layout)->addItem(
+        static_cast<QGraphicsLayoutItem *>(item),
+        row, col, row_span, col_span,
+        static_cast<Qt::Alignment>(alignment));
+}
+
+void qt_graphics_grid_layout_set_row_spacing(void *layout, int row, double spacing) {
+    static_cast<QGraphicsGridLayout *>(layout)->setRowSpacing(row, spacing);
+}
+
+void qt_graphics_grid_layout_set_column_spacing(void *layout, int col, double spacing) {
+    static_cast<QGraphicsGridLayout *>(layout)->setColumnSpacing(col, spacing);
+}
+
+void qt_graphics_grid_layout_set_row_stretch_factor(void *layout, int row, int stretch) {
+    static_cast<QGraphicsGridLayout *>(layout)->setRowStretchFactor(row, stretch);
+}
+
+void qt_graphics_grid_layout_set_column_stretch_factor(void *layout, int col, int stretch) {
+    static_cast<QGraphicsGridLayout *>(layout)->setColumnStretchFactor(col, stretch);
+}
+
+void qt_graphics_grid_layout_set_row_minimum_height(void *layout, int row, double height) {
+    static_cast<QGraphicsGridLayout *>(layout)->setRowMinimumHeight(row, height);
+}
+
+void qt_graphics_grid_layout_set_column_minimum_width(void *layout, int col, double width) {
+    static_cast<QGraphicsGridLayout *>(layout)->setColumnMinimumWidth(col, width);
+}
+
+void qt_graphics_grid_layout_set_spacing(void *layout, double spacing) {
+    static_cast<QGraphicsGridLayout *>(layout)->setSpacing(spacing);
+}
+
+int qt_graphics_grid_layout_get_count(void *layout) {
+    return static_cast<QGraphicsGridLayout *>(layout)->count();
 }
 
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */

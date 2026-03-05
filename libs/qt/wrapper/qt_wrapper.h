@@ -3100,6 +3100,51 @@ void *qt_graphics_proxy_widget_create(void *parent);
 void  qt_graphics_proxy_widget_set_widget(void *proxy, void *widget);
 void *qt_graphics_proxy_widget_get_widget(void *proxy);
 
+/* ── QGraphicsWidget ───────────────────────────────────────────────── */
+
+void *qt_graphics_widget_create(void *parent);
+void  qt_graphics_widget_set_layout(void *widget, void *layout);
+void *qt_graphics_widget_get_layout(void *widget);
+void  qt_graphics_widget_set_geometry(void *widget, double x, double y, double w, double h);
+void  qt_graphics_widget_set_minimum_size(void *widget, double w, double h);
+void  qt_graphics_widget_set_maximum_size(void *widget, double w, double h);
+void  qt_graphics_widget_set_preferred_size(void *widget, double w, double h);
+void  qt_graphics_widget_set_size_policy(void *widget, int horizontal, int vertical);
+void  qt_graphics_widget_set_window_title(void *widget, const char *title);
+void  qt_graphics_widget_set_window_flags(void *widget, int flags);
+void  qt_graphics_widget_set_palette(void *widget, void *palette);
+void  qt_graphics_widget_set_font(void *widget, void *font);
+void  qt_graphics_widget_set_style(void *widget, void *style);
+void  qt_graphics_widget_resize(void *widget, double w, double h);
+void  qt_graphics_widget_set_auto_fill_background(void *widget, int is_enabled);
+
+/* ── QGraphicsLinearLayout ─────────────────────────────────────────── */
+
+void *qt_graphics_linear_layout_create(int orientation, void *parent);
+void  qt_graphics_linear_layout_destroy(void *layout);
+void  qt_graphics_linear_layout_add_item(void *layout, void *item);
+void  qt_graphics_linear_layout_insert_item(void *layout, int index, void *item);
+void  qt_graphics_linear_layout_remove_item(void *layout, void *item);
+void  qt_graphics_linear_layout_add_stretch(void *layout, int stretch);
+void  qt_graphics_linear_layout_set_spacing(void *layout, double spacing);
+double qt_graphics_linear_layout_get_spacing(void *layout);
+void  qt_graphics_linear_layout_set_alignment(void *layout, void *item, int alignment);
+int   qt_graphics_linear_layout_get_count(void *layout);
+
+/* ── QGraphicsGridLayout ───────────────────────────────────────────── */
+
+void *qt_graphics_grid_layout_create(void *parent);
+void  qt_graphics_grid_layout_destroy(void *layout);
+void  qt_graphics_grid_layout_add_item(void *layout, void *item, int row, int col, int row_span, int col_span, int alignment);
+void  qt_graphics_grid_layout_set_row_spacing(void *layout, int row, double spacing);
+void  qt_graphics_grid_layout_set_column_spacing(void *layout, int col, double spacing);
+void  qt_graphics_grid_layout_set_row_stretch_factor(void *layout, int row, int stretch);
+void  qt_graphics_grid_layout_set_column_stretch_factor(void *layout, int col, int stretch);
+void  qt_graphics_grid_layout_set_row_minimum_height(void *layout, int row, double height);
+void  qt_graphics_grid_layout_set_column_minimum_width(void *layout, int col, double width);
+void  qt_graphics_grid_layout_set_spacing(void *layout, double spacing);
+int   qt_graphics_grid_layout_get_count(void *layout);
+
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */
 
 void  qt_graphics_effect_set_enabled(void *effect, int is_enabled);

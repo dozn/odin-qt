@@ -68,7 +68,8 @@ QPainterPathStroker,
 QTextBlockFormat, QTextListFormat, QTextImageFormat, QTextFrameFormat,
 QTextTableFormat, QTextTableCellFormat,
 QTextDocumentFragment, QTextDocumentWriter,
-QProxyStyle, QDirIterator, QTimeZone
+QProxyStyle, QDirIterator, QTimeZone,
+QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout
 
 ---
 
@@ -79,9 +80,8 @@ QProxyStyle, QDirIterator, QTimeZone
 ### Medium Priority — Useful but less commonly needed
 
 **Graphics scene (advanced):**
-- QGraphicsWidget — QWidget-like item in scene (supports layouts, stylesheets)
 - QGraphicsObject — QObject-based graphics item (signals/slots on items)
-- QGraphicsAnchorLayout / QGraphicsGridLayout / QGraphicsLinearLayout — scene layouts
+- QGraphicsAnchorLayout — anchor-based scene layout
 - QGraphicsItemAnimation — timeline-driven animation of scene items
 - QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
 

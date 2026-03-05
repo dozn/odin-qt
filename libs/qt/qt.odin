@@ -275,6 +275,9 @@ Text_Document_Writer :: distinct rawptr
 Proxy_Style :: distinct rawptr
 Dir_Iterator :: distinct rawptr
 Time_Zone :: distinct rawptr
+Graphics_Widget :: distinct rawptr
+Graphics_Linear_Layout :: distinct rawptr
+Graphics_Grid_Layout :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -4876,6 +4879,51 @@ foreign qt_lib {
 	@(require_results) graphics_proxy_widget_create :: proc(parent: Graphics_Item) -> Graphics_Proxy_Widget ---
 	graphics_proxy_widget_set_widget :: proc(proxy: Graphics_Proxy_Widget, widget: Widget) ---
 	@(require_results) graphics_proxy_widget_get_widget :: proc(proxy: Graphics_Proxy_Widget) -> Widget ---
+
+	/* QGraphicsWidget */
+
+	@(require_results) graphics_widget_create :: proc(parent: Graphics_Item) -> Graphics_Widget ---
+	graphics_widget_set_layout :: proc(widget: Graphics_Widget, layout: rawptr) ---
+	@(require_results) graphics_widget_get_layout :: proc(widget: Graphics_Widget) -> rawptr ---
+	graphics_widget_set_geometry :: proc(widget: Graphics_Widget, x: c.double, y: c.double, w: c.double, h: c.double) ---
+	graphics_widget_set_minimum_size :: proc(widget: Graphics_Widget, w: c.double, h: c.double) ---
+	graphics_widget_set_maximum_size :: proc(widget: Graphics_Widget, w: c.double, h: c.double) ---
+	graphics_widget_set_preferred_size :: proc(widget: Graphics_Widget, w: c.double, h: c.double) ---
+	graphics_widget_set_size_policy :: proc(widget: Graphics_Widget, horizontal: Size_Policy, vertical: Size_Policy) ---
+	graphics_widget_set_window_title :: proc(widget: Graphics_Widget, title: cstring) ---
+	graphics_widget_set_window_flags :: proc(widget: Graphics_Widget, flags: c.int) ---
+	graphics_widget_set_palette :: proc(widget: Graphics_Widget, palette: Palette) ---
+	graphics_widget_set_font :: proc(widget: Graphics_Widget, font: Font_Handle) ---
+	graphics_widget_set_style :: proc(widget: Graphics_Widget, style: Style) ---
+	graphics_widget_resize :: proc(widget: Graphics_Widget, w: c.double, h: c.double) ---
+	graphics_widget_set_auto_fill_background :: proc(widget: Graphics_Widget, is_enabled: c.int) ---
+
+	/* QGraphicsLinearLayout */
+
+	@(require_results) graphics_linear_layout_create :: proc(orientation: Orientation, parent: rawptr) -> Graphics_Linear_Layout ---
+	graphics_linear_layout_destroy :: proc(layout: Graphics_Linear_Layout) ---
+	graphics_linear_layout_add_item :: proc(layout: Graphics_Linear_Layout, item: rawptr) ---
+	graphics_linear_layout_insert_item :: proc(layout: Graphics_Linear_Layout, index: c.int, item: rawptr) ---
+	graphics_linear_layout_remove_item :: proc(layout: Graphics_Linear_Layout, item: rawptr) ---
+	graphics_linear_layout_add_stretch :: proc(layout: Graphics_Linear_Layout, stretch: c.int) ---
+	graphics_linear_layout_set_spacing :: proc(layout: Graphics_Linear_Layout, spacing: c.double) ---
+	@(require_results) graphics_linear_layout_get_spacing :: proc(layout: Graphics_Linear_Layout) -> c.double ---
+	graphics_linear_layout_set_alignment :: proc(layout: Graphics_Linear_Layout, item: rawptr, alignment: Alignment) ---
+	@(require_results) graphics_linear_layout_get_count :: proc(layout: Graphics_Linear_Layout) -> c.int ---
+
+	/* QGraphicsGridLayout */
+
+	@(require_results) graphics_grid_layout_create :: proc(parent: rawptr) -> Graphics_Grid_Layout ---
+	graphics_grid_layout_destroy :: proc(layout: Graphics_Grid_Layout) ---
+	graphics_grid_layout_add_item :: proc(layout: Graphics_Grid_Layout, item: rawptr, row: c.int, col: c.int, row_span: c.int, col_span: c.int, alignment: Alignment) ---
+	graphics_grid_layout_set_row_spacing :: proc(layout: Graphics_Grid_Layout, row: c.int, spacing: c.double) ---
+	graphics_grid_layout_set_column_spacing :: proc(layout: Graphics_Grid_Layout, col: c.int, spacing: c.double) ---
+	graphics_grid_layout_set_row_stretch_factor :: proc(layout: Graphics_Grid_Layout, row: c.int, stretch: c.int) ---
+	graphics_grid_layout_set_column_stretch_factor :: proc(layout: Graphics_Grid_Layout, col: c.int, stretch: c.int) ---
+	graphics_grid_layout_set_row_minimum_height :: proc(layout: Graphics_Grid_Layout, row: c.int, height: c.double) ---
+	graphics_grid_layout_set_column_minimum_width :: proc(layout: Graphics_Grid_Layout, col: c.int, width: c.double) ---
+	graphics_grid_layout_set_spacing :: proc(layout: Graphics_Grid_Layout, spacing: c.double) ---
+	@(require_results) graphics_grid_layout_get_count :: proc(layout: Graphics_Grid_Layout) -> c.int ---
 
 	/* QGraphicsEffect (base + subclasses) */
 
