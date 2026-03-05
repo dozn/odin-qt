@@ -75,7 +75,9 @@ QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery,
 QColorSpace, QColorTransform, QTextLayout, QTextLine,
 QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation,
 QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent, QGraphicsSceneWheelEvent,
-QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent
+QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent,
+QGesture, QPanGesture, QPinchGesture, QSwipeGesture,
+QTapGesture, QTapAndHoldGesture, QGestureEvent
 
 ---
 
@@ -84,10 +86,6 @@ QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent
 ### High Priority — Commonly needed functionality
 
 ### Medium Priority — Useful but less commonly needed
-
-**Gestures:**
-- QGesture, QGestureRecognizer, QPanGesture, QPinchGesture, QSwipeGesture,
-  QTapAndHoldGesture, QTapGesture — touch/gesture support
 
 ### Low Priority — Niche or rarely needed
 

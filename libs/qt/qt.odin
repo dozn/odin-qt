@@ -296,6 +296,13 @@ Graphics_Scene_Hover_Event :: distinct rawptr
 Graphics_Scene_Wheel_Event :: distinct rawptr
 Graphics_Scene_Context_Menu_Event :: distinct rawptr
 Graphics_Scene_Drag_Drop_Event :: distinct rawptr
+Gesture :: distinct rawptr
+Pan_Gesture :: distinct rawptr
+Pinch_Gesture :: distinct rawptr
+Swipe_Gesture :: distinct rawptr
+Tap_Gesture :: distinct rawptr
+Tap_And_Hold_Gesture :: distinct rawptr
+Gesture_Event :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1563,6 +1570,48 @@ Anchor_Point :: enum c.int {
 	Top = 3,
 	Vertical_Centre = 4,
 	Bottom = 5,
+}
+
+Gesture_Type :: enum c.int {
+	Tap = 1,
+	Tap_And_Hold = 2,
+	Pan = 3,
+	Pinch = 4,
+	Swipe = 5,
+	Custom = 0x0100,
+}
+
+Gesture_State :: enum c.int {
+	No_Gesture = 0,
+	Gesture_Started = 1,
+	Gesture_Updated = 2,
+	Gesture_Finished = 3,
+	Gesture_Cancelled = 4,
+}
+
+Gesture_Cancel_Policy :: enum c.int {
+	Cancel_None = 0,
+	Cancel_All_In_Context = 1,
+}
+
+Swipe_Direction :: enum c.int {
+	No_Direction = 0,
+	Left = 1,
+	Right = 2,
+	Up = 3,
+	Down = 4,
+}
+
+Pinch_Change_Flag :: enum c.int {
+	Scale_Factor_Changed = 0x1,
+	Rotation_Angle_Changed = 0x2,
+	Centre_Point_Changed = 0x4,
+}
+
+Gesture_Flag :: enum c.int {
+	Dont_Start_Gesture_On_Children = 0x01,
+	Receive_Partial_Gestures = 0x02,
+	Ignore_Cancelled_Gestures = 0x04,
 }
 
 Scroller_Gesture_Type :: enum c.int {
@@ -5599,4 +5648,65 @@ foreign qt_lib {
 	custom_item_model_end_remove_columns :: proc(model: Custom_Item_Model) ---
 	custom_item_model_emit_data_changed :: proc(model: Custom_Item_Model, top_left: rawptr, bottom_right: rawptr) ---
 	@(require_results) custom_item_model_create_index :: proc(model: Custom_Item_Model, row: c.int, column: c.int, parent: rawptr) -> rawptr ---
+
+	/* QGesture (base) */
+
+	@(require_results) gesture_get_gesture_type :: proc(gesture: Gesture) -> Gesture_Type ---
+	@(require_results) gesture_get_state :: proc(gesture: Gesture) -> Gesture_State ---
+	gesture_get_hot_spot :: proc(gesture: Gesture, x: ^c.double, y: ^c.double) ---
+	gesture_set_hot_spot :: proc(gesture: Gesture, x: c.double, y: c.double) ---
+	@(require_results) gesture_has_hot_spot :: proc(gesture: Gesture) -> c.int ---
+	gesture_unset_hot_spot :: proc(gesture: Gesture) ---
+	gesture_set_gesture_cancel_policy :: proc(gesture: Gesture, policy: Gesture_Cancel_Policy) ---
+	@(require_results) gesture_get_gesture_cancel_policy :: proc(gesture: Gesture) -> Gesture_Cancel_Policy ---
+
+	/* QPanGesture */
+
+	pan_gesture_get_last_offset :: proc(gesture: Pan_Gesture, x: ^c.double, y: ^c.double) ---
+	pan_gesture_get_offset :: proc(gesture: Pan_Gesture, x: ^c.double, y: ^c.double) ---
+	pan_gesture_get_delta :: proc(gesture: Pan_Gesture, x: ^c.double, y: ^c.double) ---
+	@(require_results) pan_gesture_get_acceleration :: proc(gesture: Pan_Gesture) -> c.double ---
+
+	/* QPinchGesture */
+
+	@(require_results) pinch_gesture_get_change_flags :: proc(gesture: Pinch_Gesture) -> c.int ---
+	@(require_results) pinch_gesture_get_total_change_flags :: proc(gesture: Pinch_Gesture) -> c.int ---
+	@(require_results) pinch_gesture_get_total_scale_factor :: proc(gesture: Pinch_Gesture) -> c.double ---
+	@(require_results) pinch_gesture_get_last_scale_factor :: proc(gesture: Pinch_Gesture) -> c.double ---
+	@(require_results) pinch_gesture_get_scale_factor :: proc(gesture: Pinch_Gesture) -> c.double ---
+	@(require_results) pinch_gesture_get_total_rotation_angle :: proc(gesture: Pinch_Gesture) -> c.double ---
+	@(require_results) pinch_gesture_get_last_rotation_angle :: proc(gesture: Pinch_Gesture) -> c.double ---
+	@(require_results) pinch_gesture_get_rotation_angle :: proc(gesture: Pinch_Gesture) -> c.double ---
+	pinch_gesture_get_start_centre_point :: proc(gesture: Pinch_Gesture, x: ^c.double, y: ^c.double) ---
+	pinch_gesture_get_last_centre_point :: proc(gesture: Pinch_Gesture, x: ^c.double, y: ^c.double) ---
+	pinch_gesture_get_centre_point :: proc(gesture: Pinch_Gesture, x: ^c.double, y: ^c.double) ---
+
+	/* QSwipeGesture */
+
+	@(require_results) swipe_gesture_get_horizontal_direction :: proc(gesture: Swipe_Gesture) -> Swipe_Direction ---
+	@(require_results) swipe_gesture_get_vertical_direction :: proc(gesture: Swipe_Gesture) -> Swipe_Direction ---
+	@(require_results) swipe_gesture_get_swipe_angle :: proc(gesture: Swipe_Gesture) -> c.double ---
+
+	/* QTapGesture */
+
+	tap_gesture_get_position :: proc(gesture: Tap_Gesture, x: ^c.double, y: ^c.double) ---
+	tap_gesture_set_position :: proc(gesture: Tap_Gesture, x: c.double, y: c.double) ---
+
+	/* QTapAndHoldGesture */
+
+	tap_and_hold_gesture_get_position :: proc(gesture: Tap_And_Hold_Gesture, x: ^c.double, y: ^c.double) ---
+	tap_and_hold_gesture_set_position :: proc(gesture: Tap_And_Hold_Gesture, x: c.double, y: c.double) ---
+	tap_and_hold_gesture_set_timeout :: proc(msecs: c.int) ---
+	@(require_results) tap_and_hold_gesture_get_timeout :: proc() -> c.int ---
+
+	/* QGestureEvent */
+
+	@(require_results) gesture_event_get_gesture :: proc(event: Gesture_Event, gesture_type: Gesture_Type) -> Gesture ---
+	@(require_results) gesture_event_is_accepted :: proc(event: Gesture_Event, gesture_type: Gesture_Type) -> c.int ---
+	gesture_event_set_accepted :: proc(event: Gesture_Event, gesture_type: Gesture_Type, is_accepted: c.int) ---
+
+	/* Widget gesture support */
+
+	@(require_results) widget_grab_gesture :: proc(widget: Widget, gesture_type: Gesture_Type, flags: c.int) -> c.int ---
+	widget_ungrab_gesture :: proc(widget: Widget, gesture_type: Gesture_Type) ---
 }

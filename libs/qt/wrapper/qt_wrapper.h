@@ -3781,6 +3781,67 @@ void  qt_custom_item_model_end_remove_columns(void *model);
 void  qt_custom_item_model_emit_data_changed(void *model, void *top_left, void *bottom_right);
 void *qt_custom_item_model_create_index(void *model, int row, int column, void *parent);
 
+/* ── QGesture (base) ─────────────────────────────────────────────── */
+
+int   qt_gesture_get_gesture_type(void *gesture);
+int   qt_gesture_get_state(void *gesture);
+void  qt_gesture_get_hot_spot(void *gesture, double *x, double *y);
+void  qt_gesture_set_hot_spot(void *gesture, double x, double y);
+int   qt_gesture_has_hot_spot(void *gesture);
+void  qt_gesture_unset_hot_spot(void *gesture);
+void  qt_gesture_set_gesture_cancel_policy(void *gesture, int policy);
+int   qt_gesture_get_gesture_cancel_policy(void *gesture);
+
+/* ── QPanGesture ─────────────────────────────────────────────────── */
+
+void  qt_pan_gesture_get_last_offset(void *gesture, double *x, double *y);
+void  qt_pan_gesture_get_offset(void *gesture, double *x, double *y);
+void  qt_pan_gesture_get_delta(void *gesture, double *x, double *y);
+double qt_pan_gesture_get_acceleration(void *gesture);
+
+/* ── QPinchGesture ───────────────────────────────────────────────── */
+
+int   qt_pinch_gesture_get_change_flags(void *gesture);
+int   qt_pinch_gesture_get_total_change_flags(void *gesture);
+double qt_pinch_gesture_get_total_scale_factor(void *gesture);
+double qt_pinch_gesture_get_last_scale_factor(void *gesture);
+double qt_pinch_gesture_get_scale_factor(void *gesture);
+double qt_pinch_gesture_get_total_rotation_angle(void *gesture);
+double qt_pinch_gesture_get_last_rotation_angle(void *gesture);
+double qt_pinch_gesture_get_rotation_angle(void *gesture);
+void  qt_pinch_gesture_get_start_centre_point(void *gesture, double *x, double *y);
+void  qt_pinch_gesture_get_last_centre_point(void *gesture, double *x, double *y);
+void  qt_pinch_gesture_get_centre_point(void *gesture, double *x, double *y);
+
+/* ── QSwipeGesture ───────────────────────────────────────────────── */
+
+int   qt_swipe_gesture_get_horizontal_direction(void *gesture);
+int   qt_swipe_gesture_get_vertical_direction(void *gesture);
+double qt_swipe_gesture_get_swipe_angle(void *gesture);
+
+/* ── QTapGesture ─────────────────────────────────────────────────── */
+
+void  qt_tap_gesture_get_position(void *gesture, double *x, double *y);
+void  qt_tap_gesture_set_position(void *gesture, double x, double y);
+
+/* ── QTapAndHoldGesture ──────────────────────────────────────────── */
+
+void  qt_tap_and_hold_gesture_get_position(void *gesture, double *x, double *y);
+void  qt_tap_and_hold_gesture_set_position(void *gesture, double x, double y);
+void  qt_tap_and_hold_gesture_set_timeout(int msecs);
+int   qt_tap_and_hold_gesture_get_timeout(void);
+
+/* ── QGestureEvent ───────────────────────────────────────────────── */
+
+void *qt_gesture_event_get_gesture(void *event, int gesture_type);
+int   qt_gesture_event_is_accepted(void *event, int gesture_type);
+void  qt_gesture_event_set_accepted(void *event, int gesture_type, int is_accepted);
+
+/* ── Widget gesture support ──────────────────────────────────────── */
+
+int   qt_widget_grab_gesture(void *widget, int gesture_type, int flags);
+void  qt_widget_ungrab_gesture(void *widget, int gesture_type);
+
 #ifdef __cplusplus
 }
 #endif

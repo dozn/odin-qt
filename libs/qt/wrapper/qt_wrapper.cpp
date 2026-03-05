@@ -238,6 +238,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QGesture>
+#include <QGestureEvent>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
@@ -14823,6 +14825,188 @@ void *qt_custom_item_model_create_index(void *model, int row, int column, void *
     (void)parent;
     QModelIndex idx = static_cast<CCustomItemModel *>(model)->publicCreateIndex(row, column);
     return static_cast<void *>(new QModelIndex(idx));
+}
+
+/* ── QGesture (base) ─────────────────────────────────────────────── */
+
+int qt_gesture_get_gesture_type(void *gesture) {
+    return static_cast<int>(static_cast<QGesture *>(gesture)->gestureType());
+}
+
+int qt_gesture_get_state(void *gesture) {
+    return static_cast<int>(static_cast<QGesture *>(gesture)->state());
+}
+
+void qt_gesture_get_hot_spot(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QGesture *>(gesture)->hotSpot();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_gesture_set_hot_spot(void *gesture, double x, double y) {
+    static_cast<QGesture *>(gesture)->setHotSpot(QPointF(x, y));
+}
+
+int qt_gesture_has_hot_spot(void *gesture) {
+    return static_cast<QGesture *>(gesture)->hasHotSpot() ? 1 : 0;
+}
+
+void qt_gesture_unset_hot_spot(void *gesture) {
+    static_cast<QGesture *>(gesture)->unsetHotSpot();
+}
+
+void qt_gesture_set_gesture_cancel_policy(void *gesture, int policy) {
+    static_cast<QGesture *>(gesture)->setGestureCancelPolicy(
+        static_cast<QGesture::GestureCancelPolicy>(policy));
+}
+
+int qt_gesture_get_gesture_cancel_policy(void *gesture) {
+    return static_cast<int>(static_cast<QGesture *>(gesture)->gestureCancelPolicy());
+}
+
+/* ── QPanGesture ─────────────────────────────────────────────────── */
+
+void qt_pan_gesture_get_last_offset(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPanGesture *>(gesture)->lastOffset();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_pan_gesture_get_offset(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPanGesture *>(gesture)->offset();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_pan_gesture_get_delta(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPanGesture *>(gesture)->delta();
+    *x = pos.x(); *y = pos.y();
+}
+
+double qt_pan_gesture_get_acceleration(void *gesture) {
+    return static_cast<QPanGesture *>(gesture)->acceleration();
+}
+
+/* ── QPinchGesture ───────────────────────────────────────────────── */
+
+int qt_pinch_gesture_get_change_flags(void *gesture) {
+    return static_cast<int>(static_cast<QPinchGesture *>(gesture)->changeFlags());
+}
+
+int qt_pinch_gesture_get_total_change_flags(void *gesture) {
+    return static_cast<int>(static_cast<QPinchGesture *>(gesture)->totalChangeFlags());
+}
+
+double qt_pinch_gesture_get_total_scale_factor(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->totalScaleFactor();
+}
+
+double qt_pinch_gesture_get_last_scale_factor(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->lastScaleFactor();
+}
+
+double qt_pinch_gesture_get_scale_factor(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->scaleFactor();
+}
+
+double qt_pinch_gesture_get_total_rotation_angle(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->totalRotationAngle();
+}
+
+double qt_pinch_gesture_get_last_rotation_angle(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->lastRotationAngle();
+}
+
+double qt_pinch_gesture_get_rotation_angle(void *gesture) {
+    return static_cast<QPinchGesture *>(gesture)->rotationAngle();
+}
+
+void qt_pinch_gesture_get_start_centre_point(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPinchGesture *>(gesture)->startCenterPoint();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_pinch_gesture_get_last_centre_point(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPinchGesture *>(gesture)->lastCenterPoint();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_pinch_gesture_get_centre_point(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QPinchGesture *>(gesture)->centerPoint();
+    *x = pos.x(); *y = pos.y();
+}
+
+/* ── QSwipeGesture ───────────────────────────────────────────────── */
+
+int qt_swipe_gesture_get_horizontal_direction(void *gesture) {
+    return static_cast<int>(static_cast<QSwipeGesture *>(gesture)->horizontalDirection());
+}
+
+int qt_swipe_gesture_get_vertical_direction(void *gesture) {
+    return static_cast<int>(static_cast<QSwipeGesture *>(gesture)->verticalDirection());
+}
+
+double qt_swipe_gesture_get_swipe_angle(void *gesture) {
+    return static_cast<QSwipeGesture *>(gesture)->swipeAngle();
+}
+
+/* ── QTapGesture ─────────────────────────────────────────────────── */
+
+void qt_tap_gesture_get_position(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QTapGesture *>(gesture)->position();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_tap_gesture_set_position(void *gesture, double x, double y) {
+    static_cast<QTapGesture *>(gesture)->setPosition(QPointF(x, y));
+}
+
+/* ── QTapAndHoldGesture ──────────────────────────────────────────── */
+
+void qt_tap_and_hold_gesture_get_position(void *gesture, double *x, double *y) {
+    QPointF pos = static_cast<QTapAndHoldGesture *>(gesture)->position();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_tap_and_hold_gesture_set_position(void *gesture, double x, double y) {
+    static_cast<QTapAndHoldGesture *>(gesture)->setPosition(QPointF(x, y));
+}
+
+void qt_tap_and_hold_gesture_set_timeout(int msecs) {
+    QTapAndHoldGesture::setTimeout(msecs);
+}
+
+int qt_tap_and_hold_gesture_get_timeout(void) {
+    return QTapAndHoldGesture::timeout();
+}
+
+/* ── QGestureEvent ───────────────────────────────────────────────── */
+
+void *qt_gesture_event_get_gesture(void *event, int gesture_type) {
+    return static_cast<void *>(
+        static_cast<QGestureEvent *>(event)->gesture(
+            static_cast<Qt::GestureType>(gesture_type)));
+}
+
+int qt_gesture_event_is_accepted(void *event, int gesture_type) {
+    return static_cast<QGestureEvent *>(event)->isAccepted(
+        static_cast<Qt::GestureType>(gesture_type)) ? 1 : 0;
+}
+
+void qt_gesture_event_set_accepted(void *event, int gesture_type, int is_accepted) {
+    static_cast<QGestureEvent *>(event)->setAccepted(
+        static_cast<Qt::GestureType>(gesture_type), is_accepted != 0);
+}
+
+/* ── Widget gesture support ──────────────────────────────────────── */
+
+int qt_widget_grab_gesture(void *widget, int gesture_type, int flags) {
+    static_cast<QWidget *>(widget)->grabGesture(
+        static_cast<Qt::GestureType>(gesture_type),
+        static_cast<Qt::GestureFlags>(flags));
+    return 1;
+}
+
+void qt_widget_ungrab_gesture(void *widget, int gesture_type) {
+    static_cast<QWidget *>(widget)->ungrabGesture(
+        static_cast<Qt::GestureType>(gesture_type));
 }
 
 } /* extern "C" */
