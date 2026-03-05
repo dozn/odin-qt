@@ -12720,7 +12720,7 @@ public:
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override {
         if (!m_row_count_cb) return 0;
-        QModelIndex *heap_parent = new QModelIndex(parent);
+        QPersistentModelIndex *heap_parent = new QPersistentModelIndex(parent);
         int result = m_row_count_cb(static_cast<void *>(heap_parent), m_user_data);
         delete heap_parent;
         return result;
@@ -12728,7 +12728,7 @@ public:
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override {
         if (!m_column_count_cb) return 0;
-        QModelIndex *heap_parent = new QModelIndex(parent);
+        QPersistentModelIndex *heap_parent = new QPersistentModelIndex(parent);
         int result = m_column_count_cb(static_cast<void *>(heap_parent), m_user_data);
         delete heap_parent;
         return result;
@@ -12736,21 +12736,18 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override {
         if (!m_data_cb || !index.isValid()) return QVariant();
-        QModelIndex *heap_index = new QModelIndex(index);
-        char *result = m_data_cb(static_cast<void *>(heap_index), role, m_user_data);
+        QPersistentModelIndex *heap_index = new QPersistentModelIndex(index);
+        const char *result = m_data_cb(static_cast<void *>(heap_index), role, m_user_data);
         delete heap_index;
-        if (result) {
-            QString str = QString::fromUtf8(result);
-            free(result);
-            return str;
-        }
+        if (result)
+            return QString::fromUtf8(result);
         return QVariant();
     }
 
     Qt::ItemFlags flags(const QModelIndex &index) const override {
         if (!m_flags_cb)
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-        QModelIndex *heap_index = new QModelIndex(index);
+        QPersistentModelIndex *heap_index = new QPersistentModelIndex(index);
         int result = m_flags_cb(static_cast<void *>(heap_index), m_user_data);
         delete heap_index;
         return static_cast<Qt::ItemFlags>(result);
@@ -12758,12 +12755,9 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override {
         if (!m_header_data_cb) return QVariant();
-        char *result = m_header_data_cb(section, static_cast<int>(orientation), role, m_user_data);
-        if (result) {
-            QString str = QString::fromUtf8(result);
-            free(result);
-            return str;
-        }
+        const char *result = m_header_data_cb(section, static_cast<int>(orientation), role, m_user_data);
+        if (result)
+            return QString::fromUtf8(result);
         return QVariant();
     }
 

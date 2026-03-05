@@ -3061,7 +3061,6 @@ build_rich_text_tab :: proc() -> qt.Widget {
 
 		buf[len(written)] = 0
 		qt.label_set_text(demo_state.block_output, cstring(raw_data(buf[:])))
-		qt.text_document_destroy(document)
 	}, nil)
 	qt.layout_add_widget(block_layout, auto_cast inspect_btn)
 	qt.layout_add_widget(block_layout, auto_cast demo_state.block_output)
@@ -3081,7 +3080,6 @@ build_rich_text_tab :: proc() -> qt.Widget {
 		msg := fmt.bprintf(buf[:], "Document has %d blocks, %d lines\n(QTextFrame provides cursor positions and child frame access for documents with embedded frames)", block_count, line_count)
 		buf[len(msg)] = 0
 		qt.label_set_text(frame_output, cstring(raw_data(buf[:])))
-		qt.text_document_destroy(document)
 	}
 	qt.label_set_word_wrap(frame_output, 1)
 	qt.layout_add_widget(frame_layout, auto_cast frame_output)
@@ -3149,7 +3147,6 @@ build_new_classes_tab :: proc() -> qt.Widget {
 		cmp_same := qt.collator_compare(collator, "hello", "hello")
 		cmp_rev := qt.collator_compare(collator, "zebra", "apple")
 
-		// Numeric mode comparison
 		qt.collator_set_numeric_mode(collator, 1)
 		cmp_num := qt.collator_compare(collator, "file2", "file10")
 		qt.collator_set_numeric_mode(collator, 0)
@@ -3207,8 +3204,6 @@ build_new_classes_tab :: proc() -> qt.Widget {
 		qt.data_stream_write_double(stream, 2.71828)
 		qt.data_stream_write_string(stream, "Odin+Qt")
 
-		// Seek back and read (create a new stream from the same file would be needed
-		// for real file I/O; for buffer demo we show the write status)
 		write_status := qt.data_stream_get_status(stream)
 		byte_order := qt.data_stream_get_byte_order(stream)
 		version := qt.data_stream_get_version(stream)

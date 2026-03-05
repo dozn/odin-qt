@@ -3219,9 +3219,9 @@ void  qt_text_frame_get_child_frames(void *frame, void **out_items, int *out_cou
 
 typedef int   (*qt_model_row_count_callback_t)(void *parent_index, void *user_data);
 typedef int   (*qt_model_column_count_callback_t)(void *parent_index, void *user_data);
-typedef char *(*qt_model_data_callback_t)(void *index, int role, void *user_data);
-typedef int   (*qt_model_flags_callback_t)(void *index, void *user_data);
-typedef char *(*qt_model_header_data_callback_t)(int section, int orientation, int role, void *user_data);
+typedef const char *(*qt_model_data_callback_t)(void *index, int role, void *user_data);
+typedef int         (*qt_model_flags_callback_t)(void *index, void *user_data);
+typedef const char *(*qt_model_header_data_callback_t)(int section, int orientation, int role, void *user_data);
 
 void *qt_custom_item_model_create(
     qt_model_row_count_callback_t    row_count_cb,
