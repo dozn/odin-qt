@@ -77,7 +77,8 @@ QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation,
 QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent, QGraphicsSceneWheelEvent,
 QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent,
 QGesture, QPanGesture, QPinchGesture, QSwipeGesture,
-QTapGesture, QTapAndHoldGesture, QGestureEvent
+QTapGesture, QTapAndHoldGesture, QGestureEvent,
+QBasicTimer, QBitArray, QTextBoundaryFinder
 
 ---
 
@@ -90,9 +91,6 @@ QTapGesture, QTapAndHoldGesture, QGestureEvent
 ### Low Priority — Niche or rarely needed
 
 **Core:**
-- QBasicTimer — lightweight timer (avoids QObject overhead)
-- QBitArray — bit manipulation
-- QTextBoundaryFinder — word/sentence/line boundary detection
 - QRunnable / QThreadPool — task-based threading
 - QWaitCondition — thread synchronization
 - QCBOR* — CBOR binary format

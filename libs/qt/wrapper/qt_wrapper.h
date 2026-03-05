@@ -2811,6 +2811,44 @@ long long qt_elapsed_timer_restart(void *timer);
 int   qt_elapsed_timer_is_valid(void *timer);
 int   qt_elapsed_timer_has_expired(void *timer, long long timeout);
 
+/* ── QBasicTimer ──────────────────────────────────────────────────── */
+
+void *qt_basic_timer_create(void);
+void  qt_basic_timer_destroy(void *timer);
+int   qt_basic_timer_is_active(void *timer);
+int   qt_basic_timer_get_timer_id(void *timer);
+void  qt_basic_timer_start(void *timer, int msec, void *object);
+void  qt_basic_timer_stop(void *timer);
+
+/* ── QBitArray ────────────────────────────────────────────────────── */
+
+void *qt_bit_array_create(int size, int value);
+void  qt_bit_array_destroy(void *array);
+int   qt_bit_array_get_size(void *array);
+void  qt_bit_array_resize(void *array, int size);
+int   qt_bit_array_test_bit(void *array, int index);
+void  qt_bit_array_set_bit(void *array, int index);
+void  qt_bit_array_clear_bit(void *array, int index);
+void  qt_bit_array_toggle_bit(void *array, int index);
+int   qt_bit_array_is_null(void *array);
+int   qt_bit_array_is_empty(void *array);
+void  qt_bit_array_fill(void *array, int value);
+int   qt_bit_array_count_set(void *array);
+void  qt_bit_array_clear(void *array);
+void  qt_bit_array_truncate(void *array, int pos);
+
+/* ── QTextBoundaryFinder ──────────────────────────────────────────── */
+
+void *qt_text_boundary_finder_create(int boundary_type, const char *text);
+void  qt_text_boundary_finder_destroy(void *finder);
+void  qt_text_boundary_finder_set_position(void *finder, int position);
+int   qt_text_boundary_finder_get_position(void *finder);
+int   qt_text_boundary_finder_to_next_boundary(void *finder);
+int   qt_text_boundary_finder_to_previous_boundary(void *finder);
+int   qt_text_boundary_finder_is_at_boundary(void *finder);
+int   qt_text_boundary_finder_get_boundary_reasons(void *finder);
+int   qt_text_boundary_finder_get_type(void *finder);
+
 /* ── QCryptographicHash ─────────────────────────────────────────────── */
 
 void *qt_crypto_hash_create(int algorithm);

@@ -303,6 +303,9 @@ Swipe_Gesture :: distinct rawptr
 Tap_Gesture :: distinct rawptr
 Tap_And_Hold_Gesture :: distinct rawptr
 Gesture_Event :: distinct rawptr
+Basic_Timer :: distinct rawptr
+Bit_Array :: distinct rawptr
+Text_Boundary_Finder :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1606,6 +1609,13 @@ Pinch_Change_Flag :: enum c.int {
 	Scale_Factor_Changed = 0x1,
 	Rotation_Angle_Changed = 0x2,
 	Centre_Point_Changed = 0x4,
+}
+
+Text_Boundary_Type :: enum c.int {
+	Grapheme = 0,
+	Word = 1,
+	Sentence = 2,
+	Line = 3,
 }
 
 Gesture_Flag :: enum c.int {
@@ -4690,6 +4700,44 @@ foreign qt_lib {
 	@(require_results) elapsed_timer_restart :: proc(timer: Elapsed_Timer) -> c.longlong ---
 	@(require_results) elapsed_timer_is_valid :: proc(timer: Elapsed_Timer) -> c.int ---
 	@(require_results) elapsed_timer_has_expired :: proc(timer: Elapsed_Timer, timeout: c.longlong) -> c.int ---
+
+	/* QBasicTimer */
+
+	@(require_results) basic_timer_create :: proc() -> Basic_Timer ---
+	basic_timer_destroy :: proc(timer: Basic_Timer) ---
+	@(require_results) basic_timer_is_active :: proc(timer: Basic_Timer) -> c.int ---
+	@(require_results) basic_timer_get_timer_id :: proc(timer: Basic_Timer) -> c.int ---
+	basic_timer_start :: proc(timer: Basic_Timer, msec: c.int, object: rawptr) ---
+	basic_timer_stop :: proc(timer: Basic_Timer) ---
+
+	/* QBitArray */
+
+	@(require_results) bit_array_create :: proc(size: c.int, value: c.int) -> Bit_Array ---
+	bit_array_destroy :: proc(array: Bit_Array) ---
+	@(require_results) bit_array_get_size :: proc(array: Bit_Array) -> c.int ---
+	bit_array_resize :: proc(array: Bit_Array, size: c.int) ---
+	@(require_results) bit_array_test_bit :: proc(array: Bit_Array, index: c.int) -> c.int ---
+	bit_array_set_bit :: proc(array: Bit_Array, index: c.int) ---
+	bit_array_clear_bit :: proc(array: Bit_Array, index: c.int) ---
+	bit_array_toggle_bit :: proc(array: Bit_Array, index: c.int) ---
+	@(require_results) bit_array_is_null :: proc(array: Bit_Array) -> c.int ---
+	@(require_results) bit_array_is_empty :: proc(array: Bit_Array) -> c.int ---
+	bit_array_fill :: proc(array: Bit_Array, value: c.int) ---
+	@(require_results) bit_array_count_set :: proc(array: Bit_Array) -> c.int ---
+	bit_array_clear :: proc(array: Bit_Array) ---
+	bit_array_truncate :: proc(array: Bit_Array, pos: c.int) ---
+
+	/* QTextBoundaryFinder */
+
+	@(require_results) text_boundary_finder_create :: proc(boundary_type: Text_Boundary_Type, text: cstring) -> Text_Boundary_Finder ---
+	text_boundary_finder_destroy :: proc(finder: Text_Boundary_Finder) ---
+	text_boundary_finder_set_position :: proc(finder: Text_Boundary_Finder, position: c.int) ---
+	@(require_results) text_boundary_finder_get_position :: proc(finder: Text_Boundary_Finder) -> c.int ---
+	@(require_results) text_boundary_finder_to_next_boundary :: proc(finder: Text_Boundary_Finder) -> c.int ---
+	@(require_results) text_boundary_finder_to_previous_boundary :: proc(finder: Text_Boundary_Finder) -> c.int ---
+	@(require_results) text_boundary_finder_is_at_boundary :: proc(finder: Text_Boundary_Finder) -> c.int ---
+	@(require_results) text_boundary_finder_get_boundary_reasons :: proc(finder: Text_Boundary_Finder) -> c.int ---
+	@(require_results) text_boundary_finder_get_type :: proc(finder: Text_Boundary_Finder) -> Text_Boundary_Type ---
 
 	/* QCryptographicHash */
 

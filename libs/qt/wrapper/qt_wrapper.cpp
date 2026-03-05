@@ -198,6 +198,9 @@
 #include <QLocale>
 #include <QUuid>
 #include <QElapsedTimer>
+#include <QBasicTimer>
+#include <QBitArray>
+#include <QTextBoundaryFinder>
 #include <QCryptographicHash>
 #include <QMimeDatabase>
 #include <QMimeType>
@@ -11101,6 +11104,130 @@ int qt_elapsed_timer_is_valid(void *timer) {
 
 int qt_elapsed_timer_has_expired(void *timer, long long timeout) {
     return static_cast<QElapsedTimer *>(timer)->hasExpired(timeout) ? 1 : 0;
+}
+
+/* ── QBasicTimer ──────────────────────────────────────────────────── */
+
+void *qt_basic_timer_create(void) {
+    return static_cast<void *>(new QBasicTimer());
+}
+
+void qt_basic_timer_destroy(void *timer) {
+    delete static_cast<QBasicTimer *>(timer);
+}
+
+int qt_basic_timer_is_active(void *timer) {
+    return static_cast<QBasicTimer *>(timer)->isActive() ? 1 : 0;
+}
+
+int qt_basic_timer_get_timer_id(void *timer) {
+    return static_cast<QBasicTimer *>(timer)->timerId();
+}
+
+void qt_basic_timer_start(void *timer, int msec, void *object) {
+    static_cast<QBasicTimer *>(timer)->start(msec, static_cast<QObject *>(object));
+}
+
+void qt_basic_timer_stop(void *timer) {
+    static_cast<QBasicTimer *>(timer)->stop();
+}
+
+/* ── QBitArray ────────────────────────────────────────────────────── */
+
+void *qt_bit_array_create(int size, int value) {
+    return static_cast<void *>(new QBitArray(size, value != 0));
+}
+
+void qt_bit_array_destroy(void *array) {
+    delete static_cast<QBitArray *>(array);
+}
+
+int qt_bit_array_get_size(void *array) {
+    return static_cast<int>(static_cast<QBitArray *>(array)->size());
+}
+
+void qt_bit_array_resize(void *array, int size) {
+    static_cast<QBitArray *>(array)->resize(size);
+}
+
+int qt_bit_array_test_bit(void *array, int index) {
+    return static_cast<QBitArray *>(array)->testBit(index) ? 1 : 0;
+}
+
+void qt_bit_array_set_bit(void *array, int index) {
+    static_cast<QBitArray *>(array)->setBit(index);
+}
+
+void qt_bit_array_clear_bit(void *array, int index) {
+    static_cast<QBitArray *>(array)->clearBit(index);
+}
+
+void qt_bit_array_toggle_bit(void *array, int index) {
+    static_cast<QBitArray *>(array)->toggleBit(index);
+}
+
+int qt_bit_array_is_null(void *array) {
+    return static_cast<QBitArray *>(array)->isNull() ? 1 : 0;
+}
+
+int qt_bit_array_is_empty(void *array) {
+    return static_cast<QBitArray *>(array)->isEmpty() ? 1 : 0;
+}
+
+void qt_bit_array_fill(void *array, int value) {
+    static_cast<QBitArray *>(array)->fill(value != 0);
+}
+
+int qt_bit_array_count_set(void *array) {
+    return static_cast<int>(static_cast<QBitArray *>(array)->count(true));
+}
+
+void qt_bit_array_clear(void *array) {
+    static_cast<QBitArray *>(array)->clear();
+}
+
+void qt_bit_array_truncate(void *array, int pos) {
+    static_cast<QBitArray *>(array)->truncate(pos);
+}
+
+/* ── QTextBoundaryFinder ──────────────────────────────────────────── */
+
+void *qt_text_boundary_finder_create(int boundary_type, const char *text) {
+    return static_cast<void *>(new QTextBoundaryFinder(
+        static_cast<QTextBoundaryFinder::BoundaryType>(boundary_type),
+        QString::fromUtf8(text)));
+}
+
+void qt_text_boundary_finder_destroy(void *finder) {
+    delete static_cast<QTextBoundaryFinder *>(finder);
+}
+
+void qt_text_boundary_finder_set_position(void *finder, int position) {
+    static_cast<QTextBoundaryFinder *>(finder)->setPosition(position);
+}
+
+int qt_text_boundary_finder_get_position(void *finder) {
+    return static_cast<int>(static_cast<QTextBoundaryFinder *>(finder)->position());
+}
+
+int qt_text_boundary_finder_to_next_boundary(void *finder) {
+    return static_cast<int>(static_cast<QTextBoundaryFinder *>(finder)->toNextBoundary());
+}
+
+int qt_text_boundary_finder_to_previous_boundary(void *finder) {
+    return static_cast<int>(static_cast<QTextBoundaryFinder *>(finder)->toPreviousBoundary());
+}
+
+int qt_text_boundary_finder_is_at_boundary(void *finder) {
+    return static_cast<QTextBoundaryFinder *>(finder)->isAtBoundary() ? 1 : 0;
+}
+
+int qt_text_boundary_finder_get_boundary_reasons(void *finder) {
+    return static_cast<int>(static_cast<QTextBoundaryFinder *>(finder)->boundaryReasons());
+}
+
+int qt_text_boundary_finder_get_type(void *finder) {
+    return static_cast<int>(static_cast<QTextBoundaryFinder *>(finder)->type());
 }
 
 /* ── QCryptographicHash ─────────────────────────────────────────────── */
