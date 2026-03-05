@@ -36,6 +36,9 @@ Demo_State :: struct {
 	timer_label: qt.Label,
 	timer_count: c.int,
 	clipboard_edit: qt.Line_Edit,
+	// Rich Text tab
+	block_edit: qt.Text_Edit,
+	block_output: qt.Label,
 	// Animations tab
 	anim_easing_combo: qt.Combo_Box,
 	// Extra Widgets tab
@@ -2893,6 +2896,473 @@ build_widget_properties_tab :: proc() -> qt.Widget {
 	return page
 }
 
+/* ── CCustomItemModel callbacks ─────────────────────────────────────── */
+
+CUSTOM_MODEL_ROWS :: 5
+CUSTOM_MODEL_COLS :: 3
+
+custom_model_data := [CUSTOM_MODEL_ROWS][CUSTOM_MODEL_COLS]cstring{
+	{"Alice", "Engineering", "42"},
+	{"Bob", "Marketing", "37"},
+	{"Carol", "Design", "29"},
+	{"Dave", "Engineering", "55"},
+	{"Eve", "Marketing", "31"},
+}
+
+custom_model_headers := [CUSTOM_MODEL_COLS]cstring{"Name", "Department", "Age"}
+
+custom_model_row_count :: proc"c"(parent_index: rawptr, user_data: rawptr) -> c.int {
+	return CUSTOM_MODEL_ROWS
+}
+
+custom_model_column_count :: proc"c"(parent_index: rawptr, user_data: rawptr) -> c.int {
+	return CUSTOM_MODEL_COLS
+}
+
+custom_model_data_cb :: proc"c"(index: rawptr, role: c.int, user_data: rawptr) -> cstring {
+	if role != 0 do return nil // Only handle DisplayRole (0)
+	row := qt.model_index_get_row(auto_cast index)
+	col := qt.model_index_get_column(auto_cast index)
+	if row >= 0 && row < CUSTOM_MODEL_ROWS && col >= 0 && col < CUSTOM_MODEL_COLS {
+		return custom_model_data[row][col]
+	}
+	return nil
+}
+
+custom_model_flags_cb :: proc"c"(index: rawptr, user_data: rawptr) -> c.int {
+	return 33 // ItemIsEnabled (32) | ItemIsSelectable (1)
+}
+
+custom_model_header_data_cb :: proc"c"(section: c.int, orientation: c.int, role: c.int, user_data: rawptr) -> cstring {
+	if role != 0 do return nil // Only handle DisplayRole
+	if orientation == 1 && section >= 0 && section < CUSTOM_MODEL_COLS { // Horizontal
+		return custom_model_headers[section]
+	}
+	return nil
+}
+
+/* ── Rich Text tab builder ─────────────────────────────────────────── */
+
+build_rich_text_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Rich Text Structures Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "Demonstrates QTextTable, QTextList, QTextBlock, and QTextFrame for rich text manipulation.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	// QTextTable demo
+	table_group := qt.group_box_create(nil, "QTextTable \xe2\x80\x94 Programmatic Table Insertion")
+	table_layout := qt.vbox_layout_create(auto_cast table_group)
+
+	table_edit := qt.text_edit_create(nil)
+	qt.widget_set_minimum_height(auto_cast table_edit, 160)
+	{
+		cursor := qt.text_edit_get_text_cursor(table_edit)
+		qt.text_cursor_insert_text(cursor, "Employee Table:\n")
+		table_ptr := qt.text_cursor_insert_table(cursor, 4, 3)
+		table: qt.Text_Table = auto_cast table_ptr
+
+		// Fill cells using cell cursors
+		cell_data := [4][3]cstring{
+			{"Name", "Role", "Office"},
+			{"Alice", "Developer", "Toronto"},
+			{"Bob", "Designer", "Montreal"},
+			{"Carol", "Manager", "Vancouver"},
+		}
+		for row in 0 ..< 4 {
+			for col in 0 ..< 3 {
+				cell_cursor := qt.text_table_cell_get_first_cursor_position(table, cast(c.int)row, cast(c.int)col)
+				qt.text_cursor_insert_text(auto_cast cell_cursor, cell_data[row][col])
+				qt.text_cursor_destroy(auto_cast cell_cursor)
+			}
+		}
+		qt.text_cursor_destroy(cursor)
+	}
+	qt.layout_add_widget(table_layout, auto_cast table_edit)
+
+	table_info := qt.label_create(nil, "Inserted 4x3 table via QTextCursor::insertTable. Cell text set via QTextTableCell cursor positions.")
+	qt.label_set_word_wrap(table_info, 1)
+	qt.widget_set_style_sheet(auto_cast table_info, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(table_layout, auto_cast table_info)
+	qt.layout_add_widget(layout, auto_cast table_group)
+
+	// QTextList demo
+	list_group := qt.group_box_create(nil, "QTextList \xe2\x80\x94 Programmatic List Insertion")
+	list_layout := qt.vbox_layout_create(auto_cast list_group)
+
+	list_edit := qt.text_edit_create(nil)
+	qt.widget_set_minimum_height(auto_cast list_edit, 140)
+	{
+		cursor := qt.text_edit_get_text_cursor(list_edit)
+		qt.text_cursor_insert_text(cursor, "Shopping List:\n")
+		qt.text_cursor_insert_list(cursor, .Disc)
+		qt.text_cursor_insert_text(cursor, "Apples")
+		qt.text_cursor_insert_block(cursor)
+		qt.text_cursor_insert_text(cursor, "Bananas")
+		qt.text_cursor_insert_block(cursor)
+		qt.text_cursor_insert_text(cursor, "Cherries")
+		qt.text_cursor_insert_block(cursor)
+		qt.text_cursor_insert_text(cursor, "Dates")
+		qt.text_cursor_destroy(cursor)
+	}
+	qt.layout_add_widget(list_layout, auto_cast list_edit)
+	qt.layout_add_widget(layout, auto_cast list_group)
+
+	// QTextBlock iteration demo
+	block_group := qt.group_box_create(nil, "QTextBlock \xe2\x80\x94 Document Block Iteration")
+	block_layout := qt.vbox_layout_create(auto_cast block_group)
+
+	demo_state.block_edit = qt.text_edit_create(nil)
+	qt.text_edit_set_plain_text(demo_state.block_edit, "First paragraph.\nSecond paragraph.\nThird paragraph with more text.\nFourth paragraph.")
+	qt.widget_set_minimum_height(auto_cast demo_state.block_edit, 100)
+	qt.layout_add_widget(block_layout, auto_cast demo_state.block_edit)
+
+	demo_state.block_output = qt.label_create(nil, "(click Inspect to iterate blocks)")
+	qt.label_set_word_wrap(demo_state.block_output, 1)
+	inspect_btn := qt.push_button_create(nil, "Inspect Blocks")
+	qt.push_button_connect_clicked(inspect_btn, proc"c"(user_data: rawptr) {
+		context = runtime.default_context()
+		document := qt.text_edit_get_document(demo_state.block_edit)
+		block_count := qt.text_document_get_block_count(document)
+		char_count := qt.text_document_get_character_count(document)
+
+		buf: [512]u8
+		written := fmt.bprintf(buf[:], "Blocks: %d, Chars: %d\n", block_count, char_count)
+
+		block := qt.text_document_get_first_block(document)
+		block_idx := 0
+		for qt.text_block_is_valid(block) != 0 && block_idx < 6 {
+			text := qt.text_block_get_text(block)
+			block_num := qt.text_block_get_block_number(block)
+			block_len := qt.text_block_get_length(block)
+			remaining := len(buf) - len(written)
+			if remaining > 80 {
+				extra := fmt.bprintf(buf[len(written):], "  [%d] len=%d: \"%s\"\n", block_num, block_len, text)
+				written = string(buf[:len(written) + len(extra)])
+			}
+			if text != nil do qt.free_string(text)
+			next_block := qt.text_block_next(block)
+			qt.text_block_destroy(block)
+			block = next_block
+			block_idx += 1
+		}
+		if qt.text_block_is_valid(block) != 0 do qt.text_block_destroy(block)
+
+		buf[len(written)] = 0
+		qt.label_set_text(demo_state.block_output, cstring(raw_data(buf[:])))
+		qt.text_document_destroy(document)
+	}, nil)
+	qt.layout_add_widget(block_layout, auto_cast inspect_btn)
+	qt.layout_add_widget(block_layout, auto_cast demo_state.block_output)
+	qt.layout_add_widget(layout, auto_cast block_group)
+
+	// QTextFrame demo
+	frame_group := qt.group_box_create(nil, "QTextFrame \xe2\x80\x94 Document Frame Info")
+	frame_layout := qt.vbox_layout_create(auto_cast frame_group)
+	frame_output := qt.label_create(nil, "")
+	{
+		// Use the block_edit's document to get frame info
+		document := qt.text_edit_get_document(demo_state.block_edit)
+		block_count := qt.text_document_get_block_count(document)
+		line_count := qt.text_document_get_line_count(document)
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "Document has %d blocks, %d lines\n(QTextFrame provides cursor positions and child frame access for documents with embedded frames)", block_count, line_count)
+		buf[len(msg)] = 0
+		qt.label_set_text(frame_output, cstring(raw_data(buf[:])))
+		qt.text_document_destroy(document)
+	}
+	qt.label_set_word_wrap(frame_output, 1)
+	qt.layout_add_widget(frame_layout, auto_cast frame_output)
+	qt.layout_add_widget(layout, auto_cast frame_group)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
+/* ── New Classes tab builder ───────────────────────────────────────── */
+
+build_new_classes_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "New Class Bindings Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// QDeadlineTimer
+	dt_group := qt.group_box_create(nil, "QDeadlineTimer \xe2\x80\x94 Timeout Management")
+	dt_layout := qt.vbox_layout_create(auto_cast dt_group)
+	dt_output := qt.label_create(nil, "")
+	{
+		timer_5s := qt.deadline_timer_create(5000, .Coarse)
+		timer_forever := qt.deadline_timer_create_forever(.Coarse)
+		timer_expired := qt.deadline_timer_create(0, .Coarse)
+
+		remaining := qt.deadline_timer_get_remaining_time(timer_5s)
+		is_forever := qt.deadline_timer_is_forever(timer_forever)
+		has_expired := qt.deadline_timer_has_expired(timer_expired)
+		timer_type := qt.deadline_timer_get_timer_type(timer_5s)
+
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "5s timer: %dms remaining, type=%d\nForever timer: is_forever=%d\nExpired timer (0ms): has_expired=%d", remaining, timer_type, is_forever, has_expired)
+		buf[len(msg)] = 0
+		qt.label_set_text(dt_output, cstring(raw_data(buf[:])))
+
+		qt.deadline_timer_destroy(timer_expired)
+		qt.deadline_timer_destroy(timer_forever)
+		qt.deadline_timer_destroy(timer_5s)
+	}
+	qt.label_set_word_wrap(dt_output, 1)
+	qt.layout_add_widget(dt_layout, auto_cast dt_output)
+	qt.layout_add_widget(layout, auto_cast dt_group)
+
+	// QCollator
+	col_group := qt.group_box_create(nil, "QCollator \xe2\x80\x94 Locale-Aware String Comparison")
+	col_layout := qt.vbox_layout_create(auto_cast col_group)
+	col_output := qt.label_create(nil, "")
+	{
+		collator := qt.collator_create("")
+		locale := qt.collator_get_locale(collator)
+
+		cmp_abc := qt.collator_compare(collator, "apple", "banana")
+		cmp_same := qt.collator_compare(collator, "hello", "hello")
+		cmp_rev := qt.collator_compare(collator, "zebra", "apple")
+
+		// Numeric mode comparison
+		qt.collator_set_numeric_mode(collator, 1)
+		cmp_num := qt.collator_compare(collator, "file2", "file10")
+		qt.collator_set_numeric_mode(collator, 0)
+		cmp_lex := qt.collator_compare(collator, "file2", "file10")
+
+		context = runtime.default_context()
+		buf: [384]u8
+		msg := fmt.bprintf(buf[:], "Locale: %s\napple vs banana: %d (negative = a < b)\nhello vs hello: %d (zero = equal)\nzebra vs apple: %d (positive = a > b)\nNumeric mode ON:  file2 vs file10: %d (2 < 10)\nNumeric mode OFF: file2 vs file10: %d (lexicographic)", locale, cmp_abc, cmp_same, cmp_rev, cmp_num, cmp_lex)
+		buf[len(msg)] = 0
+		qt.label_set_text(col_output, cstring(raw_data(buf[:])))
+
+		if locale != nil do qt.free_string(locale)
+		qt.collator_destroy(collator)
+	}
+	qt.label_set_word_wrap(col_output, 1)
+	qt.layout_add_widget(col_layout, auto_cast col_output)
+	qt.layout_add_widget(layout, auto_cast col_group)
+
+	// QTextStream
+	ts_group := qt.group_box_create(nil, "QTextStream \xe2\x80\x94 String Buffer I/O")
+	ts_layout := qt.vbox_layout_create(auto_cast ts_group)
+	ts_output := qt.label_create(nil, "")
+	{
+		stream := qt.text_stream_create_string()
+		qt.text_stream_write_string(stream, "Hello from Odin! ")
+		qt.text_stream_write_string(stream, "Value: ")
+		qt.text_stream_write_int(stream, 42)
+		qt.text_stream_write_string(stream, ", Pi: ")
+		qt.text_stream_write_double(stream, 3.14159)
+		qt.text_stream_flush(stream)
+
+		result := qt.text_stream_get_string(stream)
+		status := qt.text_stream_get_status(stream)
+
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "Wrote to string buffer, status: %v\nContent: \"%s\"", status, result)
+		buf[len(msg)] = 0
+		qt.label_set_text(ts_output, cstring(raw_data(buf[:])))
+
+		if result != nil do qt.free_string(result)
+		qt.text_stream_destroy(stream)
+	}
+	qt.label_set_word_wrap(ts_output, 1)
+	qt.layout_add_widget(ts_layout, auto_cast ts_output)
+	qt.layout_add_widget(layout, auto_cast ts_group)
+
+	// QDataStream
+	ds_group := qt.group_box_create(nil, "QDataStream \xe2\x80\x94 Binary Buffer Round-Trip")
+	ds_layout := qt.vbox_layout_create(auto_cast ds_group)
+	ds_output := qt.label_create(nil, "")
+	{
+		stream := qt.data_stream_create_buffer()
+		qt.data_stream_write_int32(stream, 12345)
+		qt.data_stream_write_double(stream, 2.71828)
+		qt.data_stream_write_string(stream, "Odin+Qt")
+
+		// Seek back and read (create a new stream from the same file would be needed
+		// for real file I/O; for buffer demo we show the write status)
+		write_status := qt.data_stream_get_status(stream)
+		byte_order := qt.data_stream_get_byte_order(stream)
+		version := qt.data_stream_get_version(stream)
+
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(buf[:], "Wrote: int32(12345), double(2.71828), string(\"Odin+Qt\")\nWrite status: %v, byte order: %v, version: %d", write_status, byte_order, version)
+		buf[len(msg)] = 0
+		qt.label_set_text(ds_output, cstring(raw_data(buf[:])))
+
+		qt.data_stream_destroy(stream)
+	}
+	qt.label_set_word_wrap(ds_output, 1)
+	qt.layout_add_widget(ds_layout, auto_cast ds_output)
+	qt.layout_add_widget(layout, auto_cast ds_group)
+
+	// QPdfWriter
+	pdf_group := qt.group_box_create(nil, "QPdfWriter \xe2\x80\x94 PDF Generation")
+	pdf_layout := qt.vbox_layout_create(auto_cast pdf_group)
+	pdf_output := qt.label_create(nil, "(click Generate to create a test PDF)")
+	qt.label_set_word_wrap(pdf_output, 1)
+	pdf_btn := qt.push_button_create(nil, "Generate Test PDF")
+	qt.push_button_connect_clicked(pdf_btn, proc"c"(user_data: rawptr) {
+		context = runtime.default_context()
+		label: qt.Label = auto_cast user_data
+		temp_path := qt.standard_paths_writable_location(.Temp)
+		if temp_path == nil {
+			qt.label_set_text(label, "Error: could not get temp directory")
+			return
+		}
+		buf: [512]u8
+		path_msg := fmt.bprintf(buf[:], "%s/odin_qt_test.pdf", temp_path)
+		buf[len(path_msg)] = 0
+		pdf_path := cstring(raw_data(buf[:]))
+
+		writer := qt.pdf_writer_create(pdf_path)
+		qt.pdf_writer_set_title(writer, "Odin + Qt Test PDF")
+		qt.pdf_writer_set_creator(writer, "Odin Qt Demo")
+		qt.pdf_writer_set_resolution(writer, 300)
+
+		title := qt.pdf_writer_get_title(writer)
+		creator := qt.pdf_writer_get_creator(writer)
+		resolution := qt.pdf_writer_get_resolution(writer)
+
+		out_buf: [512]u8
+		out_msg := fmt.bprintf(out_buf[:], "PDF created: %s\nTitle: %s, Creator: %s\nResolution: %d DPI\n(QPainter can draw to this device for full PDF output)", pdf_path, title, creator, resolution)
+		out_buf[len(out_msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(out_buf[:])))
+		statusbar_show("PDF writer created!")
+
+		if title != nil do qt.free_string(title)
+		if creator != nil do qt.free_string(creator)
+		qt.pdf_writer_destroy(writer)
+		qt.free_string(temp_path)
+	}, auto_cast pdf_output)
+	qt.layout_add_widget(pdf_layout, auto_cast pdf_btn)
+	qt.layout_add_widget(pdf_layout, auto_cast pdf_output)
+	qt.layout_add_widget(layout, auto_cast pdf_group)
+
+	// QPolygon
+	poly_group := qt.group_box_create(nil, "QPolygon \xe2\x80\x94 Geometric Polygon Operations")
+	poly_layout := qt.vbox_layout_create(auto_cast poly_group)
+	poly_output := qt.label_create(nil, "")
+	{
+		// Create a triangle polygon
+		triangle_points := [?]c.int{100, 50, 50, 150, 150, 150}
+		polygon := qt.polygon_create_from_points(raw_data(triangle_points[:]), 3)
+		point_count := qt.polygon_get_count(polygon)
+
+		// Test contains
+		is_inside := qt.polygon_contains_point(polygon, 100, 100, .Odd_Even)
+		is_outside := qt.polygon_contains_point(polygon, 10, 10, .Odd_Even)
+
+		// Bounding rect
+		bx, by, bw, bh: c.int
+		qt.polygon_get_bounding_rect(polygon, &bx, &by, &bw, &bh)
+
+		// Translate
+		qt.polygon_translate(polygon, 50, 50)
+		bx2, by2, bw2, bh2: c.int
+		qt.polygon_get_bounding_rect(polygon, &bx2, &by2, &bw2, &bh2)
+
+		context = runtime.default_context()
+		buf: [384]u8
+		msg := fmt.bprintf(buf[:], "Triangle: 3 points [(100,50), (50,150), (150,150)], count=%d\nContains (100,100): %d (1=yes)\nContains (10,10): %d (0=no)\nBounding rect: (%d,%d,%d,%d)\nAfter translate(50,50): (%d,%d,%d,%d)", point_count, is_inside, is_outside, bx, by, bw, bh, bx2, by2, bw2, bh2)
+		buf[len(msg)] = 0
+		qt.label_set_text(poly_output, cstring(raw_data(buf[:])))
+
+		qt.polygon_destroy(polygon)
+	}
+	qt.label_set_word_wrap(poly_output, 1)
+	qt.layout_add_widget(poly_layout, auto_cast poly_output)
+	qt.layout_add_widget(layout, auto_cast poly_group)
+
+	// CCustomItemModel + QTableView
+	model_group := qt.group_box_create(nil, "CCustomItemModel \xe2\x80\x94 Odin-Driven Table Model")
+	model_layout := qt.vbox_layout_create(auto_cast model_group)
+	model_desc := qt.label_create(nil, "A QTableView backed by an Odin-side data array via callback-driven QAbstractItemModel:")
+	qt.label_set_word_wrap(model_desc, 1)
+	qt.layout_add_widget(model_layout, auto_cast model_desc)
+
+	custom_model := qt.custom_item_model_create(
+		custom_model_row_count,
+		custom_model_column_count,
+		custom_model_data_cb,
+		custom_model_flags_cb,
+		custom_model_header_data_cb,
+		nil,
+	)
+	model_view := qt.table_view_create(nil)
+	qt.table_view_set_model(model_view, auto_cast custom_model)
+	qt.table_view_resize_columns_to_contents(model_view)
+	qt.widget_set_minimum_height(auto_cast model_view, 180)
+	qt.layout_add_widget(model_layout, auto_cast model_view)
+
+	model_note := qt.label_create(nil, "5 rows x 3 cols. Data returned from Odin callbacks (row_count, column_count, data, flags, header_data).")
+	qt.label_set_word_wrap(model_note, 1)
+	qt.widget_set_style_sheet(auto_cast model_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(model_layout, auto_cast model_note)
+	qt.layout_add_widget(layout, auto_cast model_group)
+
+	// QPauseAnimation
+	pause_group := qt.group_box_create(nil, "QPauseAnimation \xe2\x80\x94 Animation Delay")
+	pause_layout := qt.vbox_layout_create(auto_cast pause_group)
+	pause_output := qt.label_create(nil, "")
+	{
+		pause_anim := qt.pause_animation_create(500, nil)
+		duration := qt.pause_animation_get_duration(pause_anim)
+		qt.pause_animation_set_duration(pause_anim, 1000)
+		new_duration := qt.pause_animation_get_duration(pause_anim)
+
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "Created with 500ms, duration=%d\nSet to 1000ms, duration=%d\n(Used in QSequentialAnimationGroup for delays between animations)", duration, new_duration)
+		buf[len(msg)] = 0
+		qt.label_set_text(pause_output, cstring(raw_data(buf[:])))
+
+		qt.pause_animation_destroy(pause_anim)
+	}
+	qt.label_set_word_wrap(pause_output, 1)
+	qt.layout_add_widget(pause_layout, auto_cast pause_output)
+	qt.layout_add_widget(layout, auto_cast pause_group)
+
+	also_note := qt.label_create(nil, "Also bound: QTextOption (text layout options), QDrag (explicit drag source), QPolygonF (float variant)")
+	qt.label_set_word_wrap(also_note, 1)
+	qt.widget_set_style_sheet(auto_cast also_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast also_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -2997,6 +3467,8 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_core_utilities_tab(), "Core Utilities")
 	_ = qt.tab_widget_add_tab(tabs, build_advanced_models_tab(application), "Adv. Models")
 	_ = qt.tab_widget_add_tab(tabs, build_widget_properties_tab(), "Widget Props")
+	_ = qt.tab_widget_add_tab(tabs, build_rich_text_tab(), "Rich Text")
+	_ = qt.tab_widget_add_tab(tabs, build_new_classes_tab(), "New Classes")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
