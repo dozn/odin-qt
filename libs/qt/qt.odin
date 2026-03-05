@@ -2297,6 +2297,8 @@ foreign qt_lib {
 	@(require_results) frame_get_frame_shape :: proc(frame: Frame) -> Frame_Shape ---
 	@(require_results) frame_get_frame_shadow :: proc(frame: Frame) -> Frame_Shadow ---
 	@(require_results) frame_get_line_width :: proc(frame: Frame) -> c.int ---
+	frame_set_mid_line_width :: proc(frame: Frame, width: c.int) ---
+	@(require_results) frame_get_mid_line_width :: proc(frame: Frame) -> c.int ---
 
 	/* QMenuBar */
 
@@ -2400,6 +2402,7 @@ foreign qt_lib {
 	@(require_results) group_box_get_title :: proc(group_box: Group_Box) -> cstring ---
 	group_box_set_flat :: proc(group_box: Group_Box, is_flat: c.int) ---
 	@(require_results) group_box_is_flat :: proc(group_box: Group_Box) -> c.int ---
+	group_box_set_alignment :: proc(group_box: Group_Box, alignment: Alignment) ---
 
 	/* QDialog */
 
@@ -2423,6 +2426,8 @@ foreign qt_lib {
 	@(require_results) dock_widget_is_floating :: proc(dock_widget: Dock_Widget) -> c.int ---
 	dock_widget_set_floating :: proc(dock_widget: Dock_Widget, is_floating: c.int) ---
 	@(require_results) dock_widget_toggle_view_action :: proc(dock_widget: Dock_Widget) -> Action ---
+	dock_widget_set_title_bar_widget :: proc(dock_widget: Dock_Widget, widget: Widget) ---
+	@(require_results) dock_widget_get_title_bar_widget :: proc(dock_widget: Dock_Widget) -> Widget ---
 
 	/* QStatusBar */
 
@@ -2447,6 +2452,8 @@ foreign qt_lib {
 	@(require_results) timer_get_interval :: proc(timer: Timer) -> c.int ---
 	@(require_results) timer_get_remaining_time :: proc(timer: Timer) -> c.int ---
 	timer_single_shot :: proc(interval_ms: c.int, callback: Callback, user_data: rawptr) ---
+	timer_set_interval :: proc(timer: Timer, interval_ms: c.int) ---
+	timer_set_timer_type :: proc(timer: Timer, timer_type: c.int) ---
 
 	/* QPixmap */
 
@@ -2518,6 +2525,8 @@ foreign qt_lib {
 	tool_button_set_default_action :: proc(tool_button: Tool_Button, action: Action) ---
 	tool_button_set_auto_raise :: proc(tool_button: Tool_Button, is_auto_raise: c.int) ---
 	tool_button_set_tool_button_style :: proc(tool_button: Tool_Button, style: Tool_Button_Style) ---
+	tool_button_set_arrow_type :: proc(tool_button: Tool_Button, arrow_type: c.int) ---
+	@(require_results) tool_button_get_default_action :: proc(tool_button: Tool_Button) -> Action ---
 
 	/* QButtonGroup */
 
@@ -2605,6 +2614,20 @@ foreign qt_lib {
 	header_view_set_visible :: proc(header_view: Header_View, is_visible: c.int) ---
 	header_view_set_sort_indicator :: proc(header_view: Header_View, section: c.int, order: Sort_Order) ---
 	header_view_set_sort_indicator_shown :: proc(header_view: Header_View, is_shown: c.int) ---
+	header_view_set_section_hidden :: proc(header_view: Header_View, section: c.int, is_hidden: c.int) ---
+	@(require_results) header_view_is_section_hidden :: proc(header_view: Header_View, section: c.int) -> c.int ---
+	header_view_resize_section :: proc(header_view: Header_View, section: c.int, size: c.int) ---
+	@(require_results) header_view_get_section_size :: proc(header_view: Header_View, section: c.int) -> c.int ---
+	header_view_move_section :: proc(header_view: Header_View, from: c.int, to: c.int) ---
+	header_view_set_sort_indicator_clearable :: proc(header_view: Header_View, is_clearable: c.int) ---
+	@(require_results) header_view_get_count :: proc(header_view: Header_View) -> c.int ---
+	header_view_swap_sections :: proc(header_view: Header_View, first: c.int, second: c.int) ---
+	header_view_set_minimum_section_size :: proc(header_view: Header_View, size: c.int) ---
+	header_view_set_maximum_section_size :: proc(header_view: Header_View, size: c.int) ---
+	@(require_results) header_view_connect_section_clicked :: proc(header_view: Header_View, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) header_view_connect_section_resized :: proc(header_view: Header_View, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) header_view_connect_section_moved :: proc(header_view: Header_View, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) header_view_connect_sort_indicator_changed :: proc(header_view: Header_View, callback: Cell_Callback, user_data: rawptr) -> Connection_Id ---
 	@(require_results) table_widget_get_horizontal_header :: proc(table_widget: Table_Widget) -> Header_View ---
 	@(require_results) table_widget_get_vertical_header :: proc(table_widget: Table_Widget) -> Header_View ---
 	@(require_results) tree_widget_get_header :: proc(tree_widget: Tree_Widget) -> Header_View ---
@@ -3817,6 +3840,12 @@ foreign qt_lib {
 	process_connect_finished :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	process_connect_error_occurred :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	process_connect_started :: proc(process: Process, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	process_set_environment :: proc(process: Process, env: [^]cstring, count: c.int) ---
+	process_set_standard_output_process :: proc(process: Process, destination: Process) ---
+	process_set_read_channel :: proc(process: Process, channel: c.int) ---
+	process_set_process_channel_mode :: proc(process: Process, mode: c.int) ---
+	@(require_results) process_connect_ready_read_standard_output :: proc(process: Process, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) process_connect_ready_read_standard_error :: proc(process: Process, callback: Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* QThread */
 

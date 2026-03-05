@@ -62,47 +62,6 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
 
 ## Not Yet Implemented
 
-### Missing Methods/Signals on Existing Classes
-
-#### QProcess
-- `setEnvironment` / `setProcessEnvironment`
-- `setStandardOutputProcess` -- pipe to another process
-- `readAllStandardOutput` / `readAllStandardError` exist, but:
-- `setReadChannel`
-- `setProcessChannelMode`
-- Signal: `readyReadStandardOutput`
-- Signal: `readyReadStandardError`
-
-#### QTimer
-- `setInterval` -- change interval without restart
-- `setTimerType` -- precise vs coarse
-
-#### QFrame
-- `setMidLineWidth` / `getMidLineWidth`
-
-#### QGroupBox
-- `setAlignment`
-
-#### QDockWidget
-- `setTitleBarWidget` / `getTitleBarWidget`
-
-#### QToolButton
-- `setArrowType`
-- `getDefaultAction`
-
-#### QHeaderView
-- `setSectionHidden` / `isSectionHidden`
-- `resizeSection` / `getSectionSize`
-- `moveSection`
-- `setSortIndicatorClearable`
-- `getCount`
-- `swapSections`
-- `setMinimumSectionSize` / `setMaximumSectionSize`
-- Signal: `sectionClicked`
-- Signal: `sectionResized`
-- Signal: `sectionMoved`
-- Signal: `sortIndicatorChanged`
-
 ### New Classes to Wrap
 
 #### High Priority

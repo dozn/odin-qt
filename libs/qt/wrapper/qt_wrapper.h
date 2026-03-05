@@ -585,6 +585,8 @@ void  qt_frame_set_line_width(void *frame, int width);
 int   qt_frame_get_frame_shape(void *frame);
 int   qt_frame_get_frame_shadow(void *frame);
 int   qt_frame_get_line_width(void *frame);
+void  qt_frame_set_mid_line_width(void *frame, int width);
+int   qt_frame_get_mid_line_width(void *frame);
 
 /* ── QMenuBar ───────────────────────────────────────────────────────── */
 
@@ -688,6 +690,7 @@ void  qt_group_box_set_checked(void *group_box, int is_checked);
 char *qt_group_box_get_title(void *group_box);
 void  qt_group_box_set_flat(void *group_box, int is_flat);
 int   qt_group_box_is_flat(void *group_box);
+void  qt_group_box_set_alignment(void *group_box, int alignment);
 
 /* ── QDialog ────────────────────────────────────────────────────────── */
 
@@ -711,6 +714,8 @@ void  qt_dock_widget_set_features(void *dock, int features);
 int   qt_dock_widget_is_floating(void *dock);
 void  qt_dock_widget_set_floating(void *dock, int is_floating);
 void *qt_dock_widget_toggle_view_action(void *dock);
+void  qt_dock_widget_set_title_bar_widget(void *dock, void *widget);
+void *qt_dock_widget_get_title_bar_widget(void *dock);
 
 /* ── QStatusBar ─────────────────────────────────────────────────────── */
 
@@ -735,6 +740,8 @@ int   qt_timer_is_active(void *timer);
 int   qt_timer_get_interval(void *timer);
 int   qt_timer_get_remaining_time(void *timer);
 void  qt_timer_single_shot(int interval_ms, qt_callback_t callback, void *user_data);
+void  qt_timer_set_interval(void *timer, int interval_ms);
+void  qt_timer_set_timer_type(void *timer, int timer_type);
 
 /* ── QPixmap ────────────────────────────────────────────────────────── */
 
@@ -805,6 +812,8 @@ void  qt_tool_button_set_menu(void *button, void *menu);
 void  qt_tool_button_set_default_action(void *button, void *action);
 void  qt_tool_button_set_auto_raise(void *button, int is_auto_raise);
 void  qt_tool_button_set_tool_button_style(void *button, int style);
+void  qt_tool_button_set_arrow_type(void *button, int arrow_type);
+void *qt_tool_button_get_default_action(void *button);
 
 /* ── QButtonGroup ───────────────────────────────────────────────────── */
 
@@ -892,6 +901,20 @@ void  qt_header_view_set_stretch_last_section(void *header, int is_stretch);
 void  qt_header_view_set_visible(void *header, int is_visible);
 void  qt_header_view_set_sort_indicator(void *header, int section, int order);
 void  qt_header_view_set_sort_indicator_shown(void *header, int is_shown);
+void  qt_header_view_set_section_hidden(void *header, int section, int is_hidden);
+int   qt_header_view_is_section_hidden(void *header, int section);
+void  qt_header_view_resize_section(void *header, int section, int size);
+int   qt_header_view_get_section_size(void *header, int section);
+void  qt_header_view_move_section(void *header, int from, int to);
+void  qt_header_view_set_sort_indicator_clearable(void *header, int is_clearable);
+int   qt_header_view_get_count(void *header);
+void  qt_header_view_swap_sections(void *header, int first, int second);
+void  qt_header_view_set_minimum_section_size(void *header, int size);
+void  qt_header_view_set_maximum_section_size(void *header, int size);
+int   qt_header_view_connect_section_clicked(void *header, qt_int_callback_t callback, void *user_data);
+int   qt_header_view_connect_section_resized(void *header, qt_item_callback_t callback, void *user_data);
+int   qt_header_view_connect_section_moved(void *header, qt_item_callback_t callback, void *user_data);
+int   qt_header_view_connect_sort_indicator_changed(void *header, qt_cell_callback_t callback, void *user_data);
 void *qt_table_widget_get_horizontal_header(void *table);
 void *qt_table_widget_get_vertical_header(void *table);
 void *qt_tree_widget_get_header(void *tree);
@@ -2117,6 +2140,12 @@ void  qt_process_set_working_directory(void *process, const char *dir);
 int   qt_process_connect_finished(void *process, qt_int_callback_t callback, void *user_data);
 int   qt_process_connect_error_occurred(void *process, qt_int_callback_t callback, void *user_data);
 int   qt_process_connect_started(void *process, qt_callback_t callback, void *user_data);
+void  qt_process_set_environment(void *process, const char **env, int count);
+void  qt_process_set_standard_output_process(void *process, void *destination);
+void  qt_process_set_read_channel(void *process, int channel);
+void  qt_process_set_process_channel_mode(void *process, int mode);
+int   qt_process_connect_ready_read_standard_output(void *process, qt_callback_t callback, void *user_data);
+int   qt_process_connect_ready_read_standard_error(void *process, qt_callback_t callback, void *user_data);
 
 /* ── QThread ────────────────────────────────────────────────────────── */
 

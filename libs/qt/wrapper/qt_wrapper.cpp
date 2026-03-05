@@ -2750,6 +2750,14 @@ int qt_frame_get_line_width(void *frame) {
     return static_cast<QFrame *>(frame)->lineWidth();
 }
 
+void qt_frame_set_mid_line_width(void *frame, int width) {
+    static_cast<QFrame *>(frame)->setMidLineWidth(width);
+}
+
+int qt_frame_get_mid_line_width(void *frame) {
+    return static_cast<QFrame *>(frame)->midLineWidth();
+}
+
 /* ── QMenuBar ───────────────────────────────────────────────────────── */
 
 void *qt_menu_bar_add_menu(void *menu_bar, const char *title) {
@@ -3137,6 +3145,10 @@ int qt_group_box_is_flat(void *group_box) {
     return static_cast<QGroupBox *>(group_box)->isFlat() ? 1 : 0;
 }
 
+void qt_group_box_set_alignment(void *group_box, int alignment) {
+    static_cast<QGroupBox *>(group_box)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
 /* ── QDialog ────────────────────────────────────────────────────────── */
 
 void *qt_dialog_create(void *parent) {
@@ -3211,6 +3223,14 @@ void qt_dock_widget_set_floating(void *dock, int is_floating) {
 
 void *qt_dock_widget_toggle_view_action(void *dock) {
     return static_cast<void *>(static_cast<QDockWidget *>(dock)->toggleViewAction());
+}
+
+void qt_dock_widget_set_title_bar_widget(void *dock, void *widget) {
+    static_cast<QDockWidget *>(dock)->setTitleBarWidget(static_cast<QWidget *>(widget));
+}
+
+void *qt_dock_widget_get_title_bar_widget(void *dock) {
+    return static_cast<void *>(static_cast<QDockWidget *>(dock)->titleBarWidget());
 }
 
 /* ── QStatusBar ─────────────────────────────────────────────────────── */
@@ -3293,6 +3313,14 @@ void qt_timer_single_shot(int interval_ms, qt_callback_t callback, void *user_da
     QTimer::singleShot(interval_ms, [callback, user_data]() {
         callback(user_data);
     });
+}
+
+void qt_timer_set_interval(void *timer, int interval_ms) {
+    static_cast<QTimer *>(timer)->setInterval(interval_ms);
+}
+
+void qt_timer_set_timer_type(void *timer, int timer_type) {
+    static_cast<QTimer *>(timer)->setTimerType(static_cast<Qt::TimerType>(timer_type));
 }
 
 /* ── Clipboard ──────────────────────────────────────────────────────── */
@@ -3564,6 +3592,14 @@ void qt_tool_button_set_tool_button_style(void *button, int style) {
     static_cast<QToolButton *>(button)->setToolButtonStyle(
         static_cast<Qt::ToolButtonStyle>(style)
     );
+}
+
+void qt_tool_button_set_arrow_type(void *button, int arrow_type) {
+    static_cast<QToolButton *>(button)->setArrowType(static_cast<Qt::ArrowType>(arrow_type));
+}
+
+void *qt_tool_button_get_default_action(void *button) {
+    return static_cast<void *>(static_cast<QToolButton *>(button)->defaultAction());
 }
 
 /* ── QButtonGroup ───────────────────────────────────────────────────── */
@@ -3859,6 +3895,76 @@ void qt_header_view_set_sort_indicator(void *header, int section, int order) {
 
 void qt_header_view_set_sort_indicator_shown(void *header, int is_shown) {
     static_cast<QHeaderView *>(header)->setSortIndicatorShown(is_shown != 0);
+}
+
+void qt_header_view_set_section_hidden(void *header, int section, int is_hidden) {
+    static_cast<QHeaderView *>(header)->setSectionHidden(section, is_hidden != 0);
+}
+
+int qt_header_view_is_section_hidden(void *header, int section) {
+    return static_cast<QHeaderView *>(header)->isSectionHidden(section) ? 1 : 0;
+}
+
+void qt_header_view_resize_section(void *header, int section, int size) {
+    static_cast<QHeaderView *>(header)->resizeSection(section, size);
+}
+
+int qt_header_view_get_section_size(void *header, int section) {
+    return static_cast<QHeaderView *>(header)->sectionSize(section);
+}
+
+void qt_header_view_move_section(void *header, int from, int to) {
+    static_cast<QHeaderView *>(header)->moveSection(from, to);
+}
+
+void qt_header_view_set_sort_indicator_clearable(void *header, int is_clearable) {
+    static_cast<QHeaderView *>(header)->setSortIndicatorClearable(is_clearable != 0);
+}
+
+int qt_header_view_get_count(void *header) {
+    return static_cast<QHeaderView *>(header)->count();
+}
+
+void qt_header_view_swap_sections(void *header, int first, int second) {
+    static_cast<QHeaderView *>(header)->swapSections(first, second);
+}
+
+void qt_header_view_set_minimum_section_size(void *header, int size) {
+    static_cast<QHeaderView *>(header)->setMinimumSectionSize(size);
+}
+
+void qt_header_view_set_maximum_section_size(void *header, int size) {
+    static_cast<QHeaderView *>(header)->setMaximumSectionSize(size);
+}
+
+int qt_header_view_connect_section_clicked(void *header, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QHeaderView *>(header), &QHeaderView::sectionClicked, [callback, user_data](int section) {
+        callback(section, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_header_view_connect_section_resized(void *header, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QHeaderView *>(header), &QHeaderView::sectionResized, [callback, user_data](int section, int old_size, int new_size) {
+        (void)old_size;
+        callback(nullptr, section, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_header_view_connect_section_moved(void *header, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QHeaderView *>(header), &QHeaderView::sectionMoved, [callback, user_data](int section, int old_visual, int new_visual) {
+        (void)old_visual;
+        callback(nullptr, section, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_header_view_connect_sort_indicator_changed(void *header, qt_cell_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QHeaderView *>(header), &QHeaderView::sortIndicatorChanged, [callback, user_data](int section, Qt::SortOrder order) {
+        callback(section, static_cast<int>(order), user_data);
+    });
+    return store_connection(conn);
 }
 
 void *qt_table_widget_get_horizontal_header(void *table) {
@@ -8545,6 +8651,39 @@ int qt_process_connect_error_occurred(void *process, qt_int_callback_t callback,
 
 int qt_process_connect_started(void *process, qt_callback_t callback, void *user_data) {
     auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::started, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+void qt_process_set_environment(void *process, const char **env, int count) {
+    QStringList env_list;
+    for (int i = 0; i < count; i++)
+        env_list.append(QString::fromUtf8(env[i]));
+    static_cast<QProcess *>(process)->setEnvironment(env_list);
+}
+
+void qt_process_set_standard_output_process(void *process, void *destination) {
+    static_cast<QProcess *>(process)->setStandardOutputProcess(static_cast<QProcess *>(destination));
+}
+
+void qt_process_set_read_channel(void *process, int channel) {
+    static_cast<QProcess *>(process)->setReadChannel(static_cast<QProcess::ProcessChannel>(channel));
+}
+
+void qt_process_set_process_channel_mode(void *process, int mode) {
+    static_cast<QProcess *>(process)->setProcessChannelMode(static_cast<QProcess::ProcessChannelMode>(mode));
+}
+
+int qt_process_connect_ready_read_standard_output(void *process, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::readyReadStandardOutput, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_process_connect_ready_read_standard_error(void *process, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QProcess *>(process), &QProcess::readyReadStandardError, [callback, user_data]() {
         callback(user_data);
     });
     return store_connection(conn);
