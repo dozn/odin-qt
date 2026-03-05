@@ -13,6 +13,7 @@ cl /nologo /EHsc /std:c++17 /Zc:__cplusplus /permissive- /MD /c /O2 ^
     /I "%QT_DIR%\include\QtGui" ^
     /I "%QT_DIR%\include\QtWidgets" ^
     /I "%QT_DIR%\include\QtOpenGL" ^
+    /I "%QT_DIR%\include\QtPrintSupport" ^
     qt_wrapper.cpp
 
 if %ERRORLEVEL% neq 0 (
@@ -30,6 +31,8 @@ lib /nologo /OUT:qt_wrapper.lib ^
     "%RES_DIR%\Widgets_resources_4\.qt\rcc\qrc_qmessagebox_init.cpp.obj" ^
     "%RES_DIR%\QWindowsIntegrationPlugin_resources_1\.qt\rcc\qrc_openglblacklists_init.cpp.obj" ^
     "%RES_DIR%\QWindowsIntegrationPlugin_resources_2\.qt\rcc\qrc_cursors_init.cpp.obj" ^
+    "%RES_DIR%\PrintSupport_resources_1\.qt\rcc\qrc_qprintdialog_init.cpp.obj" ^
+    "%RES_DIR%\PrintSupport_resources_2\.qt\rcc\qrc_qprintdialog1_init.cpp.obj" ^
     "%PLUGIN_DIR%\styles\objects-Release\QModernWindowsStylePlugin_init\QModernWindowsStylePlugin_init.cpp.obj"
 
 if %ERRORLEVEL% neq 0 (

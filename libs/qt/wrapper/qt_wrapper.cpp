@@ -290,6 +290,12 @@
 #include <QDeadlineTimer>
 #include <QCollator>
 #include <QPdfWriter>
+#include <QPrinter>
+#include <QPrinterInfo>
+#include <QPrintDialog>
+#include <QPageSetupDialog>
+#include <QPrintPreviewDialog>
+#include <QPrintPreviewWidget>
 #include <QTextStream>
 #include <QDataStream>
 #include <QStyleOption>
@@ -18323,6 +18329,481 @@ int qt_model_connect_rows_removed(void *model, qt_model_rows_callback_t callback
             QModelIndex *p = new QModelIndex(parent);
             callback(static_cast<void *>(p), first, last, user_data);
             delete p;
+        });
+    return store_connection(conn);
+}
+
+/* ── QPrinter ──────────────────────────────────────────────────────── */
+
+void *qt_printer_create(int mode) {
+    return static_cast<void *>(new QPrinter(static_cast<QPrinter::PrinterMode>(mode)));
+}
+
+void *qt_printer_create_with_info(void *printer_info, int mode) {
+    return static_cast<void *>(new QPrinter(
+        *static_cast<QPrinterInfo *>(printer_info),
+        static_cast<QPrinter::PrinterMode>(mode)));
+}
+
+void qt_printer_destroy(void *printer) {
+    delete static_cast<QPrinter *>(printer);
+}
+
+void qt_printer_set_output_format(void *printer, int format) {
+    static_cast<QPrinter *>(printer)->setOutputFormat(static_cast<QPrinter::OutputFormat>(format));
+}
+
+int qt_printer_get_output_format(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->outputFormat());
+}
+
+void qt_printer_set_pdf_version(void *printer, int version) {
+    static_cast<QPrinter *>(printer)->setPdfVersion(
+        static_cast<QPagedPaintDevice::PdfVersion>(version));
+}
+
+int qt_printer_get_pdf_version(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->pdfVersion());
+}
+
+void qt_printer_set_printer_name(void *printer, const char *name) {
+    static_cast<QPrinter *>(printer)->setPrinterName(QString::fromUtf8(name));
+}
+
+char *qt_printer_get_printer_name(void *printer) {
+    return qstring_to_heap_utf8(static_cast<QPrinter *>(printer)->printerName());
+}
+
+int qt_printer_is_valid(void *printer) {
+    return static_cast<QPrinter *>(printer)->isValid() ? 1 : 0;
+}
+
+void qt_printer_set_output_file_name(void *printer, const char *filename) {
+    static_cast<QPrinter *>(printer)->setOutputFileName(QString::fromUtf8(filename));
+}
+
+char *qt_printer_get_output_file_name(void *printer) {
+    return qstring_to_heap_utf8(static_cast<QPrinter *>(printer)->outputFileName());
+}
+
+void qt_printer_set_doc_name(void *printer, const char *name) {
+    static_cast<QPrinter *>(printer)->setDocName(QString::fromUtf8(name));
+}
+
+char *qt_printer_get_doc_name(void *printer) {
+    return qstring_to_heap_utf8(static_cast<QPrinter *>(printer)->docName());
+}
+
+void qt_printer_set_creator(void *printer, const char *creator) {
+    static_cast<QPrinter *>(printer)->setCreator(QString::fromUtf8(creator));
+}
+
+char *qt_printer_get_creator(void *printer) {
+    return qstring_to_heap_utf8(static_cast<QPrinter *>(printer)->creator());
+}
+
+void qt_printer_set_page_order(void *printer, int order) {
+    static_cast<QPrinter *>(printer)->setPageOrder(static_cast<QPrinter::PageOrder>(order));
+}
+
+int qt_printer_get_page_order(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->pageOrder());
+}
+
+void qt_printer_set_resolution(void *printer, int dpi) {
+    static_cast<QPrinter *>(printer)->setResolution(dpi);
+}
+
+int qt_printer_get_resolution(void *printer) {
+    return static_cast<QPrinter *>(printer)->resolution();
+}
+
+void qt_printer_set_colour_mode(void *printer, int mode) {
+    static_cast<QPrinter *>(printer)->setColorMode(static_cast<QPrinter::ColorMode>(mode));
+}
+
+int qt_printer_get_colour_mode(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->colorMode());
+}
+
+void qt_printer_set_collate_copies(void *printer, int is_collate) {
+    static_cast<QPrinter *>(printer)->setCollateCopies(is_collate != 0);
+}
+
+int qt_printer_get_collate_copies(void *printer) {
+    return static_cast<QPrinter *>(printer)->collateCopies() ? 1 : 0;
+}
+
+void qt_printer_set_is_full_page(void *printer, int is_full_page) {
+    static_cast<QPrinter *>(printer)->setFullPage(is_full_page != 0);
+}
+
+int qt_printer_get_is_full_page(void *printer) {
+    return static_cast<QPrinter *>(printer)->fullPage() ? 1 : 0;
+}
+
+void qt_printer_set_copy_count(void *printer, int count) {
+    static_cast<QPrinter *>(printer)->setCopyCount(count);
+}
+
+int qt_printer_get_copy_count(void *printer) {
+    return static_cast<QPrinter *>(printer)->copyCount();
+}
+
+int qt_printer_does_support_multiple_copies(void *printer) {
+    return static_cast<QPrinter *>(printer)->supportsMultipleCopies() ? 1 : 0;
+}
+
+void qt_printer_set_paper_source(void *printer, int source) {
+    static_cast<QPrinter *>(printer)->setPaperSource(static_cast<QPrinter::PaperSource>(source));
+}
+
+int qt_printer_get_paper_source(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->paperSource());
+}
+
+void qt_printer_set_duplex(void *printer, int mode) {
+    static_cast<QPrinter *>(printer)->setDuplex(static_cast<QPrinter::DuplexMode>(mode));
+}
+
+int qt_printer_get_duplex(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->duplex());
+}
+
+void qt_printer_set_is_font_embedding_enabled(void *printer, int is_enabled) {
+    static_cast<QPrinter *>(printer)->setFontEmbeddingEnabled(is_enabled != 0);
+}
+
+int qt_printer_is_font_embedding_enabled(void *printer) {
+    return static_cast<QPrinter *>(printer)->fontEmbeddingEnabled() ? 1 : 0;
+}
+
+void qt_printer_get_paper_rect(void *printer, int unit, double *x, double *y, double *w, double *h) {
+    QRectF r = static_cast<QPrinter *>(printer)->paperRect(static_cast<QPrinter::Unit>(unit));
+    *x = r.x(); *y = r.y(); *w = r.width(); *h = r.height();
+}
+
+void qt_printer_get_page_rect(void *printer, int unit, double *x, double *y, double *w, double *h) {
+    QRectF r = static_cast<QPrinter *>(printer)->pageRect(static_cast<QPrinter::Unit>(unit));
+    *x = r.x(); *y = r.y(); *w = r.width(); *h = r.height();
+}
+
+int qt_printer_new_page(void *printer) {
+    return static_cast<QPrinter *>(printer)->newPage() ? 1 : 0;
+}
+
+int qt_printer_abort(void *printer) {
+    return static_cast<QPrinter *>(printer)->abort() ? 1 : 0;
+}
+
+int qt_printer_get_printer_state(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->printerState());
+}
+
+void qt_printer_set_from_to(void *printer, int from_page, int to_page) {
+    static_cast<QPrinter *>(printer)->setFromTo(from_page, to_page);
+}
+
+int qt_printer_get_from_page(void *printer) {
+    return static_cast<QPrinter *>(printer)->fromPage();
+}
+
+int qt_printer_get_to_page(void *printer) {
+    return static_cast<QPrinter *>(printer)->toPage();
+}
+
+void qt_printer_set_print_range(void *printer, int range) {
+    static_cast<QPrinter *>(printer)->setPrintRange(static_cast<QPrinter::PrintRange>(range));
+}
+
+int qt_printer_get_print_range(void *printer) {
+    return static_cast<int>(static_cast<QPrinter *>(printer)->printRange());
+}
+
+void qt_printer_set_page_size(void *printer, int page_size_id) {
+    static_cast<QPrinter *>(printer)->setPageSize(QPageSize(static_cast<QPageSize::PageSizeId>(page_size_id)));
+}
+
+void qt_printer_set_page_orientation(void *printer, int orientation) {
+    static_cast<QPrinter *>(printer)->setPageOrientation(static_cast<QPageLayout::Orientation>(orientation));
+}
+
+void qt_printer_set_page_margins(void *printer, double left, double top, double right, double bottom, int unit) {
+    static_cast<QPrinter *>(printer)->setPageMargins(
+        QMarginsF(left, top, right, bottom),
+        static_cast<QPageLayout::Unit>(unit));
+}
+
+int qt_painter_begin_printer(void *painter, void *printer) {
+    return static_cast<QPainter *>(painter)->begin(static_cast<QPrinter *>(printer)) ? 1 : 0;
+}
+
+/* ── QPrinterInfo ──────────────────────────────────────────────────── */
+
+void *qt_printer_info_create(void) {
+    return static_cast<void *>(new QPrinterInfo());
+}
+
+void *qt_printer_info_create_from_printer(void *printer) {
+    return static_cast<void *>(new QPrinterInfo(*static_cast<QPrinter *>(printer)));
+}
+
+void qt_printer_info_destroy(void *info) {
+    delete static_cast<QPrinterInfo *>(info);
+}
+
+char *qt_printer_info_get_printer_name(void *info) {
+    return qstring_to_heap_utf8(static_cast<QPrinterInfo *>(info)->printerName());
+}
+
+char *qt_printer_info_get_description(void *info) {
+    return qstring_to_heap_utf8(static_cast<QPrinterInfo *>(info)->description());
+}
+
+char *qt_printer_info_get_location(void *info) {
+    return qstring_to_heap_utf8(static_cast<QPrinterInfo *>(info)->location());
+}
+
+char *qt_printer_info_get_make_and_model(void *info) {
+    return qstring_to_heap_utf8(static_cast<QPrinterInfo *>(info)->makeAndModel());
+}
+
+int qt_printer_info_is_null(void *info) {
+    return static_cast<QPrinterInfo *>(info)->isNull() ? 1 : 0;
+}
+
+int qt_printer_info_is_default(void *info) {
+    return static_cast<QPrinterInfo *>(info)->isDefault() ? 1 : 0;
+}
+
+int qt_printer_info_is_remote(void *info) {
+    return static_cast<QPrinterInfo *>(info)->isRemote() ? 1 : 0;
+}
+
+int qt_printer_info_get_state(void *info) {
+    return static_cast<int>(static_cast<QPrinterInfo *>(info)->state());
+}
+
+int qt_printer_info_get_default_duplex_mode(void *info) {
+    return static_cast<int>(static_cast<QPrinterInfo *>(info)->defaultDuplexMode());
+}
+
+int qt_printer_info_get_default_colour_mode(void *info) {
+    return static_cast<int>(static_cast<QPrinterInfo *>(info)->defaultColorMode());
+}
+
+char *qt_printer_info_get_default_printer_name(void) {
+    return qstring_to_heap_utf8(QPrinterInfo::defaultPrinterName());
+}
+
+int qt_printer_info_get_available_printer_names(char ***names_out) {
+    QStringList names = QPrinterInfo::availablePrinterNames();
+    int count = names.size();
+    if (count == 0) {
+        *names_out = nullptr;
+        return 0;
+    }
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; ++i)
+        arr[i] = qstring_to_heap_utf8(names[i]);
+    *names_out = arr;
+    return count;
+}
+
+void qt_printer_info_free_string_array(char **names, int count) {
+    if (!names) return;
+    for (int i = 0; i < count; ++i)
+        free(names[i]);
+    free(names);
+}
+
+/* ── QPrintDialog ──────────────────────────────────────────────────── */
+
+void *qt_print_dialog_create(void *printer, void *parent) {
+    return static_cast<void *>(new QPrintDialog(
+        static_cast<QPrinter *>(printer),
+        static_cast<QWidget *>(parent)));
+}
+
+void qt_print_dialog_destroy(void *dialog) {
+    delete static_cast<QPrintDialog *>(dialog);
+}
+
+int qt_print_dialog_exec(void *dialog) {
+    return static_cast<QPrintDialog *>(dialog)->exec();
+}
+
+void qt_print_dialog_set_option(void *dialog, int option, int is_on) {
+    static_cast<QPrintDialog *>(dialog)->setOption(
+        static_cast<QAbstractPrintDialog::PrintDialogOption>(option), is_on != 0);
+}
+
+int qt_print_dialog_has_option(void *dialog, int option) {
+    return static_cast<QPrintDialog *>(dialog)->testOption(
+        static_cast<QAbstractPrintDialog::PrintDialogOption>(option)) ? 1 : 0;
+}
+
+void qt_print_dialog_set_options(void *dialog, int options) {
+    static_cast<QPrintDialog *>(dialog)->setOptions(
+        static_cast<QAbstractPrintDialog::PrintDialogOptions>(options));
+}
+
+int qt_print_dialog_get_options(void *dialog) {
+    return static_cast<int>(static_cast<QPrintDialog *>(dialog)->options());
+}
+
+/* ── QPageSetupDialog ──────────────────────────────────────────────── */
+
+void *qt_page_setup_dialog_create(void *printer, void *parent) {
+    return static_cast<void *>(new QPageSetupDialog(
+        static_cast<QPrinter *>(printer),
+        static_cast<QWidget *>(parent)));
+}
+
+void qt_page_setup_dialog_destroy(void *dialog) {
+    delete static_cast<QPageSetupDialog *>(dialog);
+}
+
+int qt_page_setup_dialog_exec(void *dialog) {
+    return static_cast<QPageSetupDialog *>(dialog)->exec();
+}
+
+/* ── QPrintPreviewDialog ───────────────────────────────────────────── */
+
+void *qt_print_preview_dialog_create(void *printer, void *parent) {
+    return static_cast<void *>(new QPrintPreviewDialog(
+        static_cast<QPrinter *>(printer),
+        static_cast<QWidget *>(parent)));
+}
+
+void qt_print_preview_dialog_destroy(void *dialog) {
+    delete static_cast<QPrintPreviewDialog *>(dialog);
+}
+
+int qt_print_preview_dialog_exec(void *dialog) {
+    return static_cast<QPrintPreviewDialog *>(dialog)->exec();
+}
+
+int qt_print_preview_dialog_connect_paint_requested(void *dialog, qt_printer_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPrintPreviewDialog *>(dialog), &QPrintPreviewDialog::paintRequested,
+        [callback, user_data](QPrinter *printer) {
+            callback(static_cast<void *>(printer), user_data);
+        });
+    return store_connection(conn);
+}
+
+/* ── QPrintPreviewWidget ───────────────────────────────────────────── */
+
+void *qt_print_preview_widget_create(void *printer, void *parent) {
+    return static_cast<void *>(new QPrintPreviewWidget(
+        static_cast<QPrinter *>(printer),
+        static_cast<QWidget *>(parent)));
+}
+
+void qt_print_preview_widget_destroy(void *widget) {
+    delete static_cast<QPrintPreviewWidget *>(widget);
+}
+
+double qt_print_preview_widget_get_zoom_factor(void *widget) {
+    return static_cast<QPrintPreviewWidget *>(widget)->zoomFactor();
+}
+
+int qt_print_preview_widget_get_orientation(void *widget) {
+    return static_cast<int>(static_cast<QPrintPreviewWidget *>(widget)->orientation());
+}
+
+int qt_print_preview_widget_get_view_mode(void *widget) {
+    return static_cast<int>(static_cast<QPrintPreviewWidget *>(widget)->viewMode());
+}
+
+int qt_print_preview_widget_get_zoom_mode(void *widget) {
+    return static_cast<int>(static_cast<QPrintPreviewWidget *>(widget)->zoomMode());
+}
+
+int qt_print_preview_widget_get_current_page(void *widget) {
+    return static_cast<QPrintPreviewWidget *>(widget)->currentPage();
+}
+
+int qt_print_preview_widget_get_page_count(void *widget) {
+    return static_cast<QPrintPreviewWidget *>(widget)->pageCount();
+}
+
+void qt_print_preview_widget_print(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->print();
+}
+
+void qt_print_preview_widget_zoom_in(void *widget, double factor) {
+    static_cast<QPrintPreviewWidget *>(widget)->zoomIn(factor);
+}
+
+void qt_print_preview_widget_zoom_out(void *widget, double factor) {
+    static_cast<QPrintPreviewWidget *>(widget)->zoomOut(factor);
+}
+
+void qt_print_preview_widget_set_zoom_factor(void *widget, double factor) {
+    static_cast<QPrintPreviewWidget *>(widget)->setZoomFactor(factor);
+}
+
+void qt_print_preview_widget_set_orientation(void *widget, int orientation) {
+    static_cast<QPrintPreviewWidget *>(widget)->setOrientation(static_cast<QPageLayout::Orientation>(orientation));
+}
+
+void qt_print_preview_widget_set_view_mode(void *widget, int mode) {
+    static_cast<QPrintPreviewWidget *>(widget)->setViewMode(static_cast<QPrintPreviewWidget::ViewMode>(mode));
+}
+
+void qt_print_preview_widget_set_zoom_mode(void *widget, int mode) {
+    static_cast<QPrintPreviewWidget *>(widget)->setZoomMode(static_cast<QPrintPreviewWidget::ZoomMode>(mode));
+}
+
+void qt_print_preview_widget_set_current_page(void *widget, int page) {
+    static_cast<QPrintPreviewWidget *>(widget)->setCurrentPage(page);
+}
+
+void qt_print_preview_widget_fit_to_width(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->fitToWidth();
+}
+
+void qt_print_preview_widget_fit_in_view(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->fitInView();
+}
+
+void qt_print_preview_widget_set_landscape_orientation(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->setLandscapeOrientation();
+}
+
+void qt_print_preview_widget_set_portrait_orientation(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->setPortraitOrientation();
+}
+
+void qt_print_preview_widget_set_single_page_view_mode(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->setSinglePageViewMode();
+}
+
+void qt_print_preview_widget_set_facing_pages_view_mode(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->setFacingPagesViewMode();
+}
+
+void qt_print_preview_widget_set_all_pages_view_mode(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->setAllPagesViewMode();
+}
+
+void qt_print_preview_widget_update_preview(void *widget) {
+    static_cast<QPrintPreviewWidget *>(widget)->updatePreview();
+}
+
+int qt_print_preview_widget_connect_paint_requested(void *widget, qt_printer_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPrintPreviewWidget *>(widget), &QPrintPreviewWidget::paintRequested,
+        [callback, user_data](QPrinter *printer) {
+            callback(static_cast<void *>(printer), user_data);
+        });
+    return store_connection(conn);
+}
+
+int qt_print_preview_widget_connect_preview_changed(void *widget, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QPrintPreviewWidget *>(widget), &QPrintPreviewWidget::previewChanged,
+        [callback, user_data]() {
+            callback(user_data);
         });
     return store_connection(conn);
 }

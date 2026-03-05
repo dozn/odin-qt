@@ -8,6 +8,7 @@ foreign import qt_lib {
 	"../qt6-static/lib/Qt6Widgets.lib",
 	"../qt6-static/lib/Qt6Gui.lib",
 	"../qt6-static/lib/Qt6Core.lib",
+	"../qt6-static/lib/Qt6PrintSupport.lib",
 	"../qt6-static/lib/Qt6OpenGL.lib",
 	"../qt6-static/lib/Qt6BundledHarfbuzz.lib",
 	"../qt6-static/lib/Qt6BundledFreetype.lib",
@@ -257,6 +258,12 @@ System_Semaphore :: distinct rawptr
 Deadline_Timer :: distinct rawptr
 Collator :: distinct rawptr
 Pdf_Writer :: distinct rawptr
+Printer :: distinct rawptr
+Printer_Info :: distinct rawptr
+Print_Dialog :: distinct rawptr
+Page_Setup_Dialog :: distinct rawptr
+Print_Preview_Dialog :: distinct rawptr
+Print_Preview_Widget :: distinct rawptr
 Text_Stream :: distinct rawptr
 Data_Stream :: distinct rawptr
 Text_Table :: distinct rawptr
@@ -1970,6 +1977,98 @@ Pdf_Version :: enum c.int {
 	Version_A1b = 1,
 	Version_1_6 = 2,
 }
+
+Printer_Mode :: enum c.int {
+	Screen_Resolution = 0,
+	Printer_Resolution = 1,
+	High_Resolution = 2,
+}
+
+Printer_Page_Order :: enum c.int {
+	First_Page_First = 0,
+	Last_Page_First = 1,
+}
+
+Printer_Colour_Mode :: enum c.int {
+	Grey_Scale = 0,
+	Colour = 1,
+}
+
+Printer_Paper_Source :: enum c.int {
+	Only_One = 0,
+	Lower = 1,
+	Middle = 2,
+	Manual = 3,
+	Envelope = 4,
+	Envelope_Manual = 5,
+	Auto = 6,
+	Tractor = 7,
+	Small_Format = 8,
+	Large_Format = 9,
+	Large_Capacity = 10,
+	Cassette = 11,
+	Form_Source = 12,
+	Custom_Source = 14,
+}
+
+Printer_State :: enum c.int {
+	Idle = 0,
+	Active = 1,
+	Aborted = 2,
+	Error = 3,
+}
+
+Printer_Output_Format :: enum c.int {
+	Native_Format = 0,
+	Pdf_Format = 1,
+}
+
+Printer_Print_Range :: enum c.int {
+	All_Pages = 0,
+	Selection = 1,
+	Page_Range = 2,
+	Current_Page = 3,
+}
+
+Printer_Unit :: enum c.int {
+	Millimetre = 0,
+	Point = 1,
+	Inch = 2,
+	Pica = 3,
+	Didot = 4,
+	Cicero = 5,
+	Device_Pixel = 6,
+}
+
+Printer_Duplex_Mode :: enum c.int {
+	None = 0,
+	Auto = 1,
+	Long_Side = 2,
+	Short_Side = 3,
+}
+
+Print_Dialog_Option :: enum c.int {
+	Print_To_File = 0x0001,
+	Print_Selection = 0x0002,
+	Print_Page_Range = 0x0004,
+	Print_Show_Page_Size = 0x0008,
+	Print_Collate_Copies = 0x0010,
+	Print_Current_Page = 0x0040,
+}
+
+Print_Preview_View_Mode :: enum c.int {
+	Single_Page_View = 0,
+	Facing_Pages_View = 1,
+	All_Pages_View = 2,
+}
+
+Print_Preview_Zoom_Mode :: enum c.int {
+	Custom_Zoom = 0,
+	Fit_To_Width = 1,
+	Fit_In_View = 2,
+}
+
+Printer_Callback :: #type proc "c" (printer: Printer, user_data: rawptr)
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
 
@@ -6657,4 +6756,127 @@ foreign qt_lib {
 	@(require_results) model_connect_data_changed :: proc(model: rawptr, callback: Model_Data_Changed_Callback, user_data: rawptr) -> Connection_Id ---
 	@(require_results) model_connect_rows_inserted :: proc(model: rawptr, callback: Model_Rows_Callback, user_data: rawptr) -> Connection_Id ---
 	@(require_results) model_connect_rows_removed :: proc(model: rawptr, callback: Model_Rows_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QPrinter */
+
+	@(require_results) printer_create :: proc(mode: Printer_Mode) -> Printer ---
+	@(require_results) printer_create_with_info :: proc(printer_info: Printer_Info, mode: Printer_Mode) -> Printer ---
+	printer_destroy :: proc(printer: Printer) ---
+	printer_set_output_format :: proc(printer: Printer, format: Printer_Output_Format) ---
+	@(require_results) printer_get_output_format :: proc(printer: Printer) -> Printer_Output_Format ---
+	printer_set_pdf_version :: proc(printer: Printer, version: Pdf_Version) ---
+	@(require_results) printer_get_pdf_version :: proc(printer: Printer) -> Pdf_Version ---
+	printer_set_printer_name :: proc(printer: Printer, name: cstring) ---
+	@(require_results) printer_get_printer_name :: proc(printer: Printer) -> cstring ---
+	@(require_results) printer_is_valid :: proc(printer: Printer) -> c.int ---
+	printer_set_output_file_name :: proc(printer: Printer, filename: cstring) ---
+	@(require_results) printer_get_output_file_name :: proc(printer: Printer) -> cstring ---
+	printer_set_doc_name :: proc(printer: Printer, name: cstring) ---
+	@(require_results) printer_get_doc_name :: proc(printer: Printer) -> cstring ---
+	printer_set_creator :: proc(printer: Printer, creator: cstring) ---
+	@(require_results) printer_get_creator :: proc(printer: Printer) -> cstring ---
+	printer_set_page_order :: proc(printer: Printer, order: Printer_Page_Order) ---
+	@(require_results) printer_get_page_order :: proc(printer: Printer) -> Printer_Page_Order ---
+	printer_set_resolution :: proc(printer: Printer, dpi: c.int) ---
+	@(require_results) printer_get_resolution :: proc(printer: Printer) -> c.int ---
+	printer_set_colour_mode :: proc(printer: Printer, mode: Printer_Colour_Mode) ---
+	@(require_results) printer_get_colour_mode :: proc(printer: Printer) -> Printer_Colour_Mode ---
+	printer_set_collate_copies :: proc(printer: Printer, is_collate: c.int) ---
+	@(require_results) printer_get_collate_copies :: proc(printer: Printer) -> c.int ---
+	printer_set_is_full_page :: proc(printer: Printer, is_full_page: c.int) ---
+	@(require_results) printer_get_is_full_page :: proc(printer: Printer) -> c.int ---
+	printer_set_copy_count :: proc(printer: Printer, count: c.int) ---
+	@(require_results) printer_get_copy_count :: proc(printer: Printer) -> c.int ---
+	@(require_results) printer_does_support_multiple_copies :: proc(printer: Printer) -> c.int ---
+	printer_set_paper_source :: proc(printer: Printer, source: Printer_Paper_Source) ---
+	@(require_results) printer_get_paper_source :: proc(printer: Printer) -> Printer_Paper_Source ---
+	printer_set_duplex :: proc(printer: Printer, mode: Printer_Duplex_Mode) ---
+	@(require_results) printer_get_duplex :: proc(printer: Printer) -> Printer_Duplex_Mode ---
+	printer_set_is_font_embedding_enabled :: proc(printer: Printer, is_enabled: c.int) ---
+	@(require_results) printer_is_font_embedding_enabled :: proc(printer: Printer) -> c.int ---
+	printer_get_paper_rect :: proc(printer: Printer, unit: Printer_Unit, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	printer_get_page_rect :: proc(printer: Printer, unit: Printer_Unit, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	@(require_results) printer_new_page :: proc(printer: Printer) -> c.int ---
+	@(require_results) printer_abort :: proc(printer: Printer) -> c.int ---
+	@(require_results) printer_get_printer_state :: proc(printer: Printer) -> Printer_State ---
+	printer_set_from_to :: proc(printer: Printer, from_page: c.int, to_page: c.int) ---
+	@(require_results) printer_get_from_page :: proc(printer: Printer) -> c.int ---
+	@(require_results) printer_get_to_page :: proc(printer: Printer) -> c.int ---
+	printer_set_print_range :: proc(printer: Printer, range: Printer_Print_Range) ---
+	@(require_results) printer_get_print_range :: proc(printer: Printer) -> Printer_Print_Range ---
+	printer_set_page_size :: proc(printer: Printer, page_size_id: c.int) ---
+	printer_set_page_orientation :: proc(printer: Printer, orientation: c.int) ---
+	printer_set_page_margins :: proc(printer: Printer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) ---
+	@(require_results) painter_begin_printer :: proc(painter: Painter, printer: Printer) -> c.int ---
+
+	/* QPrinterInfo */
+
+	@(require_results) printer_info_create :: proc() -> Printer_Info ---
+	@(require_results) printer_info_create_from_printer :: proc(printer: Printer) -> Printer_Info ---
+	printer_info_destroy :: proc(info: Printer_Info) ---
+	@(require_results) printer_info_get_printer_name :: proc(info: Printer_Info) -> cstring ---
+	@(require_results) printer_info_get_description :: proc(info: Printer_Info) -> cstring ---
+	@(require_results) printer_info_get_location :: proc(info: Printer_Info) -> cstring ---
+	@(require_results) printer_info_get_make_and_model :: proc(info: Printer_Info) -> cstring ---
+	@(require_results) printer_info_is_null :: proc(info: Printer_Info) -> c.int ---
+	@(require_results) printer_info_is_default :: proc(info: Printer_Info) -> c.int ---
+	@(require_results) printer_info_is_remote :: proc(info: Printer_Info) -> c.int ---
+	@(require_results) printer_info_get_state :: proc(info: Printer_Info) -> Printer_State ---
+	@(require_results) printer_info_get_default_duplex_mode :: proc(info: Printer_Info) -> Printer_Duplex_Mode ---
+	@(require_results) printer_info_get_default_colour_mode :: proc(info: Printer_Info) -> Printer_Colour_Mode ---
+	@(require_results) printer_info_get_default_printer_name :: proc() -> cstring ---
+	@(require_results) printer_info_get_available_printer_names :: proc(names_out: ^[^]cstring) -> c.int ---
+	printer_info_free_string_array :: proc(names: [^]cstring, count: c.int) ---
+
+	/* QPrintDialog */
+
+	@(require_results) print_dialog_create :: proc(printer: Printer, parent: Widget) -> Print_Dialog ---
+	print_dialog_destroy :: proc(dialog: Print_Dialog) ---
+	@(require_results) print_dialog_exec :: proc(dialog: Print_Dialog) -> c.int ---
+	print_dialog_set_option :: proc(dialog: Print_Dialog, option: Print_Dialog_Option, is_on: c.int) ---
+	@(require_results) print_dialog_has_option :: proc(dialog: Print_Dialog, option: Print_Dialog_Option) -> c.int ---
+	print_dialog_set_options :: proc(dialog: Print_Dialog, options: c.int) ---
+	@(require_results) print_dialog_get_options :: proc(dialog: Print_Dialog) -> c.int ---
+
+	/* QPageSetupDialog */
+
+	@(require_results) page_setup_dialog_create :: proc(printer: Printer, parent: Widget) -> Page_Setup_Dialog ---
+	page_setup_dialog_destroy :: proc(dialog: Page_Setup_Dialog) ---
+	@(require_results) page_setup_dialog_exec :: proc(dialog: Page_Setup_Dialog) -> c.int ---
+
+	/* QPrintPreviewDialog */
+
+	@(require_results) print_preview_dialog_create :: proc(printer: Printer, parent: Widget) -> Print_Preview_Dialog ---
+	print_preview_dialog_destroy :: proc(dialog: Print_Preview_Dialog) ---
+	@(require_results) print_preview_dialog_exec :: proc(dialog: Print_Preview_Dialog) -> c.int ---
+	@(require_results) print_preview_dialog_connect_paint_requested :: proc(dialog: Print_Preview_Dialog, callback: Printer_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QPrintPreviewWidget */
+
+	@(require_results) print_preview_widget_create :: proc(printer: Printer, parent: Widget) -> Print_Preview_Widget ---
+	print_preview_widget_destroy :: proc(widget: Print_Preview_Widget) ---
+	@(require_results) print_preview_widget_get_zoom_factor :: proc(widget: Print_Preview_Widget) -> c.double ---
+	@(require_results) print_preview_widget_get_orientation :: proc(widget: Print_Preview_Widget) -> c.int ---
+	@(require_results) print_preview_widget_get_view_mode :: proc(widget: Print_Preview_Widget) -> Print_Preview_View_Mode ---
+	@(require_results) print_preview_widget_get_zoom_mode :: proc(widget: Print_Preview_Widget) -> Print_Preview_Zoom_Mode ---
+	@(require_results) print_preview_widget_get_current_page :: proc(widget: Print_Preview_Widget) -> c.int ---
+	@(require_results) print_preview_widget_get_page_count :: proc(widget: Print_Preview_Widget) -> c.int ---
+	print_preview_widget_print :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_zoom_in :: proc(widget: Print_Preview_Widget, factor: c.double) ---
+	print_preview_widget_zoom_out :: proc(widget: Print_Preview_Widget, factor: c.double) ---
+	print_preview_widget_set_zoom_factor :: proc(widget: Print_Preview_Widget, factor: c.double) ---
+	print_preview_widget_set_orientation :: proc(widget: Print_Preview_Widget, orientation: c.int) ---
+	print_preview_widget_set_view_mode :: proc(widget: Print_Preview_Widget, mode: Print_Preview_View_Mode) ---
+	print_preview_widget_set_zoom_mode :: proc(widget: Print_Preview_Widget, mode: Print_Preview_Zoom_Mode) ---
+	print_preview_widget_set_current_page :: proc(widget: Print_Preview_Widget, page: c.int) ---
+	print_preview_widget_fit_to_width :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_fit_in_view :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_set_landscape_orientation :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_set_portrait_orientation :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_set_single_page_view_mode :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_set_facing_pages_view_mode :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_set_all_pages_view_mode :: proc(widget: Print_Preview_Widget) ---
+	print_preview_widget_update_preview :: proc(widget: Print_Preview_Widget) ---
+	@(require_results) print_preview_widget_connect_paint_requested :: proc(widget: Print_Preview_Widget, callback: Printer_Callback, user_data: rawptr) -> Connection_Id ---
+	@(require_results) print_preview_widget_connect_preview_changed :: proc(widget: Print_Preview_Widget, callback: Callback, user_data: rawptr) -> Connection_Id ---
 }

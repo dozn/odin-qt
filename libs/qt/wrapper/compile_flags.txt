@@ -6,3 +6,4 @@
 -I../../qt6-static/include/QtCore
 -I../../qt6-static/include/QtGui
 -I../../qt6-static/include/QtWidgets
+-I../../qt6-static/include/QtPrintSupport

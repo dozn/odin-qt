@@ -99,11 +99,12 @@ QAbstractItemModel signals (dataChanged, rowsInserted, rowsRemoved),
 QInputDialog, QLayout (base class), QLayoutItem, QBoxLayout, QSpacerItem,
 QTextCharFormat, QGradient (base class),
 Memory management utilities (qt_free_string, qt_free_string_array, qt_free_item_array),
-Signal disconnection (qt_disconnect)
+Signal disconnection (qt_disconnect),
+QPrinter, QPrinterInfo, QPrintDialog, QPageSetupDialog,
+QPrintPreviewDialog, QPrintPreviewWidget
 
 ---
 
 ## Not Yet Wrapped
 
-### Printing (if enabled)
-- **QPrinter** — not available (print support was disabled in the Qt build)
+(none currently)

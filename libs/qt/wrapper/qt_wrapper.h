@@ -22,6 +22,7 @@ typedef void (*qt_four_int_callback_t)(int a, int b, int c, int d, void *user_da
 typedef void (*qt_two_pointer_callback_t)(void *first, void *second, void *user_data);
 typedef void (*qt_model_data_changed_callback_t)(void *top_left, void *bottom_right, void *user_data);
 typedef void (*qt_model_rows_callback_t)(void *parent, int first, int last, void *user_data);
+typedef void (*qt_printer_callback_t)(void *printer, void *user_data);
 
 /* ── QApplication ──────────────────────────────────────────────────── */
 
@@ -4725,6 +4726,129 @@ int   qt_regex_match_get_last_captured_index(void *match);
 int   qt_model_connect_data_changed(void *model, qt_model_data_changed_callback_t callback, void *user_data);
 int   qt_model_connect_rows_inserted(void *model, qt_model_rows_callback_t callback, void *user_data);
 int   qt_model_connect_rows_removed(void *model, qt_model_rows_callback_t callback, void *user_data);
+
+/* ── QPrinter ──────────────────────────────────────────────────────── */
+
+void *qt_printer_create(int mode);
+void *qt_printer_create_with_info(void *printer_info, int mode);
+void  qt_printer_destroy(void *printer);
+void  qt_printer_set_output_format(void *printer, int format);
+int   qt_printer_get_output_format(void *printer);
+void  qt_printer_set_pdf_version(void *printer, int version);
+int   qt_printer_get_pdf_version(void *printer);
+void  qt_printer_set_printer_name(void *printer, const char *name);
+char *qt_printer_get_printer_name(void *printer);
+int   qt_printer_is_valid(void *printer);
+void  qt_printer_set_output_file_name(void *printer, const char *filename);
+char *qt_printer_get_output_file_name(void *printer);
+void  qt_printer_set_doc_name(void *printer, const char *name);
+char *qt_printer_get_doc_name(void *printer);
+void  qt_printer_set_creator(void *printer, const char *creator);
+char *qt_printer_get_creator(void *printer);
+void  qt_printer_set_page_order(void *printer, int order);
+int   qt_printer_get_page_order(void *printer);
+void  qt_printer_set_resolution(void *printer, int dpi);
+int   qt_printer_get_resolution(void *printer);
+void  qt_printer_set_colour_mode(void *printer, int mode);
+int   qt_printer_get_colour_mode(void *printer);
+void  qt_printer_set_collate_copies(void *printer, int is_collate);
+int   qt_printer_get_collate_copies(void *printer);
+void  qt_printer_set_is_full_page(void *printer, int is_full_page);
+int   qt_printer_get_is_full_page(void *printer);
+void  qt_printer_set_copy_count(void *printer, int count);
+int   qt_printer_get_copy_count(void *printer);
+int   qt_printer_does_support_multiple_copies(void *printer);
+void  qt_printer_set_paper_source(void *printer, int source);
+int   qt_printer_get_paper_source(void *printer);
+void  qt_printer_set_duplex(void *printer, int mode);
+int   qt_printer_get_duplex(void *printer);
+void  qt_printer_set_is_font_embedding_enabled(void *printer, int is_enabled);
+int   qt_printer_is_font_embedding_enabled(void *printer);
+void  qt_printer_get_paper_rect(void *printer, int unit, double *x, double *y, double *w, double *h);
+void  qt_printer_get_page_rect(void *printer, int unit, double *x, double *y, double *w, double *h);
+int   qt_printer_new_page(void *printer);
+int   qt_printer_abort(void *printer);
+int   qt_printer_get_printer_state(void *printer);
+void  qt_printer_set_from_to(void *printer, int from_page, int to_page);
+int   qt_printer_get_from_page(void *printer);
+int   qt_printer_get_to_page(void *printer);
+void  qt_printer_set_print_range(void *printer, int range);
+int   qt_printer_get_print_range(void *printer);
+void  qt_printer_set_page_size(void *printer, int page_size_id);
+void  qt_printer_set_page_orientation(void *printer, int orientation);
+void  qt_printer_set_page_margins(void *printer, double left, double top, double right, double bottom, int unit);
+int   qt_painter_begin_printer(void *painter, void *printer);
+
+/* ── QPrinterInfo ──────────────────────────────────────────────────── */
+
+void *qt_printer_info_create(void);
+void *qt_printer_info_create_from_printer(void *printer);
+void  qt_printer_info_destroy(void *info);
+char *qt_printer_info_get_printer_name(void *info);
+char *qt_printer_info_get_description(void *info);
+char *qt_printer_info_get_location(void *info);
+char *qt_printer_info_get_make_and_model(void *info);
+int   qt_printer_info_is_null(void *info);
+int   qt_printer_info_is_default(void *info);
+int   qt_printer_info_is_remote(void *info);
+int   qt_printer_info_get_state(void *info);
+int   qt_printer_info_get_default_duplex_mode(void *info);
+int   qt_printer_info_get_default_colour_mode(void *info);
+char *qt_printer_info_get_default_printer_name(void);
+int   qt_printer_info_get_available_printer_names(char ***names_out);
+void  qt_printer_info_free_string_array(char **names, int count);
+
+/* ── QPrintDialog ──────────────────────────────────────────────────── */
+
+void *qt_print_dialog_create(void *printer, void *parent);
+void  qt_print_dialog_destroy(void *dialog);
+int   qt_print_dialog_exec(void *dialog);
+void  qt_print_dialog_set_option(void *dialog, int option, int is_on);
+int   qt_print_dialog_has_option(void *dialog, int option);
+void  qt_print_dialog_set_options(void *dialog, int options);
+int   qt_print_dialog_get_options(void *dialog);
+
+/* ── QPageSetupDialog ──────────────────────────────────────────────── */
+
+void *qt_page_setup_dialog_create(void *printer, void *parent);
+void  qt_page_setup_dialog_destroy(void *dialog);
+int   qt_page_setup_dialog_exec(void *dialog);
+
+/* ── QPrintPreviewDialog ───────────────────────────────────────────── */
+
+void *qt_print_preview_dialog_create(void *printer, void *parent);
+void  qt_print_preview_dialog_destroy(void *dialog);
+int   qt_print_preview_dialog_exec(void *dialog);
+int   qt_print_preview_dialog_connect_paint_requested(void *dialog, qt_printer_callback_t callback, void *user_data);
+
+/* ── QPrintPreviewWidget ───────────────────────────────────────────── */
+
+void *qt_print_preview_widget_create(void *printer, void *parent);
+void  qt_print_preview_widget_destroy(void *widget);
+double qt_print_preview_widget_get_zoom_factor(void *widget);
+int   qt_print_preview_widget_get_orientation(void *widget);
+int   qt_print_preview_widget_get_view_mode(void *widget);
+int   qt_print_preview_widget_get_zoom_mode(void *widget);
+int   qt_print_preview_widget_get_current_page(void *widget);
+int   qt_print_preview_widget_get_page_count(void *widget);
+void  qt_print_preview_widget_print(void *widget);
+void  qt_print_preview_widget_zoom_in(void *widget, double factor);
+void  qt_print_preview_widget_zoom_out(void *widget, double factor);
+void  qt_print_preview_widget_set_zoom_factor(void *widget, double factor);
+void  qt_print_preview_widget_set_orientation(void *widget, int orientation);
+void  qt_print_preview_widget_set_view_mode(void *widget, int mode);
+void  qt_print_preview_widget_set_zoom_mode(void *widget, int mode);
+void  qt_print_preview_widget_set_current_page(void *widget, int page);
+void  qt_print_preview_widget_fit_to_width(void *widget);
+void  qt_print_preview_widget_fit_in_view(void *widget);
+void  qt_print_preview_widget_set_landscape_orientation(void *widget);
+void  qt_print_preview_widget_set_portrait_orientation(void *widget);
+void  qt_print_preview_widget_set_single_page_view_mode(void *widget);
+void  qt_print_preview_widget_set_facing_pages_view_mode(void *widget);
+void  qt_print_preview_widget_set_all_pages_view_mode(void *widget);
+void  qt_print_preview_widget_update_preview(void *widget);
+int   qt_print_preview_widget_connect_paint_requested(void *widget, qt_printer_callback_t callback, void *user_data);
+int   qt_print_preview_widget_connect_preview_changed(void *widget, qt_callback_t callback, void *user_data);
 
 #ifdef __cplusplus
 }

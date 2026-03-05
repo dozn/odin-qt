@@ -3862,6 +3862,255 @@ build_style_lowlevel_tab :: proc() -> qt.Widget {
 	return page
 }
 
+/* ── Print preview paint callback ──────────────────────────────────── */
+
+print_preview_paint_requested :: proc"c"(printer: qt.Printer, user_data: rawptr) {
+	painter := qt.painter_create()
+	if qt.painter_begin_printer(painter, printer) != 0 {
+		resolution := qt.printer_get_resolution(printer)
+		scale := cast(c.int)(resolution / 72) // scale factor relative to 72 DPI
+
+		qt.painter_set_font(painter, "Segoe UI", 24 * scale, cast(c.int)qt.Font_Weight.Bold, 0)
+		qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+		qt.painter_draw_text(painter, 100 * scale, 150 * scale, "Odin + Qt Print Demo")
+
+		qt.painter_set_font(painter, "Segoe UI", 14 * scale, cast(c.int)qt.Font_Weight.Normal, 0)
+		qt.painter_draw_text(painter, 100 * scale, 250 * scale, "This page was rendered via QPrintPreviewDialog.")
+		qt.painter_draw_text(painter, 100 * scale, 320 * scale, "QPainter draws to QPrinter just like any other paint device.")
+
+		qt.painter_set_pen_colour(painter, 0, 100, 200, 255)
+		qt.painter_set_pen_width(painter, 2 * scale)
+		qt.painter_draw_rect(painter, 80 * scale, 80 * scale, 500 * scale, 300 * scale)
+
+		qt.painter_set_brush_colour(painter, 70, 130, 180, 180)
+		qt.painter_set_pen_colour(painter, 30, 60, 100, 255)
+		qt.painter_set_pen_width(painter, 2 * scale)
+		qt.painter_draw_ellipse(painter, 100 * scale, 420 * scale, 120 * scale, 80 * scale)
+
+		qt.painter_set_brush_colour(painter, 255, 165, 0, 160)
+		qt.painter_set_pen_colour(painter, 180, 100, 0, 255)
+		qt.painter_draw_rounded_rect(painter, 280 * scale, 420 * scale, 140 * scale, 80 * scale, 15.0, 15.0)
+
+		qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+		qt.painter_set_font(painter, "Segoe UI", 10 * scale, cast(c.int)qt.Font_Weight.Normal, 1)
+		qt.painter_draw_text(painter, 100 * scale, 560 * scale, "Shapes rendered at printer resolution.")
+
+		_ = qt.painter_end(painter)
+	}
+	qt.painter_destroy(painter)
+}
+
+/* ── Print Support tab builder ─────────────────────────────────────── */
+
+build_print_support_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Print Support Demo")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	description := qt.label_create(nil, "Demonstrates QPrinter, QPrinterInfo, QPrintDialog, QPageSetupDialog, and QPrintPreviewDialog.")
+	qt.label_set_word_wrap(description, 1)
+	qt.layout_add_widget(layout, auto_cast description)
+
+	// QPrinterInfo — available printers
+	info_group := qt.group_box_create(nil, "QPrinterInfo \xe2\x80\x94 Available Printers")
+	info_layout := qt.vbox_layout_create(auto_cast info_group)
+	info_output := qt.plain_text_edit_create(nil)
+	qt.plain_text_edit_set_read_only(info_output, 1)
+	qt.widget_set_font(auto_cast info_output, "Consolas", 9, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.widget_set_maximum_height(auto_cast info_output, 120)
+	{
+		context = runtime.default_context()
+		default_name := qt.printer_info_get_default_printer_name()
+
+		names_ptr: [^]cstring
+		printer_count := qt.printer_info_get_available_printer_names(&names_ptr)
+
+		buf: [1024]u8
+		written := fmt.bprintf(buf[:], "Default printer: %s\nAvailable printers (%d):\n", default_name, printer_count)
+		for printer_idx in 0 ..< printer_count {
+			remaining := len(buf) - len(written) - 1
+			if remaining < 80 do break
+			extra := fmt.bprintf(buf[len(written):], "  - %s\n", names_ptr[printer_idx])
+			written = string(buf[:len(written) + len(extra)])
+		}
+		buf[len(written)] = 0
+		qt.plain_text_edit_set_plain_text(info_output, cstring(raw_data(buf[:])))
+
+		if default_name != nil do qt.free_string(default_name)
+		if printer_count > 0 do qt.printer_info_free_string_array(names_ptr, printer_count)
+	}
+	qt.layout_add_widget(info_layout, auto_cast info_output)
+	qt.layout_add_widget(layout, auto_cast info_group)
+
+	// QPrinter — properties
+	printer_group := qt.group_box_create(nil, "QPrinter \xe2\x80\x94 Printer Properties")
+	printer_layout := qt.vbox_layout_create(auto_cast printer_group)
+	printer_output := qt.label_create(nil, "")
+	qt.label_set_word_wrap(printer_output, 1)
+	{
+		context = runtime.default_context()
+		printer := qt.printer_create(.Screen_Resolution)
+		is_valid := qt.printer_is_valid(printer)
+		output_format := qt.printer_get_output_format(printer)
+		resolution := qt.printer_get_resolution(printer)
+		colour_mode := qt.printer_get_colour_mode(printer)
+		duplex := qt.printer_get_duplex(printer)
+		is_full_page := qt.printer_get_is_full_page(printer)
+		copy_count := qt.printer_get_copy_count(printer)
+		does_support_multi := qt.printer_does_support_multiple_copies(printer)
+		printer_name := qt.printer_get_printer_name(printer)
+		print_range := qt.printer_get_print_range(printer)
+
+		buf: [512]u8
+		msg := fmt.bprintf(buf[:], "Mode: ScreenResolution\nValid: %d\nOutput format: %v\nResolution: %d DPI\nColour mode: %v\nDuplex: %v\nFull page: %d\nCopy count: %d (multi-copy support: %d)\nPrinter name: \"%s\"\nPrint range: %v", is_valid, output_format, resolution, colour_mode, duplex, is_full_page, copy_count, does_support_multi, printer_name, print_range)
+		buf[len(msg)] = 0
+		qt.label_set_text(printer_output, cstring(raw_data(buf[:])))
+
+		if printer_name != nil do qt.free_string(printer_name)
+		qt.printer_destroy(printer)
+	}
+	qt.layout_add_widget(printer_layout, auto_cast printer_output)
+	qt.layout_add_widget(layout, auto_cast printer_group)
+
+	// Print dialogs
+	dialog_group := qt.group_box_create(nil, "Print Dialogs")
+	dialog_layout := qt.hbox_layout_create(auto_cast dialog_group)
+
+	// QPrintDialog
+	print_dialog_btn := qt.push_button_create(nil, "Print Dialog...")
+	qt.push_button_connect_clicked(print_dialog_btn, proc"c"(user_data: rawptr) {
+		printer := qt.printer_create(.High_Resolution)
+		dialog := qt.print_dialog_create(printer, auto_cast demo_state.window)
+		result := qt.print_dialog_exec(dialog)
+		if result != 0 {
+			statusbar_show("Print dialog accepted")
+		} else {
+			statusbar_show("Print dialog cancelled")
+		}
+		qt.print_dialog_destroy(dialog)
+		qt.printer_destroy(printer)
+	}, nil)
+	qt.layout_add_widget(dialog_layout, auto_cast print_dialog_btn)
+
+	// QPageSetupDialog
+	page_setup_btn := qt.push_button_create(nil, "Page Setup...")
+	qt.push_button_connect_clicked(page_setup_btn, proc"c"(user_data: rawptr) {
+		printer := qt.printer_create(.High_Resolution)
+		dialog := qt.page_setup_dialog_create(printer, auto_cast demo_state.window)
+		result := qt.page_setup_dialog_exec(dialog)
+		if result != 0 {
+			context = runtime.default_context()
+			resolution := qt.printer_get_resolution(printer)
+			buf: [128]u8
+			msg := fmt.bprintf(buf[:], "Page setup accepted (resolution: %d DPI)", resolution)
+			buf[len(msg)] = 0
+			statusbar_show(cstring(raw_data(buf[:])))
+		} else {
+			statusbar_show("Page setup cancelled")
+		}
+		qt.page_setup_dialog_destroy(dialog)
+		qt.printer_destroy(printer)
+	}, nil)
+	qt.layout_add_widget(dialog_layout, auto_cast page_setup_btn)
+
+	// QPrintPreviewDialog
+	preview_btn := qt.push_button_create(nil, "Print Preview...")
+	qt.push_button_connect_clicked(preview_btn, proc"c"(user_data: rawptr) {
+		printer := qt.printer_create(.High_Resolution)
+		dialog := qt.print_preview_dialog_create(printer, auto_cast demo_state.window)
+		_ = qt.print_preview_dialog_connect_paint_requested(dialog, print_preview_paint_requested, nil)
+		result := qt.print_preview_dialog_exec(dialog)
+		if result != 0 {
+			statusbar_show("Print preview accepted")
+		} else {
+			statusbar_show("Print preview closed")
+		}
+		qt.print_preview_dialog_destroy(dialog)
+		qt.printer_destroy(printer)
+	}, nil)
+	qt.layout_add_widget(dialog_layout, auto_cast preview_btn)
+
+	qt.layout_add_widget(layout, auto_cast dialog_group)
+
+	// Print to PDF
+	pdf_group := qt.group_box_create(nil, "QPrinter \xe2\x80\x94 Print to PDF")
+	pdf_layout := qt.vbox_layout_create(auto_cast pdf_group)
+	pdf_output := qt.label_create(nil, "(click Generate to print a test page to PDF via QPrinter)")
+	qt.label_set_word_wrap(pdf_output, 1)
+	pdf_btn := qt.push_button_create(nil, "Generate PDF via QPrinter")
+	qt.push_button_connect_clicked(pdf_btn, proc"c"(user_data: rawptr) {
+		context = runtime.default_context()
+		label: qt.Label = auto_cast user_data
+		temp_path := qt.standard_paths_writable_location(.Temp)
+		if temp_path == nil {
+			qt.label_set_text(label, "Error: could not get temp directory")
+			return
+		}
+		path_buf: [512]u8
+		path_msg := fmt.bprintf(path_buf[:], "%s/odin_qt_printer_test.pdf", temp_path)
+		path_buf[len(path_msg)] = 0
+		pdf_path := cstring(raw_data(path_buf[:]))
+
+		printer := qt.printer_create(.High_Resolution)
+		qt.printer_set_output_format(printer, .Pdf_Format)
+		qt.printer_set_output_file_name(printer, pdf_path)
+		qt.printer_set_doc_name(printer, "Odin Qt Printer Test")
+		qt.printer_set_creator(printer, "Odin Qt Demo")
+
+		painter := qt.painter_create()
+		if qt.painter_begin_printer(painter, printer) != 0 {
+			resolution := qt.printer_get_resolution(printer)
+			scale := cast(c.int)(resolution / 72)
+
+			qt.painter_set_font(painter, "Segoe UI", 24 * scale, cast(c.int)qt.Font_Weight.Bold, 0)
+			qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
+			qt.painter_draw_text(painter, 100 * scale, 150 * scale, "Odin + Qt Printer PDF")
+
+			qt.painter_set_font(painter, "Segoe UI", 14 * scale, cast(c.int)qt.Font_Weight.Normal, 0)
+			qt.painter_draw_text(painter, 100 * scale, 250 * scale, "Generated via QPrinter with OutputFormat = PdfFormat.")
+			qt.painter_draw_text(painter, 100 * scale, 320 * scale, "Unlike QPdfWriter, QPrinter supports all print features.")
+
+			qt.painter_set_pen_colour(painter, 0, 100, 200, 255)
+			qt.painter_set_pen_width(painter, 2 * scale)
+			qt.painter_draw_rect(painter, 80 * scale, 80 * scale, 500 * scale, 300 * scale)
+
+			_ = qt.painter_end(painter)
+		}
+		qt.painter_destroy(painter)
+
+		out_buf: [512]u8
+		out_msg := fmt.bprintf(out_buf[:], "PDF written to: %s\nDoc name: Odin Qt Printer Test\nResolution: %d DPI", pdf_path, qt.printer_get_resolution(printer))
+		out_buf[len(out_msg)] = 0
+		qt.label_set_text(label, cstring(raw_data(out_buf[:])))
+		statusbar_show("PDF generated via QPrinter!")
+
+		qt.printer_destroy(printer)
+		qt.free_string(temp_path)
+	}, auto_cast pdf_output)
+	qt.layout_add_widget(pdf_layout, auto_cast pdf_btn)
+	qt.layout_add_widget(pdf_layout, auto_cast pdf_output)
+	qt.layout_add_widget(layout, auto_cast pdf_group)
+
+	print_note := qt.label_create(nil, "Also bound: QPrintPreviewWidget (embeddable preview), QPrinter page rect/paper rect, duplex, collation, page ranges, font embedding")
+	qt.label_set_word_wrap(print_note, 1)
+	qt.widget_set_style_sheet(auto_cast print_note, "QLabel { color: #666; font-style: italic; }")
+	qt.layout_add_widget(layout, auto_cast print_note)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -3969,6 +4218,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_rich_text_tab(), "Rich Text")
 	_ = qt.tab_widget_add_tab(tabs, build_new_classes_tab(), "New Classes")
 	_ = qt.tab_widget_add_tab(tabs, build_style_lowlevel_tab(), "Style && Low-Level")
+	_ = qt.tab_widget_add_tab(tabs, build_print_support_tab(), "Print Support")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
