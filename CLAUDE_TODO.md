@@ -73,7 +73,9 @@ QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout,
 QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider,
 QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery,
 QColorSpace, QColorTransform, QTextLayout, QTextLine,
-QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation
+QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation,
+QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent, QGraphicsSceneWheelEvent,
+QGraphicsSceneContextMenuEvent, QGraphicsSceneDragDropEvent
 
 ---
 
@@ -82,9 +84,6 @@ QGraphicsObject, QGraphicsAnchorLayout, QGraphicsAnchor, QGraphicsItemAnimation
 ### High Priority — Commonly needed functionality
 
 ### Medium Priority — Useful but less commonly needed
-
-**Graphics scene (advanced):**
-- QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
 
 **Gestures:**
 - QGesture, QGestureRecognizer, QPanGesture, QPinchGesture, QSwipeGesture,

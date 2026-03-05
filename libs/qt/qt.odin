@@ -291,6 +291,11 @@ Graphics_Object :: distinct rawptr
 Graphics_Anchor_Layout :: distinct rawptr
 Graphics_Anchor :: distinct rawptr
 Graphics_Item_Animation :: distinct rawptr
+Graphics_Scene_Mouse_Event :: distinct rawptr
+Graphics_Scene_Hover_Event :: distinct rawptr
+Graphics_Scene_Wheel_Event :: distinct rawptr
+Graphics_Scene_Context_Menu_Event :: distinct rawptr
+Graphics_Scene_Drag_Drop_Event :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -5148,6 +5153,60 @@ foreign qt_lib {
 	graphics_item_animation_set_shear_at :: proc(animation: Graphics_Item_Animation, step: c.double, sh: c.double, sv: c.double) ---
 	graphics_item_animation_set_translation_at :: proc(animation: Graphics_Item_Animation, step: c.double, dx: c.double, dy: c.double) ---
 	graphics_item_animation_clear :: proc(animation: Graphics_Item_Animation) ---
+
+	/* QGraphicsSceneMouseEvent */
+
+	graphics_scene_mouse_event_get_pos :: proc(event: Graphics_Scene_Mouse_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_mouse_event_get_scene_pos :: proc(event: Graphics_Scene_Mouse_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_mouse_event_get_screen_pos :: proc(event: Graphics_Scene_Mouse_Event, x: ^c.int, y: ^c.int) ---
+	@(require_results) graphics_scene_mouse_event_get_button :: proc(event: Graphics_Scene_Mouse_Event) -> c.int ---
+	@(require_results) graphics_scene_mouse_event_get_buttons :: proc(event: Graphics_Scene_Mouse_Event) -> c.int ---
+	@(require_results) graphics_scene_mouse_event_get_modifiers :: proc(event: Graphics_Scene_Mouse_Event) -> c.int ---
+	graphics_scene_mouse_event_get_last_pos :: proc(event: Graphics_Scene_Mouse_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_mouse_event_get_last_scene_pos :: proc(event: Graphics_Scene_Mouse_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_mouse_event_get_button_down_pos :: proc(event: Graphics_Scene_Mouse_Event, button: c.int, x: ^c.double, y: ^c.double) ---
+	graphics_scene_mouse_event_get_button_down_scene_pos :: proc(event: Graphics_Scene_Mouse_Event, button: c.int, x: ^c.double, y: ^c.double) ---
+
+	/* QGraphicsSceneHoverEvent */
+
+	graphics_scene_hover_event_get_pos :: proc(event: Graphics_Scene_Hover_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_hover_event_get_scene_pos :: proc(event: Graphics_Scene_Hover_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_hover_event_get_screen_pos :: proc(event: Graphics_Scene_Hover_Event, x: ^c.int, y: ^c.int) ---
+	graphics_scene_hover_event_get_last_pos :: proc(event: Graphics_Scene_Hover_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_hover_event_get_last_scene_pos :: proc(event: Graphics_Scene_Hover_Event, x: ^c.double, y: ^c.double) ---
+	@(require_results) graphics_scene_hover_event_get_modifiers :: proc(event: Graphics_Scene_Hover_Event) -> c.int ---
+
+	/* QGraphicsSceneWheelEvent */
+
+	graphics_scene_wheel_event_get_pos :: proc(event: Graphics_Scene_Wheel_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_wheel_event_get_scene_pos :: proc(event: Graphics_Scene_Wheel_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_wheel_event_get_screen_pos :: proc(event: Graphics_Scene_Wheel_Event, x: ^c.int, y: ^c.int) ---
+	@(require_results) graphics_scene_wheel_event_get_delta :: proc(event: Graphics_Scene_Wheel_Event) -> c.int ---
+	@(require_results) graphics_scene_wheel_event_get_orientation :: proc(event: Graphics_Scene_Wheel_Event) -> c.int ---
+	@(require_results) graphics_scene_wheel_event_get_modifiers :: proc(event: Graphics_Scene_Wheel_Event) -> c.int ---
+	@(require_results) graphics_scene_wheel_event_get_buttons :: proc(event: Graphics_Scene_Wheel_Event) -> c.int ---
+
+	/* QGraphicsSceneContextMenuEvent */
+
+	graphics_scene_context_menu_event_get_pos :: proc(event: Graphics_Scene_Context_Menu_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_context_menu_event_get_scene_pos :: proc(event: Graphics_Scene_Context_Menu_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_context_menu_event_get_screen_pos :: proc(event: Graphics_Scene_Context_Menu_Event, x: ^c.int, y: ^c.int) ---
+	@(require_results) graphics_scene_context_menu_event_get_modifiers :: proc(event: Graphics_Scene_Context_Menu_Event) -> c.int ---
+	@(require_results) graphics_scene_context_menu_event_get_reason :: proc(event: Graphics_Scene_Context_Menu_Event) -> c.int ---
+
+	/* QGraphicsSceneDragDropEvent */
+
+	graphics_scene_drag_drop_event_get_pos :: proc(event: Graphics_Scene_Drag_Drop_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_drag_drop_event_get_scene_pos :: proc(event: Graphics_Scene_Drag_Drop_Event, x: ^c.double, y: ^c.double) ---
+	graphics_scene_drag_drop_event_get_screen_pos :: proc(event: Graphics_Scene_Drag_Drop_Event, x: ^c.int, y: ^c.int) ---
+	@(require_results) graphics_scene_drag_drop_event_get_buttons :: proc(event: Graphics_Scene_Drag_Drop_Event) -> c.int ---
+	@(require_results) graphics_scene_drag_drop_event_get_modifiers :: proc(event: Graphics_Scene_Drag_Drop_Event) -> c.int ---
+	@(require_results) graphics_scene_drag_drop_event_get_mime_data :: proc(event: Graphics_Scene_Drag_Drop_Event) -> Mime_Data ---
+	@(require_results) graphics_scene_drag_drop_event_get_drop_action :: proc(event: Graphics_Scene_Drag_Drop_Event) -> c.int ---
+	@(require_results) graphics_scene_drag_drop_event_get_proposed_action :: proc(event: Graphics_Scene_Drag_Drop_Event) -> c.int ---
+	@(require_results) graphics_scene_drag_drop_event_get_possible_actions :: proc(event: Graphics_Scene_Drag_Drop_Event) -> c.int ---
+	graphics_scene_drag_drop_event_set_drop_action :: proc(event: Graphics_Scene_Drag_Drop_Event, action: c.int) ---
+	graphics_scene_drag_drop_event_accept_proposed_action :: proc(event: Graphics_Scene_Drag_Drop_Event) ---
 
 	/* QGraphicsEffect (base + subclasses) */
 

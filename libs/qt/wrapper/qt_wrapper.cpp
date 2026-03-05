@@ -235,6 +235,9 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsObject>
 #include <QGraphicsItemAnimation>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneWheelEvent>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
@@ -13013,6 +13016,197 @@ void qt_graphics_item_animation_set_translation_at(void *animation, double step,
 
 void qt_graphics_item_animation_clear(void *animation) {
     static_cast<QGraphicsItemAnimation *>(animation)->clear();
+}
+
+/* ── QGraphicsSceneMouseEvent ────────────────────────────────────── */
+
+void qt_graphics_scene_mouse_event_get_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->pos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_mouse_event_get_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->scenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_mouse_event_get_screen_pos(void *event, int *x, int *y) {
+    QPoint pos = static_cast<QGraphicsSceneMouseEvent *>(event)->screenPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+int qt_graphics_scene_mouse_event_get_button(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneMouseEvent *>(event)->button());
+}
+
+int qt_graphics_scene_mouse_event_get_buttons(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneMouseEvent *>(event)->buttons());
+}
+
+int qt_graphics_scene_mouse_event_get_modifiers(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneMouseEvent *>(event)->modifiers());
+}
+
+void qt_graphics_scene_mouse_event_get_last_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->lastPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_mouse_event_get_last_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->lastScenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_mouse_event_get_button_down_pos(void *event, int button, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->buttonDownPos(
+        static_cast<Qt::MouseButton>(button));
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_mouse_event_get_button_down_scene_pos(void *event, int button, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneMouseEvent *>(event)->buttonDownScenePos(
+        static_cast<Qt::MouseButton>(button));
+    *x = pos.x(); *y = pos.y();
+}
+
+/* ── QGraphicsSceneHoverEvent ────────────────────────────────────── */
+
+void qt_graphics_scene_hover_event_get_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneHoverEvent *>(event)->pos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_hover_event_get_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneHoverEvent *>(event)->scenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_hover_event_get_screen_pos(void *event, int *x, int *y) {
+    QPoint pos = static_cast<QGraphicsSceneHoverEvent *>(event)->screenPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_hover_event_get_last_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneHoverEvent *>(event)->lastPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_hover_event_get_last_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneHoverEvent *>(event)->lastScenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+int qt_graphics_scene_hover_event_get_modifiers(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneHoverEvent *>(event)->modifiers());
+}
+
+/* ── QGraphicsSceneWheelEvent ────────────────────────────────────── */
+
+void qt_graphics_scene_wheel_event_get_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneWheelEvent *>(event)->pos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_wheel_event_get_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneWheelEvent *>(event)->scenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_wheel_event_get_screen_pos(void *event, int *x, int *y) {
+    QPoint pos = static_cast<QGraphicsSceneWheelEvent *>(event)->screenPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+int qt_graphics_scene_wheel_event_get_delta(void *event) {
+    return static_cast<QGraphicsSceneWheelEvent *>(event)->delta();
+}
+
+int qt_graphics_scene_wheel_event_get_orientation(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneWheelEvent *>(event)->orientation());
+}
+
+int qt_graphics_scene_wheel_event_get_modifiers(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneWheelEvent *>(event)->modifiers());
+}
+
+int qt_graphics_scene_wheel_event_get_buttons(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneWheelEvent *>(event)->buttons());
+}
+
+/* ── QGraphicsSceneContextMenuEvent ──────────────────────────────── */
+
+void qt_graphics_scene_context_menu_event_get_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneContextMenuEvent *>(event)->pos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_context_menu_event_get_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneContextMenuEvent *>(event)->scenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_context_menu_event_get_screen_pos(void *event, int *x, int *y) {
+    QPoint pos = static_cast<QGraphicsSceneContextMenuEvent *>(event)->screenPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+int qt_graphics_scene_context_menu_event_get_modifiers(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneContextMenuEvent *>(event)->modifiers());
+}
+
+int qt_graphics_scene_context_menu_event_get_reason(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneContextMenuEvent *>(event)->reason());
+}
+
+/* ── QGraphicsSceneDragDropEvent ─────────────────────────────────── */
+
+void qt_graphics_scene_drag_drop_event_get_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneDragDropEvent *>(event)->pos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_drag_drop_event_get_scene_pos(void *event, double *x, double *y) {
+    QPointF pos = static_cast<QGraphicsSceneDragDropEvent *>(event)->scenePos();
+    *x = pos.x(); *y = pos.y();
+}
+
+void qt_graphics_scene_drag_drop_event_get_screen_pos(void *event, int *x, int *y) {
+    QPoint pos = static_cast<QGraphicsSceneDragDropEvent *>(event)->screenPos();
+    *x = pos.x(); *y = pos.y();
+}
+
+int qt_graphics_scene_drag_drop_event_get_buttons(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneDragDropEvent *>(event)->buttons());
+}
+
+int qt_graphics_scene_drag_drop_event_get_modifiers(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneDragDropEvent *>(event)->modifiers());
+}
+
+void *qt_graphics_scene_drag_drop_event_get_mime_data(void *event) {
+    return const_cast<void *>(static_cast<const void *>(
+        static_cast<QGraphicsSceneDragDropEvent *>(event)->mimeData()));
+}
+
+int qt_graphics_scene_drag_drop_event_get_drop_action(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneDragDropEvent *>(event)->dropAction());
+}
+
+int qt_graphics_scene_drag_drop_event_get_proposed_action(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneDragDropEvent *>(event)->proposedAction());
+}
+
+int qt_graphics_scene_drag_drop_event_get_possible_actions(void *event) {
+    return static_cast<int>(static_cast<QGraphicsSceneDragDropEvent *>(event)->possibleActions());
+}
+
+void qt_graphics_scene_drag_drop_event_set_drop_action(void *event, int action) {
+    static_cast<QGraphicsSceneDragDropEvent *>(event)->setDropAction(
+        static_cast<Qt::DropAction>(action));
+}
+
+void qt_graphics_scene_drag_drop_event_accept_proposed_action(void *event) {
+    static_cast<QGraphicsSceneDragDropEvent *>(event)->acceptProposedAction();
 }
 
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */

@@ -3323,6 +3323,60 @@ void  qt_graphics_item_animation_set_shear_at(void *animation, double step, doub
 void  qt_graphics_item_animation_set_translation_at(void *animation, double step, double dx, double dy);
 void  qt_graphics_item_animation_clear(void *animation);
 
+/* ── QGraphicsSceneMouseEvent ────────────────────────────────────── */
+
+void  qt_graphics_scene_mouse_event_get_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_mouse_event_get_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_mouse_event_get_screen_pos(void *event, int *x, int *y);
+int   qt_graphics_scene_mouse_event_get_button(void *event);
+int   qt_graphics_scene_mouse_event_get_buttons(void *event);
+int   qt_graphics_scene_mouse_event_get_modifiers(void *event);
+void  qt_graphics_scene_mouse_event_get_last_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_mouse_event_get_last_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_mouse_event_get_button_down_pos(void *event, int button, double *x, double *y);
+void  qt_graphics_scene_mouse_event_get_button_down_scene_pos(void *event, int button, double *x, double *y);
+
+/* ── QGraphicsSceneHoverEvent ────────────────────────────────────── */
+
+void  qt_graphics_scene_hover_event_get_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_hover_event_get_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_hover_event_get_screen_pos(void *event, int *x, int *y);
+void  qt_graphics_scene_hover_event_get_last_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_hover_event_get_last_scene_pos(void *event, double *x, double *y);
+int   qt_graphics_scene_hover_event_get_modifiers(void *event);
+
+/* ── QGraphicsSceneWheelEvent ────────────────────────────────────── */
+
+void  qt_graphics_scene_wheel_event_get_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_wheel_event_get_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_wheel_event_get_screen_pos(void *event, int *x, int *y);
+int   qt_graphics_scene_wheel_event_get_delta(void *event);
+int   qt_graphics_scene_wheel_event_get_orientation(void *event);
+int   qt_graphics_scene_wheel_event_get_modifiers(void *event);
+int   qt_graphics_scene_wheel_event_get_buttons(void *event);
+
+/* ── QGraphicsSceneContextMenuEvent ──────────────────────────────── */
+
+void  qt_graphics_scene_context_menu_event_get_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_context_menu_event_get_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_context_menu_event_get_screen_pos(void *event, int *x, int *y);
+int   qt_graphics_scene_context_menu_event_get_modifiers(void *event);
+int   qt_graphics_scene_context_menu_event_get_reason(void *event);
+
+/* ── QGraphicsSceneDragDropEvent ─────────────────────────────────── */
+
+void  qt_graphics_scene_drag_drop_event_get_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_drag_drop_event_get_scene_pos(void *event, double *x, double *y);
+void  qt_graphics_scene_drag_drop_event_get_screen_pos(void *event, int *x, int *y);
+int   qt_graphics_scene_drag_drop_event_get_buttons(void *event);
+int   qt_graphics_scene_drag_drop_event_get_modifiers(void *event);
+void *qt_graphics_scene_drag_drop_event_get_mime_data(void *event);
+int   qt_graphics_scene_drag_drop_event_get_drop_action(void *event);
+int   qt_graphics_scene_drag_drop_event_get_proposed_action(void *event);
+int   qt_graphics_scene_drag_drop_event_get_possible_actions(void *event);
+void  qt_graphics_scene_drag_drop_event_set_drop_action(void *event, int action);
+void  qt_graphics_scene_drag_drop_event_accept_proposed_action(void *event);
+
 /* ── QGraphicsEffect (base + subclasses) ───────────────────────────── */
 
 void  qt_graphics_effect_set_enabled(void *effect, int is_enabled);
