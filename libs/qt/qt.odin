@@ -323,6 +323,36 @@ Backing_Store :: distinct rawptr
 Raw_Font :: distinct rawptr
 Glyph_Run :: distinct rawptr
 Offscreen_Surface :: distinct rawptr
+Style_Option :: distinct rawptr
+Style_Option_Complex :: distinct rawptr
+Style_Option_Button :: distinct rawptr
+Style_Option_Frame :: distinct rawptr
+Style_Option_Progress_Bar :: distinct rawptr
+Style_Option_Slider :: distinct rawptr
+Style_Option_Combo_Box :: distinct rawptr
+Style_Option_Menu_Item :: distinct rawptr
+Style_Option_Tab :: distinct rawptr
+Style_Option_Header :: distinct rawptr
+Style_Option_Tool_Button :: distinct rawptr
+Style_Option_Spin_Box :: distinct rawptr
+Style_Option_View_Item :: distinct rawptr
+Style_Option_Focus_Rect :: distinct rawptr
+Style_Option_Dock_Widget :: distinct rawptr
+Style_Option_Group_Box :: distinct rawptr
+Style_Option_Title_Bar :: distinct rawptr
+Style_Option_Tab_Widget_Frame :: distinct rawptr
+Style_Option_Tab_Bar_Base :: distinct rawptr
+Style_Option_Tool_Bar :: distinct rawptr
+Style_Option_Rubber_Band :: distinct rawptr
+Style_Option_Size_Grip :: distinct rawptr
+Common_Style :: distinct rawptr
+Rhi_Widget :: distinct rawptr
+Opengl_Window :: distinct rawptr
+Opengl_Shader_Program :: distinct rawptr
+Opengl_Buffer :: distinct rawptr
+Opengl_Vao :: distinct rawptr
+Opengl_Fbo :: distinct rawptr
+Opengl_Texture :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -5999,4 +6029,452 @@ foreign qt_lib {
 	@(require_results) offscreen_surface_get_screen :: proc(surface: Offscreen_Surface) -> rawptr ---
 	@(require_results) offscreen_surface_is_valid :: proc(surface: Offscreen_Surface) -> c.int ---
 	offscreen_surface_create_surface :: proc(surface: Offscreen_Surface) ---
+
+	/* QStyleOption (base) */
+
+	@(require_results) style_option_create :: proc(widget: Widget) -> Style_Option ---
+	@(require_results) style_option_create_empty :: proc() -> Style_Option ---
+	style_option_destroy :: proc(option: Style_Option) ---
+	style_option_init_from :: proc(option: Style_Option, widget: Widget) ---
+	style_option_set_rect :: proc(option: Style_Option, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	style_option_get_rect :: proc(option: Style_Option, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	style_option_set_state :: proc(option: Style_Option, state: c.int) ---
+	@(require_results) style_option_get_state :: proc(option: Style_Option) -> c.int ---
+	style_option_set_direction :: proc(option: Style_Option, direction: c.int) ---
+	@(require_results) style_option_get_direction :: proc(option: Style_Option) -> c.int ---
+
+	/* QStyleOptionComplex */
+
+	@(require_results) style_option_complex_create :: proc(widget: Widget) -> Style_Option_Complex ---
+	style_option_complex_destroy :: proc(option: Style_Option_Complex) ---
+	style_option_complex_set_sub_controls :: proc(option: Style_Option_Complex, sub_controls: c.int) ---
+	@(require_results) style_option_complex_get_sub_controls :: proc(option: Style_Option_Complex) -> c.int ---
+	style_option_complex_set_active_sub_controls :: proc(option: Style_Option_Complex, active: c.int) ---
+	@(require_results) style_option_complex_get_active_sub_controls :: proc(option: Style_Option_Complex) -> c.int ---
+
+	/* QStyleOptionButton */
+
+	@(require_results) style_option_button_create :: proc(widget: Widget) -> Style_Option_Button ---
+	style_option_button_destroy :: proc(option: Style_Option_Button) ---
+	style_option_button_set_text :: proc(option: Style_Option_Button, text: cstring) ---
+	@(require_results) style_option_button_get_text :: proc(option: Style_Option_Button) -> cstring ---
+	style_option_button_set_features :: proc(option: Style_Option_Button, features: c.int) ---
+	@(require_results) style_option_button_get_features :: proc(option: Style_Option_Button) -> c.int ---
+	style_option_button_set_icon :: proc(option: Style_Option_Button, icon: Icon) ---
+	style_option_button_set_icon_size :: proc(option: Style_Option_Button, w: c.int, h: c.int) ---
+	style_option_button_get_icon_size :: proc(option: Style_Option_Button, w: ^c.int, h: ^c.int) ---
+
+	/* QStyleOptionFrame */
+
+	@(require_results) style_option_frame_create :: proc(widget: Widget) -> Style_Option_Frame ---
+	style_option_frame_destroy :: proc(option: Style_Option_Frame) ---
+	style_option_frame_set_line_width :: proc(option: Style_Option_Frame, width: c.int) ---
+	@(require_results) style_option_frame_get_line_width :: proc(option: Style_Option_Frame) -> c.int ---
+	style_option_frame_set_mid_line_width :: proc(option: Style_Option_Frame, width: c.int) ---
+	@(require_results) style_option_frame_get_mid_line_width :: proc(option: Style_Option_Frame) -> c.int ---
+	style_option_frame_set_features :: proc(option: Style_Option_Frame, features: c.int) ---
+	@(require_results) style_option_frame_get_features :: proc(option: Style_Option_Frame) -> c.int ---
+	style_option_frame_set_frame_shape :: proc(option: Style_Option_Frame, shape: c.int) ---
+	@(require_results) style_option_frame_get_frame_shape :: proc(option: Style_Option_Frame) -> c.int ---
+
+	/* QStyleOptionProgressBar */
+
+	@(require_results) style_option_progress_bar_create :: proc(widget: Widget) -> Style_Option_Progress_Bar ---
+	style_option_progress_bar_destroy :: proc(option: Style_Option_Progress_Bar) ---
+	style_option_progress_bar_set_minimum :: proc(option: Style_Option_Progress_Bar, min: c.int) ---
+	@(require_results) style_option_progress_bar_get_minimum :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+	style_option_progress_bar_set_maximum :: proc(option: Style_Option_Progress_Bar, max: c.int) ---
+	@(require_results) style_option_progress_bar_get_maximum :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+	style_option_progress_bar_set_progress :: proc(option: Style_Option_Progress_Bar, progress: c.int) ---
+	@(require_results) style_option_progress_bar_get_progress :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+	style_option_progress_bar_set_text :: proc(option: Style_Option_Progress_Bar, text: cstring) ---
+	@(require_results) style_option_progress_bar_get_text :: proc(option: Style_Option_Progress_Bar) -> cstring ---
+	style_option_progress_bar_set_text_visible :: proc(option: Style_Option_Progress_Bar, is_visible: c.int) ---
+	@(require_results) style_option_progress_bar_is_text_visible :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+	style_option_progress_bar_set_inverted_appearance :: proc(option: Style_Option_Progress_Bar, is_inverted: c.int) ---
+	@(require_results) style_option_progress_bar_is_inverted_appearance :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+	style_option_progress_bar_set_bottom_to_top :: proc(option: Style_Option_Progress_Bar, is_bottom_to_top: c.int) ---
+	@(require_results) style_option_progress_bar_is_bottom_to_top :: proc(option: Style_Option_Progress_Bar) -> c.int ---
+
+	/* QStyleOptionSlider */
+
+	@(require_results) style_option_slider_create :: proc(widget: Widget) -> Style_Option_Slider ---
+	style_option_slider_destroy :: proc(option: Style_Option_Slider) ---
+	style_option_slider_set_orientation :: proc(option: Style_Option_Slider, orientation: c.int) ---
+	@(require_results) style_option_slider_get_orientation :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_minimum :: proc(option: Style_Option_Slider, min: c.int) ---
+	@(require_results) style_option_slider_get_minimum :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_maximum :: proc(option: Style_Option_Slider, max: c.int) ---
+	@(require_results) style_option_slider_get_maximum :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_tick_position :: proc(option: Style_Option_Slider, pos: c.int) ---
+	@(require_results) style_option_slider_get_tick_position :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_tick_interval :: proc(option: Style_Option_Slider, interval: c.int) ---
+	@(require_results) style_option_slider_get_tick_interval :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_single_step :: proc(option: Style_Option_Slider, step: c.int) ---
+	@(require_results) style_option_slider_get_single_step :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_page_step :: proc(option: Style_Option_Slider, step: c.int) ---
+	@(require_results) style_option_slider_get_page_step :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_slider_position :: proc(option: Style_Option_Slider, pos: c.int) ---
+	@(require_results) style_option_slider_get_slider_position :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_slider_value :: proc(option: Style_Option_Slider, value: c.int) ---
+	@(require_results) style_option_slider_get_slider_value :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_upsidedown :: proc(option: Style_Option_Slider, is_upsidedown: c.int) ---
+	@(require_results) style_option_slider_is_upsidedown :: proc(option: Style_Option_Slider) -> c.int ---
+	style_option_slider_set_dial_wrapping :: proc(option: Style_Option_Slider, is_wrapping: c.int) ---
+	@(require_results) style_option_slider_is_dial_wrapping :: proc(option: Style_Option_Slider) -> c.int ---
+
+	/* QStyleOptionComboBox */
+
+	@(require_results) style_option_combo_box_create :: proc(widget: Widget) -> Style_Option_Combo_Box ---
+	style_option_combo_box_destroy :: proc(option: Style_Option_Combo_Box) ---
+	style_option_combo_box_set_editable :: proc(option: Style_Option_Combo_Box, is_editable: c.int) ---
+	@(require_results) style_option_combo_box_is_editable :: proc(option: Style_Option_Combo_Box) -> c.int ---
+	style_option_combo_box_set_current_text :: proc(option: Style_Option_Combo_Box, text: cstring) ---
+	@(require_results) style_option_combo_box_get_current_text :: proc(option: Style_Option_Combo_Box) -> cstring ---
+	style_option_combo_box_set_current_icon :: proc(option: Style_Option_Combo_Box, icon: Icon) ---
+	style_option_combo_box_set_icon_size :: proc(option: Style_Option_Combo_Box, w: c.int, h: c.int) ---
+	style_option_combo_box_get_icon_size :: proc(option: Style_Option_Combo_Box, w: ^c.int, h: ^c.int) ---
+	style_option_combo_box_set_frame :: proc(option: Style_Option_Combo_Box, has_frame: c.int) ---
+	@(require_results) style_option_combo_box_has_frame :: proc(option: Style_Option_Combo_Box) -> c.int ---
+	style_option_combo_box_set_popup_rect :: proc(option: Style_Option_Combo_Box, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	style_option_combo_box_get_popup_rect :: proc(option: Style_Option_Combo_Box, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+
+	/* QStyleOptionMenuItem */
+
+	@(require_results) style_option_menu_item_create :: proc(widget: Widget) -> Style_Option_Menu_Item ---
+	style_option_menu_item_destroy :: proc(option: Style_Option_Menu_Item) ---
+	style_option_menu_item_set_menu_item_type :: proc(option: Style_Option_Menu_Item, type: c.int) ---
+	@(require_results) style_option_menu_item_get_menu_item_type :: proc(option: Style_Option_Menu_Item) -> c.int ---
+	style_option_menu_item_set_check_type :: proc(option: Style_Option_Menu_Item, type: c.int) ---
+	@(require_results) style_option_menu_item_get_check_type :: proc(option: Style_Option_Menu_Item) -> c.int ---
+	style_option_menu_item_set_checked :: proc(option: Style_Option_Menu_Item, is_checked: c.int) ---
+	@(require_results) style_option_menu_item_is_checked :: proc(option: Style_Option_Menu_Item) -> c.int ---
+	style_option_menu_item_set_text :: proc(option: Style_Option_Menu_Item, text: cstring) ---
+	@(require_results) style_option_menu_item_get_text :: proc(option: Style_Option_Menu_Item) -> cstring ---
+	style_option_menu_item_set_icon :: proc(option: Style_Option_Menu_Item, icon: Icon) ---
+	style_option_menu_item_set_max_icon_width :: proc(option: Style_Option_Menu_Item, width: c.int) ---
+	@(require_results) style_option_menu_item_get_max_icon_width :: proc(option: Style_Option_Menu_Item) -> c.int ---
+	style_option_menu_item_set_reserved_shortcut_width :: proc(option: Style_Option_Menu_Item, width: c.int) ---
+	@(require_results) style_option_menu_item_get_reserved_shortcut_width :: proc(option: Style_Option_Menu_Item) -> c.int ---
+	style_option_menu_item_set_font :: proc(option: Style_Option_Menu_Item, font: Font_Handle) ---
+
+	/* QStyleOptionTab */
+
+	@(require_results) style_option_tab_create :: proc(widget: Widget) -> Style_Option_Tab ---
+	style_option_tab_destroy :: proc(option: Style_Option_Tab) ---
+	style_option_tab_set_shape :: proc(option: Style_Option_Tab, shape: c.int) ---
+	@(require_results) style_option_tab_get_shape :: proc(option: Style_Option_Tab) -> c.int ---
+	style_option_tab_set_text :: proc(option: Style_Option_Tab, text: cstring) ---
+	@(require_results) style_option_tab_get_text :: proc(option: Style_Option_Tab) -> cstring ---
+	style_option_tab_set_icon :: proc(option: Style_Option_Tab, icon: Icon) ---
+	style_option_tab_set_row :: proc(option: Style_Option_Tab, row: c.int) ---
+	@(require_results) style_option_tab_get_row :: proc(option: Style_Option_Tab) -> c.int ---
+	style_option_tab_set_position :: proc(option: Style_Option_Tab, pos: c.int) ---
+	@(require_results) style_option_tab_get_position :: proc(option: Style_Option_Tab) -> c.int ---
+	style_option_tab_set_selected_position :: proc(option: Style_Option_Tab, pos: c.int) ---
+	@(require_results) style_option_tab_get_selected_position :: proc(option: Style_Option_Tab) -> c.int ---
+	style_option_tab_set_corner_widgets :: proc(option: Style_Option_Tab, widgets: c.int) ---
+	@(require_results) style_option_tab_get_corner_widgets :: proc(option: Style_Option_Tab) -> c.int ---
+	style_option_tab_set_icon_size :: proc(option: Style_Option_Tab, w: c.int, h: c.int) ---
+	style_option_tab_get_icon_size :: proc(option: Style_Option_Tab, w: ^c.int, h: ^c.int) ---
+	style_option_tab_set_document_mode :: proc(option: Style_Option_Tab, is_document_mode: c.int) ---
+	@(require_results) style_option_tab_is_document_mode :: proc(option: Style_Option_Tab) -> c.int ---
+
+	/* QStyleOptionHeader */
+
+	@(require_results) style_option_header_create :: proc(widget: Widget) -> Style_Option_Header ---
+	style_option_header_destroy :: proc(option: Style_Option_Header) ---
+	style_option_header_set_section :: proc(option: Style_Option_Header, section: c.int) ---
+	@(require_results) style_option_header_get_section :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_text :: proc(option: Style_Option_Header, text: cstring) ---
+	@(require_results) style_option_header_get_text :: proc(option: Style_Option_Header) -> cstring ---
+	style_option_header_set_icon :: proc(option: Style_Option_Header, icon: Icon) ---
+	style_option_header_set_icon_alignment :: proc(option: Style_Option_Header, alignment: c.int) ---
+	@(require_results) style_option_header_get_icon_alignment :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_position :: proc(option: Style_Option_Header, pos: c.int) ---
+	@(require_results) style_option_header_get_position :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_selected_position :: proc(option: Style_Option_Header, pos: c.int) ---
+	@(require_results) style_option_header_get_selected_position :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_sort_indicator :: proc(option: Style_Option_Header, indicator: c.int) ---
+	@(require_results) style_option_header_get_sort_indicator :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_orientation :: proc(option: Style_Option_Header, orientation: c.int) ---
+	@(require_results) style_option_header_get_orientation :: proc(option: Style_Option_Header) -> c.int ---
+	style_option_header_set_text_alignment :: proc(option: Style_Option_Header, alignment: c.int) ---
+	@(require_results) style_option_header_get_text_alignment :: proc(option: Style_Option_Header) -> c.int ---
+
+	/* QStyleOptionToolButton */
+
+	@(require_results) style_option_tool_button_create :: proc(widget: Widget) -> Style_Option_Tool_Button ---
+	style_option_tool_button_destroy :: proc(option: Style_Option_Tool_Button) ---
+	style_option_tool_button_set_features :: proc(option: Style_Option_Tool_Button, features: c.int) ---
+	@(require_results) style_option_tool_button_get_features :: proc(option: Style_Option_Tool_Button) -> c.int ---
+	style_option_tool_button_set_icon :: proc(option: Style_Option_Tool_Button, icon: Icon) ---
+	style_option_tool_button_set_icon_size :: proc(option: Style_Option_Tool_Button, w: c.int, h: c.int) ---
+	style_option_tool_button_get_icon_size :: proc(option: Style_Option_Tool_Button, w: ^c.int, h: ^c.int) ---
+	style_option_tool_button_set_text :: proc(option: Style_Option_Tool_Button, text: cstring) ---
+	@(require_results) style_option_tool_button_get_text :: proc(option: Style_Option_Tool_Button) -> cstring ---
+	style_option_tool_button_set_arrow_type :: proc(option: Style_Option_Tool_Button, arrow: c.int) ---
+	@(require_results) style_option_tool_button_get_arrow_type :: proc(option: Style_Option_Tool_Button) -> c.int ---
+	style_option_tool_button_set_tool_button_style :: proc(option: Style_Option_Tool_Button, style: c.int) ---
+	@(require_results) style_option_tool_button_get_tool_button_style :: proc(option: Style_Option_Tool_Button) -> c.int ---
+	style_option_tool_button_set_pos :: proc(option: Style_Option_Tool_Button, x: c.int, y: c.int) ---
+	style_option_tool_button_get_pos :: proc(option: Style_Option_Tool_Button, x: ^c.int, y: ^c.int) ---
+	style_option_tool_button_set_font :: proc(option: Style_Option_Tool_Button, font: Font_Handle) ---
+
+	/* QStyleOptionSpinBox */
+
+	@(require_results) style_option_spin_box_create :: proc(widget: Widget) -> Style_Option_Spin_Box ---
+	style_option_spin_box_destroy :: proc(option: Style_Option_Spin_Box) ---
+	style_option_spin_box_set_button_symbols :: proc(option: Style_Option_Spin_Box, symbols: c.int) ---
+	@(require_results) style_option_spin_box_get_button_symbols :: proc(option: Style_Option_Spin_Box) -> c.int ---
+	style_option_spin_box_set_step_enabled :: proc(option: Style_Option_Spin_Box, steps: c.int) ---
+	@(require_results) style_option_spin_box_get_step_enabled :: proc(option: Style_Option_Spin_Box) -> c.int ---
+	style_option_spin_box_set_frame :: proc(option: Style_Option_Spin_Box, has_frame: c.int) ---
+	@(require_results) style_option_spin_box_has_frame :: proc(option: Style_Option_Spin_Box) -> c.int ---
+
+	/* QStyleOptionViewItem */
+
+	@(require_results) style_option_view_item_create :: proc(widget: Widget) -> Style_Option_View_Item ---
+	style_option_view_item_destroy :: proc(option: Style_Option_View_Item) ---
+	style_option_view_item_set_display_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) ---
+	@(require_results) style_option_view_item_get_display_alignment :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_decoration_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) ---
+	@(require_results) style_option_view_item_get_decoration_alignment :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_text_elide_mode :: proc(option: Style_Option_View_Item, mode: c.int) ---
+	@(require_results) style_option_view_item_get_text_elide_mode :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_decoration_position :: proc(option: Style_Option_View_Item, pos: c.int) ---
+	@(require_results) style_option_view_item_get_decoration_position :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_decoration_size :: proc(option: Style_Option_View_Item, w: c.int, h: c.int) ---
+	style_option_view_item_get_decoration_size :: proc(option: Style_Option_View_Item, w: ^c.int, h: ^c.int) ---
+	style_option_view_item_set_font :: proc(option: Style_Option_View_Item, font: Font_Handle) ---
+	style_option_view_item_set_show_decoration_selected :: proc(option: Style_Option_View_Item, is_selected: c.int) ---
+	@(require_results) style_option_view_item_is_show_decoration_selected :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_features :: proc(option: Style_Option_View_Item, features: c.int) ---
+	@(require_results) style_option_view_item_get_features :: proc(option: Style_Option_View_Item) -> c.int ---
+	style_option_view_item_set_text :: proc(option: Style_Option_View_Item, text: cstring) ---
+	@(require_results) style_option_view_item_get_text :: proc(option: Style_Option_View_Item) -> cstring ---
+	style_option_view_item_set_icon :: proc(option: Style_Option_View_Item, icon: Icon) ---
+	style_option_view_item_set_check_state :: proc(option: Style_Option_View_Item, state: c.int) ---
+	@(require_results) style_option_view_item_get_check_state :: proc(option: Style_Option_View_Item) -> c.int ---
+
+	/* QStyleOptionFocusRect */
+
+	@(require_results) style_option_focus_rect_create :: proc(widget: Widget) -> Style_Option_Focus_Rect ---
+	style_option_focus_rect_destroy :: proc(option: Style_Option_Focus_Rect) ---
+	style_option_focus_rect_set_background_colour :: proc(option: Style_Option_Focus_Rect, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	style_option_focus_rect_get_background_colour :: proc(option: Style_Option_Focus_Rect, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) ---
+
+	/* QStyleOptionDockWidget */
+
+	@(require_results) style_option_dock_widget_create :: proc(widget: Widget) -> Style_Option_Dock_Widget ---
+	style_option_dock_widget_destroy :: proc(option: Style_Option_Dock_Widget) ---
+	style_option_dock_widget_set_title :: proc(option: Style_Option_Dock_Widget, title: cstring) ---
+	@(require_results) style_option_dock_widget_get_title :: proc(option: Style_Option_Dock_Widget) -> cstring ---
+	style_option_dock_widget_set_closable :: proc(option: Style_Option_Dock_Widget, is_closable: c.int) ---
+	@(require_results) style_option_dock_widget_is_closable :: proc(option: Style_Option_Dock_Widget) -> c.int ---
+	style_option_dock_widget_set_movable :: proc(option: Style_Option_Dock_Widget, is_movable: c.int) ---
+	@(require_results) style_option_dock_widget_is_movable :: proc(option: Style_Option_Dock_Widget) -> c.int ---
+	style_option_dock_widget_set_floatable :: proc(option: Style_Option_Dock_Widget, is_floatable: c.int) ---
+	@(require_results) style_option_dock_widget_is_floatable :: proc(option: Style_Option_Dock_Widget) -> c.int ---
+
+	/* QStyleOptionGroupBox */
+
+	@(require_results) style_option_group_box_create :: proc(widget: Widget) -> Style_Option_Group_Box ---
+	style_option_group_box_destroy :: proc(option: Style_Option_Group_Box) ---
+	style_option_group_box_set_text :: proc(option: Style_Option_Group_Box, text: cstring) ---
+	@(require_results) style_option_group_box_get_text :: proc(option: Style_Option_Group_Box) -> cstring ---
+	style_option_group_box_set_text_alignment :: proc(option: Style_Option_Group_Box, alignment: c.int) ---
+	@(require_results) style_option_group_box_get_text_alignment :: proc(option: Style_Option_Group_Box) -> c.int ---
+	style_option_group_box_set_line_width :: proc(option: Style_Option_Group_Box, width: c.int) ---
+	@(require_results) style_option_group_box_get_line_width :: proc(option: Style_Option_Group_Box) -> c.int ---
+	style_option_group_box_set_mid_line_width :: proc(option: Style_Option_Group_Box, width: c.int) ---
+	@(require_results) style_option_group_box_get_mid_line_width :: proc(option: Style_Option_Group_Box) -> c.int ---
+	style_option_group_box_set_features :: proc(option: Style_Option_Group_Box, features: c.int) ---
+	@(require_results) style_option_group_box_get_features :: proc(option: Style_Option_Group_Box) -> c.int ---
+
+	/* QStyleOptionTitleBar */
+
+	@(require_results) style_option_title_bar_create :: proc(widget: Widget) -> Style_Option_Title_Bar ---
+	style_option_title_bar_destroy :: proc(option: Style_Option_Title_Bar) ---
+	style_option_title_bar_set_text :: proc(option: Style_Option_Title_Bar, text: cstring) ---
+	@(require_results) style_option_title_bar_get_text :: proc(option: Style_Option_Title_Bar) -> cstring ---
+	style_option_title_bar_set_icon :: proc(option: Style_Option_Title_Bar, icon: Icon) ---
+	style_option_title_bar_set_title_bar_flags :: proc(option: Style_Option_Title_Bar, flags: c.int) ---
+	@(require_results) style_option_title_bar_get_title_bar_flags :: proc(option: Style_Option_Title_Bar) -> c.int ---
+	style_option_title_bar_set_title_bar_state :: proc(option: Style_Option_Title_Bar, state: c.int) ---
+	@(require_results) style_option_title_bar_get_title_bar_state :: proc(option: Style_Option_Title_Bar) -> c.int ---
+
+	/* QStyleOptionTabWidgetFrame */
+
+	@(require_results) style_option_tab_widget_frame_create :: proc(widget: Widget) -> Style_Option_Tab_Widget_Frame ---
+	style_option_tab_widget_frame_destroy :: proc(option: Style_Option_Tab_Widget_Frame) ---
+	style_option_tab_widget_frame_set_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) ---
+	@(require_results) style_option_tab_widget_frame_get_line_width :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int ---
+	style_option_tab_widget_frame_set_mid_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) ---
+	@(require_results) style_option_tab_widget_frame_get_mid_line_width :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int ---
+	style_option_tab_widget_frame_set_shape :: proc(option: Style_Option_Tab_Widget_Frame, shape: c.int) ---
+	@(require_results) style_option_tab_widget_frame_get_shape :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int ---
+	style_option_tab_widget_frame_set_tab_bar_size :: proc(option: Style_Option_Tab_Widget_Frame, w: c.int, h: c.int) ---
+	style_option_tab_widget_frame_get_tab_bar_size :: proc(option: Style_Option_Tab_Widget_Frame, w: ^c.int, h: ^c.int) ---
+	style_option_tab_widget_frame_set_selected_tab_rect :: proc(option: Style_Option_Tab_Widget_Frame, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	style_option_tab_widget_frame_get_selected_tab_rect :: proc(option: Style_Option_Tab_Widget_Frame, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+
+	/* QStyleOptionTabBarBase */
+
+	@(require_results) style_option_tab_bar_base_create :: proc(widget: Widget) -> Style_Option_Tab_Bar_Base ---
+	style_option_tab_bar_base_destroy :: proc(option: Style_Option_Tab_Bar_Base) ---
+	style_option_tab_bar_base_set_shape :: proc(option: Style_Option_Tab_Bar_Base, shape: c.int) ---
+	@(require_results) style_option_tab_bar_base_get_shape :: proc(option: Style_Option_Tab_Bar_Base) -> c.int ---
+	style_option_tab_bar_base_set_tab_bar_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	style_option_tab_bar_base_get_tab_bar_rect :: proc(option: Style_Option_Tab_Bar_Base, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	style_option_tab_bar_base_set_selected_tab_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	style_option_tab_bar_base_get_selected_tab_rect :: proc(option: Style_Option_Tab_Bar_Base, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	style_option_tab_bar_base_set_document_mode :: proc(option: Style_Option_Tab_Bar_Base, is_document_mode: c.int) ---
+	@(require_results) style_option_tab_bar_base_is_document_mode :: proc(option: Style_Option_Tab_Bar_Base) -> c.int ---
+
+	/* QStyleOptionToolBar */
+
+	@(require_results) style_option_tool_bar_create :: proc(widget: Widget) -> Style_Option_Tool_Bar ---
+	style_option_tool_bar_destroy :: proc(option: Style_Option_Tool_Bar) ---
+	style_option_tool_bar_set_position_of_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) ---
+	@(require_results) style_option_tool_bar_get_position_of_line :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+	style_option_tool_bar_set_position_within_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) ---
+	@(require_results) style_option_tool_bar_get_position_within_line :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+	style_option_tool_bar_set_toolbar_area :: proc(option: Style_Option_Tool_Bar, area: c.int) ---
+	@(require_results) style_option_tool_bar_get_toolbar_area :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+	style_option_tool_bar_set_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) ---
+	@(require_results) style_option_tool_bar_get_line_width :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+	style_option_tool_bar_set_mid_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) ---
+	@(require_results) style_option_tool_bar_get_mid_line_width :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+	style_option_tool_bar_set_features :: proc(option: Style_Option_Tool_Bar, features: c.int) ---
+	@(require_results) style_option_tool_bar_get_features :: proc(option: Style_Option_Tool_Bar) -> c.int ---
+
+	/* QStyleOptionRubberBand */
+
+	@(require_results) style_option_rubber_band_create :: proc(widget: Widget) -> Style_Option_Rubber_Band ---
+	style_option_rubber_band_destroy :: proc(option: Style_Option_Rubber_Band) ---
+	style_option_rubber_band_set_shape :: proc(option: Style_Option_Rubber_Band, shape: c.int) ---
+	@(require_results) style_option_rubber_band_get_shape :: proc(option: Style_Option_Rubber_Band) -> c.int ---
+	style_option_rubber_band_set_opaque :: proc(option: Style_Option_Rubber_Band, is_opaque: c.int) ---
+	@(require_results) style_option_rubber_band_is_opaque :: proc(option: Style_Option_Rubber_Band) -> c.int ---
+
+	/* QStyleOptionSizeGrip */
+
+	@(require_results) style_option_size_grip_create :: proc(widget: Widget) -> Style_Option_Size_Grip ---
+	style_option_size_grip_destroy :: proc(option: Style_Option_Size_Grip) ---
+	style_option_size_grip_set_corner :: proc(option: Style_Option_Size_Grip, corner: c.int) ---
+	@(require_results) style_option_size_grip_get_corner :: proc(option: Style_Option_Size_Grip) -> c.int ---
+
+	/* QCommonStyle */
+
+	@(require_results) common_style_create :: proc() -> Common_Style ---
+	common_style_destroy :: proc(style: Common_Style) ---
+	common_style_draw_primitive :: proc(style: Common_Style, element: c.int, option: rawptr, painter: Painter, widget: Widget) ---
+	common_style_draw_control :: proc(style: Common_Style, element: c.int, option: rawptr, painter: Painter, widget: Widget) ---
+	common_style_draw_complex_control :: proc(style: Common_Style, control: c.int, option: rawptr, painter: Painter, widget: Widget) ---
+	@(require_results) common_style_get_pixel_metric :: proc(style: Common_Style, metric: c.int, option: rawptr, widget: Widget) -> c.int ---
+	common_style_get_sub_element_rect :: proc(style: Common_Style, element: c.int, option: rawptr, widget: Widget, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	common_style_get_sub_control_rect :: proc(style: Common_Style, control: c.int, option: rawptr, sub_control: c.int, widget: Widget, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	@(require_results) common_style_hit_test_complex_control :: proc(style: Common_Style, control: c.int, option: rawptr, x: c.int, y: c.int, widget: Widget) -> c.int ---
+	common_style_get_size_from_contents :: proc(style: Common_Style, type: c.int, option: rawptr, contents_w: c.int, contents_h: c.int, widget: Widget, w: ^c.int, h: ^c.int) ---
+	@(require_results) common_style_get_standard_icon :: proc(style: Common_Style, standard_icon: c.int, option: rawptr, widget: Widget) -> Icon ---
+
+	/* QRhiWidget */
+
+	@(require_results) rhi_widget_create :: proc(init_cb: Callback, render_cb: Callback, user_data: rawptr, parent: Widget) -> Rhi_Widget ---
+	rhi_widget_destroy :: proc(widget: Rhi_Widget) ---
+	rhi_widget_request_update :: proc(widget: Rhi_Widget) ---
+	rhi_widget_set_fixed_colour_buffer_size :: proc(widget: Rhi_Widget, w: c.int, h: c.int) ---
+	rhi_widget_get_fixed_colour_buffer_size :: proc(widget: Rhi_Widget, w: ^c.int, h: ^c.int) ---
+	rhi_widget_set_sample_count :: proc(widget: Rhi_Widget, count: c.int) ---
+	@(require_results) rhi_widget_get_sample_count :: proc(widget: Rhi_Widget) -> c.int ---
+	rhi_widget_set_mirror_vertically :: proc(widget: Rhi_Widget, is_mirrored: c.int) ---
+	@(require_results) rhi_widget_is_mirror_vertically_enabled :: proc(widget: Rhi_Widget) -> c.int ---
+	rhi_widget_set_auto_render_target :: proc(widget: Rhi_Widget, is_auto: c.int) ---
+	@(require_results) rhi_widget_is_auto_render_target_enabled :: proc(widget: Rhi_Widget) -> c.int ---
+	@(require_results) rhi_widget_get_rhi :: proc(widget: Rhi_Widget) -> rawptr ---
+	@(require_results) rhi_widget_get_colour_texture :: proc(widget: Rhi_Widget) -> rawptr ---
+	@(require_results) rhi_widget_get_depth_stencil_buffer :: proc(widget: Rhi_Widget) -> rawptr ---
+	@(require_results) rhi_widget_get_render_target :: proc(widget: Rhi_Widget) -> rawptr ---
+
+	/* QOpenGLWindow */
+
+	@(require_results) opengl_window_create :: proc(init_cb: Callback, paint_cb: Callback, resize_cb: proc "c" (user_data: rawptr, w: c.int, h: c.int), user_data: rawptr) -> Opengl_Window ---
+	opengl_window_destroy :: proc(window: Opengl_Window) ---
+	opengl_window_request_update :: proc(window: Opengl_Window) ---
+	@(require_results) opengl_window_get_context :: proc(window: Opengl_Window) -> rawptr ---
+	opengl_window_make_current :: proc(window: Opengl_Window) ---
+	opengl_window_done_current :: proc(window: Opengl_Window) ---
+	@(require_results) opengl_window_get_device_pixel_ratio :: proc(window: Opengl_Window) -> c.double ---
+
+	/* QOpenGLShaderProgram */
+
+	@(require_results) opengl_shader_program_create :: proc() -> Opengl_Shader_Program ---
+	opengl_shader_program_destroy :: proc(program: Opengl_Shader_Program) ---
+	@(require_results) opengl_shader_program_add_shader_from_source :: proc(program: Opengl_Shader_Program, type: c.int, source: cstring) -> c.int ---
+	@(require_results) opengl_shader_program_link :: proc(program: Opengl_Shader_Program) -> c.int ---
+	@(require_results) opengl_shader_program_bind :: proc(program: Opengl_Shader_Program) -> c.int ---
+	opengl_shader_program_release :: proc(program: Opengl_Shader_Program) ---
+	@(require_results) opengl_shader_program_get_log :: proc(program: Opengl_Shader_Program) -> cstring ---
+	@(require_results) opengl_shader_program_get_attribute_location :: proc(program: Opengl_Shader_Program, name: cstring) -> c.int ---
+	@(require_results) opengl_shader_program_get_uniform_location :: proc(program: Opengl_Shader_Program, name: cstring) -> c.int ---
+	opengl_shader_program_set_uniform_int :: proc(program: Opengl_Shader_Program, location: c.int, value: c.int) ---
+	opengl_shader_program_set_uniform_float :: proc(program: Opengl_Shader_Program, location: c.int, value: c.float) ---
+	opengl_shader_program_set_uniform_vec2 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float) ---
+	opengl_shader_program_set_uniform_vec3 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float) ---
+	opengl_shader_program_set_uniform_vec4 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float, w: c.float) ---
+	opengl_shader_program_set_uniform_mat4 :: proc(program: Opengl_Shader_Program, location: c.int, value: [^]c.float) ---
+	opengl_shader_program_enable_attribute_array :: proc(program: Opengl_Shader_Program, location: c.int) ---
+	opengl_shader_program_disable_attribute_array :: proc(program: Opengl_Shader_Program, location: c.int) ---
+	opengl_shader_program_set_attribute_buffer :: proc(program: Opengl_Shader_Program, location: c.int, type: c.int, offset: c.int, tuple_size: c.int, stride: c.int) ---
+
+	/* QOpenGLBuffer */
+
+	@(require_results) opengl_buffer_create :: proc(type: c.int) -> Opengl_Buffer ---
+	opengl_buffer_destroy :: proc(buffer: Opengl_Buffer) ---
+	@(require_results) opengl_buffer_create_buffer :: proc(buffer: Opengl_Buffer) -> c.int ---
+	@(require_results) opengl_buffer_bind :: proc(buffer: Opengl_Buffer) -> c.int ---
+	opengl_buffer_release :: proc(buffer: Opengl_Buffer) ---
+	opengl_buffer_allocate :: proc(buffer: Opengl_Buffer, data: rawptr, count: c.int) ---
+	opengl_buffer_write :: proc(buffer: Opengl_Buffer, offset: c.int, data: rawptr, count: c.int) ---
+	@(require_results) opengl_buffer_get_size :: proc(buffer: Opengl_Buffer) -> c.int ---
+	opengl_buffer_set_usage_pattern :: proc(buffer: Opengl_Buffer, pattern: c.int) ---
+	@(require_results) opengl_buffer_get_usage_pattern :: proc(buffer: Opengl_Buffer) -> c.int ---
+
+	/* QOpenGLVertexArrayObject */
+
+	@(require_results) opengl_vao_create :: proc() -> Opengl_Vao ---
+	opengl_vao_destroy :: proc(vao: Opengl_Vao) ---
+	@(require_results) opengl_vao_create_vao :: proc(vao: Opengl_Vao) -> c.int ---
+	opengl_vao_bind :: proc(vao: Opengl_Vao) ---
+	opengl_vao_release :: proc(vao: Opengl_Vao) ---
+	@(require_results) opengl_vao_is_created :: proc(vao: Opengl_Vao) -> c.int ---
+
+	/* QOpenGLFramebufferObject */
+
+	@(require_results) opengl_fbo_create :: proc(width: c.int, height: c.int) -> Opengl_Fbo ---
+	opengl_fbo_destroy :: proc(fbo: Opengl_Fbo) ---
+	@(require_results) opengl_fbo_bind :: proc(fbo: Opengl_Fbo) -> c.int ---
+	@(require_results) opengl_fbo_release :: proc(fbo: Opengl_Fbo) -> c.int ---
+	@(require_results) opengl_fbo_is_valid :: proc(fbo: Opengl_Fbo) -> c.int ---
+	@(require_results) opengl_fbo_is_bound :: proc(fbo: Opengl_Fbo) -> c.int ---
+	opengl_fbo_get_size :: proc(fbo: Opengl_Fbo, w: ^c.int, h: ^c.int) ---
+	@(require_results) opengl_fbo_get_texture :: proc(fbo: Opengl_Fbo) -> c.int ---
+
+	/* QOpenGLTexture */
+
+	@(require_results) opengl_texture_create :: proc(target: c.int) -> Opengl_Texture ---
+	opengl_texture_destroy :: proc(texture: Opengl_Texture) ---
+	@(require_results) opengl_texture_create_texture :: proc(texture: Opengl_Texture) -> c.int ---
+	opengl_texture_bind :: proc(texture: Opengl_Texture) ---
+	opengl_texture_release :: proc(texture: Opengl_Texture) ---
+	@(require_results) opengl_texture_is_created :: proc(texture: Opengl_Texture) -> c.int ---
+	@(require_results) opengl_texture_get_texture_id :: proc(texture: Opengl_Texture) -> c.int ---
+	opengl_texture_set_size :: proc(texture: Opengl_Texture, width: c.int, height: c.int, depth: c.int) ---
+	opengl_texture_set_format :: proc(texture: Opengl_Texture, format: c.int) ---
+	opengl_texture_allocate_storage :: proc(texture: Opengl_Texture) ---
+	opengl_texture_set_data_2d :: proc(texture: Opengl_Texture, level: c.int, pixel_format: c.int, pixel_type: c.int, data: rawptr) ---
+	opengl_texture_generate_mip_maps :: proc(texture: Opengl_Texture) ---
+	opengl_texture_set_min_mag_filters :: proc(texture: Opengl_Texture, min_filter: c.int, mag_filter: c.int) ---
+	opengl_texture_set_wrap_mode :: proc(texture: Opengl_Texture, wrap_mode: c.int) ---
 }

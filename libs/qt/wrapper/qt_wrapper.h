@@ -4101,6 +4101,453 @@ void *qt_offscreen_surface_get_screen(void *surface);
 int   qt_offscreen_surface_is_valid(void *surface);
 void  qt_offscreen_surface_create_surface(void *surface);
 
+/* ── QStyleOption (base) ─────────────────────────────────────────── */
+
+void *qt_style_option_create(void *widget);
+void *qt_style_option_create_empty(void);
+void  qt_style_option_destroy(void *option);
+void  qt_style_option_init_from(void *option, void *widget);
+void  qt_style_option_set_rect(void *option, int x, int y, int w, int h);
+void  qt_style_option_get_rect(void *option, int *x, int *y, int *w, int *h);
+void  qt_style_option_set_state(void *option, int state);
+int   qt_style_option_get_state(void *option);
+void  qt_style_option_set_direction(void *option, int direction);
+int   qt_style_option_get_direction(void *option);
+
+/* ── QStyleOptionComplex ─────────────────────────────────────────── */
+
+void *qt_style_option_complex_create(void *widget);
+void  qt_style_option_complex_destroy(void *option);
+void  qt_style_option_complex_set_sub_controls(void *option, int sub_controls);
+int   qt_style_option_complex_get_sub_controls(void *option);
+void  qt_style_option_complex_set_active_sub_controls(void *option, int active);
+int   qt_style_option_complex_get_active_sub_controls(void *option);
+
+/* ── QStyleOptionButton ──────────────────────────────────────────── */
+
+void *qt_style_option_button_create(void *widget);
+void  qt_style_option_button_destroy(void *option);
+void  qt_style_option_button_set_text(void *option, const char *text);
+char *qt_style_option_button_get_text(void *option);
+void  qt_style_option_button_set_features(void *option, int features);
+int   qt_style_option_button_get_features(void *option);
+void  qt_style_option_button_set_icon(void *option, void *icon);
+void  qt_style_option_button_set_icon_size(void *option, int w, int h);
+void  qt_style_option_button_get_icon_size(void *option, int *w, int *h);
+
+/* ── QStyleOptionFrame ───────────────────────────────────────────── */
+
+void *qt_style_option_frame_create(void *widget);
+void  qt_style_option_frame_destroy(void *option);
+void  qt_style_option_frame_set_line_width(void *option, int width);
+int   qt_style_option_frame_get_line_width(void *option);
+void  qt_style_option_frame_set_mid_line_width(void *option, int width);
+int   qt_style_option_frame_get_mid_line_width(void *option);
+void  qt_style_option_frame_set_features(void *option, int features);
+int   qt_style_option_frame_get_features(void *option);
+void  qt_style_option_frame_set_frame_shape(void *option, int shape);
+int   qt_style_option_frame_get_frame_shape(void *option);
+
+/* ── QStyleOptionProgressBar ─────────────────────────────────────── */
+
+void *qt_style_option_progress_bar_create(void *widget);
+void  qt_style_option_progress_bar_destroy(void *option);
+void  qt_style_option_progress_bar_set_minimum(void *option, int min);
+int   qt_style_option_progress_bar_get_minimum(void *option);
+void  qt_style_option_progress_bar_set_maximum(void *option, int max);
+int   qt_style_option_progress_bar_get_maximum(void *option);
+void  qt_style_option_progress_bar_set_progress(void *option, int progress);
+int   qt_style_option_progress_bar_get_progress(void *option);
+void  qt_style_option_progress_bar_set_text(void *option, const char *text);
+char *qt_style_option_progress_bar_get_text(void *option);
+void  qt_style_option_progress_bar_set_text_visible(void *option, int is_visible);
+int   qt_style_option_progress_bar_is_text_visible(void *option);
+void  qt_style_option_progress_bar_set_inverted_appearance(void *option, int is_inverted);
+int   qt_style_option_progress_bar_is_inverted_appearance(void *option);
+void  qt_style_option_progress_bar_set_bottom_to_top(void *option, int is_bottom_to_top);
+int   qt_style_option_progress_bar_is_bottom_to_top(void *option);
+
+/* ── QStyleOptionSlider ──────────────────────────────────────────── */
+
+void *qt_style_option_slider_create(void *widget);
+void  qt_style_option_slider_destroy(void *option);
+void  qt_style_option_slider_set_orientation(void *option, int orientation);
+int   qt_style_option_slider_get_orientation(void *option);
+void  qt_style_option_slider_set_minimum(void *option, int min);
+int   qt_style_option_slider_get_minimum(void *option);
+void  qt_style_option_slider_set_maximum(void *option, int max);
+int   qt_style_option_slider_get_maximum(void *option);
+void  qt_style_option_slider_set_tick_position(void *option, int pos);
+int   qt_style_option_slider_get_tick_position(void *option);
+void  qt_style_option_slider_set_tick_interval(void *option, int interval);
+int   qt_style_option_slider_get_tick_interval(void *option);
+void  qt_style_option_slider_set_single_step(void *option, int step);
+int   qt_style_option_slider_get_single_step(void *option);
+void  qt_style_option_slider_set_page_step(void *option, int step);
+int   qt_style_option_slider_get_page_step(void *option);
+void  qt_style_option_slider_set_slider_position(void *option, int pos);
+int   qt_style_option_slider_get_slider_position(void *option);
+void  qt_style_option_slider_set_slider_value(void *option, int value);
+int   qt_style_option_slider_get_slider_value(void *option);
+void  qt_style_option_slider_set_upsidedown(void *option, int is_upsidedown);
+int   qt_style_option_slider_is_upsidedown(void *option);
+void  qt_style_option_slider_set_dial_wrapping(void *option, int is_wrapping);
+int   qt_style_option_slider_is_dial_wrapping(void *option);
+
+/* ── QStyleOptionComboBox ────────────────────────────────────────── */
+
+void *qt_style_option_combo_box_create(void *widget);
+void  qt_style_option_combo_box_destroy(void *option);
+void  qt_style_option_combo_box_set_editable(void *option, int is_editable);
+int   qt_style_option_combo_box_is_editable(void *option);
+void  qt_style_option_combo_box_set_current_text(void *option, const char *text);
+char *qt_style_option_combo_box_get_current_text(void *option);
+void  qt_style_option_combo_box_set_current_icon(void *option, void *icon);
+void  qt_style_option_combo_box_set_icon_size(void *option, int w, int h);
+void  qt_style_option_combo_box_get_icon_size(void *option, int *w, int *h);
+void  qt_style_option_combo_box_set_frame(void *option, int has_frame);
+int   qt_style_option_combo_box_has_frame(void *option);
+void  qt_style_option_combo_box_set_popup_rect(void *option, int x, int y, int w, int h);
+void  qt_style_option_combo_box_get_popup_rect(void *option, int *x, int *y, int *w, int *h);
+
+/* ── QStyleOptionMenuItem ────────────────────────────────────────── */
+
+void *qt_style_option_menu_item_create(void *widget);
+void  qt_style_option_menu_item_destroy(void *option);
+void  qt_style_option_menu_item_set_menu_item_type(void *option, int type);
+int   qt_style_option_menu_item_get_menu_item_type(void *option);
+void  qt_style_option_menu_item_set_check_type(void *option, int type);
+int   qt_style_option_menu_item_get_check_type(void *option);
+void  qt_style_option_menu_item_set_checked(void *option, int is_checked);
+int   qt_style_option_menu_item_is_checked(void *option);
+void  qt_style_option_menu_item_set_text(void *option, const char *text);
+char *qt_style_option_menu_item_get_text(void *option);
+void  qt_style_option_menu_item_set_icon(void *option, void *icon);
+void  qt_style_option_menu_item_set_max_icon_width(void *option, int width);
+int   qt_style_option_menu_item_get_max_icon_width(void *option);
+void  qt_style_option_menu_item_set_reserved_shortcut_width(void *option, int width);
+int   qt_style_option_menu_item_get_reserved_shortcut_width(void *option);
+void  qt_style_option_menu_item_set_font(void *option, void *font);
+
+/* ── QStyleOptionTab ─────────────────────────────────────────────── */
+
+void *qt_style_option_tab_create(void *widget);
+void  qt_style_option_tab_destroy(void *option);
+void  qt_style_option_tab_set_shape(void *option, int shape);
+int   qt_style_option_tab_get_shape(void *option);
+void  qt_style_option_tab_set_text(void *option, const char *text);
+char *qt_style_option_tab_get_text(void *option);
+void  qt_style_option_tab_set_icon(void *option, void *icon);
+void  qt_style_option_tab_set_row(void *option, int row);
+int   qt_style_option_tab_get_row(void *option);
+void  qt_style_option_tab_set_position(void *option, int pos);
+int   qt_style_option_tab_get_position(void *option);
+void  qt_style_option_tab_set_selected_position(void *option, int pos);
+int   qt_style_option_tab_get_selected_position(void *option);
+void  qt_style_option_tab_set_corner_widgets(void *option, int widgets);
+int   qt_style_option_tab_get_corner_widgets(void *option);
+void  qt_style_option_tab_set_icon_size(void *option, int w, int h);
+void  qt_style_option_tab_get_icon_size(void *option, int *w, int *h);
+void  qt_style_option_tab_set_document_mode(void *option, int is_document_mode);
+int   qt_style_option_tab_is_document_mode(void *option);
+
+/* ── QStyleOptionHeader ──────────────────────────────────────────── */
+
+void *qt_style_option_header_create(void *widget);
+void  qt_style_option_header_destroy(void *option);
+void  qt_style_option_header_set_section(void *option, int section);
+int   qt_style_option_header_get_section(void *option);
+void  qt_style_option_header_set_text(void *option, const char *text);
+char *qt_style_option_header_get_text(void *option);
+void  qt_style_option_header_set_icon(void *option, void *icon);
+void  qt_style_option_header_set_icon_alignment(void *option, int alignment);
+int   qt_style_option_header_get_icon_alignment(void *option);
+void  qt_style_option_header_set_position(void *option, int pos);
+int   qt_style_option_header_get_position(void *option);
+void  qt_style_option_header_set_selected_position(void *option, int pos);
+int   qt_style_option_header_get_selected_position(void *option);
+void  qt_style_option_header_set_sort_indicator(void *option, int indicator);
+int   qt_style_option_header_get_sort_indicator(void *option);
+void  qt_style_option_header_set_orientation(void *option, int orientation);
+int   qt_style_option_header_get_orientation(void *option);
+void  qt_style_option_header_set_text_alignment(void *option, int alignment);
+int   qt_style_option_header_get_text_alignment(void *option);
+
+/* ── QStyleOptionToolButton ──────────────────────────────────────── */
+
+void *qt_style_option_tool_button_create(void *widget);
+void  qt_style_option_tool_button_destroy(void *option);
+void  qt_style_option_tool_button_set_features(void *option, int features);
+int   qt_style_option_tool_button_get_features(void *option);
+void  qt_style_option_tool_button_set_icon(void *option, void *icon);
+void  qt_style_option_tool_button_set_icon_size(void *option, int w, int h);
+void  qt_style_option_tool_button_get_icon_size(void *option, int *w, int *h);
+void  qt_style_option_tool_button_set_text(void *option, const char *text);
+char *qt_style_option_tool_button_get_text(void *option);
+void  qt_style_option_tool_button_set_arrow_type(void *option, int arrow);
+int   qt_style_option_tool_button_get_arrow_type(void *option);
+void  qt_style_option_tool_button_set_tool_button_style(void *option, int style);
+int   qt_style_option_tool_button_get_tool_button_style(void *option);
+void  qt_style_option_tool_button_set_pos(void *option, int x, int y);
+void  qt_style_option_tool_button_get_pos(void *option, int *x, int *y);
+void  qt_style_option_tool_button_set_font(void *option, void *font);
+
+/* ── QStyleOptionSpinBox ─────────────────────────────────────────── */
+
+void *qt_style_option_spin_box_create(void *widget);
+void  qt_style_option_spin_box_destroy(void *option);
+void  qt_style_option_spin_box_set_button_symbols(void *option, int symbols);
+int   qt_style_option_spin_box_get_button_symbols(void *option);
+void  qt_style_option_spin_box_set_step_enabled(void *option, int steps);
+int   qt_style_option_spin_box_get_step_enabled(void *option);
+void  qt_style_option_spin_box_set_frame(void *option, int has_frame);
+int   qt_style_option_spin_box_has_frame(void *option);
+
+/* ── QStyleOptionViewItem ────────────────────────────────────────── */
+
+void *qt_style_option_view_item_create(void *widget);
+void  qt_style_option_view_item_destroy(void *option);
+void  qt_style_option_view_item_set_display_alignment(void *option, int alignment);
+int   qt_style_option_view_item_get_display_alignment(void *option);
+void  qt_style_option_view_item_set_decoration_alignment(void *option, int alignment);
+int   qt_style_option_view_item_get_decoration_alignment(void *option);
+void  qt_style_option_view_item_set_text_elide_mode(void *option, int mode);
+int   qt_style_option_view_item_get_text_elide_mode(void *option);
+void  qt_style_option_view_item_set_decoration_position(void *option, int pos);
+int   qt_style_option_view_item_get_decoration_position(void *option);
+void  qt_style_option_view_item_set_decoration_size(void *option, int w, int h);
+void  qt_style_option_view_item_get_decoration_size(void *option, int *w, int *h);
+void  qt_style_option_view_item_set_font(void *option, void *font);
+void  qt_style_option_view_item_set_show_decoration_selected(void *option, int is_selected);
+int   qt_style_option_view_item_is_show_decoration_selected(void *option);
+void  qt_style_option_view_item_set_features(void *option, int features);
+int   qt_style_option_view_item_get_features(void *option);
+void  qt_style_option_view_item_set_text(void *option, const char *text);
+char *qt_style_option_view_item_get_text(void *option);
+void  qt_style_option_view_item_set_icon(void *option, void *icon);
+void  qt_style_option_view_item_set_check_state(void *option, int state);
+int   qt_style_option_view_item_get_check_state(void *option);
+
+/* ── QStyleOptionFocusRect ───────────────────────────────────────── */
+
+void *qt_style_option_focus_rect_create(void *widget);
+void  qt_style_option_focus_rect_destroy(void *option);
+void  qt_style_option_focus_rect_set_background_colour(void *option, int r, int g, int b, int a);
+void  qt_style_option_focus_rect_get_background_colour(void *option, int *r, int *g, int *b, int *a);
+
+/* ── QStyleOptionDockWidget ──────────────────────────────────────── */
+
+void *qt_style_option_dock_widget_create(void *widget);
+void  qt_style_option_dock_widget_destroy(void *option);
+void  qt_style_option_dock_widget_set_title(void *option, const char *title);
+char *qt_style_option_dock_widget_get_title(void *option);
+void  qt_style_option_dock_widget_set_closable(void *option, int is_closable);
+int   qt_style_option_dock_widget_is_closable(void *option);
+void  qt_style_option_dock_widget_set_movable(void *option, int is_movable);
+int   qt_style_option_dock_widget_is_movable(void *option);
+void  qt_style_option_dock_widget_set_floatable(void *option, int is_floatable);
+int   qt_style_option_dock_widget_is_floatable(void *option);
+
+/* ── QStyleOptionGroupBox ────────────────────────────────────────── */
+
+void *qt_style_option_group_box_create(void *widget);
+void  qt_style_option_group_box_destroy(void *option);
+void  qt_style_option_group_box_set_text(void *option, const char *text);
+char *qt_style_option_group_box_get_text(void *option);
+void  qt_style_option_group_box_set_text_alignment(void *option, int alignment);
+int   qt_style_option_group_box_get_text_alignment(void *option);
+void  qt_style_option_group_box_set_line_width(void *option, int width);
+int   qt_style_option_group_box_get_line_width(void *option);
+void  qt_style_option_group_box_set_mid_line_width(void *option, int width);
+int   qt_style_option_group_box_get_mid_line_width(void *option);
+void  qt_style_option_group_box_set_features(void *option, int features);
+int   qt_style_option_group_box_get_features(void *option);
+/* ── QStyleOptionTitleBar ────────────────────────────────────────── */
+
+void *qt_style_option_title_bar_create(void *widget);
+void  qt_style_option_title_bar_destroy(void *option);
+void  qt_style_option_title_bar_set_text(void *option, const char *text);
+char *qt_style_option_title_bar_get_text(void *option);
+void  qt_style_option_title_bar_set_icon(void *option, void *icon);
+void  qt_style_option_title_bar_set_title_bar_flags(void *option, int flags);
+int   qt_style_option_title_bar_get_title_bar_flags(void *option);
+void  qt_style_option_title_bar_set_title_bar_state(void *option, int state);
+int   qt_style_option_title_bar_get_title_bar_state(void *option);
+
+/* ── QStyleOptionTabWidgetFrame ──────────────────────────────────── */
+
+void *qt_style_option_tab_widget_frame_create(void *widget);
+void  qt_style_option_tab_widget_frame_destroy(void *option);
+void  qt_style_option_tab_widget_frame_set_line_width(void *option, int width);
+int   qt_style_option_tab_widget_frame_get_line_width(void *option);
+void  qt_style_option_tab_widget_frame_set_mid_line_width(void *option, int width);
+int   qt_style_option_tab_widget_frame_get_mid_line_width(void *option);
+void  qt_style_option_tab_widget_frame_set_shape(void *option, int shape);
+int   qt_style_option_tab_widget_frame_get_shape(void *option);
+void  qt_style_option_tab_widget_frame_set_tab_bar_size(void *option, int w, int h);
+void  qt_style_option_tab_widget_frame_get_tab_bar_size(void *option, int *w, int *h);
+void  qt_style_option_tab_widget_frame_set_selected_tab_rect(void *option, int x, int y, int w, int h);
+void  qt_style_option_tab_widget_frame_get_selected_tab_rect(void *option, int *x, int *y, int *w, int *h);
+
+/* ── QStyleOptionTabBarBase ──────────────────────────────────────── */
+
+void *qt_style_option_tab_bar_base_create(void *widget);
+void  qt_style_option_tab_bar_base_destroy(void *option);
+void  qt_style_option_tab_bar_base_set_shape(void *option, int shape);
+int   qt_style_option_tab_bar_base_get_shape(void *option);
+void  qt_style_option_tab_bar_base_set_tab_bar_rect(void *option, int x, int y, int w, int h);
+void  qt_style_option_tab_bar_base_get_tab_bar_rect(void *option, int *x, int *y, int *w, int *h);
+void  qt_style_option_tab_bar_base_set_selected_tab_rect(void *option, int x, int y, int w, int h);
+void  qt_style_option_tab_bar_base_get_selected_tab_rect(void *option, int *x, int *y, int *w, int *h);
+void  qt_style_option_tab_bar_base_set_document_mode(void *option, int is_document_mode);
+int   qt_style_option_tab_bar_base_is_document_mode(void *option);
+
+/* ── QStyleOptionToolBar ─────────────────────────────────────────── */
+
+void *qt_style_option_tool_bar_create(void *widget);
+void  qt_style_option_tool_bar_destroy(void *option);
+void  qt_style_option_tool_bar_set_position_of_line(void *option, int pos);
+int   qt_style_option_tool_bar_get_position_of_line(void *option);
+void  qt_style_option_tool_bar_set_position_within_line(void *option, int pos);
+int   qt_style_option_tool_bar_get_position_within_line(void *option);
+void  qt_style_option_tool_bar_set_toolbar_area(void *option, int area);
+int   qt_style_option_tool_bar_get_toolbar_area(void *option);
+void  qt_style_option_tool_bar_set_line_width(void *option, int width);
+int   qt_style_option_tool_bar_get_line_width(void *option);
+void  qt_style_option_tool_bar_set_mid_line_width(void *option, int width);
+int   qt_style_option_tool_bar_get_mid_line_width(void *option);
+void  qt_style_option_tool_bar_set_features(void *option, int features);
+int   qt_style_option_tool_bar_get_features(void *option);
+
+/* ── QStyleOptionRubberBand ──────────────────────────────────────── */
+
+void *qt_style_option_rubber_band_create(void *widget);
+void  qt_style_option_rubber_band_destroy(void *option);
+void  qt_style_option_rubber_band_set_shape(void *option, int shape);
+int   qt_style_option_rubber_band_get_shape(void *option);
+void  qt_style_option_rubber_band_set_opaque(void *option, int is_opaque);
+int   qt_style_option_rubber_band_is_opaque(void *option);
+
+/* ── QStyleOptionSizeGrip ────────────────────────────────────────── */
+
+void *qt_style_option_size_grip_create(void *widget);
+void  qt_style_option_size_grip_destroy(void *option);
+void  qt_style_option_size_grip_set_corner(void *option, int corner);
+int   qt_style_option_size_grip_get_corner(void *option);
+
+/* ── QCommonStyle ────────────────────────────────────────────────── */
+
+void *qt_common_style_create(void);
+void  qt_common_style_destroy(void *style);
+void  qt_common_style_draw_primitive(void *style, int element, void *option, void *painter, void *widget);
+void  qt_common_style_draw_control(void *style, int element, void *option, void *painter, void *widget);
+void  qt_common_style_draw_complex_control(void *style, int control, void *option, void *painter, void *widget);
+int   qt_common_style_get_pixel_metric(void *style, int metric, void *option, void *widget);
+void  qt_common_style_get_sub_element_rect(void *style, int element, void *option, void *widget, int *x, int *y, int *w, int *h);
+void  qt_common_style_get_sub_control_rect(void *style, int control, void *option, int sub_control, void *widget, int *x, int *y, int *w, int *h);
+int   qt_common_style_hit_test_complex_control(void *style, int control, void *option, int x, int y, void *widget);
+void  qt_common_style_get_size_from_contents(void *style, int type, void *option, int contents_w, int contents_h, void *widget, int *w, int *h);
+void *qt_common_style_get_standard_icon(void *style, int standard_icon, void *option, void *widget);
+
+/* ── QRhiWidget ──────────────────────────────────────────────────── */
+
+void *qt_rhi_widget_create(qt_callback_t init_cb, qt_callback_t render_cb, void *user_data, void *parent);
+void  qt_rhi_widget_destroy(void *widget);
+void  qt_rhi_widget_request_update(void *widget);
+void  qt_rhi_widget_set_fixed_colour_buffer_size(void *widget, int w, int h);
+void  qt_rhi_widget_get_fixed_colour_buffer_size(void *widget, int *w, int *h);
+void  qt_rhi_widget_set_sample_count(void *widget, int count);
+int   qt_rhi_widget_get_sample_count(void *widget);
+void  qt_rhi_widget_set_mirror_vertically(void *widget, int is_mirrored);
+int   qt_rhi_widget_is_mirror_vertically_enabled(void *widget);
+void  qt_rhi_widget_set_auto_render_target(void *widget, int is_auto);
+int   qt_rhi_widget_is_auto_render_target_enabled(void *widget);
+void *qt_rhi_widget_get_rhi(void *widget);
+void *qt_rhi_widget_get_colour_texture(void *widget);
+void *qt_rhi_widget_get_depth_stencil_buffer(void *widget);
+void *qt_rhi_widget_get_render_target(void *widget);
+
+/* ── QOpenGLWindow ───────────────────────────────────────────────── */
+
+void *qt_opengl_window_create(qt_callback_t init_cb, qt_callback_t paint_cb, void (*resize_cb)(void *user_data, int w, int h), void *user_data);
+void  qt_opengl_window_destroy(void *window);
+void  qt_opengl_window_request_update(void *window);
+void *qt_opengl_window_get_context(void *window);
+void  qt_opengl_window_make_current(void *window);
+void  qt_opengl_window_done_current(void *window);
+double qt_opengl_window_get_device_pixel_ratio(void *window);
+
+/* ── QOpenGLShaderProgram ────────────────────────────────────────── */
+
+void *qt_opengl_shader_program_create(void);
+void  qt_opengl_shader_program_destroy(void *program);
+int   qt_opengl_shader_program_add_shader_from_source(void *program, int type, const char *source);
+int   qt_opengl_shader_program_link(void *program);
+int   qt_opengl_shader_program_bind(void *program);
+void  qt_opengl_shader_program_release(void *program);
+char *qt_opengl_shader_program_get_log(void *program);
+int   qt_opengl_shader_program_get_attribute_location(void *program, const char *name);
+int   qt_opengl_shader_program_get_uniform_location(void *program, const char *name);
+void  qt_opengl_shader_program_set_uniform_int(void *program, int location, int value);
+void  qt_opengl_shader_program_set_uniform_float(void *program, int location, float value);
+void  qt_opengl_shader_program_set_uniform_vec2(void *program, int location, float x, float y);
+void  qt_opengl_shader_program_set_uniform_vec3(void *program, int location, float x, float y, float z);
+void  qt_opengl_shader_program_set_uniform_vec4(void *program, int location, float x, float y, float z, float w);
+void  qt_opengl_shader_program_set_uniform_mat4(void *program, int location, const float *value);
+void  qt_opengl_shader_program_enable_attribute_array(void *program, int location);
+void  qt_opengl_shader_program_disable_attribute_array(void *program, int location);
+void  qt_opengl_shader_program_set_attribute_buffer(void *program, int location, int type, int offset, int tuple_size, int stride);
+
+/* ── QOpenGLBuffer ───────────────────────────────────────────────── */
+
+void *qt_opengl_buffer_create(int type);
+void  qt_opengl_buffer_destroy(void *buffer);
+int   qt_opengl_buffer_create_buffer(void *buffer);
+int   qt_opengl_buffer_bind(void *buffer);
+void  qt_opengl_buffer_release(void *buffer);
+void  qt_opengl_buffer_allocate(void *buffer, const void *data, int count);
+void  qt_opengl_buffer_write(void *buffer, int offset, const void *data, int count);
+int   qt_opengl_buffer_get_size(void *buffer);
+void  qt_opengl_buffer_set_usage_pattern(void *buffer, int pattern);
+int   qt_opengl_buffer_get_usage_pattern(void *buffer);
+
+/* ── QOpenGLVertexArrayObject ────────────────────────────────────── */
+
+void *qt_opengl_vao_create(void);
+void  qt_opengl_vao_destroy(void *vao);
+int   qt_opengl_vao_create_vao(void *vao);
+void  qt_opengl_vao_bind(void *vao);
+void  qt_opengl_vao_release(void *vao);
+int   qt_opengl_vao_is_created(void *vao);
+
+/* ── QOpenGLFramebufferObject ────────────────────────────────────── */
+
+void *qt_opengl_fbo_create(int width, int height);
+void  qt_opengl_fbo_destroy(void *fbo);
+int   qt_opengl_fbo_bind(void *fbo);
+int   qt_opengl_fbo_release(void *fbo);
+int   qt_opengl_fbo_is_valid(void *fbo);
+int   qt_opengl_fbo_is_bound(void *fbo);
+void  qt_opengl_fbo_get_size(void *fbo, int *w, int *h);
+int   qt_opengl_fbo_get_texture(void *fbo);
+
+/* ── QOpenGLTexture ──────────────────────────────────────────────── */
+
+void *qt_opengl_texture_create(int target);
+void  qt_opengl_texture_destroy(void *texture);
+int   qt_opengl_texture_create_texture(void *texture);
+void  qt_opengl_texture_bind(void *texture);
+void  qt_opengl_texture_release(void *texture);
+int   qt_opengl_texture_is_created(void *texture);
+int   qt_opengl_texture_get_texture_id(void *texture);
+void  qt_opengl_texture_set_size(void *texture, int width, int height, int depth);
+void  qt_opengl_texture_set_format(void *texture, int format);
+void  qt_opengl_texture_allocate_storage(void *texture);
+void  qt_opengl_texture_set_data_2d(void *texture, int level, int pixel_format, int pixel_type, const void *data);
+void  qt_opengl_texture_generate_mip_maps(void *texture);
+void  qt_opengl_texture_set_min_mag_filters(void *texture, int min_filter, int mag_filter);
+void  qt_opengl_texture_set_wrap_mode(void *texture, int wrap_mode);
+
 #ifdef __cplusplus
 }
 #endif

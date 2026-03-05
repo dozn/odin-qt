@@ -83,25 +83,17 @@ QWaitCondition, QThreadPool (with QRunnable callback wrapper),
 QPageRanges, QFileSelector, QPluginLoader, QLoggingCategory,
 QCborValue, QCborMap, QCborArray,
 QPlainTextDocumentLayout, QSplitterHandle, QStylePainter,
-QWindow, QBackingStore, QRawFont, QGlyphRun, QOffscreenSurface
+QWindow, QBackingStore, QRawFont, QGlyphRun, QOffscreenSurface,
+QStyleOption (base + all subclasses: Button, Frame, ProgressBar, Slider,
+ComboBox, MenuItem, Tab, Header, ToolButton, SpinBox, ViewItem, FocusRect,
+DockWidget, GroupBox, TitleBar, TabWidgetFrame, TabBarBase, ToolBar,
+RubberBand, SizeGrip, Complex),
+QCommonStyle, QRhiWidget,
+QOpenGLWindow, QOpenGLShaderProgram, QOpenGLBuffer,
+QOpenGLVertexArrayObject, QOpenGLFramebufferObject, QOpenGLTexture
 
 ---
 
 ## Not Yet Wrapped
 
-### High Priority — Commonly needed functionality
-
-### Medium Priority — Useful but less commonly needed
-
-### Low Priority — Niche or rarely needed
-
-**Core:**
-(all core items wrapped)
-
-**Widgets:**
-- QRhiWidget — RHI-based custom rendering (newer Qt 6 GPU widget)
-- QStyleOption* family — custom style painting primitives
-- QCommonStyle — base for custom style implementations
-
-**Gui:**
-- QOpenGL* — OpenGL integration (Qt6OpenGL.lib is linked but unused)
+All items have been wrapped. The TODO list is complete.

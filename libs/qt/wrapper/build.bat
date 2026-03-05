@@ -12,6 +12,7 @@ cl /nologo /EHsc /std:c++17 /Zc:__cplusplus /permissive- /MD /c /O2 ^
     /I "%QT_DIR%\include\QtCore" ^
     /I "%QT_DIR%\include\QtGui" ^
     /I "%QT_DIR%\include\QtWidgets" ^
+    /I "%QT_DIR%\include\QtOpenGL" ^
     qt_wrapper.cpp
 
 if %ERRORLEVEL% neq 0 (
