@@ -1536,6 +1536,62 @@ void qt_combo_box_set_current_text(void *combo_box, const char *text) {
     static_cast<QComboBox *>(combo_box)->setCurrentText(QString::fromUtf8(text));
 }
 
+void qt_combo_box_add_items(void *combo_box, const char **items, int count) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(items[i]));
+    }
+    static_cast<QComboBox *>(combo_box)->addItems(sl);
+}
+
+void qt_combo_box_insert_items(void *combo_box, int index, const char **items, int count) {
+    QStringList sl;
+    for (int i = 0; i < count; ++i) {
+        sl.append(QString::fromUtf8(items[i]));
+    }
+    static_cast<QComboBox *>(combo_box)->insertItems(index, sl);
+}
+
+void qt_combo_box_set_max_visible_items(void *combo_box, int max_items) {
+    static_cast<QComboBox *>(combo_box)->setMaxVisibleItems(max_items);
+}
+
+void qt_combo_box_set_max_count(void *combo_box, int max_count) {
+    static_cast<QComboBox *>(combo_box)->setMaxCount(max_count);
+}
+
+void qt_combo_box_set_insert_policy(void *combo_box, int policy) {
+    static_cast<QComboBox *>(combo_box)->setInsertPolicy(static_cast<QComboBox::InsertPolicy>(policy));
+}
+
+void qt_combo_box_set_duplicates_enabled(void *combo_box, int is_duplicates_enabled) {
+    static_cast<QComboBox *>(combo_box)->setDuplicatesEnabled(is_duplicates_enabled != 0);
+}
+
+void *qt_combo_box_get_line_edit(void *combo_box) {
+    return static_cast<void *>(static_cast<QComboBox *>(combo_box)->lineEdit());
+}
+
+void qt_combo_box_show_popup(void *combo_box) {
+    static_cast<QComboBox *>(combo_box)->showPopup();
+}
+
+void qt_combo_box_hide_popup(void *combo_box) {
+    static_cast<QComboBox *>(combo_box)->hidePopup();
+}
+
+void qt_combo_box_set_model(void *combo_box, void *model) {
+    static_cast<QComboBox *>(combo_box)->setModel(static_cast<QAbstractItemModel *>(model));
+}
+
+void *qt_combo_box_get_model(void *combo_box) {
+    return static_cast<void *>(static_cast<QComboBox *>(combo_box)->model());
+}
+
+void qt_combo_box_set_size_adjust_policy(void *combo_box, int policy) {
+    static_cast<QComboBox *>(combo_box)->setSizeAdjustPolicy(static_cast<QComboBox::SizeAdjustPolicy>(policy));
+}
+
 /* ── QSlider ────────────────────────────────────────────────────────── */
 
 void *qt_slider_create(int orientation, void *parent) {
@@ -1964,6 +2020,77 @@ void qt_tree_widget_set_sorting_enabled(void *tree, int is_enabled) {
     static_cast<QTreeWidget *>(tree)->setSortingEnabled(is_enabled != 0);
 }
 
+void qt_tree_widget_insert_top_level_item(void *tree, int index, void *item) {
+    static_cast<QTreeWidget *>(tree)->insertTopLevelItem(
+        index, static_cast<QTreeWidgetItem *>(item)
+    );
+}
+
+void *qt_tree_widget_get_top_level_item(void *tree, int index) {
+    return static_cast<void *>(static_cast<QTreeWidget *>(tree)->topLevelItem(index));
+}
+
+int qt_tree_widget_index_of_top_level_item(void *tree, void *item) {
+    return static_cast<QTreeWidget *>(tree)->indexOfTopLevelItem(
+        static_cast<QTreeWidgetItem *>(item)
+    );
+}
+
+void qt_tree_widget_get_selected_items(void *tree, void ***out_items, int *out_count) {
+    auto *tw = static_cast<QTreeWidget *>(tree);
+    QList<QTreeWidgetItem *> items = tw->selectedItems();
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++) {
+            (*out_items)[i] = static_cast<void *>(items[i]);
+        }
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_tree_widget_find_items(void *tree, const char *text, int flags, int column, void ***out_items, int *out_count) {
+    auto *tw = static_cast<QTreeWidget *>(tree);
+    QList<QTreeWidgetItem *> items = tw->findItems(QString::fromUtf8(text), static_cast<Qt::MatchFlags>(flags), column);
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++) {
+            (*out_items)[i] = static_cast<void *>(items[i]);
+        }
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_tree_widget_scroll_to_item(void *tree, void *item, int scroll_hint) {
+    static_cast<QTreeWidget *>(tree)->scrollToItem(
+        static_cast<QTreeWidgetItem *>(item),
+        static_cast<QAbstractItemView::ScrollHint>(scroll_hint)
+    );
+}
+
+void qt_tree_widget_sort_items(void *tree, int column, int order) {
+    static_cast<QTreeWidget *>(tree)->sortItems(column, static_cast<Qt::SortOrder>(order));
+}
+
+void qt_tree_widget_set_indentation(void *tree, int indentation) {
+    static_cast<QTreeWidget *>(tree)->setIndentation(indentation);
+}
+
+void qt_tree_widget_set_uniform_row_heights(void *tree, int is_uniform) {
+    static_cast<QTreeWidget *>(tree)->setUniformRowHeights(is_uniform != 0);
+}
+
+void qt_tree_widget_set_animated(void *tree, int is_animated) {
+    static_cast<QTreeWidget *>(tree)->setAnimated(is_animated != 0);
+}
+
+void qt_tree_widget_set_header_hidden(void *tree, int is_hidden) {
+    static_cast<QTreeWidget *>(tree)->setHeaderHidden(is_hidden != 0);
+}
+
 /* QTreeWidgetItem */
 
 void *qt_tree_widget_item_create(const char **texts, int count) {
@@ -2012,6 +2139,82 @@ void qt_tree_widget_item_set_expanded(void *item, int is_expanded) {
 
 int qt_tree_widget_item_is_expanded(void *item) {
     return static_cast<QTreeWidgetItem *>(item)->isExpanded() ? 1 : 0;
+}
+
+void qt_tree_widget_item_set_icon(void *item, int column, void *icon) {
+    static_cast<QTreeWidgetItem *>(item)->setIcon(column, *static_cast<QIcon *>(icon));
+}
+
+void qt_tree_widget_item_set_check_state(void *item, int column, int state) {
+    static_cast<QTreeWidgetItem *>(item)->setCheckState(column, static_cast<Qt::CheckState>(state));
+}
+
+int qt_tree_widget_item_get_check_state(void *item, int column) {
+    return static_cast<int>(static_cast<QTreeWidgetItem *>(item)->checkState(column));
+}
+
+void qt_tree_widget_item_set_flags(void *item, int flags) {
+    static_cast<QTreeWidgetItem *>(item)->setFlags(static_cast<Qt::ItemFlags>(flags));
+}
+
+void qt_tree_widget_item_set_data(void *item, int column, int role, int value) {
+    static_cast<QTreeWidgetItem *>(item)->setData(column, role, QVariant(value));
+}
+
+int qt_tree_widget_item_get_data(void *item, int column, int role) {
+    return static_cast<QTreeWidgetItem *>(item)->data(column, role).toInt();
+}
+
+void qt_tree_widget_item_set_data_string(void *item, int column, int role, const char *value) {
+    static_cast<QTreeWidgetItem *>(item)->setData(column, role, QVariant(QString::fromUtf8(value)));
+}
+
+char *qt_tree_widget_item_get_data_string(void *item, int column, int role) {
+    return qstring_to_heap_utf8(static_cast<QTreeWidgetItem *>(item)->data(column, role).toString());
+}
+
+void qt_tree_widget_item_set_tool_tip(void *item, int column, const char *tooltip) {
+    static_cast<QTreeWidgetItem *>(item)->setToolTip(column, QString::fromUtf8(tooltip));
+}
+
+void qt_tree_widget_item_set_hidden(void *item, int is_hidden) {
+    static_cast<QTreeWidgetItem *>(item)->setHidden(is_hidden != 0);
+}
+
+int qt_tree_widget_item_is_hidden(void *item) {
+    return static_cast<QTreeWidgetItem *>(item)->isHidden() ? 1 : 0;
+}
+
+void qt_tree_widget_item_set_disabled(void *item, int is_disabled) {
+    static_cast<QTreeWidgetItem *>(item)->setDisabled(is_disabled != 0);
+}
+
+int qt_tree_widget_item_is_disabled(void *item) {
+    return static_cast<QTreeWidgetItem *>(item)->isDisabled() ? 1 : 0;
+}
+
+void qt_tree_widget_item_set_selected(void *item, int is_selected) {
+    static_cast<QTreeWidgetItem *>(item)->setSelected(is_selected != 0);
+}
+
+int qt_tree_widget_item_is_selected(void *item) {
+    return static_cast<QTreeWidgetItem *>(item)->isSelected() ? 1 : 0;
+}
+
+void qt_tree_widget_item_set_first_column_spanned(void *item, int is_spanned) {
+    static_cast<QTreeWidgetItem *>(item)->setFirstColumnSpanned(is_spanned != 0);
+}
+
+void *qt_tree_widget_item_get_tree_widget(void *item) {
+    return static_cast<void *>(static_cast<QTreeWidgetItem *>(item)->treeWidget());
+}
+
+void *qt_tree_widget_item_take_child(void *item, int index) {
+    return static_cast<void *>(static_cast<QTreeWidgetItem *>(item)->takeChild(index));
+}
+
+void qt_tree_widget_item_sort_children(void *item, int column, int order) {
+    static_cast<QTreeWidgetItem *>(item)->sortChildren(column, static_cast<Qt::SortOrder>(order));
 }
 
 /* ── QTableWidget ───────────────────────────────────────────────────── */
@@ -2131,6 +2334,85 @@ void qt_table_widget_resize_columns_to_contents(void *table) {
 
 void qt_table_widget_resize_rows_to_contents(void *table) {
     static_cast<QTableWidget *>(table)->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+}
+
+void qt_table_widget_set_cell_widget(void *table, int row, int col, void *widget) {
+    static_cast<QTableWidget *>(table)->setCellWidget(row, col, static_cast<QWidget *>(widget));
+}
+
+void *qt_table_widget_get_cell_widget(void *table, int row, int col) {
+    return static_cast<void *>(static_cast<QTableWidget *>(table)->cellWidget(row, col));
+}
+
+void *qt_table_widget_get_item(void *table, int row, int col) {
+    return static_cast<void *>(static_cast<QTableWidget *>(table)->item(row, col));
+}
+
+void *qt_table_widget_get_current_item(void *table) {
+    return static_cast<void *>(static_cast<QTableWidget *>(table)->currentItem());
+}
+
+void qt_table_widget_set_current_cell(void *table, int row, int col) {
+    static_cast<QTableWidget *>(table)->setCurrentCell(row, col);
+}
+
+void qt_table_widget_get_selected_items(void *table, void ***out_items, int *out_count) {
+    auto *t = static_cast<QTableWidget *>(table);
+    QList<QTableWidgetItem *> items = t->selectedItems();
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++) {
+            (*out_items)[i] = static_cast<void *>(items[i]);
+        }
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_table_widget_set_show_grid(void *table, int is_show) {
+    static_cast<QTableWidget *>(table)->setShowGrid(is_show != 0);
+}
+
+void qt_table_widget_set_span(void *table, int row, int col, int row_span, int col_span) {
+    static_cast<QTableWidget *>(table)->setSpan(row, col, row_span, col_span);
+}
+
+int qt_table_widget_get_row_span(void *table, int row, int col) {
+    return static_cast<QTableWidget *>(table)->rowSpan(row, col);
+}
+
+int qt_table_widget_get_column_span(void *table, int row, int col) {
+    return static_cast<QTableWidget *>(table)->columnSpan(row, col);
+}
+
+void qt_table_widget_scroll_to_item(void *table, void *item, int scroll_hint) {
+    static_cast<QTableWidget *>(table)->scrollToItem(
+        static_cast<QTableWidgetItem *>(item),
+        static_cast<QAbstractItemView::ScrollHint>(scroll_hint)
+    );
+}
+
+void qt_table_widget_find_items(void *table, const char *text, int flags, void ***out_items, int *out_count) {
+    auto *t = static_cast<QTableWidget *>(table);
+    QList<QTableWidgetItem *> items = t->findItems(QString::fromUtf8(text), static_cast<Qt::MatchFlags>(flags));
+    *out_count = items.size();
+    if (*out_count > 0) {
+        *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+        for (int i = 0; i < *out_count; i++) {
+            (*out_items)[i] = static_cast<void *>(items[i]);
+        }
+    } else {
+        *out_items = nullptr;
+    }
+}
+
+void qt_table_widget_set_word_wrap(void *table, int is_word_wrap) {
+    static_cast<QTableWidget *>(table)->setWordWrap(is_word_wrap != 0);
+}
+
+void qt_table_widget_set_corner_button_enabled(void *table, int is_enabled) {
+    static_cast<QTableWidget *>(table)->setCornerButtonEnabled(is_enabled != 0);
 }
 
 /* ── QScrollArea ────────────────────────────────────────────────────── */
@@ -3134,6 +3416,10 @@ void qt_free_string_array(char **names, int count) {
     free(names);
 }
 
+void qt_free_item_array(void **items) {
+    free(items);
+}
+
 /* ── QFileDialog ────────────────────────────────────────────────────── */
 
 char *qt_file_dialog_get_open_file_name(void *parent, const char *caption, const char *dir, const char *filter) {
@@ -3865,6 +4151,34 @@ int qt_tree_widget_connect_current_item_changed(void *tree, qt_callback_t callba
     return store_connection(conn);
 }
 
+int qt_table_widget_connect_current_cell_changed(void *table, qt_four_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTableWidget *>(table), &QTableWidget::currentCellChanged, [callback, user_data](int row, int col, int prev_row, int prev_col) {
+        callback(row, col, prev_row, prev_col, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_table_widget_connect_current_item_changed(void *table, qt_two_pointer_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTableWidget *>(table), &QTableWidget::currentItemChanged, [callback, user_data](QTableWidgetItem *current, QTableWidgetItem *previous) {
+        callback(static_cast<void *>(current), static_cast<void *>(previous), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_tree_widget_connect_item_changed(void *tree, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTreeWidget *>(tree), &QTreeWidget::itemChanged, [callback, user_data](QTreeWidgetItem *item, int column) {
+        callback(static_cast<void *>(item), column, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_tree_widget_connect_item_selection_changed(void *tree, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTreeWidget *>(tree), &QTreeWidget::itemSelectionChanged, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
 int qt_list_widget_connect_item_clicked(void *list, qt_int_callback_t callback, void *user_data) {
     auto *lw = static_cast<QListWidget *>(list);
     auto conn = QObject::connect(lw, &QListWidget::itemClicked, [lw, callback, user_data](QListWidgetItem *item) {
@@ -3890,6 +4204,28 @@ int qt_list_widget_connect_item_selection_changed(void *list, qt_callback_t call
 
 int qt_combo_box_connect_current_text_changed(void *combo_box, qt_string_callback_t callback, void *user_data) {
     auto conn = QObject::connect(static_cast<QComboBox *>(combo_box), &QComboBox::currentTextChanged, [callback, user_data](const QString &text) {
+        QByteArray utf8 = text.toUtf8();
+        callback(utf8.constData(), user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_combo_box_connect_activated(void *combo_box, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QComboBox *>(combo_box), &QComboBox::activated, [callback, user_data](int index) {
+        callback(index, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_combo_box_connect_highlighted(void *combo_box, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QComboBox *>(combo_box), &QComboBox::highlighted, [callback, user_data](int index) {
+        callback(index, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_combo_box_connect_edit_text_changed(void *combo_box, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QComboBox *>(combo_box), &QComboBox::editTextChanged, [callback, user_data](const QString &text) {
         QByteArray utf8 = text.toUtf8();
         callback(utf8.constData(), user_data);
     });

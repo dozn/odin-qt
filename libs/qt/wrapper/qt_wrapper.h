@@ -18,6 +18,8 @@ typedef int  (*qt_event_filter_callback_t)(int event_type, void *user_data);
 typedef int  (*qt_close_event_callback_t)(void *user_data);
 typedef int  (*qt_key_event_callback_t)(int event_type, int key, int modifiers, int is_auto_repeat, const char *text, void *user_data);
 typedef int  (*qt_mouse_event_callback_t)(int event_type, int button, int x, int y, int global_x, int global_y, int modifiers, void *user_data);
+typedef void (*qt_four_int_callback_t)(int a, int b, int c, int d, void *user_data);
+typedef void (*qt_two_pointer_callback_t)(void *first, void *second, void *user_data);
 
 /* ── QApplication ──────────────────────────────────────────────────── */
 
@@ -294,6 +296,18 @@ void  qt_combo_box_set_item_text(void *combo_box, int index, const char *text);
 char *qt_combo_box_get_item_text(void *combo_box, int index);
 int   qt_combo_box_find_text(void *combo_box, const char *text);
 void  qt_combo_box_set_current_text(void *combo_box, const char *text);
+void  qt_combo_box_add_items(void *combo_box, const char **items, int count);
+void  qt_combo_box_insert_items(void *combo_box, int index, const char **items, int count);
+void  qt_combo_box_set_max_visible_items(void *combo_box, int max_items);
+void  qt_combo_box_set_max_count(void *combo_box, int max_count);
+void  qt_combo_box_set_insert_policy(void *combo_box, int policy);
+void  qt_combo_box_set_duplicates_enabled(void *combo_box, int is_duplicates_enabled);
+void *qt_combo_box_get_line_edit(void *combo_box);
+void  qt_combo_box_show_popup(void *combo_box);
+void  qt_combo_box_hide_popup(void *combo_box);
+void  qt_combo_box_set_model(void *combo_box, void *model);
+void *qt_combo_box_get_model(void *combo_box);
+void  qt_combo_box_set_size_adjust_policy(void *combo_box, int policy);
 
 /* ── QSlider ────────────────────────────────────────────────────────── */
 
@@ -406,6 +420,17 @@ void  qt_tree_widget_expand_item(void *tree, void *item);
 void  qt_tree_widget_collapse_item(void *tree, void *item);
 void  qt_tree_widget_set_selection_mode(void *tree, int mode);
 void  qt_tree_widget_set_sorting_enabled(void *tree, int is_enabled);
+void  qt_tree_widget_insert_top_level_item(void *tree, int index, void *item);
+void *qt_tree_widget_get_top_level_item(void *tree, int index);
+int   qt_tree_widget_index_of_top_level_item(void *tree, void *item);
+void  qt_tree_widget_get_selected_items(void *tree, void ***out_items, int *out_count);
+void  qt_tree_widget_find_items(void *tree, const char *text, int flags, int column, void ***out_items, int *out_count);
+void  qt_tree_widget_scroll_to_item(void *tree, void *item, int scroll_hint);
+void  qt_tree_widget_sort_items(void *tree, int column, int order);
+void  qt_tree_widget_set_indentation(void *tree, int indentation);
+void  qt_tree_widget_set_uniform_row_heights(void *tree, int is_uniform);
+void  qt_tree_widget_set_animated(void *tree, int is_animated);
+void  qt_tree_widget_set_header_hidden(void *tree, int is_hidden);
 
 /* QTreeWidgetItem */
 void *qt_tree_widget_item_create(const char **texts, int count);
@@ -418,6 +443,25 @@ void *qt_tree_widget_item_get_parent(void *item);
 void  qt_tree_widget_item_remove_child(void *item, void *child);
 void  qt_tree_widget_item_set_expanded(void *item, int is_expanded);
 int   qt_tree_widget_item_is_expanded(void *item);
+void  qt_tree_widget_item_set_icon(void *item, int column, void *icon);
+void  qt_tree_widget_item_set_check_state(void *item, int column, int state);
+int   qt_tree_widget_item_get_check_state(void *item, int column);
+void  qt_tree_widget_item_set_flags(void *item, int flags);
+void  qt_tree_widget_item_set_data(void *item, int column, int role, int value);
+int   qt_tree_widget_item_get_data(void *item, int column, int role);
+void  qt_tree_widget_item_set_data_string(void *item, int column, int role, const char *value);
+char *qt_tree_widget_item_get_data_string(void *item, int column, int role);
+void  qt_tree_widget_item_set_tool_tip(void *item, int column, const char *tooltip);
+void  qt_tree_widget_item_set_hidden(void *item, int is_hidden);
+int   qt_tree_widget_item_is_hidden(void *item);
+void  qt_tree_widget_item_set_disabled(void *item, int is_disabled);
+int   qt_tree_widget_item_is_disabled(void *item);
+void  qt_tree_widget_item_set_selected(void *item, int is_selected);
+int   qt_tree_widget_item_is_selected(void *item);
+void  qt_tree_widget_item_set_first_column_spanned(void *item, int is_spanned);
+void *qt_tree_widget_item_get_tree_widget(void *item);
+void *qt_tree_widget_item_take_child(void *item, int index);
+void  qt_tree_widget_item_sort_children(void *item, int column, int order);
 
 /* ── QTableWidget ───────────────────────────────────────────────────── */
 
@@ -446,6 +490,20 @@ void  qt_table_widget_set_column_width(void *table, int column, int width);
 void  qt_table_widget_set_row_height(void *table, int row, int height);
 void  qt_table_widget_resize_columns_to_contents(void *table);
 void  qt_table_widget_resize_rows_to_contents(void *table);
+void  qt_table_widget_set_cell_widget(void *table, int row, int col, void *widget);
+void *qt_table_widget_get_cell_widget(void *table, int row, int col);
+void *qt_table_widget_get_item(void *table, int row, int col);
+void *qt_table_widget_get_current_item(void *table);
+void  qt_table_widget_set_current_cell(void *table, int row, int col);
+void  qt_table_widget_get_selected_items(void *table, void ***out_items, int *out_count);
+void  qt_table_widget_set_show_grid(void *table, int is_show);
+void  qt_table_widget_set_span(void *table, int row, int col, int row_span, int col_span);
+int   qt_table_widget_get_row_span(void *table, int row, int col);
+int   qt_table_widget_get_column_span(void *table, int row, int col);
+void  qt_table_widget_scroll_to_item(void *table, void *item, int scroll_hint);
+void  qt_table_widget_find_items(void *table, const char *text, int flags, void ***out_items, int *out_count);
+void  qt_table_widget_set_word_wrap(void *table, int is_word_wrap);
+void  qt_table_widget_set_corner_button_enabled(void *table, int is_enabled);
 
 /* ── QScrollArea ────────────────────────────────────────────────────── */
 
@@ -831,6 +889,9 @@ int qt_list_widget_connect_item_clicked(void *list, qt_int_callback_t callback, 
 int qt_list_widget_connect_item_double_clicked(void *list, qt_int_callback_t callback, void *user_data);
 int qt_list_widget_connect_item_selection_changed(void *list, qt_callback_t callback, void *user_data);
 int qt_combo_box_connect_current_text_changed(void *combo_box, qt_string_callback_t callback, void *user_data);
+int qt_combo_box_connect_activated(void *combo_box, qt_int_callback_t callback, void *user_data);
+int qt_combo_box_connect_highlighted(void *combo_box, qt_int_callback_t callback, void *user_data);
+int qt_combo_box_connect_edit_text_changed(void *combo_box, qt_string_callback_t callback, void *user_data);
 int qt_progress_bar_connect_value_changed(void *progress_bar, qt_int_callback_t callback, void *user_data);
 int qt_slider_connect_slider_pressed(void *slider, qt_callback_t callback, void *user_data);
 int qt_slider_connect_slider_released(void *slider, qt_callback_t callback, void *user_data);
@@ -854,6 +915,15 @@ int qt_dial_connect_value_changed(void *dial, qt_int_callback_t callback, void *
 int qt_progress_dialog_connect_canceled(void *dialog, qt_callback_t callback, void *user_data);
 int qt_text_browser_connect_anchor_clicked(void *browser, qt_string_callback_t callback, void *user_data);
 int qt_system_tray_icon_connect_activated(void *tray_icon, qt_int_callback_t callback, void *user_data);
+
+/* New signals for QTableWidget and QTreeWidget */
+int qt_table_widget_connect_current_cell_changed(void *table, qt_four_int_callback_t callback, void *user_data);
+int qt_table_widget_connect_current_item_changed(void *table, qt_two_pointer_callback_t callback, void *user_data);
+int qt_tree_widget_connect_item_changed(void *tree, qt_item_callback_t callback, void *user_data);
+int qt_tree_widget_connect_item_selection_changed(void *tree, qt_callback_t callback, void *user_data);
+
+/* Memory management for out-param arrays */
+void qt_free_item_array(void **items);
 
 /* New signals for QTextEdit and QPlainTextEdit */
 int qt_text_edit_connect_cursor_position_changed(void *text_edit, qt_callback_t callback, void *user_data);

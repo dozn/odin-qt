@@ -116,6 +116,7 @@ Spacer_Item :: distinct rawptr
 Connection_Id :: distinct c.int
 Standard_Item :: distinct rawptr
 Standard_Item_Model :: distinct rawptr
+Abstract_Item_Model :: distinct rawptr
 Model_Index :: distinct rawptr
 File_System_Model :: distinct rawptr
 Sort_Filter_Proxy_Model :: distinct rawptr
@@ -268,6 +269,8 @@ Mouse_Event_Callback :: #type proc"c"(event_type: c.int, button: c.int, x: c.int
 Paint_Callback :: #type proc"c"(painter: Painter, width: c.int, height: c.int, user_data: rawptr)
 Drag_Enter_Callback :: #type proc"c"(mime_text: cstring, user_data: rawptr) -> c.int
 Drop_Callback :: #type proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr)
+Four_Int_Callback :: #type proc"c"(a: c.int, b: c.int, c_val: c.int, d: c.int, user_data: rawptr)
+Two_Pointer_Callback :: #type proc"c"(first: rawptr, second: rawptr, user_data: rawptr)
 
 /* ── Enums ─────────────────────────────────────────────────────────── */
 
@@ -511,6 +514,41 @@ Match_Flag :: enum c.int {
 	Contains = 1,
 	Starts_With = 2,
 	Ends_With = 3,
+}
+
+Scroll_Hint :: enum c.int {
+	Ensure_Visible = 0,
+	Position_At_Top = 1,
+	Position_At_Bottom = 2,
+	Position_At_Centre = 3,
+}
+
+Item_Flag :: enum c.int {
+	No_Flags = 0x0000,
+	Is_Selectable = 0x0001,
+	Is_Editable = 0x0002,
+	Is_Drag_Enabled = 0x0004,
+	Is_Drop_Enabled = 0x0008,
+	Is_User_Checkable = 0x0010,
+	Is_Enabled = 0x0020,
+	Is_Auto_Tristate = 0x0040,
+	Is_User_Tristate = 0x0080,
+}
+
+Item_Data_Role :: enum c.int {
+	Display = 0,
+	Decoration = 1,
+	Edit = 2,
+	Tool_Tip = 3,
+	Status_Tip = 4,
+	Whats_This = 5,
+	Font = 6,
+	Text_Alignment = 7,
+	Background = 8,
+	Foreground = 9,
+	Check_State = 10,
+	Size_Hint = 13,
+	User = 0x0100,
 }
 
 Event_Type :: enum c.int {
@@ -1525,6 +1563,22 @@ Widget_Attribute :: enum c.int {
 	Mac_Always_Show_Tool_Window = 36,
 }
 
+Combo_Box_Insert_Policy :: enum c.int {
+	No_Insert = 0,
+	Insert_At_Top = 1,
+	Insert_At_Current = 2,
+	Insert_At_Bottom = 3,
+	Insert_After_Current = 4,
+	Insert_Before_Current = 5,
+	Insert_Alphabetically = 6,
+}
+
+Combo_Box_Size_Adjust_Policy :: enum c.int {
+	Adjust_To_Contents = 0,
+	Adjust_To_Contents_On_First_Show = 1,
+	Adjust_To_Minimum_Contents_Length_With_Icon = 2,
+}
+
 /* ── Foreign declarations ──────────────────────────────────────────── */
 
 @(default_calling_convention="c", link_prefix="qt_")
@@ -1805,6 +1859,18 @@ foreign qt_lib {
 	@(require_results) combo_box_get_item_text :: proc(combo_box: Combo_Box, index: c.int) -> cstring ---
 	@(require_results) combo_box_find_text :: proc(combo_box: Combo_Box, text: cstring) -> c.int ---
 	combo_box_set_current_text :: proc(combo_box: Combo_Box, text: cstring) ---
+	combo_box_add_items :: proc(combo_box: Combo_Box, items: [^]cstring, count: c.int) ---
+	combo_box_insert_items :: proc(combo_box: Combo_Box, index: c.int, items: [^]cstring, count: c.int) ---
+	combo_box_set_max_visible_items :: proc(combo_box: Combo_Box, max_items: c.int) ---
+	combo_box_set_max_count :: proc(combo_box: Combo_Box, max_count: c.int) ---
+	combo_box_set_insert_policy :: proc(combo_box: Combo_Box, policy: Combo_Box_Insert_Policy) ---
+	combo_box_set_duplicates_enabled :: proc(combo_box: Combo_Box, is_duplicates_enabled: c.int) ---
+	@(require_results) combo_box_get_line_edit :: proc(combo_box: Combo_Box) -> Line_Edit ---
+	combo_box_show_popup :: proc(combo_box: Combo_Box) ---
+	combo_box_hide_popup :: proc(combo_box: Combo_Box) ---
+	combo_box_set_model :: proc(combo_box: Combo_Box, model: Abstract_Item_Model) ---
+	@(require_results) combo_box_get_model :: proc(combo_box: Combo_Box) -> Abstract_Item_Model ---
+	combo_box_set_size_adjust_policy :: proc(combo_box: Combo_Box, policy: Combo_Box_Size_Adjust_Policy) ---
 
 	/* QSlider */
 
@@ -1917,6 +1983,17 @@ foreign qt_lib {
 	tree_widget_collapse_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item) ---
 	tree_widget_set_selection_mode :: proc(tree_widget: Tree_Widget, mode: Selection_Mode) ---
 	tree_widget_set_sorting_enabled :: proc(tree_widget: Tree_Widget, is_enabled: c.int) ---
+	tree_widget_insert_top_level_item :: proc(tree_widget: Tree_Widget, index: c.int, item: Tree_Widget_Item) ---
+	@(require_results) tree_widget_get_top_level_item :: proc(tree_widget: Tree_Widget, index: c.int) -> Tree_Widget_Item ---
+	@(require_results) tree_widget_index_of_top_level_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item) -> c.int ---
+	tree_widget_get_selected_items :: proc(tree_widget: Tree_Widget, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	tree_widget_find_items :: proc(tree_widget: Tree_Widget, text: cstring, flags: Match_Flag, column: c.int, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	tree_widget_scroll_to_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item, scroll_hint: Scroll_Hint) ---
+	tree_widget_sort_items :: proc(tree_widget: Tree_Widget, column: c.int, order: Sort_Order) ---
+	tree_widget_set_indentation :: proc(tree_widget: Tree_Widget, indentation: c.int) ---
+	tree_widget_set_uniform_row_heights :: proc(tree_widget: Tree_Widget, is_uniform: c.int) ---
+	tree_widget_set_animated :: proc(tree_widget: Tree_Widget, is_animated: c.int) ---
+	tree_widget_set_header_hidden :: proc(tree_widget: Tree_Widget, is_hidden: c.int) ---
 
 	/* QTreeWidgetItem */
 
@@ -1930,6 +2007,25 @@ foreign qt_lib {
 	tree_widget_item_remove_child :: proc(item: Tree_Widget_Item, child: Tree_Widget_Item) ---
 	tree_widget_item_set_expanded :: proc(item: Tree_Widget_Item, is_expanded: c.int) ---
 	@(require_results) tree_widget_item_is_expanded :: proc(item: Tree_Widget_Item) -> c.int ---
+	tree_widget_item_set_icon :: proc(item: Tree_Widget_Item, column: c.int, icon: Icon) ---
+	tree_widget_item_set_check_state :: proc(item: Tree_Widget_Item, column: c.int, state: Check_State) ---
+	@(require_results) tree_widget_item_get_check_state :: proc(item: Tree_Widget_Item, column: c.int) -> Check_State ---
+	tree_widget_item_set_flags :: proc(item: Tree_Widget_Item, flags: c.int) ---
+	tree_widget_item_set_data :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role, value: c.int) ---
+	@(require_results) tree_widget_item_get_data :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role) -> c.int ---
+	tree_widget_item_set_data_string :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role, value: cstring) ---
+	@(require_results) tree_widget_item_get_data_string :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role) -> cstring ---
+	tree_widget_item_set_tool_tip :: proc(item: Tree_Widget_Item, column: c.int, tooltip: cstring) ---
+	tree_widget_item_set_hidden :: proc(item: Tree_Widget_Item, is_hidden: c.int) ---
+	@(require_results) tree_widget_item_is_hidden :: proc(item: Tree_Widget_Item) -> c.int ---
+	tree_widget_item_set_disabled :: proc(item: Tree_Widget_Item, is_disabled: c.int) ---
+	@(require_results) tree_widget_item_is_disabled :: proc(item: Tree_Widget_Item) -> c.int ---
+	tree_widget_item_set_selected :: proc(item: Tree_Widget_Item, is_selected: c.int) ---
+	@(require_results) tree_widget_item_is_selected :: proc(item: Tree_Widget_Item) -> c.int ---
+	tree_widget_item_set_first_column_spanned :: proc(item: Tree_Widget_Item, is_spanned: c.int) ---
+	@(require_results) tree_widget_item_get_tree_widget :: proc(item: Tree_Widget_Item) -> Tree_Widget ---
+	@(require_results) tree_widget_item_take_child :: proc(item: Tree_Widget_Item, index: c.int) -> Tree_Widget_Item ---
+	tree_widget_item_sort_children :: proc(item: Tree_Widget_Item, column: c.int, order: Sort_Order) ---
 
 	/* QTableWidget */
 
@@ -1958,6 +2054,20 @@ foreign qt_lib {
 	table_widget_set_row_height :: proc(table_widget: Table_Widget, row: c.int, height: c.int) ---
 	table_widget_resize_columns_to_contents :: proc(table_widget: Table_Widget) ---
 	table_widget_resize_rows_to_contents :: proc(table_widget: Table_Widget) ---
+	table_widget_set_cell_widget :: proc(table_widget: Table_Widget, row: c.int, col: c.int, widget: Widget) ---
+	@(require_results) table_widget_get_cell_widget :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> Widget ---
+	@(require_results) table_widget_get_item :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> rawptr ---
+	@(require_results) table_widget_get_current_item :: proc(table_widget: Table_Widget) -> rawptr ---
+	table_widget_set_current_cell :: proc(table_widget: Table_Widget, row: c.int, col: c.int) ---
+	table_widget_get_selected_items :: proc(table_widget: Table_Widget, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	table_widget_set_show_grid :: proc(table_widget: Table_Widget, is_show: c.int) ---
+	table_widget_set_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int, row_span: c.int, col_span: c.int) ---
+	@(require_results) table_widget_get_row_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int ---
+	@(require_results) table_widget_get_column_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int ---
+	table_widget_scroll_to_item :: proc(table_widget: Table_Widget, item: rawptr, scroll_hint: Scroll_Hint) ---
+	table_widget_find_items :: proc(table_widget: Table_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	table_widget_set_word_wrap :: proc(table_widget: Table_Widget, is_word_wrap: c.int) ---
+	table_widget_set_corner_button_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) ---
 
 	/* QScrollArea */
 
@@ -2266,6 +2376,7 @@ foreign qt_lib {
 	free_string :: proc(str: cstring) ---
 	dialog_free_string :: proc(str: cstring) ---
 	free_string_array :: proc(names: [^]cstring, count: c.int) ---
+	free_item_array :: proc(items: [^]rawptr) ---
 
 	/* QFileDialog */
 
@@ -2417,6 +2528,9 @@ foreign qt_lib {
 	list_widget_connect_item_double_clicked :: proc(list_widget: List_Widget, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	list_widget_connect_item_selection_changed :: proc(list_widget: List_Widget, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	combo_box_connect_current_text_changed :: proc(combo_box: Combo_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
+	combo_box_connect_activated :: proc(combo_box: Combo_Box, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	combo_box_connect_highlighted :: proc(combo_box: Combo_Box, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	combo_box_connect_edit_text_changed :: proc(combo_box: Combo_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
 	progress_bar_connect_value_changed :: proc(progress_bar: Progress_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	slider_connect_slider_pressed :: proc(slider: Slider, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	slider_connect_slider_released :: proc(slider: Slider, callback: Callback, user_data: rawptr) -> Connection_Id ---
@@ -2441,6 +2555,13 @@ foreign qt_lib {
 	progress_dialog_connect_canceled :: proc(progress_dialog: Progress_Dialog, callback: Callback, user_data: rawptr) -> Connection_Id ---
 	text_browser_connect_anchor_clicked :: proc(text_browser: Text_Browser, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
 	system_tray_icon_connect_activated :: proc(system_tray_icon: System_Tray_Icon, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* New signals for QTableWidget and QTreeWidget */
+
+	table_widget_connect_current_cell_changed :: proc(table_widget: Table_Widget, callback: Four_Int_Callback, user_data: rawptr) -> Connection_Id ---
+	table_widget_connect_current_item_changed :: proc(table_widget: Table_Widget, callback: Two_Pointer_Callback, user_data: rawptr) -> Connection_Id ---
+	tree_widget_connect_item_changed :: proc(tree_widget: Tree_Widget, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	tree_widget_connect_item_selection_changed :: proc(tree_widget: Tree_Widget, callback: Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* QTextEdit signals */
 
