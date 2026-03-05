@@ -131,6 +131,10 @@ Syntax_Highlighter :: distinct rawptr
 Property_Animation :: distinct rawptr
 Parallel_Animation_Group :: distinct rawptr
 Sequential_Animation_Group :: distinct rawptr
+Pause_Animation :: distinct rawptr
+Drag :: distinct rawptr
+Polygon :: distinct rawptr
+Polygon_F :: distinct rawptr
 Drag_Drop_Filter :: distinct rawptr
 Tab_Bar :: distinct rawptr
 Tool_Box :: distinct rawptr
@@ -168,6 +172,8 @@ Region :: distinct rawptr
 Gradient :: distinct rawptr
 Text_Cursor :: distinct rawptr
 Text_Document :: distinct rawptr
+Text_Block :: distinct rawptr
+Text_Option :: distinct rawptr
 Key_Sequence :: distinct rawptr
 Movie :: distinct rawptr
 Image_Reader :: distinct rawptr
@@ -3112,6 +3118,13 @@ foreign qt_lib {
 	sequential_animation_group_stop :: proc(group: Sequential_Animation_Group) ---
 	sequential_animation_group_connect_finished :: proc(group: Sequential_Animation_Group, callback: Callback, user_data: rawptr) -> Connection_Id ---
 
+	/* QPauseAnimation */
+
+	@(require_results) pause_animation_create :: proc(duration_ms: c.int, parent: rawptr) -> Pause_Animation ---
+	pause_animation_destroy :: proc(animation: Pause_Animation) ---
+	pause_animation_set_duration :: proc(animation: Pause_Animation, ms: c.int) ---
+	@(require_results) pause_animation_get_duration :: proc(animation: Pause_Animation) -> c.int ---
+
 	/* QTabBar */
 
 	@(require_results) tab_bar_create :: proc(parent: Widget) -> Tab_Bar ---
@@ -3650,6 +3663,74 @@ foreign qt_lib {
 	@(require_results) text_document_connect_modification_changed :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	@(require_results) text_document_connect_undo_available :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	@(require_results) text_document_connect_redo_available :: proc(document: Text_Document, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QTextBlock */
+
+	@(require_results) text_block_create_from_cursor :: proc(cursor: Text_Cursor) -> Text_Block ---
+	text_block_destroy :: proc(block: Text_Block) ---
+	@(require_results) text_block_is_valid :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_block_get_block_number :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_block_get_position :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_block_get_length :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_block_get_text :: proc(block: Text_Block) -> cstring ---
+	@(require_results) text_block_next :: proc(block: Text_Block) -> Text_Block ---
+	@(require_results) text_block_previous :: proc(block: Text_Block) -> Text_Block ---
+	@(require_results) text_block_get_line_count :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_block_is_visible :: proc(block: Text_Block) -> c.int ---
+	text_block_set_visible :: proc(block: Text_Block, is_visible: c.int) ---
+	@(require_results) text_block_get_revision :: proc(block: Text_Block) -> c.int ---
+	@(require_results) text_document_get_first_block :: proc(document: Text_Document) -> Text_Block ---
+	@(require_results) text_document_get_last_block :: proc(document: Text_Document) -> Text_Block ---
+	@(require_results) text_document_find_block_by_number :: proc(document: Text_Document, block_number: c.int) -> Text_Block ---
+
+	/* QTextOption */
+
+	@(require_results) text_option_create :: proc() -> Text_Option ---
+	@(require_results) text_option_create_with_alignment :: proc(alignment: Alignment) -> Text_Option ---
+	text_option_destroy :: proc(option: Text_Option) ---
+	text_option_set_alignment :: proc(option: Text_Option, alignment: Alignment) ---
+	@(require_results) text_option_get_alignment :: proc(option: Text_Option) -> c.int ---
+	text_option_set_wrap_mode :: proc(option: Text_Option, mode: Word_Wrap_Mode) ---
+	@(require_results) text_option_get_wrap_mode :: proc(option: Text_Option) -> c.int ---
+	text_option_set_tab_stop_distance :: proc(option: Text_Option, distance: c.double) ---
+	@(require_results) text_option_get_tab_stop_distance :: proc(option: Text_Option) -> c.double ---
+	text_document_set_default_text_option :: proc(document: Text_Document, option: Text_Option) ---
+
+	/* QDrag */
+
+	@(require_results) drag_create :: proc(source: rawptr) -> Drag ---
+	drag_destroy :: proc(drag: Drag) ---
+	drag_set_mime_data_text :: proc(drag: Drag, text: cstring) ---
+	drag_set_pixmap :: proc(drag: Drag, pixmap: Pixmap) ---
+	drag_set_hot_spot :: proc(drag: Drag, x: c.int, y: c.int) ---
+	@(require_results) drag_exec :: proc(drag: Drag, supported_actions: c.int, default_action: c.int) -> c.int ---
+
+	/* QPolygon */
+
+	@(require_results) polygon_create :: proc() -> Polygon ---
+	@(require_results) polygon_create_from_points :: proc(points: [^]c.int, count: c.int) -> Polygon ---
+	polygon_destroy :: proc(polygon: Polygon) ---
+	polygon_append :: proc(polygon: Polygon, x: c.int, y: c.int) ---
+	@(require_results) polygon_get_count :: proc(polygon: Polygon) -> c.int ---
+	polygon_get_point :: proc(polygon: Polygon, index: c.int, x: ^c.int, y: ^c.int) ---
+	polygon_set_point :: proc(polygon: Polygon, index: c.int, x: c.int, y: c.int) ---
+	@(require_results) polygon_contains_point :: proc(polygon: Polygon, x: c.int, y: c.int, fill_rule: Fill_Rule) -> c.int ---
+	polygon_translate :: proc(polygon: Polygon, dx: c.int, dy: c.int) ---
+	@(require_results) polygon_translated :: proc(polygon: Polygon, dx: c.int, dy: c.int) -> Polygon ---
+	polygon_get_bounding_rect :: proc(polygon: Polygon, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+
+	/* QPolygonF */
+
+	@(require_results) polygon_f_create :: proc() -> Polygon_F ---
+	@(require_results) polygon_f_create_from_points :: proc(points: [^]c.double, count: c.int) -> Polygon_F ---
+	polygon_f_destroy :: proc(polygon: Polygon_F) ---
+	polygon_f_append :: proc(polygon: Polygon_F, x: c.double, y: c.double) ---
+	@(require_results) polygon_f_get_count :: proc(polygon: Polygon_F) -> c.int ---
+	polygon_f_get_point :: proc(polygon: Polygon_F, index: c.int, x: ^c.double, y: ^c.double) ---
+	@(require_results) polygon_f_contains_point :: proc(polygon: Polygon_F, x: c.double, y: c.double, fill_rule: Fill_Rule) -> c.int ---
+	polygon_f_translate :: proc(polygon: Polygon_F, dx: c.double, dy: c.double) ---
+	@(require_results) polygon_f_translated :: proc(polygon: Polygon_F, dx: c.double, dy: c.double) -> Polygon_F ---
+	polygon_f_get_bounding_rect :: proc(polygon: Polygon_F, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
 
 	/* QFontDatabase */
 

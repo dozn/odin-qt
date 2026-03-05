@@ -107,6 +107,7 @@
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
+#include <QPauseAnimation>
 #include <QEasingCurve>
 #include <QPolygon>
 #include <QPaintEvent>
@@ -146,6 +147,7 @@
 #include <QTextBlock>
 #include <QTextList>
 #include <QTextTable>
+#include <QTextOption>
 #include <QFontDatabase>
 #include <QMovie>
 #include <QImageReader>
@@ -6079,6 +6081,24 @@ int qt_sequential_animation_group_connect_finished(void *group, qt_callback_t ca
     return store_connection(conn);
 }
 
+/* ── QPauseAnimation ───────────────────────────────────────────────── */
+
+void *qt_pause_animation_create(int duration_ms, void *parent) {
+    return static_cast<void *>(new QPauseAnimation(duration_ms, static_cast<QObject *>(parent)));
+}
+
+void qt_pause_animation_destroy(void *animation) {
+    delete static_cast<QPauseAnimation *>(animation);
+}
+
+void qt_pause_animation_set_duration(void *animation, int ms) {
+    static_cast<QPauseAnimation *>(animation)->setDuration(ms);
+}
+
+int qt_pause_animation_get_duration(void *animation) {
+    return static_cast<QPauseAnimation *>(animation)->duration();
+}
+
 /* ── QTabBar ────────────────────────────────────────────────────────── */
 
 void *qt_tab_bar_create(void *parent) {
@@ -7983,6 +8003,258 @@ int qt_text_document_connect_redo_available(void *document, qt_int_callback_t ca
         callback(is_available ? 1 : 0, user_data);
     });
     return store_connection(conn);
+}
+
+/* ── QTextBlock ────────────────────────────────────────────────────── */
+
+void *qt_text_block_create_from_cursor(void *cursor) {
+    return static_cast<void *>(new QTextBlock(static_cast<QTextCursor *>(cursor)->block()));
+}
+
+void qt_text_block_destroy(void *block) {
+    delete static_cast<QTextBlock *>(block);
+}
+
+int qt_text_block_is_valid(void *block) {
+    return static_cast<QTextBlock *>(block)->isValid() ? 1 : 0;
+}
+
+int qt_text_block_get_block_number(void *block) {
+    return static_cast<QTextBlock *>(block)->blockNumber();
+}
+
+int qt_text_block_get_position(void *block) {
+    return static_cast<QTextBlock *>(block)->position();
+}
+
+int qt_text_block_get_length(void *block) {
+    return static_cast<QTextBlock *>(block)->length();
+}
+
+char *qt_text_block_get_text(void *block) {
+    return qstring_to_heap_utf8(static_cast<QTextBlock *>(block)->text());
+}
+
+void *qt_text_block_next(void *block) {
+    QTextBlock next = static_cast<QTextBlock *>(block)->next();
+    if (!next.isValid()) return nullptr;
+    return static_cast<void *>(new QTextBlock(next));
+}
+
+void *qt_text_block_previous(void *block) {
+    QTextBlock prev = static_cast<QTextBlock *>(block)->previous();
+    if (!prev.isValid()) return nullptr;
+    return static_cast<void *>(new QTextBlock(prev));
+}
+
+int qt_text_block_get_line_count(void *block) {
+    return static_cast<QTextBlock *>(block)->lineCount();
+}
+
+int qt_text_block_is_visible(void *block) {
+    return static_cast<QTextBlock *>(block)->isVisible() ? 1 : 0;
+}
+
+void qt_text_block_set_visible(void *block, int is_visible) {
+    static_cast<QTextBlock *>(block)->setVisible(is_visible != 0);
+}
+
+int qt_text_block_get_revision(void *block) {
+    return static_cast<QTextBlock *>(block)->revision();
+}
+
+void *qt_text_document_get_first_block(void *document) {
+    QTextBlock b = static_cast<QTextDocument *>(document)->begin();
+    if (!b.isValid()) return nullptr;
+    return static_cast<void *>(new QTextBlock(b));
+}
+
+void *qt_text_document_get_last_block(void *document) {
+    QTextBlock b = static_cast<QTextDocument *>(document)->lastBlock();
+    if (!b.isValid()) return nullptr;
+    return static_cast<void *>(new QTextBlock(b));
+}
+
+void *qt_text_document_find_block_by_number(void *document, int block_number) {
+    QTextBlock b = static_cast<QTextDocument *>(document)->findBlockByNumber(block_number);
+    if (!b.isValid()) return nullptr;
+    return static_cast<void *>(new QTextBlock(b));
+}
+
+/* ── QTextOption ───────────────────────────────────────────────────── */
+
+void *qt_text_option_create(void) {
+    return static_cast<void *>(new QTextOption());
+}
+
+void *qt_text_option_create_with_alignment(int alignment) {
+    return static_cast<void *>(new QTextOption(static_cast<Qt::Alignment>(alignment)));
+}
+
+void qt_text_option_destroy(void *option) {
+    delete static_cast<QTextOption *>(option);
+}
+
+void qt_text_option_set_alignment(void *option, int alignment) {
+    static_cast<QTextOption *>(option)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_text_option_get_alignment(void *option) {
+    return static_cast<int>(static_cast<QTextOption *>(option)->alignment());
+}
+
+void qt_text_option_set_wrap_mode(void *option, int mode) {
+    static_cast<QTextOption *>(option)->setWrapMode(static_cast<QTextOption::WrapMode>(mode));
+}
+
+int qt_text_option_get_wrap_mode(void *option) {
+    return static_cast<int>(static_cast<QTextOption *>(option)->wrapMode());
+}
+
+void qt_text_option_set_tab_stop_distance(void *option, double distance) {
+    static_cast<QTextOption *>(option)->setTabStopDistance(distance);
+}
+
+double qt_text_option_get_tab_stop_distance(void *option) {
+    return static_cast<QTextOption *>(option)->tabStopDistance();
+}
+
+void qt_text_document_set_default_text_option(void *document, void *option) {
+    static_cast<QTextDocument *>(document)->setDefaultTextOption(*static_cast<QTextOption *>(option));
+}
+
+/* ── QDrag ─────────────────────────────────────────────────────────── */
+
+void *qt_drag_create(void *source) {
+    return static_cast<void *>(new QDrag(static_cast<QObject *>(source)));
+}
+
+void qt_drag_destroy(void *drag) {
+    delete static_cast<QDrag *>(drag);
+}
+
+void qt_drag_set_mime_data_text(void *drag, const char *text) {
+    QMimeData *data = new QMimeData();
+    data->setText(QString::fromUtf8(text));
+    static_cast<QDrag *>(drag)->setMimeData(data);
+}
+
+void qt_drag_set_pixmap(void *drag, void *pixmap) {
+    static_cast<QDrag *>(drag)->setPixmap(*static_cast<QPixmap *>(pixmap));
+}
+
+void qt_drag_set_hot_spot(void *drag, int x, int y) {
+    static_cast<QDrag *>(drag)->setHotSpot(QPoint(x, y));
+}
+
+int qt_drag_exec(void *drag, int supported_actions, int default_action) {
+    return static_cast<int>(static_cast<QDrag *>(drag)->exec(
+        static_cast<Qt::DropActions>(supported_actions),
+        static_cast<Qt::DropAction>(default_action)));
+}
+
+/* ── QPolygon ──────────────────────────────────────────────────────── */
+
+void *qt_polygon_create(void) {
+    return static_cast<void *>(new QPolygon());
+}
+
+void *qt_polygon_create_from_points(const int *points, int count) {
+    QPolygon *poly = new QPolygon();
+    for (int i = 0; i < count; i++)
+        poly->append(QPoint(points[i * 2], points[i * 2 + 1]));
+    return static_cast<void *>(poly);
+}
+
+void qt_polygon_destroy(void *polygon) {
+    delete static_cast<QPolygon *>(polygon);
+}
+
+void qt_polygon_append(void *polygon, int x, int y) {
+    static_cast<QPolygon *>(polygon)->append(QPoint(x, y));
+}
+
+int qt_polygon_get_count(void *polygon) {
+    return static_cast<QPolygon *>(polygon)->count();
+}
+
+void qt_polygon_get_point(void *polygon, int index, int *x, int *y) {
+    QPoint p = static_cast<QPolygon *>(polygon)->point(index);
+    *x = p.x();
+    *y = p.y();
+}
+
+void qt_polygon_set_point(void *polygon, int index, int x, int y) {
+    static_cast<QPolygon *>(polygon)->setPoint(index, x, y);
+}
+
+int qt_polygon_contains_point(void *polygon, int x, int y, int fill_rule) {
+    return static_cast<QPolygon *>(polygon)->containsPoint(QPoint(x, y), static_cast<Qt::FillRule>(fill_rule)) ? 1 : 0;
+}
+
+void qt_polygon_translate(void *polygon, int dx, int dy) {
+    static_cast<QPolygon *>(polygon)->translate(dx, dy);
+}
+
+void *qt_polygon_translated(void *polygon, int dx, int dy) {
+    return static_cast<void *>(new QPolygon(static_cast<QPolygon *>(polygon)->translated(dx, dy)));
+}
+
+void qt_polygon_get_bounding_rect(void *polygon, int *x, int *y, int *w, int *h) {
+    QRect r = static_cast<QPolygon *>(polygon)->boundingRect();
+    *x = r.x();
+    *y = r.y();
+    *w = r.width();
+    *h = r.height();
+}
+
+void *qt_polygon_f_create(void) {
+    return static_cast<void *>(new QPolygonF());
+}
+
+void *qt_polygon_f_create_from_points(const double *points, int count) {
+    QPolygonF *poly = new QPolygonF();
+    for (int i = 0; i < count; i++)
+        poly->append(QPointF(points[i * 2], points[i * 2 + 1]));
+    return static_cast<void *>(poly);
+}
+
+void qt_polygon_f_destroy(void *polygon) {
+    delete static_cast<QPolygonF *>(polygon);
+}
+
+void qt_polygon_f_append(void *polygon, double x, double y) {
+    static_cast<QPolygonF *>(polygon)->append(QPointF(x, y));
+}
+
+int qt_polygon_f_get_count(void *polygon) {
+    return static_cast<QPolygonF *>(polygon)->count();
+}
+
+void qt_polygon_f_get_point(void *polygon, int index, double *x, double *y) {
+    QPointF p = static_cast<QPolygonF *>(polygon)->at(index);
+    *x = p.x();
+    *y = p.y();
+}
+
+int qt_polygon_f_contains_point(void *polygon, double x, double y, int fill_rule) {
+    return static_cast<QPolygonF *>(polygon)->containsPoint(QPointF(x, y), static_cast<Qt::FillRule>(fill_rule)) ? 1 : 0;
+}
+
+void qt_polygon_f_translate(void *polygon, double dx, double dy) {
+    static_cast<QPolygonF *>(polygon)->translate(dx, dy);
+}
+
+void *qt_polygon_f_translated(void *polygon, double dx, double dy) {
+    return static_cast<void *>(new QPolygonF(static_cast<QPolygonF *>(polygon)->translated(dx, dy)));
+}
+
+void qt_polygon_f_get_bounding_rect(void *polygon, double *x, double *y, double *w, double *h) {
+    QRectF r = static_cast<QPolygonF *>(polygon)->boundingRect();
+    *x = r.x();
+    *y = r.y();
+    *w = r.width();
+    *h = r.height();
 }
 
 /* ── QFontDatabase ──────────────────────────────────────────────────── */

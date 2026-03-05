@@ -1414,6 +1414,13 @@ void  qt_sequential_animation_group_start(void *group);
 void  qt_sequential_animation_group_stop(void *group);
 int   qt_sequential_animation_group_connect_finished(void *group, qt_callback_t callback, void *user_data);
 
+/* ── QPauseAnimation ───────────────────────────────────────────────── */
+
+void *qt_pause_animation_create(int duration_ms, void *parent);
+void  qt_pause_animation_destroy(void *animation);
+void  qt_pause_animation_set_duration(void *animation, int ms);
+int   qt_pause_animation_get_duration(void *animation);
+
 /* ── QTabBar ────────────────────────────────────────────────────────── */
 
 void *qt_tab_bar_create(void *parent);
@@ -1952,6 +1959,72 @@ int   qt_text_document_connect_contents_changed(void *document, qt_callback_t ca
 int   qt_text_document_connect_modification_changed(void *document, qt_int_callback_t callback, void *user_data);
 int   qt_text_document_connect_undo_available(void *document, qt_int_callback_t callback, void *user_data);
 int   qt_text_document_connect_redo_available(void *document, qt_int_callback_t callback, void *user_data);
+
+/* ── QTextBlock ────────────────────────────────────────────────────── */
+
+void *qt_text_block_create_from_cursor(void *cursor);
+void  qt_text_block_destroy(void *block);
+int   qt_text_block_is_valid(void *block);
+int   qt_text_block_get_block_number(void *block);
+int   qt_text_block_get_position(void *block);
+int   qt_text_block_get_length(void *block);
+char *qt_text_block_get_text(void *block);
+void *qt_text_block_next(void *block);
+void *qt_text_block_previous(void *block);
+int   qt_text_block_get_line_count(void *block);
+int   qt_text_block_is_visible(void *block);
+void  qt_text_block_set_visible(void *block, int is_visible);
+int   qt_text_block_get_revision(void *block);
+void *qt_text_document_get_first_block(void *document);
+void *qt_text_document_get_last_block(void *document);
+void *qt_text_document_find_block_by_number(void *document, int block_number);
+
+/* ── QTextOption ───────────────────────────────────────────────────── */
+
+void *qt_text_option_create(void);
+void *qt_text_option_create_with_alignment(int alignment);
+void  qt_text_option_destroy(void *option);
+void  qt_text_option_set_alignment(void *option, int alignment);
+int   qt_text_option_get_alignment(void *option);
+void  qt_text_option_set_wrap_mode(void *option, int mode);
+int   qt_text_option_get_wrap_mode(void *option);
+void  qt_text_option_set_tab_stop_distance(void *option, double distance);
+double qt_text_option_get_tab_stop_distance(void *option);
+void  qt_text_document_set_default_text_option(void *document, void *option);
+
+/* ── QDrag ─────────────────────────────────────────────────────────── */
+
+void *qt_drag_create(void *source);
+void  qt_drag_destroy(void *drag);
+void  qt_drag_set_mime_data_text(void *drag, const char *text);
+void  qt_drag_set_pixmap(void *drag, void *pixmap);
+void  qt_drag_set_hot_spot(void *drag, int x, int y);
+int   qt_drag_exec(void *drag, int supported_actions, int default_action);
+
+/* ── QPolygon ──────────────────────────────────────────────────────── */
+
+void *qt_polygon_create(void);
+void *qt_polygon_create_from_points(const int *points, int count);
+void  qt_polygon_destroy(void *polygon);
+void  qt_polygon_append(void *polygon, int x, int y);
+int   qt_polygon_get_count(void *polygon);
+void  qt_polygon_get_point(void *polygon, int index, int *x, int *y);
+void  qt_polygon_set_point(void *polygon, int index, int x, int y);
+int   qt_polygon_contains_point(void *polygon, int x, int y, int fill_rule);
+void  qt_polygon_translate(void *polygon, int dx, int dy);
+void *qt_polygon_translated(void *polygon, int dx, int dy);
+void  qt_polygon_get_bounding_rect(void *polygon, int *x, int *y, int *w, int *h);
+
+void *qt_polygon_f_create(void);
+void *qt_polygon_f_create_from_points(const double *points, int count);
+void  qt_polygon_f_destroy(void *polygon);
+void  qt_polygon_f_append(void *polygon, double x, double y);
+int   qt_polygon_f_get_count(void *polygon);
+void  qt_polygon_f_get_point(void *polygon, int index, double *x, double *y);
+int   qt_polygon_f_contains_point(void *polygon, double x, double y, int fill_rule);
+void  qt_polygon_f_translate(void *polygon, double dx, double dy);
+void *qt_polygon_f_translated(void *polygon, double dx, double dy);
+void  qt_polygon_f_get_bounding_rect(void *polygon, double *x, double *y, double *w, double *h);
 
 /* ── QFontDatabase ──────────────────────────────────────────────────── */
 

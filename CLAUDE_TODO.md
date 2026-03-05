@@ -56,21 +56,14 @@ QGraphicsBlurEffect, QGraphicsColorizeEffect, QGraphicsDropShadowEffect, QGraphi
 QStyle, QStyleFactory, QScroller, QScrollerProperties,
 QIdentityProxyModel, QTransposeProxyModel, QConcatenateTablesProxyModel,
 QSignalMapper, QLockFile, QTimeLine, QCalendar, QRandomGenerator,
-QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore
+QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore,
+QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF
 
 ---
 
 ## Not Yet Implemented
 
 ### New Classes to Wrap
-
-#### High Priority
-- `QPauseAnimation` -- needed for animation sequences with delays
-- `QOpenGLWidget` -- OpenGL/3D rendering integration
-- `QPolygon` / `QPolygonF` -- geometric polygon shapes (used with QPainter)
-- `QTextBlock` -- rich text block iteration (needed for syntax highlighters, line numbers)
-- `QTextOption` -- text layout options (wrap mode, alignment, tab stops)
-- `QDrag` -- explicit drag source object (currently only drop target via filter)
 
 #### Medium Priority
 - `QPdfWriter` -- PDF generation
