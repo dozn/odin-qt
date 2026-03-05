@@ -80,6 +80,7 @@ Tool_Bar :: distinct rawptr
 Tab_Widget :: distinct rawptr
 Group_Box :: distinct rawptr
 List_Widget :: distinct rawptr
+List_Widget_Item :: distinct rawptr
 Tree_Widget :: distinct rawptr
 Tree_Widget_Item :: distinct rawptr
 Table_Widget :: distinct rawptr
@@ -444,6 +445,13 @@ Tool_Button_Style :: enum c.int {
 	Follow_Style = 4,
 }
 
+Elide_Mode :: enum c.int {
+	Left = 0,
+	Right = 1,
+	Middle = 2,
+	None = 3,
+}
+
 Dock_Widget_Feature :: enum c.int {
 	Closable = 0x01,
 	Movable = 0x02,
@@ -521,6 +529,33 @@ Scroll_Hint :: enum c.int {
 	Position_At_Top = 1,
 	Position_At_Bottom = 2,
 	Position_At_Centre = 3,
+}
+
+List_Widget_View_Mode :: enum c.int {
+	List_Mode = 0,
+	Icon_Mode = 1,
+}
+
+List_View_Flow :: enum c.int {
+	Left_To_Right = 0,
+	Top_To_Bottom = 1,
+}
+
+Shortcut_Context :: enum c.int {
+	Widget_Shortcut = 0,
+	Window_Shortcut = 1,
+	Application_Shortcut = 2,
+	Widget_With_Children_Shortcut = 3,
+}
+
+Menu_Role :: enum c.int {
+	No_Role = 0,
+	Text_Heuristic_Role = 1,
+	Application_Specific_Role = 2,
+	About_Qt_Role = 3,
+	About_Role = 4,
+	Preferences_Role = 5,
+	Quit_Role = 6,
 }
 
 Item_Flag :: enum c.int {
@@ -1882,6 +1917,13 @@ foreign qt_lib {
 	slider_set_tick_interval :: proc(slider: Slider, interval: c.int) ---
 	slider_set_single_step :: proc(slider: Slider, step: c.int) ---
 	slider_set_page_step :: proc(slider: Slider, step: c.int) ---
+	slider_set_orientation :: proc(slider: Slider, orientation: Orientation) ---
+	slider_set_minimum :: proc(slider: Slider, min_val: c.int) ---
+	slider_set_maximum :: proc(slider: Slider, max_val: c.int) ---
+	@(require_results) slider_get_minimum :: proc(slider: Slider) -> c.int ---
+	@(require_results) slider_get_maximum :: proc(slider: Slider) -> c.int ---
+	slider_set_inverted_appearance :: proc(slider: Slider, is_inverted: c.int) ---
+	slider_set_inverted_controls :: proc(slider: Slider, is_inverted: c.int) ---
 
 	/* QProgressBar */
 
@@ -1893,6 +1935,12 @@ foreign qt_lib {
 	progress_bar_set_text_visible :: proc(progress_bar: Progress_Bar, is_visible: c.int) ---
 	progress_bar_reset :: proc(progress_bar: Progress_Bar) ---
 	progress_bar_set_orientation :: proc(progress_bar: Progress_Bar, orientation: Orientation) ---
+	progress_bar_set_minimum :: proc(progress_bar: Progress_Bar, min_val: c.int) ---
+	progress_bar_set_maximum :: proc(progress_bar: Progress_Bar, max_val: c.int) ---
+	@(require_results) progress_bar_get_minimum :: proc(progress_bar: Progress_Bar) -> c.int ---
+	@(require_results) progress_bar_get_maximum :: proc(progress_bar: Progress_Bar) -> c.int ---
+	@(require_results) progress_bar_is_text_visible :: proc(progress_bar: Progress_Bar) -> c.int ---
+	@(require_results) progress_bar_get_text :: proc(progress_bar: Progress_Bar) -> cstring ---
 
 	/* QSpinBox */
 
@@ -1965,6 +2013,20 @@ foreign qt_lib {
 	list_widget_insert_item :: proc(list_widget: List_Widget, row: c.int, text: cstring) ---
 	list_widget_sort_items :: proc(list_widget: List_Widget, order: Sort_Order) ---
 	list_widget_set_selection_mode :: proc(list_widget: List_Widget, mode: Selection_Mode) ---
+	@(require_results) list_widget_get_item :: proc(list_widget: List_Widget, row: c.int) -> List_Widget_Item ---
+	@(require_results) list_widget_get_item_at :: proc(list_widget: List_Widget, x: c.int, y: c.int) -> List_Widget_Item ---
+	@(require_results) list_widget_get_current_item :: proc(list_widget: List_Widget) -> List_Widget_Item ---
+	list_widget_set_current_item :: proc(list_widget: List_Widget, item: List_Widget_Item) ---
+	list_widget_get_selected_items :: proc(list_widget: List_Widget, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	list_widget_add_items :: proc(list_widget: List_Widget, items: [^]cstring, count: c.int) ---
+	list_widget_find_items :: proc(list_widget: List_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]rawptr, out_count: ^c.int) ---
+	list_widget_scroll_to_item :: proc(list_widget: List_Widget, item: List_Widget_Item, scroll_hint: Scroll_Hint) ---
+	list_widget_set_view_mode :: proc(list_widget: List_Widget, mode: List_Widget_View_Mode) ---
+	list_widget_set_icon_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) ---
+	list_widget_set_grid_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) ---
+	list_widget_set_flow :: proc(list_widget: List_Widget, flow: List_View_Flow) ---
+	list_widget_set_spacing :: proc(list_widget: List_Widget, spacing: c.int) ---
+	list_widget_set_sorting_enabled :: proc(list_widget: List_Widget, is_enabled: c.int) ---
 
 	/* QTreeWidget */
 
@@ -2077,6 +2139,12 @@ foreign qt_lib {
 	@(require_results) scroll_area_get_widget :: proc(scroll_area: Scroll_Area) -> Widget ---
 	scroll_area_set_horizontal_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) ---
 	scroll_area_set_vertical_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) ---
+	scroll_area_ensure_visible :: proc(scroll_area: Scroll_Area, x: c.int, y: c.int, x_margin: c.int, y_margin: c.int) ---
+	scroll_area_ensure_widget_visible :: proc(scroll_area: Scroll_Area, widget: Widget, x_margin: c.int, y_margin: c.int) ---
+	@(require_results) scroll_area_take_widget :: proc(scroll_area: Scroll_Area) -> Widget ---
+	@(require_results) scroll_area_get_vertical_scroll_bar :: proc(scroll_area: Scroll_Area) -> Scroll_Bar ---
+	@(require_results) scroll_area_get_horizontal_scroll_bar :: proc(scroll_area: Scroll_Area) -> Scroll_Bar ---
+	scroll_area_set_alignment :: proc(scroll_area: Scroll_Area, alignment: Alignment) ---
 
 	/* QSplitter */
 
@@ -2087,6 +2155,13 @@ foreign qt_lib {
 	splitter_set_stretch_factor :: proc(splitter: Splitter, index: c.int, stretch: c.int) ---
 	@(require_results) splitter_get_count :: proc(splitter: Splitter) -> c.int ---
 	splitter_set_collapsible :: proc(splitter: Splitter, index: c.int, is_collapsible: c.int) ---
+	@(require_results) splitter_get_widget :: proc(splitter: Splitter, index: c.int) -> Widget ---
+	@(require_results) splitter_index_of :: proc(splitter: Splitter, widget: Widget) -> c.int ---
+	splitter_set_children_collapsible :: proc(splitter: Splitter, is_collapsible: c.int) ---
+	splitter_set_opaque_resize :: proc(splitter: Splitter, is_opaque: c.int) ---
+	splitter_set_handle_width :: proc(splitter: Splitter, width: c.int) ---
+	@(require_results) splitter_save_state :: proc(splitter: Splitter, out_len: ^c.int) -> [^]byte ---
+	@(require_results) splitter_restore_state :: proc(splitter: Splitter, data: [^]byte, len: c.int) -> c.int ---
 
 	/* QStackedWidget */
 
@@ -2123,6 +2198,17 @@ foreign qt_lib {
 	@(require_results) menu_add_menu :: proc(menu: Menu, title: cstring) -> Menu ---
 	menu_popup :: proc(menu: Menu, global_x: c.int, global_y: c.int) ---
 	menu_clear :: proc(menu: Menu) ---
+	@(require_results) menu_add_section :: proc(menu: Menu, text: cstring) -> Action ---
+	menu_insert_action :: proc(menu: Menu, before: Action, action: Action) ---
+	@(require_results) menu_insert_separator :: proc(menu: Menu, before: Action) -> Action ---
+	@(require_results) menu_insert_menu :: proc(menu: Menu, before: Action, submenu: Menu) -> Action ---
+	menu_set_title :: proc(menu: Menu, title: cstring) ---
+	@(require_results) menu_get_title :: proc(menu: Menu) -> cstring ---
+	menu_set_icon :: proc(menu: Menu, icon: Icon) ---
+	menu_set_tear_off_enabled :: proc(menu: Menu, is_enabled: c.int) ---
+	menu_set_default_action :: proc(menu: Menu, action: Action) ---
+	menu_get_actions :: proc(menu: Menu, out_actions: ^[^]rawptr, out_count: ^c.int) ---
+	@(require_results) menu_is_empty :: proc(menu: Menu) -> c.int ---
 
 	/* QAction */
 
@@ -2138,6 +2224,14 @@ foreign qt_lib {
 	@(require_results) action_is_checkable :: proc(action: Action) -> c.int ---
 	action_set_visible :: proc(action: Action, is_visible: c.int) ---
 	@(require_results) action_is_visible :: proc(action: Action) -> c.int ---
+	action_set_shortcut_context :: proc(action: Action, shortcut_context: Shortcut_Context) ---
+	action_set_status_tip :: proc(action: Action, tip: cstring) ---
+	action_set_whats_this :: proc(action: Action, text: cstring) ---
+	action_set_auto_repeat :: proc(action: Action, is_enabled: c.int) ---
+	action_set_data :: proc(action: Action, data: cstring) ---
+	@(require_results) action_get_data :: proc(action: Action) -> cstring ---
+	action_trigger :: proc(action: Action) ---
+	action_set_menu_role :: proc(action: Action, role: Menu_Role) ---
 
 	/* QToolBar */
 
@@ -2149,6 +2243,15 @@ foreign qt_lib {
 	@(require_results) toolbar_is_movable :: proc(toolbar: Tool_Bar) -> c.int ---
 	toolbar_set_icon_size :: proc(toolbar: Tool_Bar, width: c.int, height: c.int) ---
 	toolbar_set_tool_button_style :: proc(toolbar: Tool_Bar, style: Tool_Button_Style) ---
+	toolbar_insert_action :: proc(toolbar: Tool_Bar, before: Action, action: Action) ---
+	@(require_results) toolbar_insert_separator :: proc(toolbar: Tool_Bar, before: Action) -> Action ---
+	@(require_results) toolbar_insert_widget :: proc(toolbar: Tool_Bar, before: Action, widget: Widget) -> Action ---
+	toolbar_set_allowed_areas :: proc(toolbar: Tool_Bar, areas: c.int) ---
+	toolbar_set_floatable :: proc(toolbar: Tool_Bar, is_floatable: c.int) ---
+	toolbar_set_orientation :: proc(toolbar: Tool_Bar, orientation: Orientation) ---
+	@(require_results) toolbar_toggle_view_action :: proc(toolbar: Tool_Bar) -> Action ---
+	@(require_results) toolbar_widget_for_action :: proc(toolbar: Tool_Bar, action: Action) -> Widget ---
+	toolbar_clear :: proc(toolbar: Tool_Bar) ---
 
 	/* QTabWidget */
 
@@ -2166,6 +2269,13 @@ foreign qt_lib {
 	tab_widget_set_movable :: proc(tab_widget: Tab_Widget, is_movable: c.int) ---
 	@(require_results) tab_widget_get_widget :: proc(tab_widget: Tab_Widget, index: c.int) -> Widget ---
 	@(require_results) tab_widget_index_of :: proc(tab_widget: Tab_Widget, widget: Widget) -> c.int ---
+	@(require_results) tab_widget_get_current_widget :: proc(tab_widget: Tab_Widget) -> Widget ---
+	tab_widget_clear :: proc(tab_widget: Tab_Widget) ---
+	tab_widget_set_document_mode :: proc(tab_widget: Tab_Widget, is_document_mode: c.int) ---
+	tab_widget_set_elide_mode :: proc(tab_widget: Tab_Widget, mode: Elide_Mode) ---
+	tab_widget_set_uses_scroll_buttons :: proc(tab_widget: Tab_Widget, is_uses: c.int) ---
+	tab_widget_set_tab_bar_auto_hide :: proc(tab_widget: Tab_Widget, is_auto_hide: c.int) ---
+	tab_widget_set_corner_widget :: proc(tab_widget: Tab_Widget, widget: Widget, corner: Corner) ---
 
 	/* QGroupBox */
 
@@ -2184,6 +2294,12 @@ foreign qt_lib {
 	@(require_results) dialog_exec :: proc(dialog: Dialog) -> c.int ---
 	dialog_accept :: proc(dialog: Dialog) ---
 	dialog_reject :: proc(dialog: Dialog) ---
+	dialog_set_modal :: proc(dialog: Dialog, is_modal: c.int) ---
+	dialog_open :: proc(dialog: Dialog) ---
+	dialog_done :: proc(dialog: Dialog, result: c.int) ---
+	dialog_set_result :: proc(dialog: Dialog, result: c.int) ---
+	@(require_results) dialog_get_result :: proc(dialog: Dialog) -> c.int ---
+	dialog_set_size_grip_enabled :: proc(dialog: Dialog, is_enabled: c.int) ---
 
 	/* QDockWidget */
 
@@ -2202,6 +2318,10 @@ foreign qt_lib {
 	statusbar_add_permanent_widget :: proc(statusbar: Status_Bar, widget: Widget) ---
 	statusbar_add_widget :: proc(statusbar: Status_Bar, widget: Widget) ---
 	statusbar_remove_widget :: proc(statusbar: Status_Bar, widget: Widget) ---
+	@(require_results) statusbar_insert_widget :: proc(statusbar: Status_Bar, index: c.int, widget: Widget, stretch: c.int) -> c.int ---
+	@(require_results) statusbar_insert_permanent_widget :: proc(statusbar: Status_Bar, index: c.int, widget: Widget, stretch: c.int) -> c.int ---
+	@(require_results) statusbar_get_current_message :: proc(statusbar: Status_Bar) -> cstring ---
+	statusbar_set_size_grip_enabled :: proc(statusbar: Status_Bar, is_enabled: c.int) ---
 
 	/* QTimer */
 
@@ -2579,6 +2699,28 @@ foreign qt_lib {
 	plain_text_edit_connect_copy_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	plain_text_edit_connect_undo_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
 	plain_text_edit_connect_redo_available :: proc(plain_text_edit: Plain_Text_Edit, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QListWidget, QMenu, QAction signals */
+
+	list_widget_connect_item_changed :: proc(list_widget: List_Widget, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	list_widget_connect_item_activated :: proc(list_widget: List_Widget, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	menu_connect_about_to_show :: proc(menu: Menu, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	menu_connect_about_to_hide :: proc(menu: Menu, callback: Callback, user_data: rawptr) -> Connection_Id ---
+	menu_connect_triggered :: proc(menu: Menu, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	action_connect_toggled :: proc(action: Action, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	action_connect_hovered :: proc(action: Action, callback: Callback, user_data: rawptr) -> Connection_Id ---
+
+	/* QTabWidget, QSplitter, QToolBar, QSlider, QStatusBar signals */
+
+	tab_widget_connect_tab_bar_clicked :: proc(tab_widget: Tab_Widget, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	tab_widget_connect_tab_bar_double_clicked :: proc(tab_widget: Tab_Widget, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	splitter_connect_splitter_moved :: proc(splitter: Splitter, callback: Cell_Callback, user_data: rawptr) -> Connection_Id ---
+	toolbar_connect_action_triggered :: proc(toolbar: Tool_Bar, callback: Item_Callback, user_data: rawptr) -> Connection_Id ---
+	toolbar_connect_visibility_changed :: proc(toolbar: Tool_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	toolbar_connect_top_level_changed :: proc(toolbar: Tool_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	slider_connect_slider_moved :: proc(slider: Slider, callback: Int_Callback, user_data: rawptr) -> Connection_Id ---
+	slider_connect_range_changed :: proc(slider: Slider, callback: Cell_Callback, user_data: rawptr) -> Connection_Id ---
+	statusbar_connect_message_changed :: proc(statusbar: Status_Bar, callback: String_Callback, user_data: rawptr) -> Connection_Id ---
 
 	/* Signal disconnection */
 

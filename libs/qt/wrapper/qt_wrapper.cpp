@@ -1629,6 +1629,34 @@ void qt_slider_set_page_step(void *slider, int step) {
     static_cast<QSlider *>(slider)->setPageStep(step);
 }
 
+void qt_slider_set_orientation(void *slider, int orientation) {
+    static_cast<QSlider *>(slider)->setOrientation(static_cast<Qt::Orientation>(orientation));
+}
+
+void qt_slider_set_minimum(void *slider, int min_val) {
+    static_cast<QSlider *>(slider)->setMinimum(min_val);
+}
+
+void qt_slider_set_maximum(void *slider, int max_val) {
+    static_cast<QSlider *>(slider)->setMaximum(max_val);
+}
+
+int qt_slider_get_minimum(void *slider) {
+    return static_cast<QSlider *>(slider)->minimum();
+}
+
+int qt_slider_get_maximum(void *slider) {
+    return static_cast<QSlider *>(slider)->maximum();
+}
+
+void qt_slider_set_inverted_appearance(void *slider, int is_inverted) {
+    static_cast<QSlider *>(slider)->setInvertedAppearance(is_inverted != 0);
+}
+
+void qt_slider_set_inverted_controls(void *slider, int is_inverted) {
+    static_cast<QSlider *>(slider)->setInvertedControls(is_inverted != 0);
+}
+
 /* ── QProgressBar ───────────────────────────────────────────────────── */
 
 void *qt_progress_bar_create(void *parent) {
@@ -1661,6 +1689,30 @@ void qt_progress_bar_reset(void *progress_bar) {
 
 void qt_progress_bar_set_orientation(void *progress_bar, int orientation) {
     static_cast<QProgressBar *>(progress_bar)->setOrientation(static_cast<Qt::Orientation>(orientation));
+}
+
+void qt_progress_bar_set_minimum(void *progress_bar, int min_val) {
+    static_cast<QProgressBar *>(progress_bar)->setMinimum(min_val);
+}
+
+void qt_progress_bar_set_maximum(void *progress_bar, int max_val) {
+    static_cast<QProgressBar *>(progress_bar)->setMaximum(max_val);
+}
+
+int qt_progress_bar_get_minimum(void *progress_bar) {
+    return static_cast<QProgressBar *>(progress_bar)->minimum();
+}
+
+int qt_progress_bar_get_maximum(void *progress_bar) {
+    return static_cast<QProgressBar *>(progress_bar)->maximum();
+}
+
+int qt_progress_bar_is_text_visible(void *progress_bar) {
+    return static_cast<QProgressBar *>(progress_bar)->isTextVisible() ? 1 : 0;
+}
+
+char *qt_progress_bar_get_text(void *progress_bar) {
+    return qstring_to_heap_utf8(static_cast<QProgressBar *>(progress_bar)->text());
 }
 
 /* ── QSpinBox ───────────────────────────────────────────────────────── */
@@ -1940,6 +1992,88 @@ void qt_list_widget_set_selection_mode(void *list, int mode) {
     static_cast<QListWidget *>(list)->setSelectionMode(
         static_cast<QAbstractItemView::SelectionMode>(mode)
     );
+}
+
+void *qt_list_widget_get_item(void *list, int row) {
+    return static_cast<void *>(static_cast<QListWidget *>(list)->item(row));
+}
+
+void *qt_list_widget_get_item_at(void *list, int x, int y) {
+    return static_cast<void *>(static_cast<QListWidget *>(list)->itemAt(x, y));
+}
+
+void *qt_list_widget_get_current_item(void *list) {
+    return static_cast<void *>(static_cast<QListWidget *>(list)->currentItem());
+}
+
+void qt_list_widget_set_current_item(void *list, void *item) {
+    static_cast<QListWidget *>(list)->setCurrentItem(static_cast<QListWidgetItem *>(item));
+}
+
+void qt_list_widget_get_selected_items(void *list, void ***out_items, int *out_count) {
+    auto selected = static_cast<QListWidget *>(list)->selectedItems();
+    *out_count = selected.size();
+    if (*out_count == 0) {
+        *out_items = nullptr;
+        return;
+    }
+    *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+    for (int i = 0; i < *out_count; i++) {
+        (*out_items)[i] = static_cast<void *>(selected[i]);
+    }
+}
+
+void qt_list_widget_add_items(void *list, const char **items, int count) {
+    auto *lw = static_cast<QListWidget *>(list);
+    for (int i = 0; i < count; i++) {
+        lw->addItem(QString::fromUtf8(items[i]));
+    }
+}
+
+void qt_list_widget_find_items(void *list, const char *text, int match_flags, void ***out_items, int *out_count) {
+    auto found = static_cast<QListWidget *>(list)->findItems(
+        QString::fromUtf8(text), static_cast<Qt::MatchFlags>(match_flags)
+    );
+    *out_count = found.size();
+    if (*out_count == 0) {
+        *out_items = nullptr;
+        return;
+    }
+    *out_items = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+    for (int i = 0; i < *out_count; i++) {
+        (*out_items)[i] = static_cast<void *>(found[i]);
+    }
+}
+
+void qt_list_widget_scroll_to_item(void *list, void *item, int scroll_hint) {
+    static_cast<QListWidget *>(list)->scrollToItem(
+        static_cast<QListWidgetItem *>(item),
+        static_cast<QAbstractItemView::ScrollHint>(scroll_hint)
+    );
+}
+
+void qt_list_widget_set_view_mode(void *list, int mode) {
+    static_cast<QListWidget *>(list)->setViewMode(static_cast<QListView::ViewMode>(mode));
+}
+
+void qt_list_widget_set_icon_size(void *list, int w, int h) {
+    static_cast<QListWidget *>(list)->setIconSize(QSize(w, h));
+}
+
+void qt_list_widget_set_grid_size(void *list, int w, int h) {
+    static_cast<QListWidget *>(list)->setGridSize(QSize(w, h));
+}
+
+void qt_list_widget_set_flow(void *list, int flow) {
+    static_cast<QListWidget *>(list)->setFlow(static_cast<QListView::Flow>(flow));
+}
+
+void qt_list_widget_set_spacing(void *list, int spacing) {
+    static_cast<QListWidget *>(list)->setSpacing(spacing);
+}
+
+void qt_list_widget_set_sorting_enabled(void *list, int is_enabled) {
+    static_cast<QListWidget *>(list)->setSortingEnabled(is_enabled != 0);
 }
 
 /* ── QTreeWidget ────────────────────────────────────────────────────── */
@@ -2445,6 +2579,32 @@ void qt_scroll_area_set_vertical_scroll_bar_policy(void *scroll_area, int policy
     );
 }
 
+void qt_scroll_area_ensure_visible(void *scroll_area, int x, int y, int x_margin, int y_margin) {
+    static_cast<QScrollArea *>(scroll_area)->ensureVisible(x, y, x_margin, y_margin);
+}
+
+void qt_scroll_area_ensure_widget_visible(void *scroll_area, void *widget, int x_margin, int y_margin) {
+    static_cast<QScrollArea *>(scroll_area)->ensureWidgetVisible(
+        static_cast<QWidget *>(widget), x_margin, y_margin
+    );
+}
+
+void *qt_scroll_area_take_widget(void *scroll_area) {
+    return static_cast<void *>(static_cast<QScrollArea *>(scroll_area)->takeWidget());
+}
+
+void *qt_scroll_area_get_vertical_scroll_bar(void *scroll_area) {
+    return static_cast<void *>(static_cast<QScrollArea *>(scroll_area)->verticalScrollBar());
+}
+
+void *qt_scroll_area_get_horizontal_scroll_bar(void *scroll_area) {
+    return static_cast<void *>(static_cast<QScrollArea *>(scroll_area)->horizontalScrollBar());
+}
+
+void qt_scroll_area_set_alignment(void *scroll_area, int alignment) {
+    static_cast<QScrollArea *>(scroll_area)->setAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
 /* ── QSplitter ──────────────────────────────────────────────────────── */
 
 void *qt_splitter_create(int orientation, void *parent) {
@@ -2484,6 +2644,40 @@ int qt_splitter_get_count(void *splitter) {
 
 void qt_splitter_set_collapsible(void *splitter, int index, int is_collapsible) {
     static_cast<QSplitter *>(splitter)->setCollapsible(index, is_collapsible != 0);
+}
+
+void *qt_splitter_get_widget(void *splitter, int index) {
+    return static_cast<void *>(static_cast<QSplitter *>(splitter)->widget(index));
+}
+
+int qt_splitter_index_of(void *splitter, void *widget) {
+    return static_cast<QSplitter *>(splitter)->indexOf(static_cast<QWidget *>(widget));
+}
+
+void qt_splitter_set_children_collapsible(void *splitter, int is_collapsible) {
+    static_cast<QSplitter *>(splitter)->setChildrenCollapsible(is_collapsible != 0);
+}
+
+void qt_splitter_set_opaque_resize(void *splitter, int is_opaque) {
+    static_cast<QSplitter *>(splitter)->setOpaqueResize(is_opaque != 0);
+}
+
+void qt_splitter_set_handle_width(void *splitter, int width) {
+    static_cast<QSplitter *>(splitter)->setHandleWidth(width);
+}
+
+char *qt_splitter_save_state(void *splitter, int *out_len) {
+    QByteArray state = static_cast<QSplitter *>(splitter)->saveState();
+    *out_len = state.size();
+    char *result = static_cast<char *>(malloc(state.size()));
+    memcpy(result, state.constData(), state.size());
+    return result;
+}
+
+int qt_splitter_restore_state(void *splitter, const char *data, int len) {
+    return static_cast<QSplitter *>(splitter)->restoreState(
+        QByteArray(data, len)
+    ) ? 1 : 0;
 }
 
 /* ── QStackedWidget ─────────────────────────────────────────────────── */
@@ -2590,6 +2784,67 @@ void qt_menu_clear(void *menu) {
     static_cast<QMenu *>(menu)->clear();
 }
 
+void *qt_menu_add_section(void *menu, const char *text) {
+    return static_cast<void *>(static_cast<QMenu *>(menu)->addSection(QString::fromUtf8(text)));
+}
+
+void qt_menu_insert_action(void *menu, void *before, void *action) {
+    static_cast<QMenu *>(menu)->insertAction(
+        static_cast<QAction *>(before), static_cast<QAction *>(action)
+    );
+}
+
+void *qt_menu_insert_separator(void *menu, void *before) {
+    return static_cast<void *>(
+        static_cast<QMenu *>(menu)->insertSeparator(static_cast<QAction *>(before))
+    );
+}
+
+void *qt_menu_insert_menu(void *menu, void *before, void *submenu) {
+    return static_cast<void *>(
+        static_cast<QMenu *>(menu)->insertMenu(
+            static_cast<QAction *>(before), static_cast<QMenu *>(submenu)
+        )
+    );
+}
+
+void qt_menu_set_title(void *menu, const char *title) {
+    static_cast<QMenu *>(menu)->setTitle(QString::fromUtf8(title));
+}
+
+char *qt_menu_get_title(void *menu) {
+    return qstring_to_heap_utf8(static_cast<QMenu *>(menu)->title());
+}
+
+void qt_menu_set_icon(void *menu, void *icon) {
+    static_cast<QMenu *>(menu)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_menu_set_tear_off_enabled(void *menu, int is_enabled) {
+    static_cast<QMenu *>(menu)->setTearOffEnabled(is_enabled != 0);
+}
+
+void qt_menu_set_default_action(void *menu, void *action) {
+    static_cast<QMenu *>(menu)->setDefaultAction(static_cast<QAction *>(action));
+}
+
+void qt_menu_get_actions(void *menu, void ***out_actions, int *out_count) {
+    auto actions = static_cast<QMenu *>(menu)->actions();
+    *out_count = actions.size();
+    if (*out_count == 0) {
+        *out_actions = nullptr;
+        return;
+    }
+    *out_actions = static_cast<void **>(malloc(sizeof(void *) * *out_count));
+    for (int i = 0; i < *out_count; i++) {
+        (*out_actions)[i] = static_cast<void *>(actions[i]);
+    }
+}
+
+int qt_menu_is_empty(void *menu) {
+    return static_cast<QMenu *>(menu)->isEmpty() ? 1 : 0;
+}
+
 /* ── QAction ────────────────────────────────────────────────────────── */
 
 void qt_action_set_enabled(void *action, int is_enabled) {
@@ -2640,6 +2895,38 @@ int qt_action_is_visible(void *action) {
     return static_cast<QAction *>(action)->isVisible() ? 1 : 0;
 }
 
+void qt_action_set_shortcut_context(void *action, int context) {
+    static_cast<QAction *>(action)->setShortcutContext(static_cast<Qt::ShortcutContext>(context));
+}
+
+void qt_action_set_status_tip(void *action, const char *tip) {
+    static_cast<QAction *>(action)->setStatusTip(QString::fromUtf8(tip));
+}
+
+void qt_action_set_whats_this(void *action, const char *text) {
+    static_cast<QAction *>(action)->setWhatsThis(QString::fromUtf8(text));
+}
+
+void qt_action_set_auto_repeat(void *action, int is_enabled) {
+    static_cast<QAction *>(action)->setAutoRepeat(is_enabled != 0);
+}
+
+void qt_action_set_data(void *action, const char *data) {
+    static_cast<QAction *>(action)->setData(QString::fromUtf8(data));
+}
+
+char *qt_action_get_data(void *action) {
+    return qstring_to_heap_utf8(static_cast<QAction *>(action)->data().toString());
+}
+
+void qt_action_trigger(void *action) {
+    static_cast<QAction *>(action)->trigger();
+}
+
+void qt_action_set_menu_role(void *action, int role) {
+    static_cast<QAction *>(action)->setMenuRole(static_cast<QAction::MenuRole>(role));
+}
+
 /* ── QToolBar ───────────────────────────────────────────────────────── */
 
 void *qt_toolbar_create(void *parent, const char *title) {
@@ -2674,6 +2961,52 @@ void qt_toolbar_set_tool_button_style(void *toolbar, int style) {
     static_cast<QToolBar *>(toolbar)->setToolButtonStyle(
         static_cast<Qt::ToolButtonStyle>(style)
     );
+}
+
+void qt_toolbar_insert_action(void *toolbar, void *before, void *action) {
+    static_cast<QToolBar *>(toolbar)->insertAction(
+        static_cast<QAction *>(before), static_cast<QAction *>(action)
+    );
+}
+
+void *qt_toolbar_insert_separator(void *toolbar, void *before) {
+    return static_cast<void *>(
+        static_cast<QToolBar *>(toolbar)->insertSeparator(static_cast<QAction *>(before))
+    );
+}
+
+void *qt_toolbar_insert_widget(void *toolbar, void *before, void *widget) {
+    return static_cast<void *>(
+        static_cast<QToolBar *>(toolbar)->insertWidget(
+            static_cast<QAction *>(before), static_cast<QWidget *>(widget)
+        )
+    );
+}
+
+void qt_toolbar_set_allowed_areas(void *toolbar, int areas) {
+    static_cast<QToolBar *>(toolbar)->setAllowedAreas(static_cast<Qt::ToolBarAreas>(areas));
+}
+
+void qt_toolbar_set_floatable(void *toolbar, int is_floatable) {
+    static_cast<QToolBar *>(toolbar)->setFloatable(is_floatable != 0);
+}
+
+void qt_toolbar_set_orientation(void *toolbar, int orientation) {
+    static_cast<QToolBar *>(toolbar)->setOrientation(static_cast<Qt::Orientation>(orientation));
+}
+
+void *qt_toolbar_toggle_view_action(void *toolbar) {
+    return static_cast<void *>(static_cast<QToolBar *>(toolbar)->toggleViewAction());
+}
+
+void *qt_toolbar_widget_for_action(void *toolbar, void *action) {
+    return static_cast<void *>(
+        static_cast<QToolBar *>(toolbar)->widgetForAction(static_cast<QAction *>(action))
+    );
+}
+
+void qt_toolbar_clear(void *toolbar) {
+    static_cast<QToolBar *>(toolbar)->clear();
 }
 
 /* ── QTabWidget ─────────────────────────────────────────────────────── */
@@ -2738,6 +3071,36 @@ int qt_tab_widget_index_of(void *tab_widget, void *widget) {
     return static_cast<QTabWidget *>(tab_widget)->indexOf(static_cast<QWidget *>(widget));
 }
 
+void *qt_tab_widget_get_current_widget(void *tab_widget) {
+    return static_cast<void *>(static_cast<QTabWidget *>(tab_widget)->currentWidget());
+}
+
+void qt_tab_widget_clear(void *tab_widget) {
+    static_cast<QTabWidget *>(tab_widget)->clear();
+}
+
+void qt_tab_widget_set_document_mode(void *tab_widget, int is_document_mode) {
+    static_cast<QTabWidget *>(tab_widget)->setDocumentMode(is_document_mode != 0);
+}
+
+void qt_tab_widget_set_elide_mode(void *tab_widget, int mode) {
+    static_cast<QTabWidget *>(tab_widget)->setElideMode(static_cast<Qt::TextElideMode>(mode));
+}
+
+void qt_tab_widget_set_uses_scroll_buttons(void *tab_widget, int is_uses) {
+    static_cast<QTabWidget *>(tab_widget)->setUsesScrollButtons(is_uses != 0);
+}
+
+void qt_tab_widget_set_tab_bar_auto_hide(void *tab_widget, int is_auto_hide) {
+    static_cast<QTabWidget *>(tab_widget)->setTabBarAutoHide(is_auto_hide != 0);
+}
+
+void qt_tab_widget_set_corner_widget(void *tab_widget, void *widget, int corner) {
+    static_cast<QTabWidget *>(tab_widget)->setCornerWidget(
+        static_cast<QWidget *>(widget), static_cast<Qt::Corner>(corner)
+    );
+}
+
 /* ── QGroupBox ──────────────────────────────────────────────────────── */
 
 void *qt_group_box_create(void *parent, const char *title) {
@@ -2788,6 +3151,30 @@ void qt_dialog_accept(void *dialog) {
 
 void qt_dialog_reject(void *dialog) {
     static_cast<QDialog *>(dialog)->reject();
+}
+
+void qt_dialog_set_modal(void *dialog, int is_modal) {
+    static_cast<QDialog *>(dialog)->setModal(is_modal != 0);
+}
+
+void qt_dialog_open(void *dialog) {
+    static_cast<QDialog *>(dialog)->open();
+}
+
+void qt_dialog_done(void *dialog, int result) {
+    static_cast<QDialog *>(dialog)->done(result);
+}
+
+void qt_dialog_set_result(void *dialog, int result) {
+    static_cast<QDialog *>(dialog)->setResult(result);
+}
+
+int qt_dialog_get_result(void *dialog) {
+    return static_cast<QDialog *>(dialog)->result();
+}
+
+void qt_dialog_set_size_grip_enabled(void *dialog, int is_enabled) {
+    static_cast<QDialog *>(dialog)->setSizeGripEnabled(is_enabled != 0);
 }
 
 /* ── QDockWidget ────────────────────────────────────────────────────── */
@@ -2844,6 +3231,26 @@ void qt_statusbar_add_widget(void *statusbar, void *widget) {
 
 void qt_statusbar_remove_widget(void *statusbar, void *widget) {
     static_cast<QStatusBar *>(statusbar)->removeWidget(static_cast<QWidget *>(widget));
+}
+
+int qt_statusbar_insert_widget(void *statusbar, int index, void *widget, int stretch) {
+    return static_cast<QStatusBar *>(statusbar)->insertWidget(
+        index, static_cast<QWidget *>(widget), stretch
+    );
+}
+
+int qt_statusbar_insert_permanent_widget(void *statusbar, int index, void *widget, int stretch) {
+    return static_cast<QStatusBar *>(statusbar)->insertPermanentWidget(
+        index, static_cast<QWidget *>(widget), stretch
+    );
+}
+
+char *qt_statusbar_get_current_message(void *statusbar) {
+    return qstring_to_heap_utf8(static_cast<QStatusBar *>(statusbar)->currentMessage());
+}
+
+void qt_statusbar_set_size_grip_enabled(void *statusbar, int is_enabled) {
+    static_cast<QStatusBar *>(statusbar)->setSizeGripEnabled(is_enabled != 0);
 }
 
 /* ── QTimer ─────────────────────────────────────────────────────────── */
@@ -4455,6 +4862,123 @@ int qt_plain_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t
 int qt_plain_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data) {
     auto conn = QObject::connect(static_cast<QPlainTextEdit *>(text_edit), &QPlainTextEdit::redoAvailable, [callback, user_data](bool available) {
         callback(available ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+/* New signals for QListWidget, QMenu, QAction */
+
+int qt_list_widget_connect_item_changed(void *list, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QListWidget *>(list), &QListWidget::itemChanged, [callback, user_data](QListWidgetItem *item) {
+        callback(static_cast<void *>(item), 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_list_widget_connect_item_activated(void *list, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QListWidget *>(list), &QListWidget::itemActivated, [callback, user_data](QListWidgetItem *item) {
+        callback(static_cast<void *>(item), 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_menu_connect_about_to_show(void *menu, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMenu *>(menu), &QMenu::aboutToShow, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_menu_connect_about_to_hide(void *menu, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMenu *>(menu), &QMenu::aboutToHide, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_menu_connect_triggered(void *menu, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QMenu *>(menu), &QMenu::triggered, [callback, user_data](QAction *action) {
+        callback(static_cast<void *>(action), 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_action_connect_toggled(void *action, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QAction *>(action), &QAction::toggled, [callback, user_data](bool checked) {
+        callback(checked ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_action_connect_hovered(void *action, qt_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QAction *>(action), &QAction::hovered, [callback, user_data]() {
+        callback(user_data);
+    });
+    return store_connection(conn);
+}
+
+/* New signals for QTabWidget, QSplitter, QToolBar, QSlider, QStatusBar */
+
+int qt_tab_widget_connect_tab_bar_clicked(void *tab_widget, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTabWidget *>(tab_widget), &QTabWidget::tabBarClicked, [callback, user_data](int index) {
+        callback(index, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_tab_widget_connect_tab_bar_double_clicked(void *tab_widget, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QTabWidget *>(tab_widget), &QTabWidget::tabBarDoubleClicked, [callback, user_data](int index) {
+        callback(index, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_splitter_connect_splitter_moved(void *splitter, qt_cell_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSplitter *>(splitter), &QSplitter::splitterMoved, [callback, user_data](int pos, int index) {
+        callback(pos, index, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_toolbar_connect_action_triggered(void *toolbar, qt_item_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QToolBar *>(toolbar), &QToolBar::actionTriggered, [callback, user_data](QAction *action) {
+        callback(static_cast<void *>(action), 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_toolbar_connect_visibility_changed(void *toolbar, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QToolBar *>(toolbar), &QToolBar::visibilityChanged, [callback, user_data](bool is_visible) {
+        callback(is_visible ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_toolbar_connect_top_level_changed(void *toolbar, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QToolBar *>(toolbar), &QToolBar::topLevelChanged, [callback, user_data](bool is_top_level) {
+        callback(is_top_level ? 1 : 0, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_slider_connect_slider_moved(void *slider, qt_int_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSlider *>(slider), &QSlider::sliderMoved, [callback, user_data](int value) {
+        callback(value, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_slider_connect_range_changed(void *slider, qt_cell_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QSlider *>(slider), &QSlider::rangeChanged, [callback, user_data](int min_val, int max_val) {
+        callback(min_val, max_val, user_data);
+    });
+    return store_connection(conn);
+}
+
+int qt_statusbar_connect_message_changed(void *statusbar, qt_string_callback_t callback, void *user_data) {
+    auto conn = QObject::connect(static_cast<QStatusBar *>(statusbar), &QStatusBar::messageChanged, [callback, user_data](const QString &message) {
+        QByteArray utf8 = message.toUtf8();
+        callback(utf8.constData(), user_data);
     });
     return store_connection(conn);
 }

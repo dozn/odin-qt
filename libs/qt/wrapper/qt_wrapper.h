@@ -319,6 +319,13 @@ void  qt_slider_set_tick_position(void *slider, int position);
 void  qt_slider_set_tick_interval(void *slider, int interval);
 void  qt_slider_set_single_step(void *slider, int step);
 void  qt_slider_set_page_step(void *slider, int step);
+void  qt_slider_set_orientation(void *slider, int orientation);
+void  qt_slider_set_minimum(void *slider, int min_val);
+void  qt_slider_set_maximum(void *slider, int max_val);
+int   qt_slider_get_minimum(void *slider);
+int   qt_slider_get_maximum(void *slider);
+void  qt_slider_set_inverted_appearance(void *slider, int is_inverted);
+void  qt_slider_set_inverted_controls(void *slider, int is_inverted);
 
 /* ── QProgressBar ───────────────────────────────────────────────────── */
 
@@ -330,6 +337,12 @@ void  qt_progress_bar_set_format(void *progress_bar, const char *format);
 void  qt_progress_bar_set_text_visible(void *progress_bar, int is_visible);
 void  qt_progress_bar_reset(void *progress_bar);
 void  qt_progress_bar_set_orientation(void *progress_bar, int orientation);
+void  qt_progress_bar_set_minimum(void *progress_bar, int min_val);
+void  qt_progress_bar_set_maximum(void *progress_bar, int max_val);
+int   qt_progress_bar_get_minimum(void *progress_bar);
+int   qt_progress_bar_get_maximum(void *progress_bar);
+int   qt_progress_bar_is_text_visible(void *progress_bar);
+char *qt_progress_bar_get_text(void *progress_bar);
 
 /* ── QSpinBox ───────────────────────────────────────────────────────── */
 
@@ -402,6 +415,20 @@ char *qt_list_widget_get_item_text(void *list, int row);
 void  qt_list_widget_insert_item(void *list, int row, const char *text);
 void  qt_list_widget_sort_items(void *list, int order);
 void  qt_list_widget_set_selection_mode(void *list, int mode);
+void *qt_list_widget_get_item(void *list, int row);
+void *qt_list_widget_get_item_at(void *list, int x, int y);
+void *qt_list_widget_get_current_item(void *list);
+void  qt_list_widget_set_current_item(void *list, void *item);
+void  qt_list_widget_get_selected_items(void *list, void ***out_items, int *out_count);
+void  qt_list_widget_add_items(void *list, const char **items, int count);
+void  qt_list_widget_find_items(void *list, const char *text, int match_flags, void ***out_items, int *out_count);
+void  qt_list_widget_scroll_to_item(void *list, void *item, int scroll_hint);
+void  qt_list_widget_set_view_mode(void *list, int mode);
+void  qt_list_widget_set_icon_size(void *list, int w, int h);
+void  qt_list_widget_set_grid_size(void *list, int w, int h);
+void  qt_list_widget_set_flow(void *list, int flow);
+void  qt_list_widget_set_spacing(void *list, int spacing);
+void  qt_list_widget_set_sorting_enabled(void *list, int is_enabled);
 
 /* ── QTreeWidget ────────────────────────────────────────────────────── */
 
@@ -513,6 +540,12 @@ void  qt_scroll_area_set_widget_resizable(void *scroll_area, int is_resizable);
 void *qt_scroll_area_get_widget(void *scroll_area);
 void  qt_scroll_area_set_horizontal_scroll_bar_policy(void *scroll_area, int policy);
 void  qt_scroll_area_set_vertical_scroll_bar_policy(void *scroll_area, int policy);
+void  qt_scroll_area_ensure_visible(void *scroll_area, int x, int y, int x_margin, int y_margin);
+void  qt_scroll_area_ensure_widget_visible(void *scroll_area, void *widget, int x_margin, int y_margin);
+void *qt_scroll_area_take_widget(void *scroll_area);
+void *qt_scroll_area_get_vertical_scroll_bar(void *scroll_area);
+void *qt_scroll_area_get_horizontal_scroll_bar(void *scroll_area);
+void  qt_scroll_area_set_alignment(void *scroll_area, int alignment);
 
 /* ── QSplitter ──────────────────────────────────────────────────────── */
 
@@ -523,6 +556,13 @@ void  qt_splitter_get_sizes(void *splitter, int *sizes_out, int count);
 void  qt_splitter_set_stretch_factor(void *splitter, int index, int stretch);
 int   qt_splitter_get_count(void *splitter);
 void  qt_splitter_set_collapsible(void *splitter, int index, int is_collapsible);
+void *qt_splitter_get_widget(void *splitter, int index);
+int   qt_splitter_index_of(void *splitter, void *widget);
+void  qt_splitter_set_children_collapsible(void *splitter, int is_collapsible);
+void  qt_splitter_set_opaque_resize(void *splitter, int is_opaque);
+void  qt_splitter_set_handle_width(void *splitter, int width);
+char *qt_splitter_save_state(void *splitter, int *out_len);
+int   qt_splitter_restore_state(void *splitter, const char *data, int len);
 
 /* ── QStackedWidget ─────────────────────────────────────────────────── */
 
@@ -559,6 +599,17 @@ void  qt_menu_add_separator(void *menu);
 void *qt_menu_add_menu(void *menu, const char *title);
 void  qt_menu_popup(void *menu, int global_x, int global_y);
 void  qt_menu_clear(void *menu);
+void *qt_menu_add_section(void *menu, const char *text);
+void  qt_menu_insert_action(void *menu, void *before, void *action);
+void *qt_menu_insert_separator(void *menu, void *before);
+void *qt_menu_insert_menu(void *menu, void *before, void *submenu);
+void  qt_menu_set_title(void *menu, const char *title);
+char *qt_menu_get_title(void *menu);
+void  qt_menu_set_icon(void *menu, void *icon);
+void  qt_menu_set_tear_off_enabled(void *menu, int is_enabled);
+void  qt_menu_set_default_action(void *menu, void *action);
+void  qt_menu_get_actions(void *menu, void ***out_actions, int *out_count);
+int   qt_menu_is_empty(void *menu);
 
 /* ── QAction ────────────────────────────────────────────────────────── */
 
@@ -574,6 +625,14 @@ int   qt_action_is_enabled(void *action);
 int   qt_action_is_checkable(void *action);
 void  qt_action_set_visible(void *action, int is_visible);
 int   qt_action_is_visible(void *action);
+void  qt_action_set_shortcut_context(void *action, int context);
+void  qt_action_set_status_tip(void *action, const char *tip);
+void  qt_action_set_whats_this(void *action, const char *text);
+void  qt_action_set_auto_repeat(void *action, int is_enabled);
+void  qt_action_set_data(void *action, const char *data);
+char *qt_action_get_data(void *action);
+void  qt_action_trigger(void *action);
+void  qt_action_set_menu_role(void *action, int role);
 
 /* ── QToolBar ───────────────────────────────────────────────────────── */
 
@@ -585,6 +644,15 @@ void  qt_toolbar_set_movable(void *toolbar, int is_movable);
 int   qt_toolbar_is_movable(void *toolbar);
 void  qt_toolbar_set_icon_size(void *toolbar, int width, int height);
 void  qt_toolbar_set_tool_button_style(void *toolbar, int style);
+void  qt_toolbar_insert_action(void *toolbar, void *before, void *action);
+void *qt_toolbar_insert_separator(void *toolbar, void *before);
+void *qt_toolbar_insert_widget(void *toolbar, void *before, void *widget);
+void  qt_toolbar_set_allowed_areas(void *toolbar, int areas);
+void  qt_toolbar_set_floatable(void *toolbar, int is_floatable);
+void  qt_toolbar_set_orientation(void *toolbar, int orientation);
+void *qt_toolbar_toggle_view_action(void *toolbar);
+void *qt_toolbar_widget_for_action(void *toolbar, void *action);
+void  qt_toolbar_clear(void *toolbar);
 
 /* ── QTabWidget ─────────────────────────────────────────────────────── */
 
@@ -602,6 +670,13 @@ void  qt_tab_widget_set_tabs_closable(void *tab_widget, int is_closable);
 void  qt_tab_widget_set_movable(void *tab_widget, int is_movable);
 void *qt_tab_widget_get_widget(void *tab_widget, int index);
 int   qt_tab_widget_index_of(void *tab_widget, void *widget);
+void *qt_tab_widget_get_current_widget(void *tab_widget);
+void  qt_tab_widget_clear(void *tab_widget);
+void  qt_tab_widget_set_document_mode(void *tab_widget, int is_document_mode);
+void  qt_tab_widget_set_elide_mode(void *tab_widget, int mode);
+void  qt_tab_widget_set_uses_scroll_buttons(void *tab_widget, int is_uses);
+void  qt_tab_widget_set_tab_bar_auto_hide(void *tab_widget, int is_auto_hide);
+void  qt_tab_widget_set_corner_widget(void *tab_widget, void *widget, int corner);
 
 /* ── QGroupBox ──────────────────────────────────────────────────────── */
 
@@ -620,6 +695,12 @@ void *qt_dialog_create(void *parent);
 int   qt_dialog_exec(void *dialog);
 void  qt_dialog_accept(void *dialog);
 void  qt_dialog_reject(void *dialog);
+void  qt_dialog_set_modal(void *dialog, int is_modal);
+void  qt_dialog_open(void *dialog);
+void  qt_dialog_done(void *dialog, int result);
+void  qt_dialog_set_result(void *dialog, int result);
+int   qt_dialog_get_result(void *dialog);
+void  qt_dialog_set_size_grip_enabled(void *dialog, int is_enabled);
 
 /* ── QDockWidget ────────────────────────────────────────────────────── */
 
@@ -638,6 +719,10 @@ void  qt_statusbar_clear_message(void *statusbar);
 void  qt_statusbar_add_permanent_widget(void *statusbar, void *widget);
 void  qt_statusbar_add_widget(void *statusbar, void *widget);
 void  qt_statusbar_remove_widget(void *statusbar, void *widget);
+int   qt_statusbar_insert_widget(void *statusbar, int index, void *widget, int stretch);
+int   qt_statusbar_insert_permanent_widget(void *statusbar, int index, void *widget, int stretch);
+char *qt_statusbar_get_current_message(void *statusbar);
+void  qt_statusbar_set_size_grip_enabled(void *statusbar, int is_enabled);
 
 /* ── QTimer ─────────────────────────────────────────────────────────── */
 
@@ -937,6 +1022,26 @@ int qt_plain_text_edit_connect_block_count_changed(void *text_edit, qt_int_callb
 int qt_plain_text_edit_connect_copy_available(void *text_edit, qt_int_callback_t callback, void *user_data);
 int qt_plain_text_edit_connect_undo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
 int qt_plain_text_edit_connect_redo_available(void *text_edit, qt_int_callback_t callback, void *user_data);
+
+/* New signals for QListWidget, QMenu, QAction */
+int qt_list_widget_connect_item_changed(void *list, qt_item_callback_t callback, void *user_data);
+int qt_list_widget_connect_item_activated(void *list, qt_item_callback_t callback, void *user_data);
+int qt_menu_connect_about_to_show(void *menu, qt_callback_t callback, void *user_data);
+int qt_menu_connect_about_to_hide(void *menu, qt_callback_t callback, void *user_data);
+int qt_menu_connect_triggered(void *menu, qt_item_callback_t callback, void *user_data);
+int qt_action_connect_toggled(void *action, qt_int_callback_t callback, void *user_data);
+int qt_action_connect_hovered(void *action, qt_callback_t callback, void *user_data);
+
+/* New signals for QTabWidget, QSplitter, QToolBar, QSlider, QStatusBar */
+int qt_tab_widget_connect_tab_bar_clicked(void *tab_widget, qt_int_callback_t callback, void *user_data);
+int qt_tab_widget_connect_tab_bar_double_clicked(void *tab_widget, qt_int_callback_t callback, void *user_data);
+int qt_splitter_connect_splitter_moved(void *splitter, qt_cell_callback_t callback, void *user_data);
+int qt_toolbar_connect_action_triggered(void *toolbar, qt_item_callback_t callback, void *user_data);
+int qt_toolbar_connect_visibility_changed(void *toolbar, qt_int_callback_t callback, void *user_data);
+int qt_toolbar_connect_top_level_changed(void *toolbar, qt_int_callback_t callback, void *user_data);
+int qt_slider_connect_slider_moved(void *slider, qt_int_callback_t callback, void *user_data);
+int qt_slider_connect_range_changed(void *slider, qt_cell_callback_t callback, void *user_data);
+int qt_statusbar_connect_message_changed(void *statusbar, qt_string_callback_t callback, void *user_data);
 
 /* ── QSettings ──────────────────────────────────────────────────────── */
 
