@@ -3467,6 +3467,277 @@ build_new_classes_tab :: proc() -> qt.Widget {
 	return page
 }
 
+build_style_lowlevel_tab :: proc() -> qt.Widget {
+	page := qt.widget_create(nil)
+	outer_layout := qt.vbox_layout_create(page)
+	scroll := qt.scroll_area_create(nil)
+	qt.scroll_area_set_widget_resizable(scroll, 1)
+	content := qt.widget_create(nil)
+	layout := qt.vbox_layout_create(content)
+	qt.layout_set_spacing(layout, 8)
+
+	heading := qt.label_create(nil, "Style, Font & Low-Level APIs")
+	qt.label_set_alignment(heading, .Centre)
+	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.layout_add_widget(layout, auto_cast heading)
+
+	// ── QCommonStyle: Standard Icons ──────────────────────────────
+	icon_group := qt.group_box_create(nil, "QCommonStyle \xe2\x80\x94 Standard Icons")
+	icon_grid := qt.grid_layout_create(auto_cast icon_group)
+	qt.layout_set_spacing(auto_cast icon_grid, 4)
+
+	style := qt.common_style_create()
+
+	Standard_Icon :: struct {
+		label: cstring,
+		id:    c.int,
+	}
+	standard_icons := [?]Standard_Icon{
+		{"Info",       9},  // SP_MessageBoxInformation
+		{"Warning",   10},  // SP_MessageBoxWarning
+		{"Critical",  11},  // SP_MessageBoxCritical
+		{"Question",  12},  // SP_MessageBoxQuestion
+		{"Desktop",   13},  // SP_DesktopIcon
+		{"Trash",     14},  // SP_TrashIcon
+		{"Computer",  15},  // SP_ComputerIcon
+		{"Dir Open",  20},  // SP_DirOpenIcon
+		{"Dir Close", 21},  // SP_DirClosedIcon
+		{"File",      24},  // SP_FileIcon
+		{"Arrow Up",  37},  // SP_ArrowUp
+		{"Arrow Down",38},  // SP_ArrowDown
+		{"Play",      48},  // SP_MediaPlay
+		{"Stop",      49},  // SP_MediaStop
+		{"Pause",     50},  // SP_MediaPause
+		{"Reload",    46},  // SP_BrowserReload
+		{"Home",      43},  // SP_DirHomeIcon
+		{"New Folder",31},  // SP_FileDialogNewFolder
+	}
+
+	for icon_info, idx in standard_icons {
+		icon := qt.common_style_get_standard_icon(style, icon_info.id, nil, nil)
+		btn := qt.push_button_create(nil, icon_info.label)
+		qt.push_button_set_icon(btn, icon)
+		qt.push_button_set_flat(btn, 1)
+		qt.widget_set_enabled(auto_cast btn, 0)
+		qt.grid_layout_add_widget(icon_grid, auto_cast btn, cast(c.int)(idx / 6), cast(c.int)(idx % 6), 1, 1)
+		qt.icon_destroy(icon)
+	}
+
+	qt.layout_add_widget(layout, auto_cast icon_group)
+
+	// ── QCommonStyle: Pixel Metrics ──────────────────────────────
+	metric_group := qt.group_box_create(nil, "QCommonStyle \xe2\x80\x94 Pixel Metrics")
+	metric_grid := qt.grid_layout_create(auto_cast metric_group)
+
+	Pixel_Metric :: struct {
+		label: cstring,
+		id:    c.int,
+	}
+	pixel_metrics := [?]Pixel_Metric{
+		{"Button Margin",       0},   // PM_ButtonMargin
+		{"Scroll Bar Extent",  15},   // PM_ScrollBarExtent
+		{"Slider Thickness",   17},   // PM_SliderThickness
+		{"Slider Length",      19},   // PM_SliderLength
+		{"Small Icon Size",    34},   // PM_SmallIconSize
+		{"Large Icon Size",    35},   // PM_LargeIconSize
+		{"Splitter Width",     44},   // PM_SplitterWidth
+		{"Title Bar Height",   49},   // PM_TitleBarHeight
+		{"Layout Left Margin", 63},   // PM_LayoutLeftMargin
+		{"Layout H Spacing",   67},   // PM_LayoutHorizontalSpacing
+		{"Layout V Spacing",   68},   // PM_LayoutVerticalSpacing
+	}
+
+	for metric, idx in pixel_metrics {
+		name_label := qt.label_create(nil, metric.label)
+		value := qt.common_style_get_pixel_metric(style, metric.id, nil, nil)
+		context = runtime.default_context()
+		buf: [32]u8
+		msg := fmt.bprintf(buf[:], "%d px", value)
+		buf[len(msg)] = 0
+		value_label := qt.label_create(nil, cstring(raw_data(buf[:])))
+		qt.widget_set_font(auto_cast value_label, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+		qt.grid_layout_add_widget(metric_grid, auto_cast name_label, cast(c.int)idx, 0, 1, 1)
+		qt.grid_layout_add_widget(metric_grid, auto_cast value_label, cast(c.int)idx, 1, 1, 1)
+	}
+
+	qt.layout_add_widget(layout, auto_cast metric_group)
+	qt.common_style_destroy(style)
+
+	// ── QStyleOption: Create from Widget ─────────────────────────
+	option_group := qt.group_box_create(nil, "QStyleOption \xe2\x80\x94 Read Widget Properties")
+	option_layout := qt.vbox_layout_create(auto_cast option_group)
+
+	sample_button := qt.push_button_create(nil, "Sample Button")
+	qt.widget_resize(auto_cast sample_button, 150, 30)
+	qt.layout_add_widget(option_layout, auto_cast sample_button)
+
+	btn_option := qt.style_option_button_create(auto_cast sample_button)
+	qt.style_option_button_set_text(btn_option, "Custom Text")
+	qt.style_option_button_set_features(btn_option, 0x01) // Flat
+
+	opt_text := qt.style_option_button_get_text(btn_option)
+	opt_features := qt.style_option_button_get_features(btn_option)
+	opt_state := qt.style_option_get_state(auto_cast btn_option)
+	opt_direction := qt.style_option_get_direction(auto_cast btn_option)
+
+	opt_rx, opt_ry, opt_rw, opt_rh: c.int
+	qt.style_option_get_rect(auto_cast btn_option, &opt_rx, &opt_ry, &opt_rw, &opt_rh)
+
+	option_output := qt.label_create(nil, "")
+	{
+		context = runtime.default_context()
+		buf: [384]u8
+		msg := fmt.bprintf(
+			buf[:],
+			"QStyleOptionButton created from widget:\n  text = \"%s\"\n  features = 0x%x\n  state = 0x%x\n  direction = %d\n  rect = (%d, %d, %d, %d)",
+			opt_text, opt_features, opt_state, opt_direction,
+			opt_rx, opt_ry, opt_rw, opt_rh,
+		)
+		buf[len(msg)] = 0
+		qt.label_set_text(option_output, cstring(raw_data(buf[:])))
+	}
+	qt.widget_set_font(auto_cast option_output, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.layout_add_widget(option_layout, auto_cast option_output)
+
+	if opt_text != nil do qt.free_string(opt_text)
+	qt.style_option_button_destroy(btn_option)
+
+	// Also demo QStyleOptionSlider
+	slider_option := qt.style_option_slider_create(nil)
+	qt.style_option_slider_set_minimum(slider_option, 0)
+	qt.style_option_slider_set_maximum(slider_option, 100)
+	qt.style_option_slider_set_slider_value(slider_option, 42)
+	qt.style_option_slider_set_slider_position(slider_option, 42)
+	qt.style_option_slider_set_orientation(slider_option, 1) // Horizontal
+	qt.style_option_slider_set_single_step(slider_option, 1)
+	qt.style_option_slider_set_page_step(slider_option, 10)
+
+	slider_val := qt.style_option_slider_get_slider_value(slider_option)
+	slider_min := qt.style_option_slider_get_minimum(slider_option)
+	slider_max := qt.style_option_slider_get_maximum(slider_option)
+	slider_orient := qt.style_option_slider_get_orientation(slider_option)
+	slider_single := qt.style_option_slider_get_single_step(slider_option)
+	slider_page := qt.style_option_slider_get_page_step(slider_option)
+
+	slider_output := qt.label_create(nil, "")
+	{
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(
+			buf[:],
+			"QStyleOptionSlider:\n  value=%d, min=%d, max=%d\n  orientation=%d (1=Horizontal)\n  singleStep=%d, pageStep=%d",
+			slider_val, slider_min, slider_max, slider_orient, slider_single, slider_page,
+		)
+		buf[len(msg)] = 0
+		qt.label_set_text(slider_output, cstring(raw_data(buf[:])))
+	}
+	qt.widget_set_font(auto_cast slider_output, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.layout_add_widget(option_layout, auto_cast slider_output)
+	qt.style_option_slider_destroy(slider_option)
+
+	qt.layout_add_widget(layout, auto_cast option_group)
+
+	// ── QRawFont: Font Metrics ──────────────────────────────────
+	font_group := qt.group_box_create(nil, "QRawFont \xe2\x80\x94 Low-Level Font Metrics")
+	font_layout := qt.vbox_layout_create(auto_cast font_group)
+
+	raw_font := qt.raw_font_create("C:\\Windows\\Fonts\\segoeui.ttf", 16.0)
+	font_output := qt.label_create(nil, "")
+
+	if qt.raw_font_is_valid(raw_font) != 0 {
+		family := qt.raw_font_get_family_name(raw_font)
+		style_name := qt.raw_font_get_style_name(raw_font)
+		pixel_size := qt.raw_font_get_pixel_size(raw_font)
+		weight := qt.raw_font_get_weight(raw_font)
+		ascent := qt.raw_font_get_ascent(raw_font)
+		descent := qt.raw_font_get_descent(raw_font)
+		leading := qt.raw_font_get_leading(raw_font)
+		line_thickness := qt.raw_font_get_line_thickness(raw_font)
+		underline_pos := qt.raw_font_get_underline_position(raw_font)
+
+		context = runtime.default_context()
+		buf: [512]u8
+		msg := fmt.bprintf(
+			buf[:],
+			"Family: %s\nStyle: %s\nPixel Size: %.1f\nWeight: %d\nAscent: %.2f\nDescent: %.2f\nLeading: %.2f\nLine Thickness: %.2f\nUnderline Pos: %.2f",
+			family, style_name, pixel_size, weight,
+			ascent, descent, leading, line_thickness, underline_pos,
+		)
+		buf[len(msg)] = 0
+		qt.label_set_text(font_output, cstring(raw_data(buf[:])))
+
+		if family != nil do qt.free_string(family)
+		if style_name != nil do qt.free_string(style_name)
+	} else {
+		qt.label_set_text(font_output, "Could not load C:\\Windows\\Fonts\\segoeui.ttf")
+	}
+
+	qt.widget_set_font(auto_cast font_output, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.layout_add_widget(font_layout, auto_cast font_output)
+	qt.raw_font_destroy(raw_font)
+
+	// Also demo QGlyphRun
+	glyph_run := qt.glyph_run_create()
+	is_empty := qt.glyph_run_is_empty(glyph_run)
+	glyph_flags := qt.glyph_run_get_flags(glyph_run)
+
+	glyph_output := qt.label_create(nil, "")
+	{
+		context = runtime.default_context()
+		buf: [128]u8
+		msg := fmt.bprintf(buf[:], "\nQGlyphRun: is_empty=%d, flags=0x%x", is_empty, glyph_flags)
+		buf[len(msg)] = 0
+		qt.label_set_text(glyph_output, cstring(raw_data(buf[:])))
+	}
+	qt.widget_set_font(auto_cast glyph_output, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.layout_add_widget(font_layout, auto_cast glyph_output)
+	qt.glyph_run_destroy(glyph_run)
+
+	qt.layout_add_widget(layout, auto_cast font_group)
+
+	// ── QWindow: Low-Level Window Properties ────────────────────
+	window_group := qt.group_box_create(nil, "QWindow \xe2\x80\x94 Platform Window Properties")
+	window_layout := qt.vbox_layout_create(auto_cast window_group)
+
+	qwindow := qt.window_create(nil)
+	qt.window_set_title(qwindow, "Test QWindow")
+	qt.window_resize(qwindow, 320, 240)
+	qt.window_set_opacity(qwindow, 0.9)
+
+	title := qt.window_get_title(qwindow)
+	opacity := qt.window_get_opacity(qwindow)
+	is_active := qt.window_is_active(qwindow)
+	dpr := qt.window_get_device_pixel_ratio(qwindow)
+
+	wx, wy, ww, wh: c.int
+	qt.window_get_geometry(qwindow, &wx, &wy, &ww, &wh)
+
+	window_output := qt.label_create(nil, "")
+	{
+		context = runtime.default_context()
+		buf: [256]u8
+		msg := fmt.bprintf(
+			buf[:],
+			"Title: \"%s\"\nSize: %dx%d\nOpacity: %.1f\nDevice Pixel Ratio: %.1f\nIs Active: %d\n(QWindow not shown \xe2\x80\x94 just demonstrating the API)",
+			title, ww, wh, opacity, dpr, is_active,
+		)
+		buf[len(msg)] = 0
+		qt.label_set_text(window_output, cstring(raw_data(buf[:])))
+	}
+	qt.widget_set_font(auto_cast window_output, "Consolas", 10, cast(c.int)qt.Font_Weight.Normal, 0)
+	qt.layout_add_widget(window_layout, auto_cast window_output)
+
+	if title != nil do qt.free_string(title)
+	qt.window_destroy(qwindow)
+
+	qt.layout_add_widget(layout, auto_cast window_group)
+
+	qt.box_layout_add_stretch(layout, 1)
+	qt.scroll_area_set_widget(scroll, content)
+	qt.layout_add_widget(outer_layout, auto_cast scroll)
+	return page
+}
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 main :: proc() {
@@ -3573,6 +3844,7 @@ main :: proc() {
 	_ = qt.tab_widget_add_tab(tabs, build_widget_properties_tab(), "Widget Props")
 	_ = qt.tab_widget_add_tab(tabs, build_rich_text_tab(), "Rich Text")
 	_ = qt.tab_widget_add_tab(tabs, build_new_classes_tab(), "New Classes")
+	_ = qt.tab_widget_add_tab(tabs, build_style_lowlevel_tab(), "Style && Low-Level")
 
 	qt.main_window_set_central_widget(demo_state.window, auto_cast tabs)
 
