@@ -743,6 +743,19 @@ void  qt_pixmap_destroy(void *pixmap);
 int   qt_pixmap_get_width(void *pixmap);
 int   qt_pixmap_get_height(void *pixmap);
 int   qt_pixmap_is_null(void *pixmap);
+void *qt_pixmap_scaled(void *pixmap, int w, int h, int aspect_ratio_mode, int transform_mode);
+void *qt_pixmap_scaled_to_width(void *pixmap, int width, int transform_mode);
+void *qt_pixmap_scaled_to_height(void *pixmap, int height, int transform_mode);
+void  qt_pixmap_fill(void *pixmap, void *colour);
+int   qt_pixmap_save(void *pixmap, const char *file_path);
+int   qt_pixmap_load(void *pixmap, const char *file_path);
+void *qt_pixmap_copy(void *pixmap, int x, int y, int w, int h);
+void  qt_pixmap_get_size(void *pixmap, int *w, int *h);
+void  qt_pixmap_get_rect(void *pixmap, int *x, int *y, int *w, int *h);
+void *qt_pixmap_from_image(void *image);
+void *qt_pixmap_create_mask_from_colour(void *pixmap, void *colour, int mode);
+void  qt_pixmap_set_mask(void *pixmap, void *bitmap);
+void *qt_pixmap_get_mask(void *pixmap);
 
 /* ── QIcon ──────────────────────────────────────────────────────────── */
 
@@ -751,6 +764,15 @@ void *qt_icon_create_from_file(const char *file_path);
 void *qt_icon_create_from_pixmap(void *pixmap);
 void  qt_icon_destroy(void *icon);
 int   qt_icon_is_null(void *icon);
+void  qt_icon_add_file(void *icon, const char *filename, int w, int h, int mode, int state);
+void  qt_icon_add_pixmap(void *icon, void *pixmap, int mode, int state);
+void *qt_icon_get_pixmap(void *icon, int w, int h, int mode, int state);
+void *qt_icon_from_theme(const char *name);
+int   qt_icon_has_theme_icon(const char *name);
+void  qt_icon_set_theme_name(const char *name);
+char *qt_icon_get_theme_name(void);
+void  qt_icon_get_available_sizes(void *icon, int mode, int state, int **out_sizes, int *out_count);
+void  qt_icon_free_available_sizes(int *sizes);
 
 /* Icon/pixmap setters on existing widgets */
 void  qt_push_button_set_icon(void *button, void *icon);
@@ -1264,27 +1286,49 @@ void *qt_paintable_widget_create(void *parent, qt_paint_callback_t callback, voi
 void qt_painter_set_pen_colour(void *painter, int r, int g, int b, int a);
 void qt_painter_set_pen_width(void *painter, int width);
 void qt_painter_set_no_pen(void *painter);
+void qt_painter_set_pen(void *painter, void *pen);
 void qt_painter_set_brush_colour(void *painter, int r, int g, int b, int a);
 void qt_painter_set_no_brush(void *painter);
+void qt_painter_set_brush(void *painter, void *brush);
 void qt_painter_set_font(void *painter, const char *family, int point_size, int weight, int is_italic);
 void qt_painter_set_antialiasing(void *painter, int is_enabled);
 void qt_painter_set_opacity(void *painter, double opacity);
+void qt_painter_set_render_hint(void *painter, int hint, int is_on);
+void qt_painter_set_render_hints(void *painter, int hints, int is_on);
+void qt_painter_set_composition_mode(void *painter, int mode);
+int  qt_painter_get_composition_mode(void *painter);
+void qt_painter_set_clipping(void *painter, int is_enabled);
+int  qt_painter_has_clipping(void *painter);
+void qt_painter_get_clip_bounding_rect(void *painter, int *x, int *y, int *w, int *h);
 void qt_painter_draw_line(void *painter, int x1, int y1, int x2, int y2);
 void qt_painter_draw_rect(void *painter, int x, int y, int width, int height);
 void qt_painter_fill_rect(void *painter, int x, int y, int width, int height, int r, int g, int b, int a);
+void qt_painter_erase_rect(void *painter, int x, int y, int width, int height);
 void qt_painter_draw_ellipse(void *painter, int x, int y, int width, int height);
 void qt_painter_draw_arc(void *painter, int x, int y, int width, int height, int start_angle, int span_angle);
 void qt_painter_draw_pie(void *painter, int x, int y, int width, int height, int start_angle, int span_angle);
+void qt_painter_draw_chord(void *painter, int x, int y, int width, int height, int start_angle, int span_angle);
 void qt_painter_draw_rounded_rect(void *painter, int x, int y, int width, int height, double x_radius, double y_radius);
 void qt_painter_draw_text(void *painter, int x, int y, const char *text);
 void qt_painter_draw_text_in_rect(void *painter, int x, int y, int width, int height, int flags, const char *text);
+void qt_painter_bounding_rect(void *painter, int x, int y, int w, int h, int flags, const char *text, int *out_x, int *out_y, int *out_w, int *out_h);
 void qt_painter_draw_pixmap(void *painter, int x, int y, void *pixmap);
+void qt_painter_draw_image(void *painter, int x, int y, void *image);
+void qt_painter_draw_point(void *painter, int x, int y);
+void qt_painter_draw_points(void *painter, const int *points, int point_count);
 void qt_painter_draw_polygon(void *painter, const int *points, int point_count);
+void qt_painter_draw_polyline(void *painter, const int *points, int point_count);
+void qt_painter_draw_convex_polygon(void *painter, const int *points, int point_count);
 void qt_painter_save(void *painter);
 void qt_painter_restore(void *painter);
 void qt_painter_translate(void *painter, double dx, double dy);
 void qt_painter_rotate(void *painter, double angle);
 void qt_painter_scale(void *painter, double sx, double sy);
+void  *qt_painter_create(void);
+void   qt_painter_destroy(void *painter);
+int    qt_painter_begin(void *painter, void *device);
+int    qt_painter_end(void *painter);
+int    qt_painter_is_active(void *painter);
 
 /* ── Drag and Drop ─────────────────────────────────────────────────── */
 
@@ -1602,6 +1646,13 @@ void *qt_pixmap_to_image(void *pixmap);
 int   qt_image_get_depth(void *image);
 int   qt_image_get_byte_count(void *image);
 const unsigned char *qt_image_get_bits(void *image);
+void *qt_image_convert_to_format(void *image, int format);
+void *qt_image_rgb_swapped(void *image);
+void *qt_image_transformed(void *image, void *transform);
+void  qt_image_set_text(void *image, const char *key, const char *value);
+char *qt_image_get_text(void *image, const char *key);
+int   qt_image_is_all_grey(void *image);
+int   qt_image_is_greyscale(void *image);
 
 /* ── QColor (standalone) ────────────────────────────────────────────── */
 
@@ -1617,6 +1668,19 @@ char *qt_colour_get_name(void *colour);
 int   qt_colour_is_valid(void *colour);
 void *qt_colour_lighter(void *colour, int factor);
 void *qt_colour_darker(void *colour, int factor);
+void  qt_colour_set_alpha(void *colour, int alpha);
+int   qt_colour_get_alpha(void *colour);
+void  qt_colour_set_red(void *colour, int red);
+int   qt_colour_get_red(void *colour);
+void  qt_colour_set_green(void *colour, int green);
+int   qt_colour_get_green(void *colour);
+void  qt_colour_set_blue(void *colour, int blue);
+int   qt_colour_get_blue(void *colour);
+void *qt_colour_to_rgb(void *colour);
+void *qt_colour_to_hsv(void *colour);
+void *qt_colour_to_hsl(void *colour);
+int   qt_colour_get_spec(void *colour);
+void  qt_colour_set_named_colour(void *colour, const char *name);
 
 /* ── QFont (standalone) ─────────────────────────────────────────────── */
 
@@ -1646,6 +1710,13 @@ void  qt_font_set_word_spacing(void *font, double spacing);
 void  qt_font_set_stretch(void *font, int factor);
 void  qt_font_set_style_hint(void *font, int hint);
 char *qt_font_to_string(void *font);
+void  qt_font_set_style_strategy(void *font, int strategy);
+void *qt_font_from_string(const char *description);
+int   qt_font_is_exact_match(void *font);
+void  qt_font_set_overline(void *font, int is_overline);
+int   qt_font_is_overline(void *font);
+void  qt_font_set_capitalization(void *font, int capitalization);
+void  qt_font_set_hinting_preference(void *font, int preference);
 
 /* ── QPen (standalone) ──────────────────────────────────────────────── */
 
@@ -1666,6 +1737,15 @@ void  qt_pen_set_join_style(void *pen, int style);
 int   qt_pen_get_join_style(void *pen);
 void  qt_pen_set_dash_offset(void *pen, double offset);
 double qt_pen_get_dash_offset(void *pen);
+void   qt_pen_set_brush(void *pen, void *brush);
+void  *qt_pen_get_brush(void *pen);
+void   qt_pen_set_dash_pattern(void *pen, const double *pattern, int count);
+void   qt_pen_get_dash_pattern(void *pen, double **out_pattern, int *out_count);
+void   qt_pen_free_dash_pattern(double *pattern);
+void   qt_pen_set_cosmetic(void *pen, int is_cosmetic);
+int    qt_pen_is_cosmetic(void *pen);
+void   qt_pen_set_miter_limit(void *pen, double limit);
+double qt_pen_get_miter_limit(void *pen);
 
 /* ── QBrush (standalone) ────────────────────────────────────────────── */
 
@@ -1713,6 +1793,24 @@ void  qt_painter_path_add_rounded_rect(void *path, double x, double y, double w,
 void  qt_painter_path_close_subpath(void *path);
 int   qt_painter_path_is_empty(void *path);
 int   qt_painter_path_contains_point(void *path, double x, double y);
+void  qt_painter_path_add_path(void *path, void *other);
+void  qt_painter_path_add_polygon(void *path, const double *points, int point_count);
+void  qt_painter_path_get_bounding_rect(void *path, double *x, double *y, double *w, double *h);
+double qt_painter_path_get_length(void *path);
+double qt_painter_path_get_percent_at_length(void *path, double length);
+void  qt_painter_path_get_point_at_percent(void *path, double percent, double *x, double *y);
+double qt_painter_path_get_angle_at_percent(void *path, double percent);
+void *qt_painter_path_united(void *path, void *other);
+void *qt_painter_path_intersected(void *path, void *other);
+void *qt_painter_path_subtracted(void *path, void *other);
+void *qt_painter_path_simplified(void *path);
+void *qt_painter_path_translated(void *path, double dx, double dy);
+void *qt_painter_path_to_reversed(void *path);
+int   qt_painter_path_intersects_rect(void *path, double x, double y, double w, double h);
+int   qt_painter_path_intersects_path(void *path, void *other);
+void  qt_painter_path_set_fill_rule(void *path, int rule);
+int   qt_painter_path_get_fill_rule(void *path);
+int   qt_painter_path_get_element_count(void *path);
 void  qt_painter_draw_path(void *painter, void *path);
 void  qt_painter_set_clip_path(void *painter, void *path);
 void  qt_painter_fill_path(void *painter, void *path, int r, int g, int b, int a);

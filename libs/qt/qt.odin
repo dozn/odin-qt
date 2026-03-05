@@ -1351,7 +1351,54 @@ Render_Hint :: enum c.int {
 	Antialiasing = 0x01,
 	Text_Antialiasing = 0x02,
 	Smooth_Pixmap_Transform = 0x04,
+	Vertical_Subpixel_Positioning = 0x08,
 	Lossless_Image_Rendering = 0x40,
+	Non_Cosmetic_Brush_Patterns = 0x80,
+}
+
+Composition_Mode :: enum c.int {
+	Source_Over = 0,
+	Destination_Over = 1,
+	Clear = 2,
+	Source = 3,
+	Destination = 4,
+	Source_In = 5,
+	Destination_In = 6,
+	Source_Out = 7,
+	Destination_Out = 8,
+	Source_Atop = 9,
+	Destination_Atop = 10,
+	Xor = 11,
+	Plus = 12,
+	Multiply = 13,
+	Screen = 14,
+	Overlay = 15,
+	Darken = 16,
+	Lighten = 17,
+	Colour_Dodge = 18,
+	Colour_Burn = 19,
+	Hard_Light = 20,
+	Soft_Light = 21,
+	Difference = 22,
+	Exclusion = 23,
+	Raster_Source_Or_Destination = 24,
+	Raster_Source_And_Destination = 25,
+	Raster_Source_Xor_Destination = 26,
+	Raster_Not_Source_And_Not_Destination = 27,
+	Raster_Not_Source_Or_Not_Destination = 28,
+	Raster_Not_Source_Xor_Destination = 29,
+	Raster_Not_Source = 30,
+	Raster_Not_Source_And_Destination = 31,
+	Raster_Source_And_Not_Destination = 32,
+	Raster_Not_Source_Or_Destination = 33,
+	Raster_Source_Or_Not_Destination = 34,
+	Raster_Clear_Destination = 35,
+	Raster_Set_Destination = 36,
+}
+
+Mask_Mode :: enum c.int {
+	Mask_In_Colour = 0,
+	Mask_Out_Colour = 1,
 }
 
 Time_Line_State :: enum c.int {
@@ -1612,6 +1659,61 @@ Combo_Box_Size_Adjust_Policy :: enum c.int {
 	Adjust_To_Contents = 0,
 	Adjust_To_Contents_On_First_Show = 1,
 	Adjust_To_Minimum_Contents_Length_With_Icon = 2,
+}
+
+Icon_Mode :: enum c.int {
+	Normal = 0,
+	Disabled = 1,
+	Active = 2,
+	Selected = 3,
+}
+
+Icon_State :: enum c.int {
+	On = 0,
+	Off = 1,
+}
+
+Font_Style_Strategy :: enum c.int {
+	Prefer_Default = 0x0001,
+	Prefer_Bitmap = 0x0002,
+	Prefer_Device = 0x0004,
+	Prefer_Outline = 0x0008,
+	Force_Outline = 0x0010,
+	Prefer_Match = 0x0020,
+	Prefer_Quality = 0x0040,
+	Prefer_Antialias = 0x0080,
+	No_Antialias = 0x0100,
+	No_Font_Merging = 0x8000,
+	Prefer_No_Shaping = 0x1000,
+}
+
+Font_Capitalization :: enum c.int {
+	Mixed_Case = 0,
+	All_Uppercase = 1,
+	All_Lowercase = 2,
+	Small_Caps = 3,
+	Capitalize = 4,
+}
+
+Font_Hinting_Preference :: enum c.int {
+	Default_Hinting = 0,
+	No_Hinting = 1,
+	Vertical_Hinting = 2,
+	Full_Hinting = 3,
+}
+
+Colour_Spec :: enum c.int {
+	Invalid = 0,
+	Rgb = 1,
+	Hsv = 2,
+	Cmyk = 3,
+	Hsl = 4,
+	Extended_Rgb = 5,
+}
+
+Fill_Rule :: enum c.int {
+	Odd_Even = 0,
+	Winding = 1,
 }
 
 /* ── Foreign declarations ──────────────────────────────────────────── */
@@ -2342,6 +2444,19 @@ foreign qt_lib {
 	@(require_results) pixmap_get_width :: proc(pixmap: Pixmap) -> c.int ---
 	@(require_results) pixmap_get_height :: proc(pixmap: Pixmap) -> c.int ---
 	@(require_results) pixmap_is_null :: proc(pixmap: Pixmap) -> c.int ---
+	@(require_results) pixmap_scaled :: proc(pixmap: Pixmap, w: c.int, h: c.int, aspect_ratio_mode: Aspect_Ratio_Mode, transform_mode: Transformation_Mode) -> Pixmap ---
+	@(require_results) pixmap_scaled_to_width :: proc(pixmap: Pixmap, width: c.int, transform_mode: Transformation_Mode) -> Pixmap ---
+	@(require_results) pixmap_scaled_to_height :: proc(pixmap: Pixmap, height: c.int, transform_mode: Transformation_Mode) -> Pixmap ---
+	pixmap_fill :: proc(pixmap: Pixmap, colour: Colour_Handle) ---
+	@(require_results) pixmap_save :: proc(pixmap: Pixmap, file_path: cstring) -> c.int ---
+	@(require_results) pixmap_load :: proc(pixmap: Pixmap, file_path: cstring) -> c.int ---
+	@(require_results) pixmap_copy :: proc(pixmap: Pixmap, x: c.int, y: c.int, w: c.int, h: c.int) -> Pixmap ---
+	pixmap_get_size :: proc(pixmap: Pixmap, w: ^c.int, h: ^c.int) ---
+	pixmap_get_rect :: proc(pixmap: Pixmap, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	@(require_results) pixmap_from_image :: proc(image: Image) -> Pixmap ---
+	@(require_results) pixmap_create_mask_from_colour :: proc(pixmap: Pixmap, colour: Colour_Handle, mode: Mask_Mode) -> Pixmap ---
+	pixmap_set_mask :: proc(pixmap: Pixmap, bitmap: Bitmap) ---
+	@(require_results) pixmap_get_mask :: proc(pixmap: Pixmap) -> Pixmap ---
 
 	/* QIcon */
 
@@ -2350,6 +2465,15 @@ foreign qt_lib {
 	@(require_results) icon_create_from_pixmap :: proc(pixmap: Pixmap) -> Icon ---
 	icon_destroy :: proc(icon: Icon) ---
 	@(require_results) icon_is_null :: proc(icon: Icon) -> c.int ---
+	icon_add_file :: proc(icon: Icon, filename: cstring, w: c.int, h: c.int, mode: Icon_Mode, state: Icon_State) ---
+	icon_add_pixmap :: proc(icon: Icon, pixmap: Pixmap, mode: Icon_Mode, state: Icon_State) ---
+	@(require_results) icon_get_pixmap :: proc(icon: Icon, w: c.int, h: c.int, mode: Icon_Mode, state: Icon_State) -> Pixmap ---
+	@(require_results) icon_from_theme :: proc(name: cstring) -> Icon ---
+	@(require_results) icon_has_theme_icon :: proc(name: cstring) -> c.int ---
+	icon_set_theme_name :: proc(name: cstring) ---
+	@(require_results) icon_get_theme_name :: proc() -> cstring ---
+	icon_get_available_sizes :: proc(icon: Icon, mode: Icon_Mode, state: Icon_State, out_sizes: ^[^]c.int, out_count: ^c.int) ---
+	icon_free_available_sizes :: proc(sizes: [^]c.int) ---
 
 	/* Icon/pixmap setters on existing widgets */
 
@@ -2849,27 +2973,49 @@ foreign qt_lib {
 	painter_set_pen_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) ---
 	painter_set_pen_width :: proc(painter: Painter, width: c.int) ---
 	painter_set_no_pen :: proc(painter: Painter) ---
+	painter_set_pen :: proc(painter: Painter, pen: Pen) ---
 	painter_set_brush_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) ---
 	painter_set_no_brush :: proc(painter: Painter) ---
+	painter_set_brush :: proc(painter: Painter, brush: Brush) ---
 	painter_set_font :: proc(painter: Painter, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) ---
 	painter_set_antialiasing :: proc(painter: Painter, is_enabled: c.int) ---
 	painter_set_opacity :: proc(painter: Painter, opacity: c.double) ---
+	painter_set_render_hint :: proc(painter: Painter, hint: Render_Hint, is_on: c.int) ---
+	painter_set_render_hints :: proc(painter: Painter, hints: c.int, is_on: c.int) ---
+	painter_set_composition_mode :: proc(painter: Painter, mode: Composition_Mode) ---
+	@(require_results) painter_get_composition_mode :: proc(painter: Painter) -> Composition_Mode ---
+	painter_set_clipping :: proc(painter: Painter, is_enabled: c.int) ---
+	@(require_results) painter_has_clipping :: proc(painter: Painter) -> c.int ---
+	painter_get_clip_bounding_rect :: proc(painter: Painter, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
 	painter_draw_line :: proc(painter: Painter, x1: c.int, y1: c.int, x2: c.int, y2: c.int) ---
 	painter_draw_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int) ---
 	painter_fill_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	painter_erase_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int) ---
 	painter_draw_ellipse :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int) ---
 	painter_draw_arc :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, start_angle: c.int, span_angle: c.int) ---
 	painter_draw_pie :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, start_angle: c.int, span_angle: c.int) ---
+	painter_draw_chord :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, start_angle: c.int, span_angle: c.int) ---
 	painter_draw_rounded_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, x_radius: c.double, y_radius: c.double) ---
 	painter_draw_text :: proc(painter: Painter, x: c.int, y: c.int, text: cstring) ---
 	painter_draw_text_in_rect :: proc(painter: Painter, x: c.int, y: c.int, width: c.int, height: c.int, flags: c.int, text: cstring) ---
+	painter_bounding_rect :: proc(painter: Painter, x: c.int, y: c.int, w: c.int, h: c.int, flags: c.int, text: cstring, out_x: ^c.int, out_y: ^c.int, out_w: ^c.int, out_h: ^c.int) ---
 	painter_draw_pixmap :: proc(painter: Painter, x: c.int, y: c.int, pixmap: Pixmap) ---
+	painter_draw_image :: proc(painter: Painter, x: c.int, y: c.int, image: Image) ---
+	painter_draw_point :: proc(painter: Painter, x: c.int, y: c.int) ---
+	painter_draw_points :: proc(painter: Painter, points: [^]c.int, point_count: c.int) ---
 	painter_draw_polygon :: proc(painter: Painter, points: [^]c.int, point_count: c.int) ---
+	painter_draw_polyline :: proc(painter: Painter, points: [^]c.int, point_count: c.int) ---
+	painter_draw_convex_polygon :: proc(painter: Painter, points: [^]c.int, point_count: c.int) ---
 	painter_save :: proc(painter: Painter) ---
 	painter_restore :: proc(painter: Painter) ---
 	painter_translate :: proc(painter: Painter, dx: c.double, dy: c.double) ---
 	painter_rotate :: proc(painter: Painter, angle: c.double) ---
 	painter_scale :: proc(painter: Painter, sx: c.double, sy: c.double) ---
+	@(require_results) painter_create :: proc() -> Painter ---
+	painter_destroy :: proc(painter: Painter) ---
+	@(require_results) painter_begin :: proc(painter: Painter, device: rawptr) -> c.int ---
+	@(require_results) painter_end :: proc(painter: Painter) -> c.int ---
+	@(require_results) painter_is_active :: proc(painter: Painter) -> c.int ---
 
 	/* Drag and Drop */
 
@@ -3187,6 +3333,13 @@ foreign qt_lib {
 	@(require_results) image_get_depth :: proc(image: Image) -> c.int ---
 	@(require_results) image_get_byte_count :: proc(image: Image) -> c.int ---
 	@(require_results) image_get_bits :: proc(image: Image) -> [^]u8 ---
+	@(require_results) image_convert_to_format :: proc(image: Image, format: Image_Format) -> Image ---
+	@(require_results) image_rgb_swapped :: proc(image: Image) -> Image ---
+	@(require_results) image_transformed :: proc(image: Image, transform: Transform) -> Image ---
+	image_set_text :: proc(image: Image, key: cstring, value: cstring) ---
+	@(require_results) image_get_text :: proc(image: Image, key: cstring) -> cstring ---
+	@(require_results) image_is_all_grey :: proc(image: Image) -> c.int ---
+	@(require_results) image_is_greyscale :: proc(image: Image) -> c.int ---
 
 	/* QColor (standalone) */
 
@@ -3202,6 +3355,19 @@ foreign qt_lib {
 	@(require_results) colour_is_valid :: proc(colour: Colour_Handle) -> c.int ---
 	@(require_results) colour_lighter :: proc(colour: Colour_Handle, factor: c.int) -> Colour_Handle ---
 	@(require_results) colour_darker :: proc(colour: Colour_Handle, factor: c.int) -> Colour_Handle ---
+	colour_set_alpha :: proc(colour: Colour_Handle, alpha: c.int) ---
+	@(require_results) colour_get_alpha :: proc(colour: Colour_Handle) -> c.int ---
+	colour_set_red :: proc(colour: Colour_Handle, red: c.int) ---
+	@(require_results) colour_get_red :: proc(colour: Colour_Handle) -> c.int ---
+	colour_set_green :: proc(colour: Colour_Handle, green: c.int) ---
+	@(require_results) colour_get_green :: proc(colour: Colour_Handle) -> c.int ---
+	colour_set_blue :: proc(colour: Colour_Handle, blue: c.int) ---
+	@(require_results) colour_get_blue :: proc(colour: Colour_Handle) -> c.int ---
+	@(require_results) colour_to_rgb :: proc(colour: Colour_Handle) -> Colour_Handle ---
+	@(require_results) colour_to_hsv :: proc(colour: Colour_Handle) -> Colour_Handle ---
+	@(require_results) colour_to_hsl :: proc(colour: Colour_Handle) -> Colour_Handle ---
+	@(require_results) colour_get_spec :: proc(colour: Colour_Handle) -> Colour_Spec ---
+	colour_set_named_colour :: proc(colour: Colour_Handle, name: cstring) ---
 
 	/* QFont (standalone) */
 
@@ -3231,6 +3397,13 @@ foreign qt_lib {
 	font_set_stretch :: proc(font: Font_Handle, factor: c.int) ---
 	font_set_style_hint :: proc(font: Font_Handle, hint: Font_Style_Hint) ---
 	@(require_results) font_to_string :: proc(font: Font_Handle) -> cstring ---
+	font_set_style_strategy :: proc(font: Font_Handle, strategy: Font_Style_Strategy) ---
+	@(require_results) font_from_string :: proc(description: cstring) -> Font_Handle ---
+	@(require_results) font_is_exact_match :: proc(font: Font_Handle) -> c.int ---
+	font_set_overline :: proc(font: Font_Handle, is_overline: c.int) ---
+	@(require_results) font_is_overline :: proc(font: Font_Handle) -> c.int ---
+	font_set_capitalization :: proc(font: Font_Handle, capitalization: Font_Capitalization) ---
+	font_set_hinting_preference :: proc(font: Font_Handle, preference: Font_Hinting_Preference) ---
 
 	/* QPen (standalone) */
 
@@ -3251,6 +3424,15 @@ foreign qt_lib {
 	@(require_results) pen_get_join_style :: proc(pen: Pen) -> Pen_Join_Style ---
 	pen_set_dash_offset :: proc(pen: Pen, offset: c.double) ---
 	@(require_results) pen_get_dash_offset :: proc(pen: Pen) -> c.double ---
+	pen_set_brush :: proc(pen: Pen, brush: Brush) ---
+	@(require_results) pen_get_brush :: proc(pen: Pen) -> Brush ---
+	pen_set_dash_pattern :: proc(pen: Pen, pattern: [^]c.double, count: c.int) ---
+	pen_get_dash_pattern :: proc(pen: Pen, out_pattern: ^[^]c.double, out_count: ^c.int) ---
+	pen_free_dash_pattern :: proc(pattern: [^]c.double) ---
+	pen_set_cosmetic :: proc(pen: Pen, is_cosmetic: c.int) ---
+	@(require_results) pen_is_cosmetic :: proc(pen: Pen) -> c.int ---
+	pen_set_miter_limit :: proc(pen: Pen, limit: c.double) ---
+	@(require_results) pen_get_miter_limit :: proc(pen: Pen) -> c.double ---
 
 	/* QBrush (standalone) */
 
@@ -3298,6 +3480,24 @@ foreign qt_lib {
 	painter_path_close_subpath :: proc(path: Painter_Path) ---
 	@(require_results) painter_path_is_empty :: proc(path: Painter_Path) -> c.int ---
 	@(require_results) painter_path_contains_point :: proc(path: Painter_Path, x: c.double, y: c.double) -> c.int ---
+	painter_path_add_path :: proc(path: Painter_Path, other: Painter_Path) ---
+	painter_path_add_polygon :: proc(path: Painter_Path, points: [^]c.double, point_count: c.int) ---
+	painter_path_get_bounding_rect :: proc(path: Painter_Path, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	@(require_results) painter_path_get_length :: proc(path: Painter_Path) -> c.double ---
+	@(require_results) painter_path_get_percent_at_length :: proc(path: Painter_Path, length: c.double) -> c.double ---
+	painter_path_get_point_at_percent :: proc(path: Painter_Path, percent: c.double, x: ^c.double, y: ^c.double) ---
+	@(require_results) painter_path_get_angle_at_percent :: proc(path: Painter_Path, percent: c.double) -> c.double ---
+	@(require_results) painter_path_united :: proc(path: Painter_Path, other: Painter_Path) -> Painter_Path ---
+	@(require_results) painter_path_intersected :: proc(path: Painter_Path, other: Painter_Path) -> Painter_Path ---
+	@(require_results) painter_path_subtracted :: proc(path: Painter_Path, other: Painter_Path) -> Painter_Path ---
+	@(require_results) painter_path_simplified :: proc(path: Painter_Path) -> Painter_Path ---
+	@(require_results) painter_path_translated :: proc(path: Painter_Path, dx: c.double, dy: c.double) -> Painter_Path ---
+	@(require_results) painter_path_to_reversed :: proc(path: Painter_Path) -> Painter_Path ---
+	@(require_results) painter_path_intersects_rect :: proc(path: Painter_Path, x: c.double, y: c.double, w: c.double, h: c.double) -> c.int ---
+	@(require_results) painter_path_intersects_path :: proc(path: Painter_Path, other: Painter_Path) -> c.int ---
+	painter_path_set_fill_rule :: proc(path: Painter_Path, rule: Fill_Rule) ---
+	@(require_results) painter_path_get_fill_rule :: proc(path: Painter_Path) -> Fill_Rule ---
+	@(require_results) painter_path_get_element_count :: proc(path: Painter_Path) -> c.int ---
 	painter_draw_path :: proc(painter: Painter, path: Painter_Path) ---
 	painter_set_clip_path :: proc(painter: Painter, path: Painter_Path) ---
 	painter_fill_path :: proc(painter: Painter, path: Painter_Path, r: c.int, g: c.int, b: c.int, a: c.int) ---

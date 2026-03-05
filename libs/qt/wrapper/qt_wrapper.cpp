@@ -3326,6 +3326,70 @@ int qt_pixmap_is_null(void *pixmap) {
     return static_cast<QPixmap *>(pixmap)->isNull() ? 1 : 0;
 }
 
+void *qt_pixmap_scaled(void *pixmap, int w, int h, int aspect_ratio_mode, int transform_mode) {
+    QPixmap result = static_cast<QPixmap *>(pixmap)->scaled(w, h, static_cast<Qt::AspectRatioMode>(aspect_ratio_mode), static_cast<Qt::TransformationMode>(transform_mode));
+    return static_cast<void *>(new QPixmap(result));
+}
+
+void *qt_pixmap_scaled_to_width(void *pixmap, int width, int transform_mode) {
+    QPixmap result = static_cast<QPixmap *>(pixmap)->scaledToWidth(width, static_cast<Qt::TransformationMode>(transform_mode));
+    return static_cast<void *>(new QPixmap(result));
+}
+
+void *qt_pixmap_scaled_to_height(void *pixmap, int height, int transform_mode) {
+    QPixmap result = static_cast<QPixmap *>(pixmap)->scaledToHeight(height, static_cast<Qt::TransformationMode>(transform_mode));
+    return static_cast<void *>(new QPixmap(result));
+}
+
+void qt_pixmap_fill(void *pixmap, void *colour) {
+    static_cast<QPixmap *>(pixmap)->fill(*static_cast<QColor *>(colour));
+}
+
+int qt_pixmap_save(void *pixmap, const char *file_path) {
+    return static_cast<QPixmap *>(pixmap)->save(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+int qt_pixmap_load(void *pixmap, const char *file_path) {
+    return static_cast<QPixmap *>(pixmap)->load(QString::fromUtf8(file_path)) ? 1 : 0;
+}
+
+void *qt_pixmap_copy(void *pixmap, int x, int y, int w, int h) {
+    QPixmap result = static_cast<QPixmap *>(pixmap)->copy(x, y, w, h);
+    return static_cast<void *>(new QPixmap(result));
+}
+
+void qt_pixmap_get_size(void *pixmap, int *w, int *h) {
+    QSize s = static_cast<QPixmap *>(pixmap)->size();
+    if (w) *w = s.width();
+    if (h) *h = s.height();
+}
+
+void qt_pixmap_get_rect(void *pixmap, int *x, int *y, int *w, int *h) {
+    QRect r = static_cast<QPixmap *>(pixmap)->rect();
+    if (x) *x = r.x();
+    if (y) *y = r.y();
+    if (w) *w = r.width();
+    if (h) *h = r.height();
+}
+
+void *qt_pixmap_from_image(void *image) {
+    return static_cast<void *>(new QPixmap(QPixmap::fromImage(*static_cast<QImage *>(image))));
+}
+
+void *qt_pixmap_create_mask_from_colour(void *pixmap, void *colour, int mode) {
+    QBitmap result = static_cast<QPixmap *>(pixmap)->createMaskFromColor(*static_cast<QColor *>(colour), static_cast<Qt::MaskMode>(mode));
+    return static_cast<void *>(new QBitmap(result));
+}
+
+void qt_pixmap_set_mask(void *pixmap, void *bitmap) {
+    static_cast<QPixmap *>(pixmap)->setMask(*static_cast<QBitmap *>(bitmap));
+}
+
+void *qt_pixmap_get_mask(void *pixmap) {
+    QBitmap result = static_cast<QPixmap *>(pixmap)->mask();
+    return static_cast<void *>(new QBitmap(result));
+}
+
 /* ── QIcon ──────────────────────────────────────────────────────────── */
 
 void *qt_icon_create(void) {
@@ -3346,6 +3410,52 @@ void qt_icon_destroy(void *icon) {
 
 int qt_icon_is_null(void *icon) {
     return static_cast<QIcon *>(icon)->isNull() ? 1 : 0;
+}
+
+void qt_icon_add_file(void *icon, const char *filename, int w, int h, int mode, int state) {
+    static_cast<QIcon *>(icon)->addFile(QString::fromUtf8(filename), QSize(w, h), static_cast<QIcon::Mode>(mode), static_cast<QIcon::State>(state));
+}
+
+void qt_icon_add_pixmap(void *icon, void *pixmap, int mode, int state) {
+    static_cast<QIcon *>(icon)->addPixmap(*static_cast<QPixmap *>(pixmap), static_cast<QIcon::Mode>(mode), static_cast<QIcon::State>(state));
+}
+
+void *qt_icon_get_pixmap(void *icon, int w, int h, int mode, int state) {
+    return static_cast<void *>(new QPixmap(static_cast<QIcon *>(icon)->pixmap(QSize(w, h), static_cast<QIcon::Mode>(mode), static_cast<QIcon::State>(state))));
+}
+
+void *qt_icon_from_theme(const char *name) {
+    return static_cast<void *>(new QIcon(QIcon::fromTheme(QString::fromUtf8(name))));
+}
+
+int qt_icon_has_theme_icon(const char *name) {
+    return QIcon::hasThemeIcon(QString::fromUtf8(name)) ? 1 : 0;
+}
+
+void qt_icon_set_theme_name(const char *name) {
+    QIcon::setThemeName(QString::fromUtf8(name));
+}
+
+char *qt_icon_get_theme_name(void) {
+    return qstring_to_heap_utf8(QIcon::themeName());
+}
+
+void qt_icon_get_available_sizes(void *icon, int mode, int state, int **out_sizes, int *out_count) {
+    QList<QSize> sizes = static_cast<QIcon *>(icon)->availableSizes(static_cast<QIcon::Mode>(mode), static_cast<QIcon::State>(state));
+    *out_count = sizes.size();
+    if (sizes.isEmpty()) {
+        *out_sizes = nullptr;
+        return;
+    }
+    *out_sizes = static_cast<int *>(malloc(sizeof(int) * 2 * sizes.size()));
+    for (int i = 0; i < sizes.size(); ++i) {
+        (*out_sizes)[i * 2] = sizes[i].width();
+        (*out_sizes)[i * 2 + 1] = sizes[i].height();
+    }
+}
+
+void qt_icon_free_available_sizes(int *sizes) {
+    free(sizes);
 }
 
 void qt_push_button_set_icon(void *button, void *icon) {
@@ -5433,12 +5543,20 @@ void qt_painter_set_no_pen(void *painter) {
     static_cast<QPainter *>(painter)->setPen(Qt::NoPen);
 }
 
+void qt_painter_set_pen(void *painter, void *pen) {
+    static_cast<QPainter *>(painter)->setPen(*static_cast<QPen *>(pen));
+}
+
 void qt_painter_set_brush_colour(void *painter, int r, int g, int b, int a) {
     static_cast<QPainter *>(painter)->setBrush(QBrush(QColor(r, g, b, a)));
 }
 
 void qt_painter_set_no_brush(void *painter) {
     static_cast<QPainter *>(painter)->setBrush(Qt::NoBrush);
+}
+
+void qt_painter_set_brush(void *painter, void *brush) {
+    static_cast<QPainter *>(painter)->setBrush(*static_cast<QBrush *>(brush));
 }
 
 void qt_painter_set_font(void *painter, const char *family, int point_size, int weight, int is_italic) {
@@ -5455,6 +5573,38 @@ void qt_painter_set_opacity(void *painter, double opacity) {
     static_cast<QPainter *>(painter)->setOpacity(opacity);
 }
 
+void qt_painter_set_render_hint(void *painter, int hint, int is_on) {
+    static_cast<QPainter *>(painter)->setRenderHint(static_cast<QPainter::RenderHint>(hint), is_on != 0);
+}
+
+void qt_painter_set_render_hints(void *painter, int hints, int is_on) {
+    static_cast<QPainter *>(painter)->setRenderHints(static_cast<QPainter::RenderHints>(hints), is_on != 0);
+}
+
+void qt_painter_set_composition_mode(void *painter, int mode) {
+    static_cast<QPainter *>(painter)->setCompositionMode(static_cast<QPainter::CompositionMode>(mode));
+}
+
+int qt_painter_get_composition_mode(void *painter) {
+    return static_cast<int>(static_cast<QPainter *>(painter)->compositionMode());
+}
+
+void qt_painter_set_clipping(void *painter, int is_enabled) {
+    static_cast<QPainter *>(painter)->setClipping(is_enabled != 0);
+}
+
+int qt_painter_has_clipping(void *painter) {
+    return static_cast<QPainter *>(painter)->hasClipping() ? 1 : 0;
+}
+
+void qt_painter_get_clip_bounding_rect(void *painter, int *x, int *y, int *w, int *h) {
+    QRectF r = static_cast<QPainter *>(painter)->clipBoundingRect();
+    if (x) *x = static_cast<int>(r.x());
+    if (y) *y = static_cast<int>(r.y());
+    if (w) *w = static_cast<int>(r.width());
+    if (h) *h = static_cast<int>(r.height());
+}
+
 void qt_painter_draw_line(void *painter, int x1, int y1, int x2, int y2) {
     static_cast<QPainter *>(painter)->drawLine(x1, y1, x2, y2);
 }
@@ -5465,6 +5615,10 @@ void qt_painter_draw_rect(void *painter, int x, int y, int width, int height) {
 
 void qt_painter_fill_rect(void *painter, int x, int y, int width, int height, int r, int g, int b, int a) {
     static_cast<QPainter *>(painter)->fillRect(x, y, width, height, QColor(r, g, b, a));
+}
+
+void qt_painter_erase_rect(void *painter, int x, int y, int width, int height) {
+    static_cast<QPainter *>(painter)->eraseRect(x, y, width, height);
 }
 
 void qt_painter_draw_ellipse(void *painter, int x, int y, int width, int height) {
@@ -5479,6 +5633,10 @@ void qt_painter_draw_pie(void *painter, int x, int y, int width, int height, int
     static_cast<QPainter *>(painter)->drawPie(x, y, width, height, start_angle, span_angle);
 }
 
+void qt_painter_draw_chord(void *painter, int x, int y, int width, int height, int start_angle, int span_angle) {
+    static_cast<QPainter *>(painter)->drawChord(x, y, width, height, start_angle, span_angle);
+}
+
 void qt_painter_draw_rounded_rect(void *painter, int x, int y, int width, int height, double x_radius, double y_radius) {
     static_cast<QPainter *>(painter)->drawRoundedRect(x, y, width, height, x_radius, y_radius);
 }
@@ -5491,8 +5649,32 @@ void qt_painter_draw_text_in_rect(void *painter, int x, int y, int width, int he
     static_cast<QPainter *>(painter)->drawText(QRect(x, y, width, height), flags, QString::fromUtf8(text));
 }
 
+void qt_painter_bounding_rect(void *painter, int x, int y, int w, int h, int flags, const char *text, int *out_x, int *out_y, int *out_w, int *out_h) {
+    QRect result = static_cast<QPainter *>(painter)->boundingRect(QRect(x, y, w, h), flags, QString::fromUtf8(text));
+    if (out_x) *out_x = result.x();
+    if (out_y) *out_y = result.y();
+    if (out_w) *out_w = result.width();
+    if (out_h) *out_h = result.height();
+}
+
 void qt_painter_draw_pixmap(void *painter, int x, int y, void *pixmap) {
     static_cast<QPainter *>(painter)->drawPixmap(x, y, *static_cast<QPixmap *>(pixmap));
+}
+
+void qt_painter_draw_image(void *painter, int x, int y, void *image) {
+    static_cast<QPainter *>(painter)->drawImage(x, y, *static_cast<QImage *>(image));
+}
+
+void qt_painter_draw_point(void *painter, int x, int y) {
+    static_cast<QPainter *>(painter)->drawPoint(x, y);
+}
+
+void qt_painter_draw_points(void *painter, const int *points, int point_count) {
+    QVector<QPoint> pts(point_count);
+    for (int i = 0; i < point_count; ++i) {
+        pts[i] = QPoint(points[i * 2], points[i * 2 + 1]);
+    }
+    static_cast<QPainter *>(painter)->drawPoints(pts.data(), point_count);
 }
 
 void qt_painter_draw_polygon(void *painter, const int *points, int point_count) {
@@ -5501,6 +5683,22 @@ void qt_painter_draw_polygon(void *painter, const int *points, int point_count) 
         polygon.append(QPoint(points[i * 2], points[i * 2 + 1]));
     }
     static_cast<QPainter *>(painter)->drawPolygon(polygon);
+}
+
+void qt_painter_draw_polyline(void *painter, const int *points, int point_count) {
+    QVector<QPoint> pts(point_count);
+    for (int i = 0; i < point_count; ++i) {
+        pts[i] = QPoint(points[i * 2], points[i * 2 + 1]);
+    }
+    static_cast<QPainter *>(painter)->drawPolyline(pts.data(), point_count);
+}
+
+void qt_painter_draw_convex_polygon(void *painter, const int *points, int point_count) {
+    QVector<QPoint> pts(point_count);
+    for (int i = 0; i < point_count; ++i) {
+        pts[i] = QPoint(points[i * 2], points[i * 2 + 1]);
+    }
+    static_cast<QPainter *>(painter)->drawConvexPolygon(pts.data(), point_count);
 }
 
 void qt_painter_save(void *painter) {
@@ -5521,6 +5719,26 @@ void qt_painter_rotate(void *painter, double angle) {
 
 void qt_painter_scale(void *painter, double sx, double sy) {
     static_cast<QPainter *>(painter)->scale(sx, sy);
+}
+
+void *qt_painter_create(void) {
+    return static_cast<void *>(new QPainter());
+}
+
+void qt_painter_destroy(void *painter) {
+    delete static_cast<QPainter *>(painter);
+}
+
+int qt_painter_begin(void *painter, void *device) {
+    return static_cast<QPainter *>(painter)->begin(static_cast<QPaintDevice *>(device)) ? 1 : 0;
+}
+
+int qt_painter_end(void *painter) {
+    return static_cast<QPainter *>(painter)->end() ? 1 : 0;
+}
+
+int qt_painter_is_active(void *painter) {
+    return static_cast<QPainter *>(painter)->isActive() ? 1 : 0;
 }
 
 /* ── Drag and Drop ─────────────────────────────────────────────────── */
@@ -6589,6 +6807,34 @@ const unsigned char *qt_image_get_bits(void *image) {
     return static_cast<QImage *>(image)->constBits();
 }
 
+void *qt_image_convert_to_format(void *image, int format) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->convertToFormat(static_cast<QImage::Format>(format))));
+}
+
+void *qt_image_rgb_swapped(void *image) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->rgbSwapped()));
+}
+
+void *qt_image_transformed(void *image, void *transform) {
+    return static_cast<void *>(new QImage(static_cast<QImage *>(image)->transformed(*static_cast<QTransform *>(transform))));
+}
+
+void qt_image_set_text(void *image, const char *key, const char *value) {
+    static_cast<QImage *>(image)->setText(QString::fromUtf8(key), QString::fromUtf8(value));
+}
+
+char *qt_image_get_text(void *image, const char *key) {
+    return qstring_to_heap_utf8(static_cast<QImage *>(image)->text(QString::fromUtf8(key)));
+}
+
+int qt_image_is_all_grey(void *image) {
+    return static_cast<QImage *>(image)->allGray() ? 1 : 0;
+}
+
+int qt_image_is_greyscale(void *image) {
+    return static_cast<QImage *>(image)->isGrayscale() ? 1 : 0;
+}
+
 /* ── QColor (standalone) ────────────────────────────────────────────── */
 
 void *qt_colour_create(int r, int g, int b, int a) {
@@ -6640,6 +6886,58 @@ void *qt_colour_lighter(void *colour, int factor) {
 
 void *qt_colour_darker(void *colour, int factor) {
     return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->darker(factor)));
+}
+
+void qt_colour_set_alpha(void *colour, int alpha) {
+    static_cast<QColor *>(colour)->setAlpha(alpha);
+}
+
+int qt_colour_get_alpha(void *colour) {
+    return static_cast<QColor *>(colour)->alpha();
+}
+
+void qt_colour_set_red(void *colour, int red) {
+    static_cast<QColor *>(colour)->setRed(red);
+}
+
+int qt_colour_get_red(void *colour) {
+    return static_cast<QColor *>(colour)->red();
+}
+
+void qt_colour_set_green(void *colour, int green) {
+    static_cast<QColor *>(colour)->setGreen(green);
+}
+
+int qt_colour_get_green(void *colour) {
+    return static_cast<QColor *>(colour)->green();
+}
+
+void qt_colour_set_blue(void *colour, int blue) {
+    static_cast<QColor *>(colour)->setBlue(blue);
+}
+
+int qt_colour_get_blue(void *colour) {
+    return static_cast<QColor *>(colour)->blue();
+}
+
+void *qt_colour_to_rgb(void *colour) {
+    return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->toRgb()));
+}
+
+void *qt_colour_to_hsv(void *colour) {
+    return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->toHsv()));
+}
+
+void *qt_colour_to_hsl(void *colour) {
+    return static_cast<void *>(new QColor(static_cast<QColor *>(colour)->toHsl()));
+}
+
+int qt_colour_get_spec(void *colour) {
+    return static_cast<int>(static_cast<QColor *>(colour)->spec());
+}
+
+void qt_colour_set_named_colour(void *colour, const char *name) {
+    static_cast<QColor *>(colour)->setNamedColor(QString::fromUtf8(name));
 }
 
 /* ── QFont (standalone) ─────────────────────────────────────────────── */
@@ -6748,6 +7046,36 @@ char *qt_font_to_string(void *font) {
     return qstring_to_heap_utf8(static_cast<QFont *>(font)->toString());
 }
 
+void qt_font_set_style_strategy(void *font, int strategy) {
+    static_cast<QFont *>(font)->setStyleStrategy(static_cast<QFont::StyleStrategy>(strategy));
+}
+
+void *qt_font_from_string(const char *description) {
+    QFont *f = new QFont();
+    f->fromString(QString::fromUtf8(description));
+    return static_cast<void *>(f);
+}
+
+int qt_font_is_exact_match(void *font) {
+    return static_cast<QFont *>(font)->exactMatch() ? 1 : 0;
+}
+
+void qt_font_set_overline(void *font, int is_overline) {
+    static_cast<QFont *>(font)->setOverline(is_overline != 0);
+}
+
+int qt_font_is_overline(void *font) {
+    return static_cast<QFont *>(font)->overline() ? 1 : 0;
+}
+
+void qt_font_set_capitalization(void *font, int capitalization) {
+    static_cast<QFont *>(font)->setCapitalization(static_cast<QFont::Capitalization>(capitalization));
+}
+
+void qt_font_set_hinting_preference(void *font, int preference) {
+    static_cast<QFont *>(font)->setHintingPreference(static_cast<QFont::HintingPreference>(preference));
+}
+
 /* ── QPen (standalone) ──────────────────────────────────────────────── */
 
 void *qt_pen_create(void) {
@@ -6817,6 +7145,56 @@ void qt_pen_set_dash_offset(void *pen, double offset) {
 
 double qt_pen_get_dash_offset(void *pen) {
     return static_cast<QPen *>(pen)->dashOffset();
+}
+
+void qt_pen_set_brush(void *pen, void *brush) {
+    static_cast<QPen *>(pen)->setBrush(*static_cast<QBrush *>(brush));
+}
+
+void *qt_pen_get_brush(void *pen) {
+    return static_cast<void *>(new QBrush(static_cast<QPen *>(pen)->brush()));
+}
+
+void qt_pen_set_dash_pattern(void *pen, const double *pattern, int count) {
+    QList<qreal> dashes;
+    dashes.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        dashes.append(pattern[i]);
+    }
+    static_cast<QPen *>(pen)->setDashPattern(dashes);
+}
+
+void qt_pen_get_dash_pattern(void *pen, double **out_pattern, int *out_count) {
+    QList<qreal> dashes = static_cast<QPen *>(pen)->dashPattern();
+    *out_count = dashes.size();
+    if (dashes.isEmpty()) {
+        *out_pattern = nullptr;
+        return;
+    }
+    *out_pattern = static_cast<double *>(malloc(sizeof(double) * dashes.size()));
+    for (int i = 0; i < dashes.size(); ++i) {
+        (*out_pattern)[i] = dashes[i];
+    }
+}
+
+void qt_pen_free_dash_pattern(double *pattern) {
+    free(pattern);
+}
+
+void qt_pen_set_cosmetic(void *pen, int is_cosmetic) {
+    static_cast<QPen *>(pen)->setCosmetic(is_cosmetic != 0);
+}
+
+int qt_pen_is_cosmetic(void *pen) {
+    return static_cast<QPen *>(pen)->isCosmetic() ? 1 : 0;
+}
+
+void qt_pen_set_miter_limit(void *pen, double limit) {
+    static_cast<QPen *>(pen)->setMiterLimit(limit);
+}
+
+double qt_pen_get_miter_limit(void *pen) {
+    return static_cast<QPen *>(pen)->miterLimit();
 }
 
 /* ── QBrush (standalone) ────────────────────────────────────────────── */
@@ -6968,6 +7346,85 @@ int qt_painter_path_is_empty(void *path) {
 
 int qt_painter_path_contains_point(void *path, double x, double y) {
     return static_cast<QPainterPath *>(path)->contains(QPointF(x, y)) ? 1 : 0;
+}
+
+void qt_painter_path_add_path(void *path, void *other) {
+    static_cast<QPainterPath *>(path)->addPath(*static_cast<QPainterPath *>(other));
+}
+
+void qt_painter_path_add_polygon(void *path, const double *points, int point_count) {
+    QPolygonF polygon;
+    polygon.reserve(point_count);
+    for (int i = 0; i < point_count; ++i) {
+        polygon.append(QPointF(points[i * 2], points[i * 2 + 1]));
+    }
+    static_cast<QPainterPath *>(path)->addPolygon(polygon);
+}
+
+void qt_painter_path_get_bounding_rect(void *path, double *x, double *y, double *w, double *h) {
+    QRectF r = static_cast<QPainterPath *>(path)->boundingRect();
+    *x = r.x(); *y = r.y(); *w = r.width(); *h = r.height();
+}
+
+double qt_painter_path_get_length(void *path) {
+    return static_cast<QPainterPath *>(path)->length();
+}
+
+double qt_painter_path_get_percent_at_length(void *path, double length) {
+    return static_cast<QPainterPath *>(path)->percentAtLength(length);
+}
+
+void qt_painter_path_get_point_at_percent(void *path, double percent, double *x, double *y) {
+    QPointF p = static_cast<QPainterPath *>(path)->pointAtPercent(percent);
+    *x = p.x(); *y = p.y();
+}
+
+double qt_painter_path_get_angle_at_percent(void *path, double percent) {
+    return static_cast<QPainterPath *>(path)->angleAtPercent(percent);
+}
+
+void *qt_painter_path_united(void *path, void *other) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->united(*static_cast<QPainterPath *>(other))));
+}
+
+void *qt_painter_path_intersected(void *path, void *other) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->intersected(*static_cast<QPainterPath *>(other))));
+}
+
+void *qt_painter_path_subtracted(void *path, void *other) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->subtracted(*static_cast<QPainterPath *>(other))));
+}
+
+void *qt_painter_path_simplified(void *path) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->simplified()));
+}
+
+void *qt_painter_path_translated(void *path, double dx, double dy) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->translated(dx, dy)));
+}
+
+void *qt_painter_path_to_reversed(void *path) {
+    return static_cast<void *>(new QPainterPath(static_cast<QPainterPath *>(path)->toReversed()));
+}
+
+int qt_painter_path_intersects_rect(void *path, double x, double y, double w, double h) {
+    return static_cast<QPainterPath *>(path)->intersects(QRectF(x, y, w, h)) ? 1 : 0;
+}
+
+int qt_painter_path_intersects_path(void *path, void *other) {
+    return static_cast<QPainterPath *>(path)->intersects(*static_cast<QPainterPath *>(other)) ? 1 : 0;
+}
+
+void qt_painter_path_set_fill_rule(void *path, int rule) {
+    static_cast<QPainterPath *>(path)->setFillRule(static_cast<Qt::FillRule>(rule));
+}
+
+int qt_painter_path_get_fill_rule(void *path) {
+    return static_cast<int>(static_cast<QPainterPath *>(path)->fillRule());
+}
+
+int qt_painter_path_get_element_count(void *path) {
+    return static_cast<QPainterPath *>(path)->elementCount();
 }
 
 void qt_painter_draw_path(void *painter, void *path) {
