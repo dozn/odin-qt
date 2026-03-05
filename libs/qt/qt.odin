@@ -2199,6 +2199,32 @@ foreign qt_lib {
 	list_widget_set_spacing :: proc(list_widget: List_Widget, spacing: c.int) ---
 	list_widget_set_sorting_enabled :: proc(list_widget: List_Widget, is_enabled: c.int) ---
 
+	/* QListWidgetItem */
+
+	@(require_results) list_widget_item_create :: proc(text: cstring) -> List_Widget_Item ---
+	list_widget_item_set_text :: proc(item: List_Widget_Item, text: cstring) ---
+	@(require_results) list_widget_item_get_text :: proc(item: List_Widget_Item) -> cstring ---
+	list_widget_item_set_font :: proc(item: List_Widget_Item, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) ---
+	list_widget_item_set_foreground :: proc(item: List_Widget_Item, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	list_widget_item_set_background :: proc(item: List_Widget_Item, r: c.int, g: c.int, b: c.int, a: c.int) ---
+	list_widget_item_set_icon :: proc(item: List_Widget_Item, icon: Icon) ---
+	list_widget_item_set_flags :: proc(item: List_Widget_Item, flags: c.int) ---
+	@(require_results) list_widget_item_get_flags :: proc(item: List_Widget_Item) -> c.int ---
+	list_widget_item_set_size_hint :: proc(item: List_Widget_Item, w: c.int, h: c.int) ---
+	list_widget_item_set_text_alignment :: proc(item: List_Widget_Item, alignment: c.int) ---
+	@(require_results) list_widget_item_get_text_alignment :: proc(item: List_Widget_Item) -> c.int ---
+	list_widget_item_set_tool_tip :: proc(item: List_Widget_Item, tooltip: cstring) ---
+	@(require_results) list_widget_item_get_tool_tip :: proc(item: List_Widget_Item) -> cstring ---
+	list_widget_item_set_check_state :: proc(item: List_Widget_Item, state: Check_State) ---
+	@(require_results) list_widget_item_get_check_state :: proc(item: List_Widget_Item) -> Check_State ---
+	list_widget_item_set_hidden :: proc(item: List_Widget_Item, is_hidden: c.int) ---
+	@(require_results) list_widget_item_is_hidden :: proc(item: List_Widget_Item) -> c.int ---
+	list_widget_item_set_selected :: proc(item: List_Widget_Item, is_selected: c.int) ---
+	@(require_results) list_widget_item_is_selected :: proc(item: List_Widget_Item) -> c.int ---
+	@(require_results) list_widget_item_get_row :: proc(item: List_Widget_Item) -> c.int ---
+	list_widget_add_item_object :: proc(list_widget: List_Widget, item: List_Widget_Item) ---
+	list_widget_insert_item_object :: proc(list_widget: List_Widget, row: c.int, item: List_Widget_Item) ---
+
 	/* QTreeWidget */
 
 	@(require_results) tree_widget_create :: proc(parent: Widget) -> Tree_Widget ---

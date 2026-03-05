@@ -738,13 +738,36 @@ build_data_views_tab :: proc() -> qt.Widget {
 	qt.widget_set_font(auto_cast heading, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Bold, 0)
 	qt.layout_add_widget(layout, auto_cast heading)
 
-	// ListWidget
+	// ListWidget with per-item styling via QListWidgetItem
 	list_group := qt.group_box_create(nil, "List Widget")
 	list_layout := qt.vbox_layout_create(auto_cast list_group)
 	demo_state.data_list = qt.list_widget_create(nil)
-	qt.list_widget_add_item(demo_state.data_list, "First item")
-	qt.list_widget_add_item(demo_state.data_list, "Second item")
-	qt.list_widget_add_item(demo_state.data_list, "Third item")
+
+	// Styled items using QListWidgetItem
+	item_bold := qt.list_widget_item_create("Bold item")
+	qt.list_widget_item_set_font(item_bold, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.list_widget_add_item_object(demo_state.data_list, item_bold)
+
+	item_italic := qt.list_widget_item_create("Italic blue item")
+	qt.list_widget_item_set_font(item_italic, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Normal, 1)
+	qt.list_widget_item_set_foreground(item_italic, 0, 80, 180, 255)
+	qt.list_widget_add_item_object(demo_state.data_list, item_italic)
+
+	item_highlight := qt.list_widget_item_create("Highlighted background")
+	qt.list_widget_item_set_background(item_highlight, 255, 240, 200, 255)
+	qt.list_widget_item_set_tool_tip(item_highlight, "This item has a warm background colour")
+	qt.list_widget_add_item_object(demo_state.data_list, item_highlight)
+
+	item_checkable := qt.list_widget_item_create("Checkable item")
+	qt.list_widget_item_set_flags(item_checkable, 0x31) // ItemIsSelectable | ItemIsEnabled | ItemIsUserCheckable
+	qt.list_widget_item_set_check_state(item_checkable, .Unchecked)
+	qt.list_widget_add_item_object(demo_state.data_list, item_checkable)
+
+	item_red := qt.list_widget_item_create("Red warning text")
+	qt.list_widget_item_set_foreground(item_red, 180, 40, 40, 255)
+	qt.list_widget_item_set_font(item_red, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Bold, 0)
+	qt.list_widget_add_item_object(demo_state.data_list, item_red)
+
 	qt.list_widget_connect_current_row_changed(demo_state.data_list, data_list_selection_changed, nil)
 	qt.layout_add_widget(list_layout, auto_cast demo_state.data_list)
 	list_btn_row := qt.widget_create(nil)

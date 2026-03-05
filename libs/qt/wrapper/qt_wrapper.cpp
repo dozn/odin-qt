@@ -2085,6 +2085,104 @@ void qt_list_widget_set_sorting_enabled(void *list, int is_enabled) {
     static_cast<QListWidget *>(list)->setSortingEnabled(is_enabled != 0);
 }
 
+/* QListWidgetItem */
+
+void *qt_list_widget_item_create(const char *text) {
+    return static_cast<void *>(new QListWidgetItem(QString::fromUtf8(text)));
+}
+
+void qt_list_widget_item_set_text(void *item, const char *text) {
+    static_cast<QListWidgetItem *>(item)->setText(QString::fromUtf8(text));
+}
+
+char *qt_list_widget_item_get_text(void *item) {
+    return qstring_to_heap_utf8(static_cast<QListWidgetItem *>(item)->text());
+}
+
+void qt_list_widget_item_set_font(void *item, const char *family, int point_size, int weight, int is_italic) {
+    QFont f(QString::fromUtf8(family), point_size, weight, is_italic != 0);
+    static_cast<QListWidgetItem *>(item)->setFont(f);
+}
+
+void qt_list_widget_item_set_foreground(void *item, int r, int g, int b, int a) {
+    static_cast<QListWidgetItem *>(item)->setForeground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_list_widget_item_set_background(void *item, int r, int g, int b, int a) {
+    static_cast<QListWidgetItem *>(item)->setBackground(QBrush(QColor(r, g, b, a)));
+}
+
+void qt_list_widget_item_set_icon(void *item, void *icon) {
+    static_cast<QListWidgetItem *>(item)->setIcon(*static_cast<QIcon *>(icon));
+}
+
+void qt_list_widget_item_set_flags(void *item, int flags) {
+    static_cast<QListWidgetItem *>(item)->setFlags(static_cast<Qt::ItemFlags>(flags));
+}
+
+int qt_list_widget_item_get_flags(void *item) {
+    return static_cast<int>(static_cast<QListWidgetItem *>(item)->flags());
+}
+
+void qt_list_widget_item_set_size_hint(void *item, int w, int h) {
+    static_cast<QListWidgetItem *>(item)->setSizeHint(QSize(w, h));
+}
+
+void qt_list_widget_item_set_text_alignment(void *item, int alignment) {
+    static_cast<QListWidgetItem *>(item)->setTextAlignment(static_cast<Qt::Alignment>(alignment));
+}
+
+int qt_list_widget_item_get_text_alignment(void *item) {
+    return static_cast<int>(static_cast<QListWidgetItem *>(item)->textAlignment());
+}
+
+void qt_list_widget_item_set_tool_tip(void *item, const char *tooltip) {
+    static_cast<QListWidgetItem *>(item)->setToolTip(QString::fromUtf8(tooltip));
+}
+
+char *qt_list_widget_item_get_tool_tip(void *item) {
+    return qstring_to_heap_utf8(static_cast<QListWidgetItem *>(item)->toolTip());
+}
+
+void qt_list_widget_item_set_check_state(void *item, int state) {
+    static_cast<QListWidgetItem *>(item)->setCheckState(static_cast<Qt::CheckState>(state));
+}
+
+int qt_list_widget_item_get_check_state(void *item) {
+    return static_cast<int>(static_cast<QListWidgetItem *>(item)->checkState());
+}
+
+void qt_list_widget_item_set_hidden(void *item, int is_hidden) {
+    static_cast<QListWidgetItem *>(item)->setHidden(is_hidden != 0);
+}
+
+int qt_list_widget_item_is_hidden(void *item) {
+    return static_cast<QListWidgetItem *>(item)->isHidden() ? 1 : 0;
+}
+
+void qt_list_widget_item_set_selected(void *item, int is_selected) {
+    static_cast<QListWidgetItem *>(item)->setSelected(is_selected != 0);
+}
+
+int qt_list_widget_item_is_selected(void *item) {
+    return static_cast<QListWidgetItem *>(item)->isSelected() ? 1 : 0;
+}
+
+int qt_list_widget_item_get_row(void *item) {
+    auto *lwi = static_cast<QListWidgetItem *>(item);
+    auto *lw = lwi->listWidget();
+    if (!lw) return -1;
+    return lw->row(lwi);
+}
+
+void qt_list_widget_add_item_object(void *list, void *item) {
+    static_cast<QListWidget *>(list)->addItem(static_cast<QListWidgetItem *>(item));
+}
+
+void qt_list_widget_insert_item_object(void *list, int row, void *item) {
+    static_cast<QListWidget *>(list)->insertItem(row, static_cast<QListWidgetItem *>(item));
+}
+
 /* ── QTreeWidget ────────────────────────────────────────────────────── */
 
 void *qt_tree_widget_create(void *parent) {

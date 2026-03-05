@@ -430,6 +430,31 @@ void  qt_list_widget_set_flow(void *list, int flow);
 void  qt_list_widget_set_spacing(void *list, int spacing);
 void  qt_list_widget_set_sorting_enabled(void *list, int is_enabled);
 
+/* QListWidgetItem */
+void *qt_list_widget_item_create(const char *text);
+void  qt_list_widget_item_set_text(void *item, const char *text);
+char *qt_list_widget_item_get_text(void *item);
+void  qt_list_widget_item_set_font(void *item, const char *family, int point_size, int weight, int is_italic);
+void  qt_list_widget_item_set_foreground(void *item, int r, int g, int b, int a);
+void  qt_list_widget_item_set_background(void *item, int r, int g, int b, int a);
+void  qt_list_widget_item_set_icon(void *item, void *icon);
+void  qt_list_widget_item_set_flags(void *item, int flags);
+int   qt_list_widget_item_get_flags(void *item);
+void  qt_list_widget_item_set_size_hint(void *item, int w, int h);
+void  qt_list_widget_item_set_text_alignment(void *item, int alignment);
+int   qt_list_widget_item_get_text_alignment(void *item);
+void  qt_list_widget_item_set_tool_tip(void *item, const char *tooltip);
+char *qt_list_widget_item_get_tool_tip(void *item);
+void  qt_list_widget_item_set_check_state(void *item, int state);
+int   qt_list_widget_item_get_check_state(void *item);
+void  qt_list_widget_item_set_hidden(void *item, int is_hidden);
+int   qt_list_widget_item_is_hidden(void *item);
+void  qt_list_widget_item_set_selected(void *item, int is_selected);
+int   qt_list_widget_item_is_selected(void *item);
+int   qt_list_widget_item_get_row(void *item);
+void  qt_list_widget_add_item_object(void *list, void *item);
+void  qt_list_widget_insert_item_object(void *list, int row, void *item);
+
 /* ── QTreeWidget ────────────────────────────────────────────────────── */
 
 void *qt_tree_widget_create(void *parent);

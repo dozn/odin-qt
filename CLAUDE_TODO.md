@@ -61,16 +61,14 @@ QEventLoop, QSysInfo, QLibrary, QSharedMemory, QSystemSemaphore,
 QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF,
 QPdfWriter, QTextStream, QDataStream, QTextTable, QTextTableCell,
 QTextList, QTextFrame, QDeadlineTimer, QCollator,
-QAbstractItemModel helper (CCustomItemModel)
+QAbstractItemModel helper (CCustomItemModel),
+QListWidgetItem
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Per-item styling (handles exist but methods are incomplete):**
-- QListWidgetItem — full handle with setFont, setForeground, setBackground, setIcon, setFlags, setSizeHint
 
 **Drag/drop beyond text:**
 - QMimeData — enable URLs, HTML, images, custom MIME types in drag/drop
