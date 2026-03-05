@@ -3870,11 +3870,11 @@ print_preview_paint_requested :: proc"c"(printer: qt.Printer, user_data: rawptr)
 		resolution := qt.printer_get_resolution(printer)
 		scale := cast(c.int)(resolution / 72) // scale factor relative to 72 DPI
 
-		qt.painter_set_font(painter, "Segoe UI", 24 * scale, cast(c.int)qt.Font_Weight.Bold, 0)
+		qt.painter_set_font(painter, "Segoe UI", 24, cast(c.int)qt.Font_Weight.Bold, 0)
 		qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
 		qt.painter_draw_text(painter, 100 * scale, 150 * scale, "Odin + Qt Print Demo")
 
-		qt.painter_set_font(painter, "Segoe UI", 14 * scale, cast(c.int)qt.Font_Weight.Normal, 0)
+		qt.painter_set_font(painter, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Normal, 0)
 		qt.painter_draw_text(painter, 100 * scale, 250 * scale, "This page was rendered via QPrintPreviewDialog.")
 		qt.painter_draw_text(painter, 100 * scale, 320 * scale, "QPainter draws to QPrinter just like any other paint device.")
 
@@ -3889,10 +3889,11 @@ print_preview_paint_requested :: proc"c"(printer: qt.Printer, user_data: rawptr)
 
 		qt.painter_set_brush_colour(painter, 255, 165, 0, 160)
 		qt.painter_set_pen_colour(painter, 180, 100, 0, 255)
-		qt.painter_draw_rounded_rect(painter, 280 * scale, 420 * scale, 140 * scale, 80 * scale, 15.0, 15.0)
+		scale_f := cast(c.double)scale
+		qt.painter_draw_rounded_rect(painter, 280 * scale, 420 * scale, 140 * scale, 80 * scale, 15.0 * scale_f, 15.0 * scale_f)
 
 		qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
-		qt.painter_set_font(painter, "Segoe UI", 10 * scale, cast(c.int)qt.Font_Weight.Normal, 1)
+		qt.painter_set_font(painter, "Segoe UI", 10, cast(c.int)qt.Font_Weight.Normal, 1)
 		qt.painter_draw_text(painter, 100 * scale, 560 * scale, "Shapes rendered at printer resolution.")
 
 		_ = qt.painter_end(painter)
@@ -4071,11 +4072,11 @@ build_print_support_tab :: proc() -> qt.Widget {
 			resolution := qt.printer_get_resolution(printer)
 			scale := cast(c.int)(resolution / 72)
 
-			qt.painter_set_font(painter, "Segoe UI", 24 * scale, cast(c.int)qt.Font_Weight.Bold, 0)
+			qt.painter_set_font(painter, "Segoe UI", 24, cast(c.int)qt.Font_Weight.Bold, 0)
 			qt.painter_set_pen_colour(painter, 40, 40, 40, 255)
 			qt.painter_draw_text(painter, 100 * scale, 150 * scale, "Odin + Qt Printer PDF")
 
-			qt.painter_set_font(painter, "Segoe UI", 14 * scale, cast(c.int)qt.Font_Weight.Normal, 0)
+			qt.painter_set_font(painter, "Segoe UI", 14, cast(c.int)qt.Font_Weight.Normal, 0)
 			qt.painter_draw_text(painter, 100 * scale, 250 * scale, "Generated via QPrinter with OutputFormat = PdfFormat.")
 			qt.painter_draw_text(painter, 100 * scale, 320 * scale, "Unlike QPdfWriter, QPrinter supports all print features.")
 
