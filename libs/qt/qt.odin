@@ -315,6 +315,14 @@ Logging_Category :: distinct rawptr
 Cbor_Value :: distinct rawptr
 Cbor_Map :: distinct rawptr
 Cbor_Array :: distinct rawptr
+Plain_Text_Document_Layout :: distinct rawptr
+Splitter_Handle :: distinct rawptr
+Style_Painter :: distinct rawptr
+Window_Handle :: distinct rawptr
+Backing_Store :: distinct rawptr
+Raw_Font :: distinct rawptr
+Glyph_Run :: distinct rawptr
+Offscreen_Surface :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -5895,4 +5903,100 @@ foreign qt_lib {
 	cbor_array_append_string :: proc(array: Cbor_Array, text: cstring) ---
 	cbor_array_append_bool :: proc(array: Cbor_Array, value: c.int) ---
 	@(require_results) cbor_array_get_value_at :: proc(array: Cbor_Array, index: c.int) -> Cbor_Value ---
+
+	/* QPlainTextDocumentLayout */
+
+	@(require_results) plain_text_document_layout_create :: proc(document: Text_Document) -> Plain_Text_Document_Layout ---
+	plain_text_document_layout_destroy :: proc(layout: Plain_Text_Document_Layout) ---
+	plain_text_document_layout_set_cursor_width :: proc(layout: Plain_Text_Document_Layout, width: c.int) ---
+	@(require_results) plain_text_document_layout_get_cursor_width :: proc(layout: Plain_Text_Document_Layout) -> c.int ---
+	plain_text_document_layout_request_update :: proc(layout: Plain_Text_Document_Layout) ---
+
+	/* QSplitterHandle */
+
+	@(require_results) splitter_handle_get_orientation :: proc(handle: Splitter_Handle) -> c.int ---
+	@(require_results) splitter_handle_get_splitter :: proc(handle: Splitter_Handle) -> Splitter ---
+	@(require_results) splitter_handle_is_opaque_resize :: proc(handle: Splitter_Handle) -> c.int ---
+
+	/* QStylePainter */
+
+	@(require_results) style_painter_create :: proc(widget: Widget) -> Style_Painter ---
+	style_painter_destroy :: proc(painter: Style_Painter) ---
+	@(require_results) style_painter_begin :: proc(painter: Style_Painter, widget: Widget) -> c.int ---
+	style_painter_draw_primitive :: proc(painter: Style_Painter, element: c.int, option: rawptr) ---
+	style_painter_draw_control :: proc(painter: Style_Painter, element: c.int, option: rawptr) ---
+	style_painter_draw_complex_control :: proc(painter: Style_Painter, control: c.int, option: rawptr) ---
+	style_painter_draw_item_text :: proc(painter: Style_Painter, x: c.int, y: c.int, w: c.int, h: c.int, flags: c.int, palette: rawptr, is_enabled: c.int, text: cstring, text_role: c.int) ---
+	style_painter_draw_item_pixmap :: proc(painter: Style_Painter, x: c.int, y: c.int, w: c.int, h: c.int, flags: c.int, pixmap: Pixmap) ---
+	@(require_results) style_painter_get_style :: proc(painter: Style_Painter) -> Style ---
+
+	/* QWindow */
+
+	@(require_results) window_create :: proc(parent: Window_Handle) -> Window_Handle ---
+	window_destroy :: proc(window: Window_Handle) ---
+	window_set_title :: proc(window: Window_Handle, title: cstring) ---
+	@(require_results) window_get_title :: proc(window: Window_Handle) -> cstring ---
+	window_set_geometry :: proc(window: Window_Handle, x: c.int, y: c.int, w: c.int, h: c.int) ---
+	window_get_geometry :: proc(window: Window_Handle, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) ---
+	window_resize :: proc(window: Window_Handle, w: c.int, h: c.int) ---
+	window_set_minimum_size :: proc(window: Window_Handle, w: c.int, h: c.int) ---
+	window_set_maximum_size :: proc(window: Window_Handle, w: c.int, h: c.int) ---
+	window_show :: proc(window: Window_Handle) ---
+	window_hide :: proc(window: Window_Handle) ---
+	@(require_results) window_is_visible :: proc(window: Window_Handle) -> c.int ---
+	window_set_visible :: proc(window: Window_Handle, is_visible: c.int) ---
+	window_set_opacity :: proc(window: Window_Handle, opacity: c.double) ---
+	@(require_results) window_get_opacity :: proc(window: Window_Handle) -> c.double ---
+	window_request_activate :: proc(window: Window_Handle) ---
+	@(require_results) window_is_active :: proc(window: Window_Handle) -> c.int ---
+	window_set_modality :: proc(window: Window_Handle, modality: c.int) ---
+	@(require_results) window_get_modality :: proc(window: Window_Handle) -> c.int ---
+	@(require_results) window_get_device_pixel_ratio :: proc(window: Window_Handle) -> c.double ---
+
+	/* QBackingStore */
+
+	@(require_results) backing_store_create :: proc(window: Window_Handle) -> Backing_Store ---
+	backing_store_destroy :: proc(store: Backing_Store) ---
+	backing_store_begin_paint :: proc(store: Backing_Store, region: Region) ---
+	backing_store_end_paint :: proc(store: Backing_Store) ---
+	backing_store_flush :: proc(store: Backing_Store, region: Region, window: Window_Handle, x: c.int, y: c.int) ---
+	backing_store_resize :: proc(store: Backing_Store, w: c.int, h: c.int) ---
+	backing_store_get_size :: proc(store: Backing_Store, w: ^c.int, h: ^c.int) ---
+
+	/* QRawFont */
+
+	@(require_results) raw_font_create :: proc(file_name: cstring, pixel_size: c.double) -> Raw_Font ---
+	raw_font_destroy :: proc(font: Raw_Font) ---
+	@(require_results) raw_font_is_valid :: proc(font: Raw_Font) -> c.int ---
+	@(require_results) raw_font_get_family_name :: proc(font: Raw_Font) -> cstring ---
+	@(require_results) raw_font_get_style_name :: proc(font: Raw_Font) -> cstring ---
+	@(require_results) raw_font_get_pixel_size :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_weight :: proc(font: Raw_Font) -> c.int ---
+	@(require_results) raw_font_get_ascent :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_descent :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_leading :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_units_per_em :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_line_thickness :: proc(font: Raw_Font) -> c.double ---
+	@(require_results) raw_font_get_underline_position :: proc(font: Raw_Font) -> c.double ---
+
+	/* QGlyphRun */
+
+	@(require_results) glyph_run_create :: proc() -> Glyph_Run ---
+	glyph_run_destroy :: proc(glyph_run: Glyph_Run) ---
+	glyph_run_set_raw_font :: proc(glyph_run: Glyph_Run, raw_font: Raw_Font) ---
+	@(require_results) glyph_run_get_raw_font :: proc(glyph_run: Glyph_Run) -> Raw_Font ---
+	@(require_results) glyph_run_is_empty :: proc(glyph_run: Glyph_Run) -> c.int ---
+	glyph_run_get_bounding_rect :: proc(glyph_run: Glyph_Run, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) ---
+	glyph_run_set_flag :: proc(glyph_run: Glyph_Run, flag: c.int, is_enabled: c.int) ---
+	@(require_results) glyph_run_get_flags :: proc(glyph_run: Glyph_Run) -> c.int ---
+	glyph_run_clear :: proc(glyph_run: Glyph_Run) ---
+
+	/* QOffscreenSurface */
+
+	@(require_results) offscreen_surface_create :: proc() -> Offscreen_Surface ---
+	offscreen_surface_destroy :: proc(surface: Offscreen_Surface) ---
+	offscreen_surface_set_screen :: proc(surface: Offscreen_Surface, screen: rawptr) ---
+	@(require_results) offscreen_surface_get_screen :: proc(surface: Offscreen_Surface) -> rawptr ---
+	@(require_results) offscreen_surface_is_valid :: proc(surface: Offscreen_Surface) -> c.int ---
+	offscreen_surface_create_surface :: proc(surface: Offscreen_Surface) ---
 }

@@ -4005,6 +4005,102 @@ void  qt_cbor_array_append_string(void *array, const char *text);
 void  qt_cbor_array_append_bool(void *array, int value);
 void *qt_cbor_array_get_value_at(void *array, int index);
 
+/* ── QPlainTextDocumentLayout ────────────────────────────────────── */
+
+void *qt_plain_text_document_layout_create(void *document);
+void  qt_plain_text_document_layout_destroy(void *layout);
+void  qt_plain_text_document_layout_set_cursor_width(void *layout, int width);
+int   qt_plain_text_document_layout_get_cursor_width(void *layout);
+void  qt_plain_text_document_layout_request_update(void *layout);
+
+/* ── QSplitterHandle ─────────────────────────────────────────────── */
+
+int   qt_splitter_handle_get_orientation(void *handle);
+void *qt_splitter_handle_get_splitter(void *handle);
+int   qt_splitter_handle_is_opaque_resize(void *handle);
+
+/* ── QStylePainter ───────────────────────────────────────────────── */
+
+void *qt_style_painter_create(void *widget);
+void  qt_style_painter_destroy(void *painter);
+int   qt_style_painter_begin(void *painter, void *widget);
+void  qt_style_painter_draw_primitive(void *painter, int element, void *option);
+void  qt_style_painter_draw_control(void *painter, int element, void *option);
+void  qt_style_painter_draw_complex_control(void *painter, int control, void *option);
+void  qt_style_painter_draw_item_text(void *painter, int x, int y, int w, int h, int flags, void *palette, int is_enabled, const char *text, int text_role);
+void  qt_style_painter_draw_item_pixmap(void *painter, int x, int y, int w, int h, int flags, void *pixmap);
+void *qt_style_painter_get_style(void *painter);
+
+/* ── QWindow ─────────────────────────────────────────────────────── */
+
+void *qt_window_create(void *parent);
+void  qt_window_destroy(void *window);
+void  qt_window_set_title(void *window, const char *title);
+char *qt_window_get_title(void *window);
+void  qt_window_set_geometry(void *window, int x, int y, int w, int h);
+void  qt_window_get_geometry(void *window, int *x, int *y, int *w, int *h);
+void  qt_window_resize(void *window, int w, int h);
+void  qt_window_set_minimum_size(void *window, int w, int h);
+void  qt_window_set_maximum_size(void *window, int w, int h);
+void  qt_window_show(void *window);
+void  qt_window_hide(void *window);
+int   qt_window_is_visible(void *window);
+void  qt_window_set_visible(void *window, int is_visible);
+void  qt_window_set_opacity(void *window, double opacity);
+double qt_window_get_opacity(void *window);
+void  qt_window_request_activate(void *window);
+int   qt_window_is_active(void *window);
+void  qt_window_set_modality(void *window, int modality);
+int   qt_window_get_modality(void *window);
+double qt_window_get_device_pixel_ratio(void *window);
+
+/* ── QBackingStore ───────────────────────────────────────────────── */
+
+void *qt_backing_store_create(void *window);
+void  qt_backing_store_destroy(void *store);
+void  qt_backing_store_begin_paint(void *store, void *region);
+void  qt_backing_store_end_paint(void *store);
+void  qt_backing_store_flush(void *store, void *region, void *window, int x, int y);
+void  qt_backing_store_resize(void *store, int w, int h);
+void  qt_backing_store_get_size(void *store, int *w, int *h);
+
+/* ── QRawFont ────────────────────────────────────────────────────── */
+
+void *qt_raw_font_create(const char *file_name, double pixel_size);
+void  qt_raw_font_destroy(void *font);
+int   qt_raw_font_is_valid(void *font);
+char *qt_raw_font_get_family_name(void *font);
+char *qt_raw_font_get_style_name(void *font);
+double qt_raw_font_get_pixel_size(void *font);
+int   qt_raw_font_get_weight(void *font);
+double qt_raw_font_get_ascent(void *font);
+double qt_raw_font_get_descent(void *font);
+double qt_raw_font_get_leading(void *font);
+double qt_raw_font_get_units_per_em(void *font);
+double qt_raw_font_get_line_thickness(void *font);
+double qt_raw_font_get_underline_position(void *font);
+
+/* ── QGlyphRun ───────────────────────────────────────────────────── */
+
+void *qt_glyph_run_create(void);
+void  qt_glyph_run_destroy(void *glyph_run);
+void  qt_glyph_run_set_raw_font(void *glyph_run, void *raw_font);
+void *qt_glyph_run_get_raw_font(void *glyph_run);
+int   qt_glyph_run_is_empty(void *glyph_run);
+void  qt_glyph_run_get_bounding_rect(void *glyph_run, double *x, double *y, double *w, double *h);
+void  qt_glyph_run_set_flag(void *glyph_run, int flag, int is_enabled);
+int   qt_glyph_run_get_flags(void *glyph_run);
+void  qt_glyph_run_clear(void *glyph_run);
+
+/* ── QOffscreenSurface ───────────────────────────────────────────── */
+
+void *qt_offscreen_surface_create(void);
+void  qt_offscreen_surface_destroy(void *surface);
+void  qt_offscreen_surface_set_screen(void *surface, void *screen);
+void *qt_offscreen_surface_get_screen(void *surface);
+int   qt_offscreen_surface_is_valid(void *surface);
+void  qt_offscreen_surface_create_surface(void *surface);
+
 #ifdef __cplusplus
 }
 #endif

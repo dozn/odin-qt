@@ -253,6 +253,15 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QPlainTextDocumentLayout>
+#include <QSplitterHandle>
+#include <QStylePainter>
+#include <QCommonStyle>
+#include <QWindow>
+#include <QBackingStore>
+#include <QRawFont>
+#include <QGlyphRun>
+#include <QOffscreenSurface>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
@@ -15609,6 +15618,336 @@ void qt_cbor_array_append_bool(void *array, int value) {
 void *qt_cbor_array_get_value_at(void *array, int index) {
     QCborValue val = static_cast<QCborArray *>(array)->at(index);
     return static_cast<void *>(new QCborValue(val));
+}
+
+/* ── QPlainTextDocumentLayout ────────────────────────────────────── */
+
+void *qt_plain_text_document_layout_create(void *document) {
+    return static_cast<void *>(new QPlainTextDocumentLayout(
+        static_cast<QTextDocument *>(document)));
+}
+
+void qt_plain_text_document_layout_destroy(void *layout) {
+    delete static_cast<QPlainTextDocumentLayout *>(layout);
+}
+
+void qt_plain_text_document_layout_set_cursor_width(void *layout, int width) {
+    static_cast<QPlainTextDocumentLayout *>(layout)->setCursorWidth(width);
+}
+
+int qt_plain_text_document_layout_get_cursor_width(void *layout) {
+    return static_cast<QPlainTextDocumentLayout *>(layout)->cursorWidth();
+}
+
+void qt_plain_text_document_layout_request_update(void *layout) {
+    static_cast<QPlainTextDocumentLayout *>(layout)->requestUpdate();
+}
+
+/* ── QSplitterHandle ─────────────────────────────────────────────── */
+
+int qt_splitter_handle_get_orientation(void *handle) {
+    return static_cast<int>(static_cast<QSplitterHandle *>(handle)->orientation());
+}
+
+void *qt_splitter_handle_get_splitter(void *handle) {
+    return static_cast<void *>(static_cast<QSplitterHandle *>(handle)->splitter());
+}
+
+int qt_splitter_handle_is_opaque_resize(void *handle) {
+    return static_cast<QSplitterHandle *>(handle)->opaqueResize() ? 1 : 0;
+}
+
+/* ── QStylePainter ───────────────────────────────────────────────── */
+
+void *qt_style_painter_create(void *widget) {
+    return static_cast<void *>(new QStylePainter(static_cast<QWidget *>(widget)));
+}
+
+void qt_style_painter_destroy(void *painter) {
+    delete static_cast<QStylePainter *>(painter);
+}
+
+int qt_style_painter_begin(void *painter, void *widget) {
+    return static_cast<QStylePainter *>(painter)->begin(static_cast<QWidget *>(widget)) ? 1 : 0;
+}
+
+void qt_style_painter_draw_primitive(void *painter, int element, void *option) {
+    static_cast<QStylePainter *>(painter)->drawPrimitive(
+        static_cast<QStyle::PrimitiveElement>(element),
+        *static_cast<QStyleOption *>(option));
+}
+
+void qt_style_painter_draw_control(void *painter, int element, void *option) {
+    static_cast<QStylePainter *>(painter)->drawControl(
+        static_cast<QStyle::ControlElement>(element),
+        *static_cast<QStyleOption *>(option));
+}
+
+void qt_style_painter_draw_complex_control(void *painter, int control, void *option) {
+    static_cast<QStylePainter *>(painter)->drawComplexControl(
+        static_cast<QStyle::ComplexControl>(control),
+        *static_cast<QStyleOptionComplex *>(option));
+}
+
+void qt_style_painter_draw_item_text(void *painter, int x, int y, int w, int h,
+                                     int flags, void *palette, int is_enabled,
+                                     const char *text, int text_role) {
+    static_cast<QStylePainter *>(painter)->drawItemText(
+        QRect(x, y, w, h), flags,
+        *static_cast<QPalette *>(palette),
+        is_enabled != 0,
+        QString::fromUtf8(text),
+        static_cast<QPalette::ColorRole>(text_role));
+}
+
+void qt_style_painter_draw_item_pixmap(void *painter, int x, int y, int w, int h,
+                                       int flags, void *pixmap) {
+    static_cast<QStylePainter *>(painter)->drawItemPixmap(
+        QRect(x, y, w, h), flags, *static_cast<QPixmap *>(pixmap));
+}
+
+void *qt_style_painter_get_style(void *painter) {
+    return static_cast<void *>(static_cast<QStylePainter *>(painter)->style());
+}
+
+/* ── QWindow ─────────────────────────────────────────────────────── */
+
+void *qt_window_create(void *parent) {
+    return static_cast<void *>(new QWindow(
+        parent ? static_cast<QWindow *>(parent) : nullptr));
+}
+
+void qt_window_destroy(void *window) {
+    delete static_cast<QWindow *>(window);
+}
+
+void qt_window_set_title(void *window, const char *title) {
+    static_cast<QWindow *>(window)->setTitle(QString::fromUtf8(title));
+}
+
+char *qt_window_get_title(void *window) {
+    return qstring_to_heap_utf8(static_cast<QWindow *>(window)->title());
+}
+
+void qt_window_set_geometry(void *window, int x, int y, int w, int h) {
+    static_cast<QWindow *>(window)->setGeometry(x, y, w, h);
+}
+
+void qt_window_get_geometry(void *window, int *x, int *y, int *w, int *h) {
+    QRect rect = static_cast<QWindow *>(window)->geometry();
+    *x = rect.x(); *y = rect.y(); *w = rect.width(); *h = rect.height();
+}
+
+void qt_window_resize(void *window, int w, int h) {
+    static_cast<QWindow *>(window)->resize(w, h);
+}
+
+void qt_window_set_minimum_size(void *window, int w, int h) {
+    static_cast<QWindow *>(window)->setMinimumSize(QSize(w, h));
+}
+
+void qt_window_set_maximum_size(void *window, int w, int h) {
+    static_cast<QWindow *>(window)->setMaximumSize(QSize(w, h));
+}
+
+void qt_window_show(void *window) {
+    static_cast<QWindow *>(window)->show();
+}
+
+void qt_window_hide(void *window) {
+    static_cast<QWindow *>(window)->hide();
+}
+
+int qt_window_is_visible(void *window) {
+    return static_cast<QWindow *>(window)->isVisible() ? 1 : 0;
+}
+
+void qt_window_set_visible(void *window, int is_visible) {
+    static_cast<QWindow *>(window)->setVisible(is_visible != 0);
+}
+
+void qt_window_set_opacity(void *window, double opacity) {
+    static_cast<QWindow *>(window)->setOpacity(opacity);
+}
+
+double qt_window_get_opacity(void *window) {
+    return static_cast<QWindow *>(window)->opacity();
+}
+
+void qt_window_request_activate(void *window) {
+    static_cast<QWindow *>(window)->requestActivate();
+}
+
+int qt_window_is_active(void *window) {
+    return static_cast<QWindow *>(window)->isActive() ? 1 : 0;
+}
+
+void qt_window_set_modality(void *window, int modality) {
+    static_cast<QWindow *>(window)->setModality(
+        static_cast<Qt::WindowModality>(modality));
+}
+
+int qt_window_get_modality(void *window) {
+    return static_cast<int>(static_cast<QWindow *>(window)->modality());
+}
+
+double qt_window_get_device_pixel_ratio(void *window) {
+    return static_cast<QWindow *>(window)->devicePixelRatio();
+}
+
+/* ── QBackingStore ───────────────────────────────────────────────── */
+
+void *qt_backing_store_create(void *window) {
+    return static_cast<void *>(new QBackingStore(static_cast<QWindow *>(window)));
+}
+
+void qt_backing_store_destroy(void *store) {
+    delete static_cast<QBackingStore *>(store);
+}
+
+void qt_backing_store_begin_paint(void *store, void *region) {
+    static_cast<QBackingStore *>(store)->beginPaint(*static_cast<QRegion *>(region));
+}
+
+void qt_backing_store_end_paint(void *store) {
+    static_cast<QBackingStore *>(store)->endPaint();
+}
+
+void qt_backing_store_flush(void *store, void *region, void *window, int x, int y) {
+    static_cast<QBackingStore *>(store)->flush(
+        *static_cast<QRegion *>(region),
+        window ? static_cast<QWindow *>(window) : nullptr,
+        QPoint(x, y));
+}
+
+void qt_backing_store_resize(void *store, int w, int h) {
+    static_cast<QBackingStore *>(store)->resize(QSize(w, h));
+}
+
+void qt_backing_store_get_size(void *store, int *w, int *h) {
+    QSize size = static_cast<QBackingStore *>(store)->size();
+    *w = size.width(); *h = size.height();
+}
+
+/* ── QRawFont ────────────────────────────────────────────────────── */
+
+void *qt_raw_font_create(const char *file_name, double pixel_size) {
+    return static_cast<void *>(new QRawFont(QString::fromUtf8(file_name), pixel_size));
+}
+
+void qt_raw_font_destroy(void *font) {
+    delete static_cast<QRawFont *>(font);
+}
+
+int qt_raw_font_is_valid(void *font) {
+    return static_cast<QRawFont *>(font)->isValid() ? 1 : 0;
+}
+
+char *qt_raw_font_get_family_name(void *font) {
+    return qstring_to_heap_utf8(static_cast<QRawFont *>(font)->familyName());
+}
+
+char *qt_raw_font_get_style_name(void *font) {
+    return qstring_to_heap_utf8(static_cast<QRawFont *>(font)->styleName());
+}
+
+double qt_raw_font_get_pixel_size(void *font) {
+    return static_cast<QRawFont *>(font)->pixelSize();
+}
+
+int qt_raw_font_get_weight(void *font) {
+    return static_cast<int>(static_cast<QRawFont *>(font)->weight());
+}
+
+double qt_raw_font_get_ascent(void *font) {
+    return static_cast<QRawFont *>(font)->ascent();
+}
+
+double qt_raw_font_get_descent(void *font) {
+    return static_cast<QRawFont *>(font)->descent();
+}
+
+double qt_raw_font_get_leading(void *font) {
+    return static_cast<QRawFont *>(font)->leading();
+}
+
+double qt_raw_font_get_units_per_em(void *font) {
+    return static_cast<QRawFont *>(font)->unitsPerEm();
+}
+
+double qt_raw_font_get_line_thickness(void *font) {
+    return static_cast<QRawFont *>(font)->lineThickness();
+}
+
+double qt_raw_font_get_underline_position(void *font) {
+    return static_cast<QRawFont *>(font)->underlinePosition();
+}
+
+/* ── QGlyphRun ───────────────────────────────────────────────────── */
+
+void *qt_glyph_run_create(void) {
+    return static_cast<void *>(new QGlyphRun());
+}
+
+void qt_glyph_run_destroy(void *glyph_run) {
+    delete static_cast<QGlyphRun *>(glyph_run);
+}
+
+void qt_glyph_run_set_raw_font(void *glyph_run, void *raw_font) {
+    static_cast<QGlyphRun *>(glyph_run)->setRawFont(*static_cast<QRawFont *>(raw_font));
+}
+
+void *qt_glyph_run_get_raw_font(void *glyph_run) {
+    return static_cast<void *>(new QRawFont(static_cast<QGlyphRun *>(glyph_run)->rawFont()));
+}
+
+int qt_glyph_run_is_empty(void *glyph_run) {
+    return static_cast<QGlyphRun *>(glyph_run)->isEmpty() ? 1 : 0;
+}
+
+void qt_glyph_run_get_bounding_rect(void *glyph_run, double *x, double *y, double *w, double *h) {
+    QRectF rect = static_cast<QGlyphRun *>(glyph_run)->boundingRect();
+    *x = rect.x(); *y = rect.y(); *w = rect.width(); *h = rect.height();
+}
+
+void qt_glyph_run_set_flag(void *glyph_run, int flag, int is_enabled) {
+    static_cast<QGlyphRun *>(glyph_run)->setFlag(
+        static_cast<QGlyphRun::GlyphRunFlag>(flag), is_enabled != 0);
+}
+
+int qt_glyph_run_get_flags(void *glyph_run) {
+    return static_cast<int>(static_cast<QGlyphRun *>(glyph_run)->flags());
+}
+
+void qt_glyph_run_clear(void *glyph_run) {
+    static_cast<QGlyphRun *>(glyph_run)->clear();
+}
+
+/* ── QOffscreenSurface ───────────────────────────────────────────── */
+
+void *qt_offscreen_surface_create(void) {
+    return static_cast<void *>(new QOffscreenSurface());
+}
+
+void qt_offscreen_surface_destroy(void *surface) {
+    delete static_cast<QOffscreenSurface *>(surface);
+}
+
+void qt_offscreen_surface_set_screen(void *surface, void *screen) {
+    static_cast<QOffscreenSurface *>(surface)->setScreen(
+        static_cast<QScreen *>(screen));
+}
+
+void *qt_offscreen_surface_get_screen(void *surface) {
+    return static_cast<void *>(static_cast<QOffscreenSurface *>(surface)->screen());
+}
+
+int qt_offscreen_surface_is_valid(void *surface) {
+    return static_cast<QOffscreenSurface *>(surface)->isValid() ? 1 : 0;
+}
+
+void qt_offscreen_surface_create_surface(void *surface) {
+    static_cast<QOffscreenSurface *>(surface)->create();
 }
 
 } /* extern "C" */

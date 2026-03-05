@@ -81,7 +81,9 @@ QTapGesture, QTapAndHoldGesture, QGestureEvent,
 QBasicTimer, QBitArray, QTextBoundaryFinder,
 QWaitCondition, QThreadPool (with QRunnable callback wrapper),
 QPageRanges, QFileSelector, QPluginLoader, QLoggingCategory,
-QCborValue, QCborMap, QCborArray
+QCborValue, QCborMap, QCborArray,
+QPlainTextDocumentLayout, QSplitterHandle, QStylePainter,
+QWindow, QBackingStore, QRawFont, QGlyphRun, QOffscreenSurface
 
 ---
 
@@ -98,16 +100,8 @@ QCborValue, QCborMap, QCborArray
 
 **Widgets:**
 - QRhiWidget — RHI-based custom rendering (newer Qt 6 GPU widget)
-- QPlainTextDocumentLayout — custom layout engine for plain text
 - QStyleOption* family — custom style painting primitives
-- QStylePainter — convenience for drawing style-aware elements
 - QCommonStyle — base for custom style implementations
-- QSplitterHandle — customizing splitter handles
 
 **Gui:**
-- QWindow — platform window (lower-level than QWidget)
-- QBackingStore — low-level window backing store
-- QRawFont — low-level font access
-- QGlyphRun — glyph-level text rendering
-- QOffscreenSurface — offscreen rendering
 - QOpenGL* — OpenGL integration (Qt6OpenGL.lib is linked but unused)
