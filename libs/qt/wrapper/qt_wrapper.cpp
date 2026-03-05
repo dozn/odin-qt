@@ -140,6 +140,8 @@
 #include <QWhatsThis>
 #include <QImage>
 #include <QColor>
+#include <QColorSpace>
+#include <QColorTransform>
 #include <QFont>
 #include <QPalette>
 #include <QPainterPath>
@@ -162,6 +164,7 @@
 #include <QTextImageFormat>
 #include <QTextFrameFormat>
 #include <QTextOption>
+#include <QTextLayout>
 #include <QFontDatabase>
 #include <QMovie>
 #include <QImageReader>
@@ -7472,6 +7475,87 @@ void qt_colour_set_named_colour(void *colour, const char *name) {
     static_cast<QColor *>(colour)->setNamedColor(QString::fromUtf8(name));
 }
 
+/* ── QColorSpace ──────────────────────────────────────────────────── */
+
+void *qt_colour_space_create(void) {
+    return static_cast<void *>(new QColorSpace());
+}
+
+void *qt_colour_space_create_named(int named_colour_space) {
+    return static_cast<void *>(new QColorSpace(static_cast<QColorSpace::NamedColorSpace>(named_colour_space)));
+}
+
+void qt_colour_space_destroy(void *colour_space) {
+    delete static_cast<QColorSpace *>(colour_space);
+}
+
+int qt_colour_space_is_valid(void *colour_space) {
+    return static_cast<QColorSpace *>(colour_space)->isValid() ? 1 : 0;
+}
+
+int qt_colour_space_get_primaries(void *colour_space) {
+    return static_cast<int>(static_cast<QColorSpace *>(colour_space)->primaries());
+}
+
+int qt_colour_space_get_transfer_function(void *colour_space) {
+    return static_cast<int>(static_cast<QColorSpace *>(colour_space)->transferFunction());
+}
+
+float qt_colour_space_get_gamma(void *colour_space) {
+    return static_cast<QColorSpace *>(colour_space)->gamma();
+}
+
+char *qt_colour_space_get_description(void *colour_space) {
+    return qstring_to_heap_utf8(static_cast<QColorSpace *>(colour_space)->description());
+}
+
+void qt_colour_space_set_description(void *colour_space, const char *description) {
+    static_cast<QColorSpace *>(colour_space)->setDescription(QString::fromUtf8(description));
+}
+
+void *qt_colour_space_get_transform_to(void *colour_space, void *target) {
+    QColorTransform transform = static_cast<QColorSpace *>(colour_space)->transformationToColorSpace(
+        *static_cast<QColorSpace *>(target));
+    return static_cast<void *>(new QColorTransform(transform));
+}
+
+void *qt_colour_space_create_with_primaries_and_transfer(int primaries, int transfer_function) {
+    return static_cast<void *>(new QColorSpace(
+        static_cast<QColorSpace::Primaries>(primaries),
+        static_cast<QColorSpace::TransferFunction>(transfer_function)));
+}
+
+void *qt_colour_space_create_with_primaries_and_gamma(int primaries, float gamma) {
+    return static_cast<void *>(new QColorSpace(
+        static_cast<QColorSpace::Primaries>(primaries), gamma));
+}
+
+/* ── QColorTransform ──────────────────────────────────────────────── */
+
+void *qt_colour_transform_create(void) {
+    return static_cast<void *>(new QColorTransform());
+}
+
+void qt_colour_transform_destroy(void *transform) {
+    delete static_cast<QColorTransform *>(transform);
+}
+
+int qt_colour_transform_is_identity(void *transform) {
+    return static_cast<QColorTransform *>(transform)->isIdentity() ? 1 : 0;
+}
+
+void *qt_colour_transform_map_colour(void *transform, void *colour) {
+    QColor result = static_cast<QColorTransform *>(transform)->map(*static_cast<QColor *>(colour));
+    return static_cast<void *>(new QColor(result));
+}
+
+void *qt_colour_transform_transform_image(void *transform, void *image) {
+    // Apply the colour transform to each pixel of the image
+    QImage src = *static_cast<QImage *>(image);
+    QImage result = src.colorTransformed(*static_cast<QColorTransform *>(transform));
+    return static_cast<void *>(new QImage(result));
+}
+
 /* ── QFont (standalone) ─────────────────────────────────────────────── */
 
 void *qt_font_create(const char *family, int point_size, int weight, int is_italic) {
@@ -8981,6 +9065,156 @@ double qt_text_option_get_tab_stop_distance(void *option) {
 
 void qt_text_document_set_default_text_option(void *document, void *option) {
     static_cast<QTextDocument *>(document)->setDefaultTextOption(*static_cast<QTextOption *>(option));
+}
+
+/* ── QTextLayout ──────────────────────────────────────────────────── */
+
+void *qt_text_layout_create(void) {
+    return static_cast<void *>(new QTextLayout());
+}
+
+void *qt_text_layout_create_with_text(const char *text) {
+    return static_cast<void *>(new QTextLayout(QString::fromUtf8(text)));
+}
+
+void *qt_text_layout_create_with_text_and_font(const char *text, void *font) {
+    return static_cast<void *>(new QTextLayout(QString::fromUtf8(text), *static_cast<QFont *>(font)));
+}
+
+void qt_text_layout_destroy(void *layout) {
+    delete static_cast<QTextLayout *>(layout);
+}
+
+void qt_text_layout_set_text(void *layout, const char *text) {
+    static_cast<QTextLayout *>(layout)->setText(QString::fromUtf8(text));
+}
+
+char *qt_text_layout_get_text(void *layout) {
+    return qstring_to_heap_utf8(static_cast<QTextLayout *>(layout)->text());
+}
+
+void qt_text_layout_set_font(void *layout, void *font) {
+    static_cast<QTextLayout *>(layout)->setFont(*static_cast<QFont *>(font));
+}
+
+void qt_text_layout_set_text_option(void *layout, void *option) {
+    static_cast<QTextLayout *>(layout)->setTextOption(*static_cast<QTextOption *>(option));
+}
+
+void qt_text_layout_begin_layout(void *layout) {
+    static_cast<QTextLayout *>(layout)->beginLayout();
+}
+
+void qt_text_layout_end_layout(void *layout) {
+    static_cast<QTextLayout *>(layout)->endLayout();
+}
+
+void *qt_text_layout_create_line(void *layout) {
+    QTextLine line = static_cast<QTextLayout *>(layout)->createLine();
+    return static_cast<void *>(new QTextLine(line));
+}
+
+int qt_text_layout_get_line_count(void *layout) {
+    return static_cast<QTextLayout *>(layout)->lineCount();
+}
+
+void *qt_text_layout_get_line_at(void *layout, int index) {
+    QTextLine line = static_cast<QTextLayout *>(layout)->lineAt(index);
+    return static_cast<void *>(new QTextLine(line));
+}
+
+void qt_text_layout_set_position(void *layout, double x, double y) {
+    static_cast<QTextLayout *>(layout)->setPosition(QPointF(x, y));
+}
+
+void qt_text_layout_get_bounding_rect(void *layout, double *x, double *y, double *width, double *height) {
+    QRectF rect = static_cast<QTextLayout *>(layout)->boundingRect();
+    *x = rect.x();
+    *y = rect.y();
+    *width = rect.width();
+    *height = rect.height();
+}
+
+void qt_text_layout_draw(void *layout, void *painter, double x, double y) {
+    static_cast<QTextLayout *>(layout)->draw(static_cast<QPainter *>(painter), QPointF(x, y));
+}
+
+void qt_text_layout_set_cache_enabled(void *layout, int is_enabled) {
+    static_cast<QTextLayout *>(layout)->setCacheEnabled(is_enabled != 0);
+}
+
+/* ── QTextLine ────────────────────────────────────────────────────── */
+
+void qt_text_line_destroy(void *line) {
+    delete static_cast<QTextLine *>(line);
+}
+
+int qt_text_line_is_valid(void *line) {
+    return static_cast<QTextLine *>(line)->isValid() ? 1 : 0;
+}
+
+void qt_text_line_set_line_width(void *line, double width) {
+    static_cast<QTextLine *>(line)->setLineWidth(width);
+}
+
+void qt_text_line_set_position(void *line, double x, double y) {
+    static_cast<QTextLine *>(line)->setPosition(QPointF(x, y));
+}
+
+double qt_text_line_get_width(void *line) {
+    return static_cast<QTextLine *>(line)->width();
+}
+
+double qt_text_line_get_natural_text_width(void *line) {
+    return static_cast<QTextLine *>(line)->naturalTextWidth();
+}
+
+double qt_text_line_get_height(void *line) {
+    return static_cast<QTextLine *>(line)->height();
+}
+
+double qt_text_line_get_ascent(void *line) {
+    return static_cast<QTextLine *>(line)->ascent();
+}
+
+double qt_text_line_get_descent(void *line) {
+    return static_cast<QTextLine *>(line)->descent();
+}
+
+double qt_text_line_get_leading(void *line) {
+    return static_cast<QTextLine *>(line)->leading();
+}
+
+double qt_text_line_get_x(void *line) {
+    return static_cast<QTextLine *>(line)->x();
+}
+
+double qt_text_line_get_y(void *line) {
+    return static_cast<QTextLine *>(line)->y();
+}
+
+int qt_text_line_get_text_start(void *line) {
+    return static_cast<QTextLine *>(line)->textStart();
+}
+
+int qt_text_line_get_text_length(void *line) {
+    return static_cast<QTextLine *>(line)->textLength();
+}
+
+int qt_text_line_get_line_number(void *line) {
+    return static_cast<QTextLine *>(line)->lineNumber();
+}
+
+void qt_text_line_get_natural_text_rect(void *line, double *x, double *y, double *width, double *height) {
+    QRectF rect = static_cast<QTextLine *>(line)->naturalTextRect();
+    *x = rect.x();
+    *y = rect.y();
+    *width = rect.width();
+    *height = rect.height();
+}
+
+void qt_text_line_draw(void *line, void *painter, double x, double y) {
+    static_cast<QTextLine *>(line)->draw(static_cast<QPainter *>(painter), QPointF(x, y));
 }
 
 /* ── QDrag ─────────────────────────────────────────────────────────── */

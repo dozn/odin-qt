@@ -1816,6 +1816,29 @@ void *qt_colour_to_hsl(void *colour);
 int   qt_colour_get_spec(void *colour);
 void  qt_colour_set_named_colour(void *colour, const char *name);
 
+/* ── QColorSpace ──────────────────────────────────────────────────── */
+
+void *qt_colour_space_create(void);
+void *qt_colour_space_create_named(int named_colour_space);
+void  qt_colour_space_destroy(void *colour_space);
+int   qt_colour_space_is_valid(void *colour_space);
+int   qt_colour_space_get_primaries(void *colour_space);
+int   qt_colour_space_get_transfer_function(void *colour_space);
+float qt_colour_space_get_gamma(void *colour_space);
+char *qt_colour_space_get_description(void *colour_space);
+void  qt_colour_space_set_description(void *colour_space, const char *description);
+void *qt_colour_space_get_transform_to(void *colour_space, void *target);
+void *qt_colour_space_create_with_primaries_and_transfer(int primaries, int transfer_function);
+void *qt_colour_space_create_with_primaries_and_gamma(int primaries, float gamma);
+
+/* ── QColorTransform ──────────────────────────────────────────────── */
+
+void *qt_colour_transform_create(void);
+void  qt_colour_transform_destroy(void *transform);
+int   qt_colour_transform_is_identity(void *transform);
+void *qt_colour_transform_map_colour(void *transform, void *colour);
+void *qt_colour_transform_transform_image(void *transform, void *image);
+
 /* ── QFont (standalone) ─────────────────────────────────────────────── */
 
 void *qt_font_create(const char *family, int point_size, int weight, int is_italic);
@@ -2230,6 +2253,46 @@ int   qt_text_option_get_wrap_mode(void *option);
 void  qt_text_option_set_tab_stop_distance(void *option, double distance);
 double qt_text_option_get_tab_stop_distance(void *option);
 void  qt_text_document_set_default_text_option(void *document, void *option);
+
+/* ── QTextLayout ──────────────────────────────────────────────────── */
+
+void *qt_text_layout_create(void);
+void *qt_text_layout_create_with_text(const char *text);
+void *qt_text_layout_create_with_text_and_font(const char *text, void *font);
+void  qt_text_layout_destroy(void *layout);
+void  qt_text_layout_set_text(void *layout, const char *text);
+char *qt_text_layout_get_text(void *layout);
+void  qt_text_layout_set_font(void *layout, void *font);
+void  qt_text_layout_set_text_option(void *layout, void *option);
+void  qt_text_layout_begin_layout(void *layout);
+void  qt_text_layout_end_layout(void *layout);
+void *qt_text_layout_create_line(void *layout);
+int   qt_text_layout_get_line_count(void *layout);
+void *qt_text_layout_get_line_at(void *layout, int index);
+void  qt_text_layout_set_position(void *layout, double x, double y);
+void  qt_text_layout_get_bounding_rect(void *layout, double *x, double *y, double *width, double *height);
+void  qt_text_layout_draw(void *layout, void *painter, double x, double y);
+void  qt_text_layout_set_cache_enabled(void *layout, int is_enabled);
+
+/* ── QTextLine ────────────────────────────────────────────────────── */
+
+void  qt_text_line_destroy(void *line);
+int   qt_text_line_is_valid(void *line);
+void  qt_text_line_set_line_width(void *line, double width);
+void  qt_text_line_set_position(void *line, double x, double y);
+double qt_text_line_get_width(void *line);
+double qt_text_line_get_natural_text_width(void *line);
+double qt_text_line_get_height(void *line);
+double qt_text_line_get_ascent(void *line);
+double qt_text_line_get_descent(void *line);
+double qt_text_line_get_leading(void *line);
+double qt_text_line_get_x(void *line);
+double qt_text_line_get_y(void *line);
+int   qt_text_line_get_text_start(void *line);
+int   qt_text_line_get_text_length(void *line);
+int   qt_text_line_get_line_number(void *line);
+void  qt_text_line_get_natural_text_rect(void *line, double *x, double *y, double *width, double *height);
+void  qt_text_line_draw(void *line, void *painter, double x, double y);
 
 /* ── QDrag ─────────────────────────────────────────────────────────── */
 

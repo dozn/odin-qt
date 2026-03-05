@@ -71,7 +71,8 @@ QTextDocumentFragment, QTextDocumentWriter,
 QProxyStyle, QDirIterator, QTimeZone,
 QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout,
 QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider,
-QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery
+QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery,
+QColorSpace, QColorTransform, QTextLayout, QTextLine
 
 ---
 
@@ -86,12 +87,6 @@ QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery
 - QGraphicsAnchorLayout — anchor-based scene layout
 - QGraphicsItemAnimation — timeline-driven animation of scene items
 - QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
-
-**Font/colour:**
-- QColorSpace / QColorTransform — ICC/colour space management
-
-**Drawing:**
-- QTextLayout / QTextLine — low-level text layout for custom QPainter rendering
 
 **Gestures:**
 - QGesture, QGestureRecognizer, QPanGesture, QPinchGesture, QSwipeGesture,

@@ -283,6 +283,10 @@ File_Icon_Provider :: distinct rawptr
 Font_Info :: distinct rawptr
 Font_Metrics_F :: distinct rawptr
 Url_Query :: distinct rawptr
+Colour_Space :: distinct rawptr
+Colour_Transform :: distinct rawptr
+Text_Layout :: distinct rawptr
+Text_Line :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -1764,6 +1768,30 @@ Colour_Spec :: enum c.int {
 	Cmyk = 3,
 	Hsl = 4,
 	Extended_Rgb = 5,
+}
+
+Named_Colour_Space :: enum c.int {
+	Srgb = 1,
+	Srgb_Linear = 2,
+	Adobe_Rgb = 3,
+	Display_P3 = 4,
+	Pro_Photo_Rgb = 5,
+}
+
+Colour_Space_Primaries :: enum c.int {
+	Custom = 0,
+	Srgb = 1,
+	Adobe_Rgb = 2,
+	Dci_P3_D65 = 3,
+	Pro_Photo_Rgb = 4,
+}
+
+Colour_Space_Transfer_Function :: enum c.int {
+	Custom = 0,
+	Linear = 1,
+	Gamma = 2,
+	Srgb = 3,
+	Pro_Photo_Rgb = 4,
 }
 
 Fill_Rule :: enum c.int {
@@ -3597,6 +3625,29 @@ foreign qt_lib {
 	@(require_results) colour_get_spec :: proc(colour: Colour_Handle) -> Colour_Spec ---
 	colour_set_named_colour :: proc(colour: Colour_Handle, name: cstring) ---
 
+	/* QColorSpace */
+
+	@(require_results) colour_space_create :: proc() -> Colour_Space ---
+	@(require_results) colour_space_create_named :: proc(named_colour_space: Named_Colour_Space) -> Colour_Space ---
+	colour_space_destroy :: proc(colour_space: Colour_Space) ---
+	@(require_results) colour_space_is_valid :: proc(colour_space: Colour_Space) -> c.int ---
+	@(require_results) colour_space_get_primaries :: proc(colour_space: Colour_Space) -> Colour_Space_Primaries ---
+	@(require_results) colour_space_get_transfer_function :: proc(colour_space: Colour_Space) -> Colour_Space_Transfer_Function ---
+	@(require_results) colour_space_get_gamma :: proc(colour_space: Colour_Space) -> c.float ---
+	@(require_results) colour_space_get_description :: proc(colour_space: Colour_Space) -> cstring ---
+	colour_space_set_description :: proc(colour_space: Colour_Space, description: cstring) ---
+	@(require_results) colour_space_get_transform_to :: proc(colour_space: Colour_Space, target: Colour_Space) -> Colour_Transform ---
+	@(require_results) colour_space_create_with_primaries_and_transfer :: proc(primaries: Colour_Space_Primaries, transfer_function: Colour_Space_Transfer_Function) -> Colour_Space ---
+	@(require_results) colour_space_create_with_primaries_and_gamma :: proc(primaries: Colour_Space_Primaries, gamma: c.float) -> Colour_Space ---
+
+	/* QColorTransform */
+
+	@(require_results) colour_transform_create :: proc() -> Colour_Transform ---
+	colour_transform_destroy :: proc(transform: Colour_Transform) ---
+	@(require_results) colour_transform_is_identity :: proc(transform: Colour_Transform) -> c.int ---
+	@(require_results) colour_transform_map_colour :: proc(transform: Colour_Transform, colour: Colour_Handle) -> Colour_Handle ---
+	@(require_results) colour_transform_transform_image :: proc(transform: Colour_Transform, image: Image) -> Image ---
+
 	/* QFont (standalone) */
 
 	@(require_results) font_create :: proc(family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) -> Font_Handle ---
@@ -4011,6 +4062,46 @@ foreign qt_lib {
 	text_option_set_tab_stop_distance :: proc(option: Text_Option, distance: c.double) ---
 	@(require_results) text_option_get_tab_stop_distance :: proc(option: Text_Option) -> c.double ---
 	text_document_set_default_text_option :: proc(document: Text_Document, option: Text_Option) ---
+
+	/* QTextLayout */
+
+	@(require_results) text_layout_create :: proc() -> Text_Layout ---
+	@(require_results) text_layout_create_with_text :: proc(text: cstring) -> Text_Layout ---
+	@(require_results) text_layout_create_with_text_and_font :: proc(text: cstring, font: Font_Handle) -> Text_Layout ---
+	text_layout_destroy :: proc(layout: Text_Layout) ---
+	text_layout_set_text :: proc(layout: Text_Layout, text: cstring) ---
+	@(require_results) text_layout_get_text :: proc(layout: Text_Layout) -> cstring ---
+	text_layout_set_font :: proc(layout: Text_Layout, font: Font_Handle) ---
+	text_layout_set_text_option :: proc(layout: Text_Layout, option: Text_Option) ---
+	text_layout_begin_layout :: proc(layout: Text_Layout) ---
+	text_layout_end_layout :: proc(layout: Text_Layout) ---
+	@(require_results) text_layout_create_line :: proc(layout: Text_Layout) -> Text_Line ---
+	@(require_results) text_layout_get_line_count :: proc(layout: Text_Layout) -> c.int ---
+	@(require_results) text_layout_get_line_at :: proc(layout: Text_Layout, index: c.int) -> Text_Line ---
+	text_layout_set_position :: proc(layout: Text_Layout, x: c.double, y: c.double) ---
+	text_layout_get_bounding_rect :: proc(layout: Text_Layout, x: ^c.double, y: ^c.double, width: ^c.double, height: ^c.double) ---
+	text_layout_draw :: proc(layout: Text_Layout, painter: Painter, x: c.double, y: c.double) ---
+	text_layout_set_cache_enabled :: proc(layout: Text_Layout, is_enabled: c.int) ---
+
+	/* QTextLine */
+
+	text_line_destroy :: proc(line: Text_Line) ---
+	@(require_results) text_line_is_valid :: proc(line: Text_Line) -> c.int ---
+	text_line_set_line_width :: proc(line: Text_Line, width: c.double) ---
+	text_line_set_position :: proc(line: Text_Line, x: c.double, y: c.double) ---
+	@(require_results) text_line_get_width :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_natural_text_width :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_height :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_ascent :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_descent :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_leading :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_x :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_y :: proc(line: Text_Line) -> c.double ---
+	@(require_results) text_line_get_text_start :: proc(line: Text_Line) -> c.int ---
+	@(require_results) text_line_get_text_length :: proc(line: Text_Line) -> c.int ---
+	@(require_results) text_line_get_line_number :: proc(line: Text_Line) -> c.int ---
+	text_line_get_natural_text_rect :: proc(line: Text_Line, x: ^c.double, y: ^c.double, width: ^c.double, height: ^c.double) ---
+	text_line_draw :: proc(line: Text_Line, painter: Painter, x: c.double, y: c.double) ---
 
 	/* QDrag */
 
