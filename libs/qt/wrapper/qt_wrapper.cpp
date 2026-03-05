@@ -8358,6 +8358,116 @@ int qt_drag_exec(void *drag, int supported_actions, int default_action) {
         static_cast<Qt::DropAction>(default_action)));
 }
 
+void qt_drag_set_mime_data(void *drag, void *mime_data) {
+    static_cast<QDrag *>(drag)->setMimeData(static_cast<QMimeData *>(mime_data));
+}
+
+/* ── QMimeData ─────────────────────────────────────────────────────── */
+
+void *qt_mime_data_create(void) {
+    return static_cast<void *>(new QMimeData());
+}
+
+void qt_mime_data_destroy(void *mime) {
+    delete static_cast<QMimeData *>(mime);
+}
+
+void qt_mime_data_set_text(void *mime, const char *text) {
+    static_cast<QMimeData *>(mime)->setText(QString::fromUtf8(text));
+}
+
+char *qt_mime_data_get_text(void *mime) {
+    return qstring_to_heap_utf8(static_cast<QMimeData *>(mime)->text());
+}
+
+int qt_mime_data_has_text(void *mime) {
+    return static_cast<QMimeData *>(mime)->hasText() ? 1 : 0;
+}
+
+void qt_mime_data_set_html(void *mime, const char *html) {
+    static_cast<QMimeData *>(mime)->setHtml(QString::fromUtf8(html));
+}
+
+char *qt_mime_data_get_html(void *mime) {
+    return qstring_to_heap_utf8(static_cast<QMimeData *>(mime)->html());
+}
+
+int qt_mime_data_has_html(void *mime) {
+    return static_cast<QMimeData *>(mime)->hasHtml() ? 1 : 0;
+}
+
+void qt_mime_data_set_urls(void *mime, const char **urls, int count) {
+    QList<QUrl> url_list;
+    url_list.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        url_list.append(QUrl(QString::fromUtf8(urls[i])));
+    }
+    static_cast<QMimeData *>(mime)->setUrls(url_list);
+}
+
+void qt_mime_data_get_urls(void *mime, char ***out_urls, int *out_count) {
+    QList<QUrl> url_list = static_cast<QMimeData *>(mime)->urls();
+    int n = url_list.size();
+    *out_count = n;
+    if (n == 0) { *out_urls = nullptr; return; }
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * n));
+    for (int i = 0; i < n; ++i) {
+        arr[i] = qstring_to_heap_utf8(url_list[i].toString());
+    }
+    *out_urls = arr;
+}
+
+int qt_mime_data_has_urls(void *mime) {
+    return static_cast<QMimeData *>(mime)->hasUrls() ? 1 : 0;
+}
+
+void qt_mime_data_set_image_data(void *mime, void *image) {
+    static_cast<QMimeData *>(mime)->setImageData(*static_cast<QImage *>(image));
+}
+
+int qt_mime_data_has_image(void *mime) {
+    return static_cast<QMimeData *>(mime)->hasImage() ? 1 : 0;
+}
+
+void qt_mime_data_set_data(void *mime, const char *mime_type, const unsigned char *data, int size) {
+    QByteArray ba(reinterpret_cast<const char *>(data), size);
+    static_cast<QMimeData *>(mime)->setData(QString::fromUtf8(mime_type), ba);
+}
+
+void qt_mime_data_get_data(void *mime, const char *mime_type, unsigned char **out_data, int *out_size) {
+    QByteArray ba = static_cast<QMimeData *>(mime)->data(QString::fromUtf8(mime_type));
+    int n = ba.size();
+    *out_size = n;
+    if (n == 0) { *out_data = nullptr; return; }
+    unsigned char *buf = static_cast<unsigned char *>(malloc(n));
+    memcpy(buf, ba.constData(), n);
+    *out_data = buf;
+}
+
+int qt_mime_data_has_format(void *mime, const char *mime_type) {
+    return static_cast<QMimeData *>(mime)->hasFormat(QString::fromUtf8(mime_type)) ? 1 : 0;
+}
+
+void qt_mime_data_get_formats(void *mime, char ***out_formats, int *out_count) {
+    QStringList fmts = static_cast<QMimeData *>(mime)->formats();
+    int n = fmts.size();
+    *out_count = n;
+    if (n == 0) { *out_formats = nullptr; return; }
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * n));
+    for (int i = 0; i < n; ++i) {
+        arr[i] = qstring_to_heap_utf8(fmts[i]);
+    }
+    *out_formats = arr;
+}
+
+void qt_mime_data_remove_format(void *mime, const char *mime_type) {
+    static_cast<QMimeData *>(mime)->removeFormat(QString::fromUtf8(mime_type));
+}
+
+void qt_mime_data_clear(void *mime) {
+    static_cast<QMimeData *>(mime)->clear();
+}
+
 /* ── QPolygon ──────────────────────────────────────────────────────── */
 
 void *qt_polygon_create(void) {

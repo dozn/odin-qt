@@ -529,7 +529,15 @@ drop_handle :: proc"c"(mime_text: cstring, x: c.int, y: c.int, user_data: rawptr
 drag_source_mouse_handler :: proc"c"(event_type: c.int, button: c.int, x: c.int, y: c.int, global_x: c.int, global_y: c.int, modifiers: c.int, user_data: rawptr) -> c.int {
 	if event_type == cast(c.int)qt.Event_Type.Mouse_Button_Press && button == cast(c.int)qt.Mouse_Button.Left {
 		source: qt.Widget = auto_cast user_data
-		qt.widget_start_drag(source, "Hello from Odin drag source!")
+
+		// Build rich mime data with text + HTML using QMimeData
+		mime := qt.mime_data_create()
+		qt.mime_data_set_text(mime, "Hello from Odin drag source!")
+		qt.mime_data_set_html(mime, "<b>Hello</b> from <i>Odin</i> drag source!")
+
+		drag := qt.drag_create(source)
+		qt.drag_set_mime_data(drag, mime) // QDrag takes ownership of the QMimeData
+		_ = qt.drag_exec(drag, 0x03, 0x01) // CopyAction | MoveAction, default CopyAction
 		return 1
 	}
 	return 0

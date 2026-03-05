@@ -2048,9 +2048,32 @@ void  qt_text_document_set_default_text_option(void *document, void *option);
 void *qt_drag_create(void *source);
 void  qt_drag_destroy(void *drag);
 void  qt_drag_set_mime_data_text(void *drag, const char *text);
+void  qt_drag_set_mime_data(void *drag, void *mime_data);
 void  qt_drag_set_pixmap(void *drag, void *pixmap);
 void  qt_drag_set_hot_spot(void *drag, int x, int y);
 int   qt_drag_exec(void *drag, int supported_actions, int default_action);
+
+/* ── QMimeData ─────────────────────────────────────────────────────── */
+
+void *qt_mime_data_create(void);
+void  qt_mime_data_destroy(void *mime);
+void  qt_mime_data_set_text(void *mime, const char *text);
+char *qt_mime_data_get_text(void *mime);
+int   qt_mime_data_has_text(void *mime);
+void  qt_mime_data_set_html(void *mime, const char *html);
+char *qt_mime_data_get_html(void *mime);
+int   qt_mime_data_has_html(void *mime);
+void  qt_mime_data_set_urls(void *mime, const char **urls, int count);
+void  qt_mime_data_get_urls(void *mime, char ***out_urls, int *out_count);
+int   qt_mime_data_has_urls(void *mime);
+void  qt_mime_data_set_image_data(void *mime, void *image);
+int   qt_mime_data_has_image(void *mime);
+void  qt_mime_data_set_data(void *mime, const char *mime_type, const unsigned char *data, int size);
+void  qt_mime_data_get_data(void *mime, const char *mime_type, unsigned char **out_data, int *out_size);
+int   qt_mime_data_has_format(void *mime, const char *mime_type);
+void  qt_mime_data_get_formats(void *mime, char ***out_formats, int *out_count);
+void  qt_mime_data_remove_format(void *mime, const char *mime_type);
+void  qt_mime_data_clear(void *mime);
 
 /* ── QPolygon ──────────────────────────────────────────────────────── */
 

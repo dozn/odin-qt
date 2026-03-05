@@ -260,6 +260,7 @@ Text_Table :: distinct rawptr
 Text_List :: distinct rawptr
 Text_Frame :: distinct rawptr
 Custom_Item_Model :: distinct rawptr
+Mime_Data :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -3806,9 +3807,32 @@ foreign qt_lib {
 	@(require_results) drag_create :: proc(source: rawptr) -> Drag ---
 	drag_destroy :: proc(drag: Drag) ---
 	drag_set_mime_data_text :: proc(drag: Drag, text: cstring) ---
+	drag_set_mime_data :: proc(drag: Drag, mime_data: Mime_Data) ---
 	drag_set_pixmap :: proc(drag: Drag, pixmap: Pixmap) ---
 	drag_set_hot_spot :: proc(drag: Drag, x: c.int, y: c.int) ---
 	@(require_results) drag_exec :: proc(drag: Drag, supported_actions: c.int, default_action: c.int) -> c.int ---
+
+	/* QMimeData */
+
+	@(require_results) mime_data_create :: proc() -> Mime_Data ---
+	mime_data_destroy :: proc(mime: Mime_Data) ---
+	mime_data_set_text :: proc(mime: Mime_Data, text: cstring) ---
+	@(require_results) mime_data_get_text :: proc(mime: Mime_Data) -> cstring ---
+	@(require_results) mime_data_has_text :: proc(mime: Mime_Data) -> c.int ---
+	mime_data_set_html :: proc(mime: Mime_Data, html: cstring) ---
+	@(require_results) mime_data_get_html :: proc(mime: Mime_Data) -> cstring ---
+	@(require_results) mime_data_has_html :: proc(mime: Mime_Data) -> c.int ---
+	mime_data_set_urls :: proc(mime: Mime_Data, urls: [^]cstring, count: c.int) ---
+	mime_data_get_urls :: proc(mime: Mime_Data, out_urls: ^[^]cstring, out_count: ^c.int) ---
+	@(require_results) mime_data_has_urls :: proc(mime: Mime_Data) -> c.int ---
+	mime_data_set_image_data :: proc(mime: Mime_Data, image: Image) ---
+	@(require_results) mime_data_has_image :: proc(mime: Mime_Data) -> c.int ---
+	mime_data_set_data :: proc(mime: Mime_Data, mime_type: cstring, data: [^]u8, size: c.int) ---
+	mime_data_get_data :: proc(mime: Mime_Data, mime_type: cstring, out_data: ^[^]u8, out_size: ^c.int) ---
+	@(require_results) mime_data_has_format :: proc(mime: Mime_Data, mime_type: cstring) -> c.int ---
+	mime_data_get_formats :: proc(mime: Mime_Data, out_formats: ^[^]cstring, out_count: ^c.int) ---
+	mime_data_remove_format :: proc(mime: Mime_Data, mime_type: cstring) ---
+	mime_data_clear :: proc(mime: Mime_Data) ---
 
 	/* QPolygon */
 

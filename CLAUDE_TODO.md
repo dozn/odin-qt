@@ -62,16 +62,13 @@ QPauseAnimation, QTextBlock, QTextOption, QDrag, QPolygon, QPolygonF,
 QPdfWriter, QTextStream, QDataStream, QTextTable, QTextTableCell,
 QTextList, QTextFrame, QDeadlineTimer, QCollator,
 QAbstractItemModel helper (CCustomItemModel),
-QListWidgetItem
+QListWidgetItem, QMimeData
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Drag/drop beyond text:**
-- QMimeData — enable URLs, HTML, images, custom MIME types in drag/drop
 
 **Graphics scene gaps:**
 - QGraphicsPolygonItem — polygon shape in scene (completes the shape family)
