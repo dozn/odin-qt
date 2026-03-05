@@ -272,6 +272,9 @@ Text_Table_Format :: distinct rawptr
 Text_Table_Cell_Format :: distinct rawptr
 Text_Document_Fragment :: distinct rawptr
 Text_Document_Writer :: distinct rawptr
+Proxy_Style :: distinct rawptr
+Dir_Iterator :: distinct rawptr
+Time_Zone :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -4175,6 +4178,33 @@ foreign qt_lib {
 	@(require_results) dir_root_path :: proc() -> cstring ---
 	@(require_results) dir_current_path :: proc() -> cstring ---
 
+	/* QDirIterator */
+
+	@(require_results) dir_iterator_create :: proc(path: cstring, filters: c.int, iterator_flags: c.int) -> Dir_Iterator ---
+	@(require_results) dir_iterator_create_with_patterns :: proc(path: cstring, name_filters: [^]cstring, filter_count: c.int, dir_filters: c.int, iterator_flags: c.int) -> Dir_Iterator ---
+	dir_iterator_destroy :: proc(iter: Dir_Iterator) ---
+	@(require_results) dir_iterator_has_next :: proc(iter: Dir_Iterator) -> c.int ---
+	@(require_results) dir_iterator_next :: proc(iter: Dir_Iterator) -> cstring ---
+	@(require_results) dir_iterator_get_file_name :: proc(iter: Dir_Iterator) -> cstring ---
+	@(require_results) dir_iterator_get_file_path :: proc(iter: Dir_Iterator) -> cstring ---
+	@(require_results) dir_iterator_get_path :: proc(iter: Dir_Iterator) -> cstring ---
+
+	/* QTimeZone */
+
+	@(require_results) time_zone_create :: proc(iana_id: cstring) -> Time_Zone ---
+	@(require_results) time_zone_create_utc :: proc() -> Time_Zone ---
+	@(require_results) time_zone_create_system :: proc() -> Time_Zone ---
+	time_zone_destroy :: proc(tz: Time_Zone) ---
+	@(require_results) time_zone_is_valid :: proc(tz: Time_Zone) -> c.int ---
+	@(require_results) time_zone_get_id :: proc(tz: Time_Zone) -> cstring ---
+	@(require_results) time_zone_get_display_name :: proc(tz: Time_Zone, time_type: c.int) -> cstring ---
+	@(require_results) time_zone_get_offset_from_utc :: proc(tz: Time_Zone, datetime: Date_Time) -> c.int ---
+	@(require_results) time_zone_has_daylight_time :: proc(tz: Time_Zone) -> c.int ---
+	@(require_results) time_zone_is_daylight_time :: proc(tz: Time_Zone, datetime: Date_Time) -> c.int ---
+	@(require_results) time_zone_get_available_ids :: proc(ids_out: ^[^]cstring) -> c.int ---
+	time_zone_free_ids :: proc(ids: [^]cstring, count: c.int) ---
+	date_time_set_time_zone :: proc(datetime: Date_Time, tz: Time_Zone) ---
+
 	/* QProcess */
 
 	@(require_results) process_create :: proc(parent: Widget) -> Process ---
@@ -4894,6 +4924,12 @@ foreign qt_lib {
 	@(require_results) application_get_style :: proc(app: Application) -> Style ---
 	@(require_results) style_get_pixel_metric :: proc(style: Style, metric: Style_Pixel_Metric, widget: Widget) -> c.int ---
 	@(require_results) style_get_name :: proc(style: Style) -> cstring ---
+
+	/* QProxyStyle */
+
+	@(require_results) proxy_style_create :: proc(base_style_key: cstring) -> Proxy_Style ---
+	proxy_style_destroy :: proc(style: Proxy_Style) ---
+	application_set_style_object :: proc(style: Proxy_Style) ---
 
 	/* QScroller / QScrollerProperties */
 

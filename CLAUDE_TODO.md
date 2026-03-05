@@ -67,22 +67,14 @@ QGraphicsPolygonItem, QGraphicsSimpleTextItem,
 QPainterPathStroker,
 QTextBlockFormat, QTextListFormat, QTextImageFormat, QTextFrameFormat,
 QTextTableFormat, QTextTableCellFormat,
-QTextDocumentFragment, QTextDocumentWriter
+QTextDocumentFragment, QTextDocumentWriter,
+QProxyStyle, QDirIterator, QTimeZone
 
 ---
 
 ## Not Yet Wrapped
 
 ### High Priority — Commonly needed functionality
-
-**Styling/theming:**
-- QProxyStyle — overlay to customize specific style elements without rewriting everything
-
-**File system:**
-- QDirIterator / QDirListing — recursive directory traversal
-
-**Date/time:**
-- QTimeZone — timezone handling for QDateTime
 
 ### Medium Priority — Useful but less commonly needed
 

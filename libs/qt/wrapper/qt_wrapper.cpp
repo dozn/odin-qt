@@ -82,6 +82,7 @@
 #include <QToolTip>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QProxyStyle>
 #include <QSpacerItem>
 #include <QCloseEvent>
 #include <QKeyEvent>
@@ -168,6 +169,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
+#include <QDirIterator>
+#include <QTimeZone>
 #include <QProcess>
 #include <QThread>
 #include <QMutex>
@@ -9615,6 +9618,120 @@ char *qt_dir_current_path(void) {
     return qstring_to_heap_utf8(QDir::currentPath());
 }
 
+/* ── QDirIterator ──────────────────────────────────────────────────── */
+
+void *qt_dir_iterator_create(const char *path, int filters, int iterator_flags) {
+    return static_cast<void *>(new QDirIterator(
+        QString::fromUtf8(path),
+        static_cast<QDir::Filters>(filters),
+        static_cast<QDirIterator::IteratorFlags>(iterator_flags)));
+}
+
+void *qt_dir_iterator_create_with_patterns(const char *path, const char **name_filters, int filter_count, int dir_filters, int iterator_flags) {
+    QStringList patterns;
+    patterns.reserve(filter_count);
+    for (int i = 0; i < filter_count; ++i) {
+        patterns.append(QString::fromUtf8(name_filters[i]));
+    }
+    return static_cast<void *>(new QDirIterator(
+        QString::fromUtf8(path),
+        patterns,
+        static_cast<QDir::Filters>(dir_filters),
+        static_cast<QDirIterator::IteratorFlags>(iterator_flags)));
+}
+
+void qt_dir_iterator_destroy(void *iter) {
+    delete static_cast<QDirIterator *>(iter);
+}
+
+int qt_dir_iterator_has_next(void *iter) {
+    return static_cast<QDirIterator *>(iter)->hasNext() ? 1 : 0;
+}
+
+char *qt_dir_iterator_next(void *iter) {
+    return qstring_to_heap_utf8(static_cast<QDirIterator *>(iter)->next());
+}
+
+char *qt_dir_iterator_get_file_name(void *iter) {
+    return qstring_to_heap_utf8(static_cast<QDirIterator *>(iter)->fileName());
+}
+
+char *qt_dir_iterator_get_file_path(void *iter) {
+    return qstring_to_heap_utf8(static_cast<QDirIterator *>(iter)->filePath());
+}
+
+char *qt_dir_iterator_get_path(void *iter) {
+    return qstring_to_heap_utf8(static_cast<QDirIterator *>(iter)->path());
+}
+
+/* ── QTimeZone ─────────────────────────────────────────────────────── */
+
+void *qt_time_zone_create(const char *iana_id) {
+    return static_cast<void *>(new QTimeZone(QByteArray(iana_id)));
+}
+
+void *qt_time_zone_create_utc(void) {
+    return static_cast<void *>(new QTimeZone(QTimeZone::utc()));
+}
+
+void *qt_time_zone_create_system(void) {
+    return static_cast<void *>(new QTimeZone(QTimeZone::systemTimeZone()));
+}
+
+void qt_time_zone_destroy(void *tz) {
+    delete static_cast<QTimeZone *>(tz);
+}
+
+int qt_time_zone_is_valid(void *tz) {
+    return static_cast<QTimeZone *>(tz)->isValid() ? 1 : 0;
+}
+
+char *qt_time_zone_get_id(void *tz) {
+    QByteArray id = static_cast<QTimeZone *>(tz)->id();
+    char *result = static_cast<char *>(malloc(id.size() + 1));
+    memcpy(result, id.constData(), id.size() + 1);
+    return result;
+}
+
+char *qt_time_zone_get_display_name(void *tz, int time_type) {
+    return qstring_to_heap_utf8(static_cast<QTimeZone *>(tz)->displayName(static_cast<QTimeZone::TimeType>(time_type)));
+}
+
+int qt_time_zone_get_offset_from_utc(void *tz, void *datetime) {
+    return static_cast<QTimeZone *>(tz)->offsetFromUtc(*static_cast<QDateTime *>(datetime));
+}
+
+int qt_time_zone_has_daylight_time(void *tz) {
+    return static_cast<QTimeZone *>(tz)->hasDaylightTime() ? 1 : 0;
+}
+
+int qt_time_zone_is_daylight_time(void *tz, void *datetime) {
+    return static_cast<QTimeZone *>(tz)->isDaylightTime(*static_cast<QDateTime *>(datetime)) ? 1 : 0;
+}
+
+int qt_time_zone_get_available_ids(char ***ids_out) {
+    QList<QByteArray> ids = QTimeZone::availableTimeZoneIds();
+    int count = ids.size();
+    char **arr = static_cast<char **>(malloc(sizeof(char *) * count));
+    for (int i = 0; i < count; ++i) {
+        arr[i] = static_cast<char *>(malloc(ids[i].size() + 1));
+        memcpy(arr[i], ids[i].constData(), ids[i].size() + 1);
+    }
+    *ids_out = arr;
+    return count;
+}
+
+void qt_time_zone_free_ids(char **ids, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(ids[i]);
+    }
+    free(ids);
+}
+
+void qt_date_time_set_time_zone(void *datetime, void *tz) {
+    static_cast<QDateTime *>(datetime)->setTimeZone(*static_cast<QTimeZone *>(tz));
+}
+
 /* ── QProcess ───────────────────────────────────────────────────────── */
 
 void *qt_process_create(void *parent) {
@@ -12282,6 +12399,23 @@ int qt_style_get_pixel_metric(void *style, int metric, void *widget) {
 
 char *qt_style_get_name(void *style) {
     return qstring_to_heap_utf8(static_cast<QStyle *>(style)->name());
+}
+
+/* ── QProxyStyle ───────────────────────────────────────────────────── */
+
+void *qt_proxy_style_create(const char *base_style_key) {
+    if (base_style_key && base_style_key[0]) {
+        return static_cast<void *>(new QProxyStyle(QString::fromUtf8(base_style_key)));
+    }
+    return static_cast<void *>(new QProxyStyle());
+}
+
+void qt_proxy_style_destroy(void *style) {
+    delete static_cast<QProxyStyle *>(style);
+}
+
+void qt_application_set_style_object(void *style) {
+    QApplication::setStyle(static_cast<QStyle *>(style));
 }
 
 /* ── QScroller / QScrollerProperties ───────────────────────────────── */

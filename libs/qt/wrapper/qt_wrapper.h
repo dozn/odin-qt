@@ -2401,6 +2401,33 @@ char *qt_dir_temp_path(void);
 char *qt_dir_root_path(void);
 char *qt_dir_current_path(void);
 
+/* ── QDirIterator ──────────────────────────────────────────────────── */
+
+void *qt_dir_iterator_create(const char *path, int filters, int iterator_flags);
+void *qt_dir_iterator_create_with_patterns(const char *path, const char **name_filters, int filter_count, int dir_filters, int iterator_flags);
+void  qt_dir_iterator_destroy(void *iter);
+int   qt_dir_iterator_has_next(void *iter);
+char *qt_dir_iterator_next(void *iter);
+char *qt_dir_iterator_get_file_name(void *iter);
+char *qt_dir_iterator_get_file_path(void *iter);
+char *qt_dir_iterator_get_path(void *iter);
+
+/* ── QTimeZone ─────────────────────────────────────────────────────── */
+
+void *qt_time_zone_create(const char *iana_id);
+void *qt_time_zone_create_utc(void);
+void *qt_time_zone_create_system(void);
+void  qt_time_zone_destroy(void *tz);
+int   qt_time_zone_is_valid(void *tz);
+char *qt_time_zone_get_id(void *tz);
+char *qt_time_zone_get_display_name(void *tz, int time_type);
+int   qt_time_zone_get_offset_from_utc(void *tz, void *datetime);
+int   qt_time_zone_has_daylight_time(void *tz);
+int   qt_time_zone_is_daylight_time(void *tz, void *datetime);
+int   qt_time_zone_get_available_ids(char ***ids_out);
+void  qt_time_zone_free_ids(char **ids, int count);
+void  qt_date_time_set_time_zone(void *datetime, void *tz);
+
 /* ── QProcess ───────────────────────────────────────────────────────── */
 
 void *qt_process_create(void *parent);
@@ -3120,6 +3147,12 @@ void  qt_style_free_keys(char **keys, int count);
 void *qt_application_get_style(void *app);
 int   qt_style_get_pixel_metric(void *style, int metric, void *widget);
 char *qt_style_get_name(void *style);
+
+/* ── QProxyStyle ───────────────────────────────────────────────────── */
+
+void *qt_proxy_style_create(const char *base_style_key);
+void  qt_proxy_style_destroy(void *style);
+void  qt_application_set_style_object(void *style);
 
 /* ── QScroller / QScrollerProperties ───────────────────────────────── */
 
