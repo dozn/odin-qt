@@ -835,6 +835,15 @@ void *qt_pixmap_create_mask_from_colour(void *pixmap, void *colour, int mode);
 void  qt_pixmap_set_mask(void *pixmap, void *bitmap);
 void *qt_pixmap_get_mask(void *pixmap);
 
+/* ── QPixmapCache ──────────────────────────────────────────────────── */
+
+int   qt_pixmap_cache_get_cache_limit(void);
+void  qt_pixmap_cache_set_cache_limit(int kilobytes);
+int   qt_pixmap_cache_find(const char *key, void *pixmap_out);
+int   qt_pixmap_cache_insert(const char *key, void *pixmap);
+void  qt_pixmap_cache_remove(const char *key);
+void  qt_pixmap_cache_clear(void);
+
 /* ── QIcon ──────────────────────────────────────────────────────────── */
 
 void *qt_icon_create(void);
@@ -1205,6 +1214,29 @@ int   qt_font_metrics_get_descent(void *metrics);
 int   qt_font_metrics_get_leading(void *metrics);
 int   qt_font_metrics_get_average_char_width(void *metrics);
 void  qt_font_metrics_get_bounding_rect(void *metrics, const char *text, int *x, int *y, int *width, int *height);
+
+/* ── QFontInfo ─────────────────────────────────────────────────────── */
+
+void *qt_font_info_create(void *font);
+void  qt_font_info_destroy(void *info);
+char *qt_font_info_get_family(void *info);
+int   qt_font_info_get_point_size(void *info);
+int   qt_font_info_get_weight(void *info);
+int   qt_font_info_is_italic(void *info);
+int   qt_font_info_is_fixed_pitch(void *info);
+int   qt_font_info_is_exact_match(void *info);
+
+/* ── QFontMetricsF ─────────────────────────────────────────────────── */
+
+void *qt_font_metrics_f_create(void *font);
+void  qt_font_metrics_f_destroy(void *metrics);
+double qt_font_metrics_f_get_horizontal_advance(void *metrics, const char *text);
+double qt_font_metrics_f_get_height(void *metrics);
+double qt_font_metrics_f_get_ascent(void *metrics);
+double qt_font_metrics_f_get_descent(void *metrics);
+double qt_font_metrics_f_get_leading(void *metrics);
+double qt_font_metrics_f_get_average_char_width(void *metrics);
+void  qt_font_metrics_f_get_bounding_rect(void *metrics, const char *text, double *x, double *y, double *width, double *height);
 
 /* ── QApplication extras ────────────────────────────────────────────── */
 
@@ -2682,6 +2714,21 @@ char *qt_url_get_fragment(void *url);
 int   qt_url_is_valid(void *url);
 int   qt_url_is_local_file(void *url);
 char *qt_url_get_file_name(void *url);
+
+/* ── QUrlQuery ─────────────────────────────────────────────────────── */
+
+void *qt_url_query_create(void);
+void *qt_url_query_create_from_url(void *url);
+void *qt_url_query_create_from_string(const char *query_string);
+void  qt_url_query_destroy(void *query);
+void  qt_url_query_add_item(void *query, const char *key, const char *value);
+char *qt_url_query_get_query_value(void *query, const char *key);
+int   qt_url_query_has_query_item(void *query, const char *key);
+void  qt_url_query_remove_query_item(void *query, const char *key);
+void  qt_url_query_remove_all_query_items(void *query, const char *key);
+char *qt_url_query_to_string(void *query);
+int   qt_url_query_is_empty(void *query);
+void  qt_url_query_clear(void *query);
 
 /* ── QUuid ──────────────────────────────────────────────────────────── */
 

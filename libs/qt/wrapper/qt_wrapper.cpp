@@ -54,6 +54,7 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QPixmap>
+#include <QPixmapCache>
 #include <QIcon>
 #include <QShortcut>
 #include <QDialogButtonBox>
@@ -68,12 +69,15 @@
 #include <QTextBrowser>
 #include <QSystemTrayIcon>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QAbstractButton>
 #include <QSettings>
 #include <QDesktopServices>
 #include <QStandardPaths>
 #include <QScreen>
 #include <QFontMetrics>
+#include <QFontMetricsF>
+#include <QFontInfo>
 #include <QCompleter>
 #include <QStringListModel>
 #include <QIntValidator>
@@ -3715,6 +3719,32 @@ void *qt_pixmap_get_mask(void *pixmap) {
     return static_cast<void *>(new QBitmap(result));
 }
 
+/* ── QPixmapCache ──────────────────────────────────────────────────── */
+
+int qt_pixmap_cache_get_cache_limit(void) {
+    return QPixmapCache::cacheLimit();
+}
+
+void qt_pixmap_cache_set_cache_limit(int kilobytes) {
+    QPixmapCache::setCacheLimit(kilobytes);
+}
+
+int qt_pixmap_cache_find(const char *key, void *pixmap_out) {
+    return QPixmapCache::find(QString::fromUtf8(key), static_cast<QPixmap *>(pixmap_out)) ? 1 : 0;
+}
+
+int qt_pixmap_cache_insert(const char *key, void *pixmap) {
+    return QPixmapCache::insert(QString::fromUtf8(key), *static_cast<QPixmap *>(pixmap)) ? 1 : 0;
+}
+
+void qt_pixmap_cache_remove(const char *key) {
+    QPixmapCache::remove(QString::fromUtf8(key));
+}
+
+void qt_pixmap_cache_clear(void) {
+    QPixmapCache::clear();
+}
+
 /* ── QIcon ──────────────────────────────────────────────────────────── */
 
 void *qt_icon_create(void) {
@@ -4730,6 +4760,83 @@ int qt_font_metrics_get_average_char_width(void *metrics) {
 void qt_font_metrics_get_bounding_rect(void *metrics, const char *text,
                                        int *x, int *y, int *width, int *height) {
     QRect rect = static_cast<QFontMetrics *>(metrics)->boundingRect(QString::fromUtf8(text));
+    *x = rect.x();
+    *y = rect.y();
+    *width = rect.width();
+    *height = rect.height();
+}
+
+/* ── QFontInfo ──────────────────────────────────────────────────────── */
+
+void *qt_font_info_create(void *font) {
+    return static_cast<void *>(new QFontInfo(*static_cast<QFont *>(font)));
+}
+
+void qt_font_info_destroy(void *info) {
+    delete static_cast<QFontInfo *>(info);
+}
+
+char *qt_font_info_get_family(void *info) {
+    return qstring_to_heap_utf8(static_cast<QFontInfo *>(info)->family());
+}
+
+int qt_font_info_get_point_size(void *info) {
+    return static_cast<QFontInfo *>(info)->pointSize();
+}
+
+int qt_font_info_get_weight(void *info) {
+    return static_cast<int>(static_cast<QFontInfo *>(info)->weight());
+}
+
+int qt_font_info_is_italic(void *info) {
+    return static_cast<QFontInfo *>(info)->italic() ? 1 : 0;
+}
+
+int qt_font_info_is_fixed_pitch(void *info) {
+    return static_cast<QFontInfo *>(info)->fixedPitch() ? 1 : 0;
+}
+
+int qt_font_info_is_exact_match(void *info) {
+    return static_cast<QFontInfo *>(info)->exactMatch() ? 1 : 0;
+}
+
+/* ── QFontMetricsF ─────────────────────────────────────────────────── */
+
+void *qt_font_metrics_f_create(void *font) {
+    return static_cast<void *>(new QFontMetricsF(*static_cast<QFont *>(font)));
+}
+
+void qt_font_metrics_f_destroy(void *metrics) {
+    delete static_cast<QFontMetricsF *>(metrics);
+}
+
+double qt_font_metrics_f_get_horizontal_advance(void *metrics, const char *text) {
+    return static_cast<QFontMetricsF *>(metrics)->horizontalAdvance(QString::fromUtf8(text));
+}
+
+double qt_font_metrics_f_get_height(void *metrics) {
+    return static_cast<QFontMetricsF *>(metrics)->height();
+}
+
+double qt_font_metrics_f_get_ascent(void *metrics) {
+    return static_cast<QFontMetricsF *>(metrics)->ascent();
+}
+
+double qt_font_metrics_f_get_descent(void *metrics) {
+    return static_cast<QFontMetricsF *>(metrics)->descent();
+}
+
+double qt_font_metrics_f_get_leading(void *metrics) {
+    return static_cast<QFontMetricsF *>(metrics)->leading();
+}
+
+double qt_font_metrics_f_get_average_char_width(void *metrics) {
+    return static_cast<QFontMetricsF *>(metrics)->averageCharWidth();
+}
+
+void qt_font_metrics_f_get_bounding_rect(void *metrics, const char *text,
+                                         double *x, double *y, double *width, double *height) {
+    QRectF rect = static_cast<QFontMetricsF *>(metrics)->boundingRect(QString::fromUtf8(text));
     *x = rect.x();
     *y = rect.y();
     *width = rect.width();
@@ -10648,6 +10755,58 @@ int qt_url_is_local_file(void *url) {
 
 char *qt_url_get_file_name(void *url) {
     return qstring_to_heap_utf8(static_cast<QUrl *>(url)->fileName());
+}
+
+/* ── QUrlQuery ─────────────────────────────────────────────────────── */
+
+void *qt_url_query_create(void) {
+    return static_cast<void *>(new QUrlQuery());
+}
+
+void *qt_url_query_create_from_url(void *url) {
+    return static_cast<void *>(new QUrlQuery(*static_cast<QUrl *>(url)));
+}
+
+void *qt_url_query_create_from_string(const char *query_string) {
+    return static_cast<void *>(new QUrlQuery(QString::fromUtf8(query_string)));
+}
+
+void qt_url_query_destroy(void *query) {
+    delete static_cast<QUrlQuery *>(query);
+}
+
+void qt_url_query_add_item(void *query, const char *key, const char *value) {
+    static_cast<QUrlQuery *>(query)->addQueryItem(
+        QString::fromUtf8(key), QString::fromUtf8(value));
+}
+
+char *qt_url_query_get_query_value(void *query, const char *key) {
+    return qstring_to_heap_utf8(
+        static_cast<QUrlQuery *>(query)->queryItemValue(QString::fromUtf8(key)));
+}
+
+int qt_url_query_has_query_item(void *query, const char *key) {
+    return static_cast<QUrlQuery *>(query)->hasQueryItem(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+void qt_url_query_remove_query_item(void *query, const char *key) {
+    static_cast<QUrlQuery *>(query)->removeQueryItem(QString::fromUtf8(key));
+}
+
+void qt_url_query_remove_all_query_items(void *query, const char *key) {
+    static_cast<QUrlQuery *>(query)->removeAllQueryItems(QString::fromUtf8(key));
+}
+
+char *qt_url_query_to_string(void *query) {
+    return qstring_to_heap_utf8(static_cast<QUrlQuery *>(query)->toString());
+}
+
+int qt_url_query_is_empty(void *query) {
+    return static_cast<QUrlQuery *>(query)->isEmpty() ? 1 : 0;
+}
+
+void qt_url_query_clear(void *query) {
+    static_cast<QUrlQuery *>(query)->clear();
 }
 
 /* ── QUuid ──────────────────────────────────────────────────────────── */

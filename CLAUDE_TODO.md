@@ -70,7 +70,8 @@ QTextTableFormat, QTextTableCellFormat,
 QTextDocumentFragment, QTextDocumentWriter,
 QProxyStyle, QDirIterator, QTimeZone,
 QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout,
-QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider
+QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider,
+QFontInfo, QFontMetricsF, QPixmapCache, QUrlQuery
 
 ---
 
@@ -87,20 +88,14 @@ QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider
 - QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
 
 **Font/colour:**
-- QFontInfo — query what font was actually matched
-- QFontMetricsF — floating-point precision font metrics
 - QColorSpace / QColorTransform — ICC/colour space management
 
 **Drawing:**
-- QPixmapCache — global pixmap cache for performance
 - QTextLayout / QTextLine — low-level text layout for custom QPainter rendering
 
 **Gestures:**
 - QGesture, QGestureRecognizer, QPanGesture, QPinchGesture, QSwipeGesture,
   QTapAndHoldGesture, QTapGesture — touch/gesture support
-
-**URL:**
-- QUrlQuery — URL query parameter manipulation
 
 ### Low Priority — Niche or rarely needed
 

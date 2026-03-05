@@ -280,6 +280,9 @@ Graphics_Linear_Layout :: distinct rawptr
 Graphics_Grid_Layout :: distinct rawptr
 Tree_Widget_Item_Iterator :: distinct rawptr
 File_Icon_Provider :: distinct rawptr
+Font_Info :: distinct rawptr
+Font_Metrics_F :: distinct rawptr
+Url_Query :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -2627,6 +2630,15 @@ foreign qt_lib {
 	pixmap_set_mask :: proc(pixmap: Pixmap, bitmap: Bitmap) ---
 	@(require_results) pixmap_get_mask :: proc(pixmap: Pixmap) -> Pixmap ---
 
+	/* QPixmapCache */
+
+	@(require_results) pixmap_cache_get_cache_limit :: proc() -> c.int ---
+	pixmap_cache_set_cache_limit :: proc(kilobytes: c.int) ---
+	@(require_results) pixmap_cache_find :: proc(key: cstring, pixmap_out: Pixmap) -> c.int ---
+	@(require_results) pixmap_cache_insert :: proc(key: cstring, pixmap: Pixmap) -> c.int ---
+	pixmap_cache_remove :: proc(key: cstring) ---
+	pixmap_cache_clear :: proc() ---
+
 	/* QIcon */
 
 	@(require_results) icon_create :: proc() -> Icon ---
@@ -2886,6 +2898,29 @@ foreign qt_lib {
 	@(require_results) font_metrics_get_leading :: proc(font_metrics: Font_Metrics) -> c.int ---
 	@(require_results) font_metrics_get_average_char_width :: proc(font_metrics: Font_Metrics) -> c.int ---
 	font_metrics_get_bounding_rect :: proc(font_metrics: Font_Metrics, text: cstring, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) ---
+
+	/* QFontInfo */
+
+	@(require_results) font_info_create :: proc(font: Font_Handle) -> Font_Info ---
+	font_info_destroy :: proc(info: Font_Info) ---
+	@(require_results) font_info_get_family :: proc(info: Font_Info) -> cstring ---
+	@(require_results) font_info_get_point_size :: proc(info: Font_Info) -> c.int ---
+	@(require_results) font_info_get_weight :: proc(info: Font_Info) -> c.int ---
+	@(require_results) font_info_is_italic :: proc(info: Font_Info) -> c.int ---
+	@(require_results) font_info_is_fixed_pitch :: proc(info: Font_Info) -> c.int ---
+	@(require_results) font_info_is_exact_match :: proc(info: Font_Info) -> c.int ---
+
+	/* QFontMetricsF */
+
+	@(require_results) font_metrics_f_create :: proc(font: Font_Handle) -> Font_Metrics_F ---
+	font_metrics_f_destroy :: proc(metrics: Font_Metrics_F) ---
+	@(require_results) font_metrics_f_get_horizontal_advance :: proc(metrics: Font_Metrics_F, text: cstring) -> c.double ---
+	@(require_results) font_metrics_f_get_height :: proc(metrics: Font_Metrics_F) -> c.double ---
+	@(require_results) font_metrics_f_get_ascent :: proc(metrics: Font_Metrics_F) -> c.double ---
+	@(require_results) font_metrics_f_get_descent :: proc(metrics: Font_Metrics_F) -> c.double ---
+	@(require_results) font_metrics_f_get_leading :: proc(metrics: Font_Metrics_F) -> c.double ---
+	@(require_results) font_metrics_f_get_average_char_width :: proc(metrics: Font_Metrics_F) -> c.double ---
+	font_metrics_f_get_bounding_rect :: proc(metrics: Font_Metrics_F, text: cstring, x: ^c.double, y: ^c.double, width: ^c.double, height: ^c.double) ---
 
 	/* QApplication extras */
 
@@ -4464,6 +4499,21 @@ foreign qt_lib {
 	@(require_results) url_is_valid :: proc(url: Url) -> c.int ---
 	@(require_results) url_is_local_file :: proc(url: Url) -> c.int ---
 	@(require_results) url_get_file_name :: proc(url: Url) -> cstring ---
+
+	/* QUrlQuery */
+
+	@(require_results) url_query_create :: proc() -> Url_Query ---
+	@(require_results) url_query_create_from_url :: proc(url: Url) -> Url_Query ---
+	@(require_results) url_query_create_from_string :: proc(query_string: cstring) -> Url_Query ---
+	url_query_destroy :: proc(query: Url_Query) ---
+	url_query_add_item :: proc(query: Url_Query, key: cstring, value: cstring) ---
+	@(require_results) url_query_get_query_value :: proc(query: Url_Query, key: cstring) -> cstring ---
+	@(require_results) url_query_has_query_item :: proc(query: Url_Query, key: cstring) -> c.int ---
+	url_query_remove_query_item :: proc(query: Url_Query, key: cstring) ---
+	url_query_remove_all_query_items :: proc(query: Url_Query, key: cstring) ---
+	@(require_results) url_query_to_string :: proc(query: Url_Query) -> cstring ---
+	@(require_results) url_query_is_empty :: proc(query: Url_Query) -> c.int ---
+	url_query_clear :: proc(query: Url_Query) ---
 
 	/* QUuid */
 
