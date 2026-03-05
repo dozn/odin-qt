@@ -69,7 +69,8 @@ QTextBlockFormat, QTextListFormat, QTextImageFormat, QTextFrameFormat,
 QTextTableFormat, QTextTableCellFormat,
 QTextDocumentFragment, QTextDocumentWriter,
 QProxyStyle, QDirIterator, QTimeZone,
-QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout
+QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout,
+QTreeWidgetItemIterator, QTableWidgetSelectionRange, QFileIconProvider
 
 ---
 
@@ -84,11 +85,6 @@ QGraphicsWidget, QGraphicsLinearLayout, QGraphicsGridLayout
 - QGraphicsAnchorLayout — anchor-based scene layout
 - QGraphicsItemAnimation — timeline-driven animation of scene items
 - QGraphicsScene*Event classes — mouse, hover, drag/drop events within scenes
-
-**Item views:**
-- QTreeWidgetItemIterator — flat iteration over all tree items
-- QTableWidgetSelectionRange — querying selection ranges as row/col spans
-- QFileIconProvider — platform-native file/folder icons
 
 **Font/colour:**
 - QFontInfo — query what font was actually matched

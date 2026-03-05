@@ -515,6 +515,14 @@ void *qt_tree_widget_item_get_tree_widget(void *item);
 void *qt_tree_widget_item_take_child(void *item, int index);
 void  qt_tree_widget_item_sort_children(void *item, int column, int order);
 
+/* ── QTreeWidgetItemIterator ───────────────────────────────────────── */
+
+void *qt_tree_widget_item_iterator_create(void *tree, int flags);
+void  qt_tree_widget_item_iterator_destroy(void *iter);
+int   qt_tree_widget_item_iterator_is_valid(void *iter);
+void *qt_tree_widget_item_iterator_get_item(void *iter);
+void  qt_tree_widget_item_iterator_next(void *iter);
+
 /* ── QTableWidget ───────────────────────────────────────────────────── */
 
 void *qt_table_widget_create(int rows, int cols, void *parent);
@@ -581,6 +589,19 @@ int   qt_table_widget_item_get_column(void *item);
 void  qt_table_widget_item_set_selected(void *item, int is_selected);
 int   qt_table_widget_item_is_selected(void *item);
 void  qt_table_widget_set_item_object(void *table, int row, int col, void *item);
+
+/* ── QTableWidgetSelectionRange ────────────────────────────────────── */
+
+int   qt_table_widget_get_selection_ranges(void *table, int **out_ranges, int *out_count);
+void  qt_table_widget_free_selection_ranges(int *ranges);
+void  qt_table_widget_set_range_selected(void *table, int top_row, int left_col, int bottom_row, int right_col, int is_selected);
+
+/* ── QFileIconProvider ─────────────────────────────────────────────── */
+
+void *qt_file_icon_provider_create(void);
+void  qt_file_icon_provider_destroy(void *provider);
+void *qt_file_icon_provider_get_icon_for_file(void *provider, const char *file_path);
+void *qt_file_icon_provider_get_icon_for_type(void *provider, int icon_type);
 
 /* ── QScrollArea ────────────────────────────────────────────────────── */
 

@@ -278,6 +278,8 @@ Time_Zone :: distinct rawptr
 Graphics_Widget :: distinct rawptr
 Graphics_Linear_Layout :: distinct rawptr
 Graphics_Grid_Layout :: distinct rawptr
+Tree_Widget_Item_Iterator :: distinct rawptr
+File_Icon_Provider :: distinct rawptr
 
 /* ── Colour struct ─────────────────────────────────────────────────── */
 
@@ -2304,6 +2306,14 @@ foreign qt_lib {
 	@(require_results) tree_widget_item_take_child :: proc(item: Tree_Widget_Item, index: c.int) -> Tree_Widget_Item ---
 	tree_widget_item_sort_children :: proc(item: Tree_Widget_Item, column: c.int, order: Sort_Order) ---
 
+	/* QTreeWidgetItemIterator */
+
+	@(require_results) tree_widget_item_iterator_create :: proc(tree: Tree_Widget, flags: c.int) -> Tree_Widget_Item_Iterator ---
+	tree_widget_item_iterator_destroy :: proc(iter: Tree_Widget_Item_Iterator) ---
+	@(require_results) tree_widget_item_iterator_is_valid :: proc(iter: Tree_Widget_Item_Iterator) -> c.int ---
+	@(require_results) tree_widget_item_iterator_get_item :: proc(iter: Tree_Widget_Item_Iterator) -> Tree_Widget_Item ---
+	tree_widget_item_iterator_next :: proc(iter: Tree_Widget_Item_Iterator) ---
+
 	/* QTableWidget */
 
 	@(require_results) table_widget_create :: proc(rows: c.int, cols: c.int, parent: Widget) -> Table_Widget ---
@@ -2371,6 +2381,19 @@ foreign qt_lib {
 	table_widget_item_set_selected :: proc(item: Table_Widget_Item, is_selected: c.int) ---
 	@(require_results) table_widget_item_is_selected :: proc(item: Table_Widget_Item) -> c.int ---
 	table_widget_set_item_object :: proc(table_widget: Table_Widget, row: c.int, col: c.int, item: Table_Widget_Item) ---
+
+	/* QTableWidgetSelectionRange */
+
+	@(require_results) table_widget_get_selection_ranges :: proc(table_widget: Table_Widget, out_ranges: ^[^]c.int, out_count: ^c.int) -> c.int ---
+	table_widget_free_selection_ranges :: proc(ranges: [^]c.int) ---
+	table_widget_set_range_selected :: proc(table_widget: Table_Widget, top_row: c.int, left_col: c.int, bottom_row: c.int, right_col: c.int, is_selected: c.int) ---
+
+	/* QFileIconProvider */
+
+	@(require_results) file_icon_provider_create :: proc() -> File_Icon_Provider ---
+	file_icon_provider_destroy :: proc(provider: File_Icon_Provider) ---
+	@(require_results) file_icon_provider_get_icon_for_file :: proc(provider: File_Icon_Provider, file_path: cstring) -> Icon ---
+	@(require_results) file_icon_provider_get_icon_for_type :: proc(provider: File_Icon_Provider, icon_type: c.int) -> Icon ---
 
 	/* QScrollArea */
 

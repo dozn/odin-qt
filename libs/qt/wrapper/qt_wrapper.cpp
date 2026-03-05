@@ -31,6 +31,7 @@
 #include <QListWidget>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QTreeWidgetItemIterator>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QScrollArea>
@@ -168,6 +169,7 @@
 #include <QPageSize>
 #include <QFile>
 #include <QFileInfo>
+#include <QFileIconProvider>
 #include <QDir>
 #include <QDirIterator>
 #include <QTimeZone>
@@ -2474,6 +2476,33 @@ void qt_tree_widget_item_sort_children(void *item, int column, int order) {
     static_cast<QTreeWidgetItem *>(item)->sortChildren(column, static_cast<Qt::SortOrder>(order));
 }
 
+/* ── QTreeWidgetItemIterator ───────────────────────────────────────── */
+
+void *qt_tree_widget_item_iterator_create(void *tree, int flags) {
+    return static_cast<void *>(new QTreeWidgetItemIterator(
+        static_cast<QTreeWidget *>(tree),
+        static_cast<QTreeWidgetItemIterator::IteratorFlags>(flags)));
+}
+
+void qt_tree_widget_item_iterator_destroy(void *iter) {
+    delete static_cast<QTreeWidgetItemIterator *>(iter);
+}
+
+int qt_tree_widget_item_iterator_is_valid(void *iter) {
+    auto *it = static_cast<QTreeWidgetItemIterator *>(iter);
+    return (**it != nullptr) ? 1 : 0;
+}
+
+void *qt_tree_widget_item_iterator_get_item(void *iter) {
+    auto *it = static_cast<QTreeWidgetItemIterator *>(iter);
+    return static_cast<void *>(**it);
+}
+
+void qt_tree_widget_item_iterator_next(void *iter) {
+    auto *it = static_cast<QTreeWidgetItemIterator *>(iter);
+    ++(*it);
+}
+
 /* ── QTableWidget ───────────────────────────────────────────────────── */
 
 void *qt_table_widget_create(int rows, int cols, void *parent) {
@@ -2767,6 +2796,54 @@ int qt_table_widget_item_is_selected(void *item) {
 
 void qt_table_widget_set_item_object(void *table, int row, int col, void *item) {
     static_cast<QTableWidget *>(table)->setItem(row, col, static_cast<QTableWidgetItem *>(item));
+}
+
+/* ── QTableWidgetSelectionRange ────────────────────────────────────── */
+
+int qt_table_widget_get_selection_ranges(void *table, int **out_ranges, int *out_count) {
+    QList<QTableWidgetSelectionRange> ranges = static_cast<QTableWidget *>(table)->selectedRanges();
+    int n = ranges.size();
+    *out_count = n;
+    if (n == 0) { *out_ranges = nullptr; return 0; }
+    // Each range is 4 ints: topRow, leftColumn, bottomRow, rightColumn
+    int *arr = static_cast<int *>(malloc(sizeof(int) * 4 * n));
+    for (int i = 0; i < n; ++i) {
+        arr[i * 4 + 0] = ranges[i].topRow();
+        arr[i * 4 + 1] = ranges[i].leftColumn();
+        arr[i * 4 + 2] = ranges[i].bottomRow();
+        arr[i * 4 + 3] = ranges[i].rightColumn();
+    }
+    *out_ranges = arr;
+    return n;
+}
+
+void qt_table_widget_free_selection_ranges(int *ranges) {
+    free(ranges);
+}
+
+void qt_table_widget_set_range_selected(void *table, int top_row, int left_col, int bottom_row, int right_col, int is_selected) {
+    QTableWidgetSelectionRange range(top_row, left_col, bottom_row, right_col);
+    static_cast<QTableWidget *>(table)->setRangeSelected(range, is_selected != 0);
+}
+
+/* ── QFileIconProvider ─────────────────────────────────────────────── */
+
+void *qt_file_icon_provider_create(void) {
+    return static_cast<void *>(new QFileIconProvider());
+}
+
+void qt_file_icon_provider_destroy(void *provider) {
+    delete static_cast<QFileIconProvider *>(provider);
+}
+
+void *qt_file_icon_provider_get_icon_for_file(void *provider, const char *file_path) {
+    QIcon icon = static_cast<QFileIconProvider *>(provider)->icon(QFileInfo(QString::fromUtf8(file_path)));
+    return static_cast<void *>(new QIcon(icon));
+}
+
+void *qt_file_icon_provider_get_icon_for_type(void *provider, int icon_type) {
+    QIcon icon = static_cast<QFileIconProvider *>(provider)->icon(static_cast<QFileIconProvider::IconType>(icon_type));
+    return static_cast<void *>(new QIcon(icon));
 }
 
 /* ── QScrollArea ────────────────────────────────────────────────────── */
