@@ -3105,6 +3105,7 @@ foreign qt_lib {
 	@(require_results) painter_create :: proc() -> Painter ---
 	painter_destroy :: proc(painter: Painter) ---
 	@(require_results) painter_begin :: proc(painter: Painter, device: rawptr) -> c.int ---
+	@(require_results) painter_begin_pdf_writer :: proc(painter: Painter, pdf_writer: Pdf_Writer) -> c.int ---
 	@(require_results) painter_end :: proc(painter: Painter) -> c.int ---
 	@(require_results) painter_is_active :: proc(painter: Painter) -> c.int ---
 

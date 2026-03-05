@@ -1350,6 +1350,7 @@ void qt_painter_scale(void *painter, double sx, double sy);
 void  *qt_painter_create(void);
 void   qt_painter_destroy(void *painter);
 int    qt_painter_begin(void *painter, void *device);
+int    qt_painter_begin_pdf_writer(void *painter, void *pdf_writer);
 int    qt_painter_end(void *painter);
 int    qt_painter_is_active(void *painter);
 

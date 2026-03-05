@@ -3245,7 +3245,7 @@ build_new_classes_tab :: proc() -> qt.Widget {
 		qt.pdf_writer_set_resolution(writer, 300)
 
 		painter := qt.painter_create()
-		if qt.painter_begin(painter, auto_cast writer) != 0 {
+		if qt.painter_begin_pdf_writer(painter, writer) != 0 {
 			qt.painter_set_font(painter, "Segoe UI", 24, cast(c.int)qt.Font_Weight.Bold, 0)
 			qt.painter_draw_text(painter, 200, 300, "Odin + Qt PDF Demo")
 

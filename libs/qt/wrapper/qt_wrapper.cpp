@@ -5848,6 +5848,10 @@ int qt_painter_begin(void *painter, void *device) {
     return static_cast<QPainter *>(painter)->begin(static_cast<QPaintDevice *>(device)) ? 1 : 0;
 }
 
+int qt_painter_begin_pdf_writer(void *painter, void *pdf_writer) {
+    return static_cast<QPainter *>(painter)->begin(static_cast<QPdfWriter *>(pdf_writer)) ? 1 : 0;
+}
+
 int qt_painter_end(void *painter) {
     return static_cast<QPainter *>(painter)->end() ? 1 : 0;
 }
