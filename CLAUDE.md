@@ -59,6 +59,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 odin-qt/
   CLAUDE_TODO.md             # Tracks which Qt classes have been wrapped
+  README.md                  # Project overview and documentation
   src/
     main.odin               # Application entry point (demo app)
   libs/
@@ -92,11 +93,6 @@ odin run src -debug -error-pos-style:unix
 ### Build only
 ```
 odin build src -debug -error-pos-style:unix
-```
-
-### Tests
-```
-odin test src
 ```
 
 ### Prerequisites
@@ -138,7 +134,7 @@ Qt is a C++ library. Odin can only bind to C ABI functions. The binding uses thr
 2. **Static library** (`libs/qt/wrapper/qt_wrapper.lib`) — the compiled wrapper plus Qt resource `.obj` files, archived via `lib.exe`.
 3. **Odin bindings** (`libs/qt/qt.odin`) — `foreign import` block that references the wrapper `.lib`, all Qt static `.lib` files, and all required Windows system `.lib` files.
 
-Opaque handle types (e.g. `Application`, `Main_Window`, `Widget`, `Label`, `Push_Button`, etc.) are `distinct rawptr` for type safety on the Odin side. See `CLAUDE_TODO.md` for the full list of wrapped Qt classes.
+Opaque handle types are `distinct rawptr` for type safety on the Odin side. See `CLAUDE_TODO.md` for the full list of wrapped Qt classes.
 
 ### Adding New Qt Wrapper Functions
 1. Add the C function declaration to `qt_wrapper.h`
