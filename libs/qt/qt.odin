@@ -2082,8 +2082,8 @@ foreign qt_lib {
 	@(require_results) application_exec :: proc(application: Application) -> c.int --- // https://doc.qt.io/qt-6.8/qapplication.html#exec
 	application_quit :: proc(application: Application) --- // https://doc.qt.io/qt-6.8/qapplication.html#quit
 	application_process_events :: proc(application: Application) --- // https://doc.qt.io/qt-6.8/qapplication.html#processEvents
-	application_set_application_name :: proc(application: Application, name: cstring) --- // https://doc.qt.io/qt-6.8/qapplication.html#setApplicationName
-	application_set_organization_name :: proc(application: Application, name: cstring) --- // https://doc.qt.io/qt-6.8/qapplication.html#setOrganizationName
+	application_set_application_name :: proc(application: Application, name: cstring) --- // https://doc.qt.io/qt-6.8/qcoreapplication.html#applicationName-prop
+	application_set_organization_name :: proc(application: Application, name: cstring) --- // https://doc.qt.io/qt-6.8/qcoreapplication.html#organizationName-prop
 
 	/* QMainWindow */
 
@@ -2147,7 +2147,7 @@ foreign qt_lib {
 	@(require_results) widget_get_style_sheet :: proc(widget: Widget) -> cstring --- // https://doc.qt.io/qt-6.8/qwidget.html#styleSheet
 	widget_set_fixed_width :: proc(widget: Widget, width: c.int) --- // https://doc.qt.io/qt-6.8/qwidget.html#setFixedWidth
 	widget_set_fixed_height :: proc(widget: Widget, height: c.int) --- // https://doc.qt.io/qt-6.8/qwidget.html#setFixedHeight
-	widget_set_object_name :: proc(widget: Widget, name: cstring) --- // https://doc.qt.io/qt-6.8/qwidget.html#setObjectName
+	widget_set_object_name :: proc(widget: Widget, name: cstring) --- // https://doc.qt.io/qt-6.8/qobject.html#setObjectName
 	@(require_results) widget_get_object_name :: proc(widget: Widget) -> cstring --- // https://doc.qt.io/qt-6.8/qwidget.html#objectName
 	widget_set_window_flags :: proc(widget: Widget, flags: c.int) --- // https://doc.qt.io/qt-6.8/qwidget.html#windowFlags-prop
 	@(require_results) widget_get_window_flags :: proc(widget: Widget) -> c.int --- // https://doc.qt.io/qt-6.8/qwidget.html#windowFlags
@@ -2203,13 +2203,13 @@ foreign qt_lib {
 	/* QPushButton */
 
 	@(require_results) push_button_create :: proc(parent: Widget, text: cstring) -> Push_Button --- // https://doc.qt.io/qt-6.8/qpushbutton.html#QPushButton
-	push_button_set_text :: proc(button: Push_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#setText
+	push_button_set_text :: proc(button: Push_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#text-prop
 	@(require_results) push_button_get_text :: proc(button: Push_Button) -> cstring --- // https://doc.qt.io/qt-6.8/qpushbutton.html#text
 	push_button_set_flat :: proc(button: Push_Button, is_flat: c.int) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#flat-prop
 	@(require_results) push_button_is_flat :: proc(button: Push_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qpushbutton.html#isFlat
-	push_button_set_checkable :: proc(button: Push_Button, is_checkable: c.int) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#setCheckable
+	push_button_set_checkable :: proc(button: Push_Button, is_checkable: c.int) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#checkable-prop
 	@(require_results) push_button_is_checked :: proc(button: Push_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qpushbutton.html#isChecked
-	push_button_set_checked :: proc(button: Push_Button, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#setChecked
+	push_button_set_checked :: proc(button: Push_Button, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#checked-prop
 	push_button_set_default :: proc(button: Push_Button, is_default: c.int) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#default-prop
 	@(require_results) push_button_is_default :: proc(button: Push_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qpushbutton.html#isDefault
 	push_button_set_auto_default :: proc(button: Push_Button, is_auto_default: c.int) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#autoDefault-prop
@@ -2220,10 +2220,10 @@ foreign qt_lib {
 	/* QRadioButton */
 
 	@(require_results) radio_button_create :: proc(parent: Widget, text: cstring) -> Radio_Button --- // https://doc.qt.io/qt-6.8/qradiobutton.html#QRadioButton
-	radio_button_set_text :: proc(radio_button: Radio_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qradiobutton.html#setText
+	radio_button_set_text :: proc(radio_button: Radio_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#text-prop
 	@(require_results) radio_button_get_text :: proc(radio_button: Radio_Button) -> cstring --- // https://doc.qt.io/qt-6.8/qradiobutton.html#text
 	@(require_results) radio_button_is_checked :: proc(radio_button: Radio_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qradiobutton.html#isChecked
-	radio_button_set_checked :: proc(radio_button: Radio_Button, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qradiobutton.html#setChecked
+	radio_button_set_checked :: proc(radio_button: Radio_Button, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#checked-prop
 
 	/* QLineEdit */
 
@@ -2326,8 +2326,8 @@ foreign qt_lib {
 
 	@(require_results) check_box_create :: proc(parent: Widget, text: cstring) -> Check_Box --- // https://doc.qt.io/qt-6.8/qcheckbox.html#QCheckBox
 	@(require_results) check_box_is_checked :: proc(check_box: Check_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qcheckbox.html#isChecked
-	check_box_set_checked :: proc(check_box: Check_Box, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qcheckbox.html#setChecked
-	check_box_set_text :: proc(check_box: Check_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qcheckbox.html#setText
+	check_box_set_checked :: proc(check_box: Check_Box, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#checked-prop
+	check_box_set_text :: proc(check_box: Check_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#text-prop
 	@(require_results) check_box_get_text :: proc(check_box: Check_Box) -> cstring --- // https://doc.qt.io/qt-6.8/qcheckbox.html#text
 	check_box_set_tristate :: proc(check_box: Check_Box, is_tristate: c.int) --- // https://doc.qt.io/qt-6.8/qcheckbox.html#tristate-prop
 	@(require_results) check_box_is_tristate :: proc(check_box: Check_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qcheckbox.html#isTristate
@@ -2366,20 +2366,20 @@ foreign qt_lib {
 	/* QSlider */
 
 	@(require_results) slider_create :: proc(orientation: Orientation, parent: Widget) -> Slider --- // https://doc.qt.io/qt-6.8/qslider.html#QSlider
-	slider_set_range :: proc(slider: Slider, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setRange
+	slider_set_range :: proc(slider: Slider, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#setRange
 	@(require_results) slider_get_value :: proc(slider: Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qslider.html#value
-	slider_set_value :: proc(slider: Slider, value: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setValue
+	slider_set_value :: proc(slider: Slider, value: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#value-prop
 	slider_set_tick_position :: proc(slider: Slider, position: Tick_Position) --- // https://doc.qt.io/qt-6.8/qslider.html#tickPosition-prop
 	slider_set_tick_interval :: proc(slider: Slider, interval: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#tickInterval-prop
-	slider_set_single_step :: proc(slider: Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setSingleStep
-	slider_set_page_step :: proc(slider: Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setPageStep
-	slider_set_orientation :: proc(slider: Slider, orientation: Orientation) --- // https://doc.qt.io/qt-6.8/qslider.html#setOrientation
-	slider_set_minimum :: proc(slider: Slider, min_val: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setMinimum
-	slider_set_maximum :: proc(slider: Slider, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setMaximum
+	slider_set_single_step :: proc(slider: Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#singleStep-prop
+	slider_set_page_step :: proc(slider: Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#pageStep-prop
+	slider_set_orientation :: proc(slider: Slider, orientation: Orientation) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#orientation-prop
+	slider_set_minimum :: proc(slider: Slider, min_val: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#minimum-prop
+	slider_set_maximum :: proc(slider: Slider, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#maximum-prop
 	@(require_results) slider_get_minimum :: proc(slider: Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qslider.html#minimum
 	@(require_results) slider_get_maximum :: proc(slider: Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qslider.html#maximum
-	slider_set_inverted_appearance :: proc(slider: Slider, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setInvertedAppearance
-	slider_set_inverted_controls :: proc(slider: Slider, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qslider.html#setInvertedControls
+	slider_set_inverted_appearance :: proc(slider: Slider, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#invertedAppearance-prop
+	slider_set_inverted_controls :: proc(slider: Slider, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#invertedControls-prop
 
 	/* QProgressBar */
 
@@ -2407,9 +2407,9 @@ foreign qt_lib {
 	spin_box_set_prefix :: proc(spin_box: Spin_Box, prefix: cstring) --- // https://doc.qt.io/qt-6.8/qspinbox.html#prefix-prop
 	spin_box_set_suffix :: proc(spin_box: Spin_Box, suffix: cstring) --- // https://doc.qt.io/qt-6.8/qspinbox.html#suffix-prop
 	spin_box_set_single_step :: proc(spin_box: Spin_Box, step: c.int) --- // https://doc.qt.io/qt-6.8/qspinbox.html#singleStep-prop
-	spin_box_set_read_only :: proc(spin_box: Spin_Box, is_read_only: c.int) --- // https://doc.qt.io/qt-6.8/qspinbox.html#setReadOnly
+	spin_box_set_read_only :: proc(spin_box: Spin_Box, is_read_only: c.int) --- // https://doc.qt.io/qt-6.8/qabstractspinbox.html#readOnly-prop
 	@(require_results) spin_box_is_read_only :: proc(spin_box: Spin_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qspinbox.html#isReadOnly
-	spin_box_set_wrapping :: proc(spin_box: Spin_Box, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qspinbox.html#setWrapping
+	spin_box_set_wrapping :: proc(spin_box: Spin_Box, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qabstractspinbox.html#wrapping-prop
 
 	/* QDoubleSpinBox */
 
@@ -2421,9 +2421,9 @@ foreign qt_lib {
 	double_spin_box_set_single_step :: proc(double_spin_box: Double_Spin_Box, step: c.double) --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#singleStep-prop
 	double_spin_box_set_prefix :: proc(double_spin_box: Double_Spin_Box, prefix: cstring) --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#prefix-prop
 	double_spin_box_set_suffix :: proc(double_spin_box: Double_Spin_Box, suffix: cstring) --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#suffix-prop
-	double_spin_box_set_read_only :: proc(double_spin_box: Double_Spin_Box, is_read_only: c.int) --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#setReadOnly
+	double_spin_box_set_read_only :: proc(double_spin_box: Double_Spin_Box, is_read_only: c.int) --- // https://doc.qt.io/qt-6.8/qabstractspinbox.html#readOnly-prop
 	@(require_results) double_spin_box_is_read_only :: proc(double_spin_box: Double_Spin_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#isReadOnly
-	double_spin_box_set_wrapping :: proc(double_spin_box: Double_Spin_Box, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qdoublespinbox.html#setWrapping
+	double_spin_box_set_wrapping :: proc(double_spin_box: Double_Spin_Box, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qabstractspinbox.html#wrapping-prop
 
 	/* Layouts (QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout) */
 
@@ -2454,7 +2454,7 @@ foreign qt_lib {
 	@(require_results) spacer_item_create :: proc(width: c.int, height: c.int, horizontal_policy: Size_Policy, vertical_policy: Size_Policy) -> Spacer_Item --- // https://doc.qt.io/qt-6.8/qspaceritem.html#QSpacerItem
 	box_layout_add_spacer_item :: proc(layout: Layout, spacer: Spacer_Item) --- // https://doc.qt.io/qt-6.8/qboxlayout.html#addSpacerItem
 	grid_layout_add_spacer_item :: proc(layout: Layout, spacer: Spacer_Item, row: c.int, col: c.int, row_span: c.int, col_span: c.int) --- // https://doc.qt.io/qt-6.8/qgridlayout.html#addSpacerItem
-	@(require_results) layout_set_widget_alignment :: proc(layout: Layout, widget: Widget, alignment: Alignment) -> c.int --- // https://doc.qt.io/qt-6.8/qlayout.html#setWidgetAlignment
+	@(require_results) layout_set_widget_alignment :: proc(layout: Layout, widget: Widget, alignment: Alignment) -> c.int --- // https://doc.qt.io/qt-6.8/qlayout.html#setAlignment
 
 	/* QListWidget */
 
@@ -2468,7 +2468,7 @@ foreign qt_lib {
 	@(require_results) list_widget_get_item_text :: proc(list_widget: List_Widget, row: c.int) -> cstring --- // https://doc.qt.io/qt-6.8/qlistwidget.html#itemText
 	list_widget_insert_item :: proc(list_widget: List_Widget, row: c.int, text: cstring) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#insertItem
 	list_widget_sort_items :: proc(list_widget: List_Widget, order: Sort_Order) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#sortItems
-	list_widget_set_selection_mode :: proc(list_widget: List_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setSelectionMode
+	list_widget_set_selection_mode :: proc(list_widget: List_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionMode-prop
 	@(require_results) list_widget_get_item :: proc(list_widget: List_Widget, row: c.int) -> List_Widget_Item --- // https://doc.qt.io/qt-6.8/qlistwidget.html#item
 	@(require_results) list_widget_get_item_at :: proc(list_widget: List_Widget, x: c.int, y: c.int) -> List_Widget_Item --- // https://doc.qt.io/qt-6.8/qlistwidget.html#itemAt
 	@(require_results) list_widget_get_current_item :: proc(list_widget: List_Widget) -> List_Widget_Item --- // https://doc.qt.io/qt-6.8/qlistwidget.html#currentItem
@@ -2477,11 +2477,11 @@ foreign qt_lib {
 	list_widget_add_items :: proc(list_widget: List_Widget, items: [^]cstring, count: c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#addItems
 	list_widget_find_items :: proc(list_widget: List_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]rawptr, out_count: ^c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#findItems
 	list_widget_scroll_to_item :: proc(list_widget: List_Widget, item: List_Widget_Item, scroll_hint: Scroll_Hint) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#scrollToItem
-	list_widget_set_view_mode :: proc(list_widget: List_Widget, mode: List_Widget_View_Mode) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setViewMode
-	list_widget_set_icon_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setIconSize
-	list_widget_set_grid_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setGridSize
-	list_widget_set_flow :: proc(list_widget: List_Widget, flow: List_View_Flow) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setFlow
-	list_widget_set_spacing :: proc(list_widget: List_Widget, spacing: c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#setSpacing
+	list_widget_set_view_mode :: proc(list_widget: List_Widget, mode: List_Widget_View_Mode) --- // https://doc.qt.io/qt-6.8/qlistview.html#viewMode-prop
+	list_widget_set_icon_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#iconSize-prop
+	list_widget_set_grid_size :: proc(list_widget: List_Widget, width: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qlistview.html#gridSize-prop
+	list_widget_set_flow :: proc(list_widget: List_Widget, flow: List_View_Flow) --- // https://doc.qt.io/qt-6.8/qlistview.html#flow-prop
+	list_widget_set_spacing :: proc(list_widget: List_Widget, spacing: c.int) --- // https://doc.qt.io/qt-6.8/qlistview.html#spacing-prop
 	list_widget_set_sorting_enabled :: proc(list_widget: List_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qlistwidget.html#sortingEnabled-prop
 
 	/* QListWidgetItem */
@@ -2525,8 +2525,8 @@ foreign qt_lib {
 	tree_widget_collapse_all :: proc(tree_widget: Tree_Widget) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#collapseAll
 	tree_widget_expand_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#expandItem
 	tree_widget_collapse_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#collapseItem
-	tree_widget_set_selection_mode :: proc(tree_widget: Tree_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setSelectionMode
-	tree_widget_set_sorting_enabled :: proc(tree_widget: Tree_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setSortingEnabled
+	tree_widget_set_selection_mode :: proc(tree_widget: Tree_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionMode-prop
+	tree_widget_set_sorting_enabled :: proc(tree_widget: Tree_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtreeview.html#sortingEnabled-prop
 	tree_widget_insert_top_level_item :: proc(tree_widget: Tree_Widget, index: c.int, item: Tree_Widget_Item) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#insertTopLevelItem
 	@(require_results) tree_widget_get_top_level_item :: proc(tree_widget: Tree_Widget, index: c.int) -> Tree_Widget_Item --- // https://doc.qt.io/qt-6.8/qtreewidget.html#topLevelItem
 	@(require_results) tree_widget_index_of_top_level_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qtreewidget.html#indexOfTopLevelItem
@@ -2534,10 +2534,10 @@ foreign qt_lib {
 	tree_widget_find_items :: proc(tree_widget: Tree_Widget, text: cstring, flags: Match_Flag, column: c.int, out_items: ^[^]rawptr, out_count: ^c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#findItems
 	tree_widget_scroll_to_item :: proc(tree_widget: Tree_Widget, item: Tree_Widget_Item, scroll_hint: Scroll_Hint) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#scrollToItem
 	tree_widget_sort_items :: proc(tree_widget: Tree_Widget, column: c.int, order: Sort_Order) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#sortItems
-	tree_widget_set_indentation :: proc(tree_widget: Tree_Widget, indentation: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setIndentation
-	tree_widget_set_uniform_row_heights :: proc(tree_widget: Tree_Widget, is_uniform: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setUniformRowHeights
-	tree_widget_set_animated :: proc(tree_widget: Tree_Widget, is_animated: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setAnimated
-	tree_widget_set_header_hidden :: proc(tree_widget: Tree_Widget, is_hidden: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidget.html#setHeaderHidden
+	tree_widget_set_indentation :: proc(tree_widget: Tree_Widget, indentation: c.int) --- // https://doc.qt.io/qt-6.8/qtreeview.html#indentation-prop
+	tree_widget_set_uniform_row_heights :: proc(tree_widget: Tree_Widget, is_uniform: c.int) --- // https://doc.qt.io/qt-6.8/qtreeview.html#uniformRowHeights-prop
+	tree_widget_set_animated :: proc(tree_widget: Tree_Widget, is_animated: c.int) --- // https://doc.qt.io/qt-6.8/qtreeview.html#animated-prop
+	tree_widget_set_header_hidden :: proc(tree_widget: Tree_Widget, is_hidden: c.int) --- // https://doc.qt.io/qt-6.8/qtreeview.html#headerHidden-prop
 
 	/* QTreeWidgetItem */
 
@@ -2557,7 +2557,7 @@ foreign qt_lib {
 	tree_widget_item_set_flags :: proc(item: Tree_Widget_Item, flags: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setFlags
 	tree_widget_item_set_data :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role, value: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setData
 	@(require_results) tree_widget_item_get_data :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role) -> c.int --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#data
-	tree_widget_item_set_data_string :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role, value: cstring) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setDataString
+	tree_widget_item_set_data_string :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role, value: cstring) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setData
 	@(require_results) tree_widget_item_get_data_string :: proc(item: Tree_Widget_Item, column: c.int, role: Item_Data_Role) -> cstring --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#dataString
 	tree_widget_item_set_tool_tip :: proc(item: Tree_Widget_Item, column: c.int, tooltip: cstring) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setToolTip
 	tree_widget_item_set_hidden :: proc(item: Tree_Widget_Item, is_hidden: c.int) --- // https://doc.qt.io/qt-6.8/qtreewidgetitem.html#setHidden
@@ -2598,12 +2598,12 @@ foreign qt_lib {
 	table_widget_insert_column :: proc(table_widget: Table_Widget, column: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#insertColumn
 	table_widget_remove_row :: proc(table_widget: Table_Widget, row: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#removeRow
 	table_widget_remove_column :: proc(table_widget: Table_Widget, column: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#removeColumn
-	table_widget_set_selection_mode :: proc(table_widget: Table_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setSelectionMode
-	table_widget_set_selection_behaviour :: proc(table_widget: Table_Widget, behaviour: Selection_Behaviour) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setSelectionBehaviour
-	table_widget_set_alternating_row_colours :: proc(table_widget: Table_Widget, is_alternating: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setAlternatingRowColors
-	table_widget_set_sorting_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setSortingEnabled
-	table_widget_set_column_width :: proc(table_widget: Table_Widget, column: c.int, width: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setColumnWidth
-	table_widget_set_row_height :: proc(table_widget: Table_Widget, row: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setRowHeight
+	table_widget_set_selection_mode :: proc(table_widget: Table_Widget, mode: Selection_Mode) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionMode-prop
+	table_widget_set_selection_behaviour :: proc(table_widget: Table_Widget, behaviour: Selection_Behaviour) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionBehavior-prop
+	table_widget_set_alternating_row_colours :: proc(table_widget: Table_Widget, is_alternating: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#alternatingRowColors-prop
+	table_widget_set_sorting_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setSortingEnabled
+	table_widget_set_column_width :: proc(table_widget: Table_Widget, column: c.int, width: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setColumnWidth
+	table_widget_set_row_height :: proc(table_widget: Table_Widget, row: c.int, height: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setRowHeight
 	table_widget_resize_columns_to_contents :: proc(table_widget: Table_Widget) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#resizeColumnsToContents
 	table_widget_resize_rows_to_contents :: proc(table_widget: Table_Widget) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#resizeRowsToContents
 	table_widget_set_cell_widget :: proc(table_widget: Table_Widget, row: c.int, col: c.int, widget: Widget) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setCellWidget
@@ -2612,14 +2612,14 @@ foreign qt_lib {
 	@(require_results) table_widget_get_current_item :: proc(table_widget: Table_Widget) -> Table_Widget_Item --- // https://doc.qt.io/qt-6.8/qtablewidget.html#currentItem
 	table_widget_set_current_cell :: proc(table_widget: Table_Widget, row: c.int, col: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setCurrentCell
 	table_widget_get_selected_items :: proc(table_widget: Table_Widget, out_items: ^[^]Table_Widget_Item, out_count: ^c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#selectedItems
-	table_widget_set_show_grid :: proc(table_widget: Table_Widget, is_show: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setShowGrid
-	table_widget_set_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int, row_span: c.int, col_span: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setSpan
+	table_widget_set_show_grid :: proc(table_widget: Table_Widget, is_show: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#showGrid-prop
+	table_widget_set_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int, row_span: c.int, col_span: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setSpan
 	@(require_results) table_widget_get_row_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qtablewidget.html#rowSpan
 	@(require_results) table_widget_get_column_span :: proc(table_widget: Table_Widget, row: c.int, col: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qtablewidget.html#columnSpan
 	table_widget_scroll_to_item :: proc(table_widget: Table_Widget, item: Table_Widget_Item, scroll_hint: Scroll_Hint) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#scrollToItem
 	table_widget_find_items :: proc(table_widget: Table_Widget, text: cstring, flags: Match_Flag, out_items: ^[^]Table_Widget_Item, out_count: ^c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#findItems
-	table_widget_set_word_wrap :: proc(table_widget: Table_Widget, is_word_wrap: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setWordWrap
-	table_widget_set_corner_button_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setCornerButtonEnabled
+	table_widget_set_word_wrap :: proc(table_widget: Table_Widget, is_word_wrap: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#wordWrap-prop
+	table_widget_set_corner_button_enabled :: proc(table_widget: Table_Widget, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#cornerButtonEnabled-prop
 
 	/* QTableWidgetItem */
 
@@ -2645,7 +2645,7 @@ foreign qt_lib {
 	@(require_results) table_widget_item_get_column :: proc(item: Table_Widget_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qtablewidgetitem.html#column
 	table_widget_item_set_selected :: proc(item: Table_Widget_Item, is_selected: c.int) --- // https://doc.qt.io/qt-6.8/qtablewidgetitem.html#setSelected
 	@(require_results) table_widget_item_is_selected :: proc(item: Table_Widget_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qtablewidgetitem.html#isSelected
-	table_widget_set_item_object :: proc(table_widget: Table_Widget, row: c.int, col: c.int, item: Table_Widget_Item) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setItemObject
+	table_widget_set_item_object :: proc(table_widget: Table_Widget, row: c.int, col: c.int, item: Table_Widget_Item) --- // https://doc.qt.io/qt-6.8/qtablewidget.html#setItem
 
 	/* QTableWidgetSelectionRange */
 
@@ -2666,8 +2666,8 @@ foreign qt_lib {
 	scroll_area_set_widget :: proc(scroll_area: Scroll_Area, widget: Widget) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#setWidget
 	scroll_area_set_widget_resizable :: proc(scroll_area: Scroll_Area, is_resizable: c.int) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#widgetResizable-prop
 	@(require_results) scroll_area_get_widget :: proc(scroll_area: Scroll_Area) -> Widget --- // https://doc.qt.io/qt-6.8/qscrollarea.html#widget
-	scroll_area_set_horizontal_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#setHorizontalScrollBarPolicy
-	scroll_area_set_vertical_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#setVerticalScrollBarPolicy
+	scroll_area_set_horizontal_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) --- // https://doc.qt.io/qt-6.8/qabstractscrollarea.html#horizontalScrollBarPolicy-prop
+	scroll_area_set_vertical_scroll_bar_policy :: proc(scroll_area: Scroll_Area, policy: Scroll_Bar_Policy) --- // https://doc.qt.io/qt-6.8/qabstractscrollarea.html#verticalScrollBarPolicy-prop
 	scroll_area_ensure_visible :: proc(scroll_area: Scroll_Area, x: c.int, y: c.int, x_margin: c.int, y_margin: c.int) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#ensureVisible
 	scroll_area_ensure_widget_visible :: proc(scroll_area: Scroll_Area, widget: Widget, x_margin: c.int, y_margin: c.int) --- // https://doc.qt.io/qt-6.8/qscrollarea.html#ensureWidgetVisible
 	@(require_results) scroll_area_take_widget :: proc(scroll_area: Scroll_Area) -> Widget --- // https://doc.qt.io/qt-6.8/qscrollarea.html#takeWidget
@@ -2920,7 +2920,7 @@ foreign qt_lib {
 
 	/* Icon/pixmap setters on existing widgets */
 
-	push_button_set_icon :: proc(button: Push_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qpushbutton.html#setIcon
+	push_button_set_icon :: proc(button: Push_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#icon-prop
 	action_set_icon :: proc(action: Action, icon: Icon) --- // https://doc.qt.io/qt-6.8/qaction.html#icon-prop
 	widget_set_window_icon :: proc(widget: Widget, icon: Icon) --- // https://doc.qt.io/qt-6.8/qwidget.html#windowIcon-prop
 	tab_widget_set_tab_icon :: proc(tab_widget: Tab_Widget, index: c.int, icon: Icon) --- // https://doc.qt.io/qt-6.8/qtabwidget.html#setTabIcon
@@ -2943,8 +2943,8 @@ foreign qt_lib {
 	/* QToolButton */
 
 	@(require_results) tool_button_create :: proc(parent: Widget) -> Tool_Button --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#QToolButton
-	tool_button_set_text :: proc(tool_button: Tool_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#setText
-	tool_button_set_icon :: proc(tool_button: Tool_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#setIcon
+	tool_button_set_text :: proc(tool_button: Tool_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#text-prop
+	tool_button_set_icon :: proc(tool_button: Tool_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qabstractbutton.html#icon-prop
 	tool_button_set_popup_mode :: proc(tool_button: Tool_Button, mode: Tool_Button_Popup_Mode) --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#popupMode-prop
 	tool_button_set_menu :: proc(tool_button: Tool_Button, menu: Menu) --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#setMenu
 	tool_button_set_default_action :: proc(tool_button: Tool_Button, action: Action) --- // https://doc.qt.io/qt-6.8/qtoolbutton.html#setDefaultAction
@@ -2975,18 +2975,18 @@ foreign qt_lib {
 
 	@(require_results) date_edit_create :: proc(parent: Widget) -> Date_Edit --- // https://doc.qt.io/qt-6.8/qdateedit.html#QDateEdit
 	date_edit_get_date :: proc(date_edit: Date_Edit, year: ^c.int, month: ^c.int, day: ^c.int) --- // https://doc.qt.io/qt-6.8/qdateedit.html#date
-	date_edit_set_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdateedit.html#setDate
-	date_edit_set_minimum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdateedit.html#setMinimumDate
-	date_edit_set_maximum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdateedit.html#setMaximumDate
-	date_edit_set_display_format :: proc(date_edit: Date_Edit, format: cstring) --- // https://doc.qt.io/qt-6.8/qdateedit.html#setDisplayFormat
-	date_edit_set_calendar_popup :: proc(date_edit: Date_Edit, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qdateedit.html#setCalendarPopup
+	date_edit_set_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#date-prop
+	date_edit_set_minimum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#minimumDate-prop
+	date_edit_set_maximum_date :: proc(date_edit: Date_Edit, year: c.int, month: c.int, day: c.int) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#maximumDate-prop
+	date_edit_set_display_format :: proc(date_edit: Date_Edit, format: cstring) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#displayFormat-prop
+	date_edit_set_calendar_popup :: proc(date_edit: Date_Edit, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#calendarPopup-prop
 
 	/* QTimeEdit */
 
 	@(require_results) time_edit_create :: proc(parent: Widget) -> Time_Edit --- // https://doc.qt.io/qt-6.8/qtimeedit.html#QTimeEdit
 	time_edit_get_time :: proc(time_edit: Time_Edit, hour: ^c.int, minute: ^c.int, second: ^c.int) --- // https://doc.qt.io/qt-6.8/qtimeedit.html#time
-	time_edit_set_time :: proc(time_edit: Time_Edit, hour: c.int, minute: c.int, second: c.int) --- // https://doc.qt.io/qt-6.8/qtimeedit.html#setTime
-	time_edit_set_display_format :: proc(time_edit: Time_Edit, format: cstring) --- // https://doc.qt.io/qt-6.8/qtimeedit.html#setDisplayFormat
+	time_edit_set_time :: proc(time_edit: Time_Edit, hour: c.int, minute: c.int, second: c.int) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#time-prop
+	time_edit_set_display_format :: proc(time_edit: Time_Edit, format: cstring) --- // https://doc.qt.io/qt-6.8/qdatetimeedit.html#displayFormat-prop
 
 	/* QDateTimeEdit */
 
@@ -2999,13 +2999,13 @@ foreign qt_lib {
 	/* QDial */
 
 	@(require_results) dial_create :: proc(parent: Widget) -> Dial --- // https://doc.qt.io/qt-6.8/qdial.html#QDial
-	dial_set_range :: proc(dial: Dial, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qdial.html#setRange
+	dial_set_range :: proc(dial: Dial, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#setRange
 	@(require_results) dial_get_value :: proc(dial: Dial) -> c.int --- // https://doc.qt.io/qt-6.8/qdial.html#value
-	dial_set_value :: proc(dial: Dial, value: c.int) --- // https://doc.qt.io/qt-6.8/qdial.html#setValue
+	dial_set_value :: proc(dial: Dial, value: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#value-prop
 	dial_set_notch_target :: proc(dial: Dial, target: c.double) --- // https://doc.qt.io/qt-6.8/qdial.html#notchTarget-prop
 	dial_set_notches_visible :: proc(dial: Dial, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qdial.html#notchesVisible-prop
 	dial_set_wrapping :: proc(dial: Dial, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qdial.html#wrapping-prop
-	dial_set_single_step :: proc(dial: Dial, step: c.int) --- // https://doc.qt.io/qt-6.8/qdial.html#setSingleStep
+	dial_set_single_step :: proc(dial: Dial, step: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#singleStep-prop
 
 	/* QProgressDialog */
 
@@ -3024,7 +3024,7 @@ foreign qt_lib {
 	/* QTextBrowser */
 
 	@(require_results) text_browser_create :: proc(parent: Widget) -> Text_Browser --- // https://doc.qt.io/qt-6.8/qtextbrowser.html#QTextBrowser
-	text_browser_set_html :: proc(text_browser: Text_Browser, html: cstring) --- // https://doc.qt.io/qt-6.8/qtextbrowser.html#setHtml
+	text_browser_set_html :: proc(text_browser: Text_Browser, html: cstring) --- // https://doc.qt.io/qt-6.8/qtextedit.html#html-prop
 	text_browser_set_source :: proc(text_browser: Text_Browser, url: cstring) --- // https://doc.qt.io/qt-6.8/qtextbrowser.html#setSource
 	text_browser_set_open_external_links :: proc(text_browser: Text_Browser, is_open: c.int) --- // https://doc.qt.io/qt-6.8/qtextbrowser.html#openExternalLinks-prop
 	text_browser_backward :: proc(text_browser: Text_Browser) --- // https://doc.qt.io/qt-6.8/qtextbrowser.html#backward
@@ -3034,11 +3034,11 @@ foreign qt_lib {
 	/* QHeaderView */
 
 	header_view_set_section_resize_mode :: proc(header_view: Header_View, mode: Header_Resize_Mode) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSectionResizeMode
-	header_view_set_section_resize_mode_for :: proc(header_view: Header_View, section: c.int, mode: Header_Resize_Mode) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSectionResizeModeFor
+	header_view_set_section_resize_mode_for :: proc(header_view: Header_View, section: c.int, mode: Header_Resize_Mode) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSectionResizeMode
 	header_view_set_stretch_last_section :: proc(header_view: Header_View, is_stretch: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#stretchLastSection-prop
 	header_view_set_visible :: proc(header_view: Header_View, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setVisible
 	header_view_set_sort_indicator :: proc(header_view: Header_View, section: c.int, order: Sort_Order) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSortIndicator
-	header_view_set_sort_indicator_shown :: proc(header_view: Header_View, is_shown: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSortIndicatorShown
+	header_view_set_sort_indicator_shown :: proc(header_view: Header_View, is_shown: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#showSortIndicator-prop
 	header_view_set_section_hidden :: proc(header_view: Header_View, section: c.int, is_hidden: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#setSectionHidden
 	@(require_results) header_view_is_section_hidden :: proc(header_view: Header_View, section: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qheaderview.html#isSectionHidden
 	header_view_resize_section :: proc(header_view: Header_View, section: c.int, size: c.int) --- // https://doc.qt.io/qt-6.8/qheaderview.html#resizeSection
@@ -3118,13 +3118,13 @@ foreign qt_lib {
 
 	@(require_results) settings_create :: proc(parent: Widget) -> Settings --- // https://doc.qt.io/qt-6.8/qsettings.html#QSettings
 	settings_destroy :: proc(settings: Settings) --- // https://doc.qt.io/qt-6.8/qsettings.html#dtor.QSettings
-	settings_set_value_int :: proc(settings: Settings, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValueInt
+	settings_set_value_int :: proc(settings: Settings, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValue
 	@(require_results) settings_get_value_int :: proc(settings: Settings, key: cstring, default_value: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qsettings.html#valueInt
-	settings_set_value_string :: proc(settings: Settings, key: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValueString
+	settings_set_value_string :: proc(settings: Settings, key: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValue
 	@(require_results) settings_get_value_string :: proc(settings: Settings, key: cstring, default_value: cstring) -> cstring --- // https://doc.qt.io/qt-6.8/qsettings.html#valueString
-	settings_set_value_bool :: proc(settings: Settings, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValueBool
+	settings_set_value_bool :: proc(settings: Settings, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValue
 	@(require_results) settings_get_value_bool :: proc(settings: Settings, key: cstring, default_value: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qsettings.html#valueBool
-	settings_set_value_double :: proc(settings: Settings, key: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValueDouble
+	settings_set_value_double :: proc(settings: Settings, key: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qsettings.html#setValue
 	@(require_results) settings_get_value_double :: proc(settings: Settings, key: cstring, default_value: c.double) -> c.double --- // https://doc.qt.io/qt-6.8/qsettings.html#valueDouble
 	settings_remove :: proc(settings: Settings, key: cstring) --- // https://doc.qt.io/qt-6.8/qsettings.html#remove
 	@(require_results) settings_contains :: proc(settings: Settings, key: cstring) -> c.int --- // https://doc.qt.io/qt-6.8/qsettings.html#contains
@@ -3189,8 +3189,8 @@ foreign qt_lib {
 	application_set_style :: proc(application: Application, style_name: cstring) --- // https://doc.qt.io/qt-6.8/qapplication.html#setStyle
 	application_set_style_sheet :: proc(application: Application, style_sheet: cstring) --- // https://doc.qt.io/qt-6.8/qapplication.html#styleSheet-prop
 	application_set_font :: proc(application: Application, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) --- // https://doc.qt.io/qt-6.8/qapplication.html#setFont
-	application_set_window_icon :: proc(application: Application, icon: Icon) --- // https://doc.qt.io/qt-6.8/qapplication.html#setWindowIcon
-	application_set_application_version :: proc(application: Application, version: cstring) --- // https://doc.qt.io/qt-6.8/qapplication.html#setApplicationVersion
+	application_set_window_icon :: proc(application: Application, icon: Icon) --- // https://doc.qt.io/qt-6.8/qguiapplication.html#windowIcon-prop
+	application_set_application_version :: proc(application: Application, version: cstring) --- // https://doc.qt.io/qt-6.8/qcoreapplication.html#applicationVersion-prop
 
 	/* QCompleter */
 
@@ -3350,13 +3350,13 @@ foreign qt_lib {
 
 	/* Dynamic properties */
 
-	object_set_property_int :: proc(object: Widget, name: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qobject.html#setPropertyInt
+	object_set_property_int :: proc(object: Widget, name: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qobject.html#setProperty
 	@(require_results) object_get_property_int :: proc(object: Widget, name: cstring, default_value: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qobject.html#propertyInt
-	object_set_property_string :: proc(object: Widget, name: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qobject.html#setPropertyString
+	object_set_property_string :: proc(object: Widget, name: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qobject.html#setProperty
 	@(require_results) object_get_property_string :: proc(object: Widget, name: cstring, default_value: cstring) -> cstring --- // https://doc.qt.io/qt-6.8/qobject.html#propertyString
-	object_set_property_bool :: proc(object: Widget, name: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qobject.html#setPropertyBool
+	object_set_property_bool :: proc(object: Widget, name: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qobject.html#setProperty
 	@(require_results) object_get_property_bool :: proc(object: Widget, name: cstring, default_value: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qobject.html#propertyBool
-	object_set_property_double :: proc(object: Widget, name: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qobject.html#setPropertyDouble
+	object_set_property_double :: proc(object: Widget, name: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qobject.html#setProperty
 	@(require_results) object_get_property_double :: proc(object: Widget, name: cstring, default_value: c.double) -> c.double --- // https://doc.qt.io/qt-6.8/qobject.html#propertyDouble
 
 	/* QStandardItem */
@@ -3440,27 +3440,27 @@ foreign qt_lib {
 	table_view_set_sorting_enabled :: proc(view: Table_View, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setSortingEnabled
 	table_view_resize_columns_to_contents :: proc(view: Table_View) --- // https://doc.qt.io/qt-6.8/qtableview.html#resizeColumnsToContents
 	table_view_resize_rows_to_contents :: proc(view: Table_View) --- // https://doc.qt.io/qt-6.8/qtableview.html#resizeRowsToContents
-	table_view_set_selection_behaviour :: proc(view: Table_View, behaviour: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setSelectionBehaviour
-	table_view_set_selection_mode :: proc(view: Table_View, mode: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setSelectionMode
-	table_view_set_alternating_row_colours :: proc(view: Table_View, is_alternating: c.int) --- // https://doc.qt.io/qt-6.8/qtableview.html#setAlternatingRowColors
+	table_view_set_selection_behaviour :: proc(view: Table_View, behaviour: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionBehavior-prop
+	table_view_set_selection_mode :: proc(view: Table_View, mode: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionMode-prop
+	table_view_set_alternating_row_colours :: proc(view: Table_View, is_alternating: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#alternatingRowColors-prop
 
 	@(require_results) list_view_create :: proc(parent: Widget) -> List_View --- // https://doc.qt.io/qt-6.8/qlistview.html#QListView
-	list_view_set_model :: proc(view: List_View, model: Standard_Item_Model) --- // https://doc.qt.io/qt-6.8/qlistview.html#setModel
-	list_view_set_selection_mode :: proc(view: List_View, mode: c.int) --- // https://doc.qt.io/qt-6.8/qlistview.html#setSelectionMode
+	list_view_set_model :: proc(view: List_View, model: Standard_Item_Model) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#setModel
+	list_view_set_selection_mode :: proc(view: List_View, mode: c.int) --- // https://doc.qt.io/qt-6.8/qabstractitemview.html#selectionMode-prop
 
 	/* QPainter / Custom drawing */
 
 	@(require_results) paintable_widget_create :: proc(parent: Widget, callback: Paint_Callback, user_data: rawptr) -> Paintable_Widget ---
 
-	painter_set_pen_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setPenColor
-	painter_set_pen_width :: proc(painter: Painter, width: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setPenWidth
-	painter_set_no_pen :: proc(painter: Painter) --- // https://doc.qt.io/qt-6.8/qpainter.html#setNoPen
+	painter_set_pen_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setPen
+	painter_set_pen_width :: proc(painter: Painter, width: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setPen
+	painter_set_no_pen :: proc(painter: Painter) --- // https://doc.qt.io/qt-6.8/qpainter.html
 	painter_set_pen :: proc(painter: Painter, pen: Pen) --- // https://doc.qt.io/qt-6.8/qpainter.html#setPen
-	painter_set_brush_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setBrushColor
-	painter_set_no_brush :: proc(painter: Painter) --- // https://doc.qt.io/qt-6.8/qpainter.html#setNoBrush
+	painter_set_brush_colour :: proc(painter: Painter, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setBrush
+	painter_set_no_brush :: proc(painter: Painter) --- // https://doc.qt.io/qt-6.8/qpainter.html
 	painter_set_brush :: proc(painter: Painter, brush: Brush) --- // https://doc.qt.io/qt-6.8/qpainter.html#setBrush
 	painter_set_font :: proc(painter: Painter, family: cstring, point_size: c.int, weight: c.int, is_italic: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setFont
-	painter_set_antialiasing :: proc(painter: Painter, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setAntialiasing
+	painter_set_antialiasing :: proc(painter: Painter, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setRenderHint
 	painter_set_opacity :: proc(painter: Painter, opacity: c.double) --- // https://doc.qt.io/qt-6.8/qpainter.html#setOpacity
 	painter_set_render_hint :: proc(painter: Painter, hint: Render_Hint, is_on: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setRenderHint
 	painter_set_render_hints :: proc(painter: Painter, hints: c.int, is_on: c.int) --- // https://doc.qt.io/qt-6.8/qpainter.html#setRenderHints
@@ -3510,8 +3510,8 @@ foreign qt_lib {
 
 	@(require_results) text_char_format_create :: proc() -> Text_Char_Format --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#QTextCharFormat
 	text_char_format_destroy :: proc(format: Text_Char_Format) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#dtor.QTextCharFormat
-	text_char_format_set_foreground :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#setForeground
-	text_char_format_set_background :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#setBackground
+	text_char_format_set_foreground :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtextformat.html#setForeground
+	text_char_format_set_background :: proc(format: Text_Char_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtextformat.html#setBackground
 	text_char_format_set_font_weight :: proc(format: Text_Char_Format, weight: c.int) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#setFontWeight
 	text_char_format_set_font_italic :: proc(format: Text_Char_Format, is_italic: c.int) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#setFontItalic
 	text_char_format_set_font_underline :: proc(format: Text_Char_Format, is_underline: c.int) --- // https://doc.qt.io/qt-6.8/qtextcharformat.html#setFontUnderline
@@ -3527,24 +3527,24 @@ foreign qt_lib {
 
 	@(require_results) property_animation_create :: proc(target: Widget, property_name: cstring) -> Property_Animation --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#QPropertyAnimation
 	property_animation_destroy :: proc(animation: Property_Animation) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#dtor.QPropertyAnimation
-	property_animation_set_duration :: proc(animation: Property_Animation, ms: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setDuration
-	property_animation_set_start_value_int :: proc(animation: Property_Animation, value: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setStartValueInt
-	property_animation_set_end_value_int :: proc(animation: Property_Animation, value: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEndValueInt
-	property_animation_set_start_value_double :: proc(animation: Property_Animation, value: c.double) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setStartValueDouble
-	property_animation_set_end_value_double :: proc(animation: Property_Animation, value: c.double) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEndValueDouble
-	property_animation_set_start_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setStartValueRect
-	property_animation_set_end_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEndValueRect
-	property_animation_set_start_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setStartValueSize
-	property_animation_set_end_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEndValueSize
-	property_animation_set_start_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setStartValuePoint
-	property_animation_set_end_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEndValuePoint
-	property_animation_set_easing_curve :: proc(animation: Property_Animation, curve_type: Easing_Curve) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setEasingCurve
-	property_animation_set_clamp_range :: proc(animation: Property_Animation, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setClampRange
+	property_animation_set_duration :: proc(animation: Property_Animation, ms: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#duration-prop
+	property_animation_set_start_value_int :: proc(animation: Property_Animation, value: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#startValue-prop
+	property_animation_set_end_value_int :: proc(animation: Property_Animation, value: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#endValue-prop
+	property_animation_set_start_value_double :: proc(animation: Property_Animation, value: c.double) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#startValue-prop
+	property_animation_set_end_value_double :: proc(animation: Property_Animation, value: c.double) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#endValue-prop
+	property_animation_set_start_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#startValue-prop
+	property_animation_set_end_value_rect :: proc(animation: Property_Animation, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#endValue-prop
+	property_animation_set_start_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#startValue-prop
+	property_animation_set_end_value_size :: proc(animation: Property_Animation, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#endValue-prop
+	property_animation_set_start_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#startValue-prop
+	property_animation_set_end_value_point :: proc(animation: Property_Animation, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#endValue-prop
+	property_animation_set_easing_curve :: proc(animation: Property_Animation, curve_type: Easing_Curve) --- // https://doc.qt.io/qt-6.8/qvariantanimation.html#easingCurve-prop
+	property_animation_set_clamp_range :: proc(animation: Property_Animation, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html
 	property_animation_start :: proc(animation: Property_Animation) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#start
 	property_animation_stop :: proc(animation: Property_Animation) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#stop
 	property_animation_pause :: proc(animation: Property_Animation) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#pause
 	property_animation_resume :: proc(animation: Property_Animation) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#resume
-	property_animation_set_loop_count :: proc(animation: Property_Animation, count: c.int) --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#setLoopCount
+	property_animation_set_loop_count :: proc(animation: Property_Animation, count: c.int) --- // https://doc.qt.io/qt-6.8/qabstractanimation.html#loopCount-prop
 	property_animation_connect_finished :: proc(animation: Property_Animation, callback: Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qpropertyanimation.html#finished
 
 	@(require_results) parallel_animation_group_create :: proc(parent: Widget) -> Parallel_Animation_Group --- // https://doc.qt.io/qt-6.8/qparallelanimationgroup.html#QParallelAnimationGroup
@@ -3614,12 +3614,12 @@ foreign qt_lib {
 	/* QScrollBar */
 
 	@(require_results) scroll_bar_create :: proc(orientation: Orientation, parent: Widget) -> Scroll_Bar --- // https://doc.qt.io/qt-6.8/qscrollbar.html#QScrollBar
-	scroll_bar_set_range :: proc(scroll_bar: Scroll_Bar, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qscrollbar.html#setRange
+	scroll_bar_set_range :: proc(scroll_bar: Scroll_Bar, min_val: c.int, max_val: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#setRange
 	@(require_results) scroll_bar_get_value :: proc(scroll_bar: Scroll_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qscrollbar.html#value
-	scroll_bar_set_value :: proc(scroll_bar: Scroll_Bar, value: c.int) --- // https://doc.qt.io/qt-6.8/qscrollbar.html#setValue
-	scroll_bar_set_single_step :: proc(scroll_bar: Scroll_Bar, step: c.int) --- // https://doc.qt.io/qt-6.8/qscrollbar.html#setSingleStep
-	scroll_bar_set_page_step :: proc(scroll_bar: Scroll_Bar, step: c.int) --- // https://doc.qt.io/qt-6.8/qscrollbar.html#setPageStep
-	scroll_bar_set_orientation :: proc(scroll_bar: Scroll_Bar, orientation: Orientation) --- // https://doc.qt.io/qt-6.8/qscrollbar.html#setOrientation
+	scroll_bar_set_value :: proc(scroll_bar: Scroll_Bar, value: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#value-prop
+	scroll_bar_set_single_step :: proc(scroll_bar: Scroll_Bar, step: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#singleStep-prop
+	scroll_bar_set_page_step :: proc(scroll_bar: Scroll_Bar, step: c.int) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#pageStep-prop
+	scroll_bar_set_orientation :: proc(scroll_bar: Scroll_Bar, orientation: Orientation) --- // https://doc.qt.io/qt-6.8/qabstractslider.html#orientation-prop
 	scroll_bar_connect_value_changed :: proc(scroll_bar: Scroll_Bar, callback: Int_Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qscrollbar.html#valueChanged
 
 	/* QLCDNumber */
@@ -3654,7 +3654,7 @@ foreign qt_lib {
 
 	@(require_results) font_combo_box_create :: proc(parent: Widget) -> Font_Combo_Box --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#QFontComboBox
 	@(require_results) font_combo_box_get_current_font_family :: proc(combo: Font_Combo_Box) -> cstring --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#currentFontFamily
-	font_combo_box_set_current_font_family :: proc(combo: Font_Combo_Box, family: cstring) --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#setCurrentFontFamily
+	font_combo_box_set_current_font_family :: proc(combo: Font_Combo_Box, family: cstring) --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#currentFont-prop
 	font_combo_box_set_font_filters :: proc(combo: Font_Combo_Box, filters: Font_Combo_Box_Font_Filter) --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#fontFilters-prop
 	font_combo_box_connect_current_font_changed :: proc(combo: Font_Combo_Box, callback: String_Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qfontcombobox.html#currentFontChanged
 
@@ -3766,7 +3766,7 @@ foreign qt_lib {
 	column_view_set_root_index :: proc(view: Column_View, index: Model_Index) --- // https://doc.qt.io/qt-6.8/qcolumnview.html#setRootIndex
 	column_view_set_preview_widget :: proc(view: Column_View, widget: Widget) --- // https://doc.qt.io/qt-6.8/qcolumnview.html#setPreviewWidget
 	@(require_results) column_view_get_preview_widget :: proc(view: Column_View) -> Widget --- // https://doc.qt.io/qt-6.8/qcolumnview.html#previewWidget
-	column_view_set_resizing_grips_visible :: proc(view: Column_View, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qcolumnview.html#setResizingGripsVisible
+	column_view_set_resizing_grips_visible :: proc(view: Column_View, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qcolumnview.html#resizingGripsVisible-prop
 
 	/* QUndoView */
 
@@ -3857,7 +3857,7 @@ foreign qt_lib {
 	@(require_results) colour_to_hsv :: proc(colour: Colour_Handle) -> Colour_Handle --- // https://doc.qt.io/qt-6.8/qcolor.html#toHsv
 	@(require_results) colour_to_hsl :: proc(colour: Colour_Handle) -> Colour_Handle --- // https://doc.qt.io/qt-6.8/qcolor.html#toHsl
 	@(require_results) colour_get_spec :: proc(colour: Colour_Handle) -> Colour_Spec --- // https://doc.qt.io/qt-6.8/qcolor.html#spec
-	colour_set_named_colour :: proc(colour: Colour_Handle, name: cstring) --- // https://doc.qt.io/qt-6.8/qcolor.html#setNamedColor
+	colour_set_named_colour :: proc(colour: Colour_Handle, name: cstring) --- // https://doc.qt.io/qt-6.8/qcolor.html#fromString
 
 	/* QColorSpace */
 
@@ -3901,7 +3901,7 @@ foreign qt_lib {
 	@(require_results) font_is_italic :: proc(font: Font_Handle) -> c.int --- // https://doc.qt.io/qt-6.8/qfont.html#isItalic
 	font_set_underline :: proc(font: Font_Handle, is_underline: c.int) --- // https://doc.qt.io/qt-6.8/qfont.html#setUnderline
 	@(require_results) font_is_underline :: proc(font: Font_Handle) -> c.int --- // https://doc.qt.io/qt-6.8/qfont.html#isUnderline
-	font_set_strikeout :: proc(font: Font_Handle, is_strikeout: c.int) --- // https://doc.qt.io/qt-6.8/qfont.html#setStrikeout
+	font_set_strikeout :: proc(font: Font_Handle, is_strikeout: c.int) --- // https://doc.qt.io/qt-6.8/qfont.html#setStrikeOut
 	@(require_results) font_is_strikeout :: proc(font: Font_Handle) -> c.int --- // https://doc.qt.io/qt-6.8/qfont.html#isStrikeout
 	font_set_kerning :: proc(font: Font_Handle, is_kerning: c.int) --- // https://doc.qt.io/qt-6.8/qfont.html#setKerning
 	@(require_results) font_is_kerning :: proc(font: Font_Handle) -> c.int --- // https://doc.qt.io/qt-6.8/qfont.html#isKerning
@@ -3975,7 +3975,7 @@ foreign qt_lib {
 	cursor_destroy :: proc(cursor: Cursor_Handle) --- // https://doc.qt.io/qt-6.8/qcursor.html#dtor.QCursor
 	cursor_get_pos :: proc(x: ^c.int, y: ^c.int) --- // https://doc.qt.io/qt-6.8/qcursor.html#pos
 	cursor_set_pos :: proc(x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qcursor.html#setPos
-	widget_set_cursor_object :: proc(widget: Widget, cursor: Cursor_Handle) --- // https://doc.qt.io/qt-6.8/qwidget.html#setCursorObject
+	widget_set_cursor_object :: proc(widget: Widget, cursor: Cursor_Handle) --- // https://doc.qt.io/qt-6.8/qwidget.html#cursor-prop
 
 	/* QPainterPath */
 
@@ -4075,7 +4075,7 @@ foreign qt_lib {
 	gradient_destroy :: proc(gradient: Gradient) --- // https://doc.qt.io/qt-6.8/qgradient.html#dtor.QGradient
 	gradient_set_colour_at :: proc(gradient: Gradient, position: c.double, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qgradient.html#setColorAt
 	gradient_set_spread :: proc(gradient: Gradient, spread: Gradient_Spread) --- // https://doc.qt.io/qt-6.8/qgradient.html#setSpread
-	brush_set_gradient :: proc(brush: Brush, gradient: Gradient) --- // https://doc.qt.io/qt-6.8/qbrush.html#setGradient
+	brush_set_gradient :: proc(brush: Brush, gradient: Gradient) --- // https://doc.qt.io/qt-6.8/qbrush.html
 
 	/* QTextCursor */
 
@@ -4238,7 +4238,7 @@ foreign qt_lib {
 
 	@(require_results) text_table_format_create :: proc() -> Text_Table_Format --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#QTextTableFormat
 	text_table_format_destroy :: proc(fmt: Text_Table_Format) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#dtor.QTextTableFormat
-	text_table_format_set_columns :: proc(fmt: Text_Table_Format, columns: c.int) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#setColumns
+	text_table_format_set_columns :: proc(fmt: Text_Table_Format, columns: c.int) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#columns
 	@(require_results) text_table_format_get_columns :: proc(fmt: Text_Table_Format) -> c.int --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#columns
 	text_table_format_set_cell_padding :: proc(fmt: Text_Table_Format, padding: c.double) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#setCellPadding
 	@(require_results) text_table_format_get_cell_padding :: proc(fmt: Text_Table_Format) -> c.double --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#cellPadding
@@ -4246,8 +4246,8 @@ foreign qt_lib {
 	@(require_results) text_table_format_get_cell_spacing :: proc(fmt: Text_Table_Format) -> c.double --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#cellSpacing
 	text_table_format_set_alignment :: proc(fmt: Text_Table_Format, alignment: Alignment) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#setAlignment
 	@(require_results) text_table_format_get_alignment :: proc(fmt: Text_Table_Format) -> Alignment --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#alignment
-	text_table_format_set_border :: proc(fmt: Text_Table_Format, border: c.double) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#setBorder
-	text_table_format_set_border_style :: proc(fmt: Text_Table_Format, style: c.int) --- // https://doc.qt.io/qt-6.8/qtexttableformat.html#setBorderStyle
+	text_table_format_set_border :: proc(fmt: Text_Table_Format, border: c.double) --- // https://doc.qt.io/qt-6.8/qtextframeformat.html#setBorder
+	text_table_format_set_border_style :: proc(fmt: Text_Table_Format, style: c.int) --- // https://doc.qt.io/qt-6.8/qtextframeformat.html#setBorderStyle
 	text_table_set_format :: proc(table: Text_Table, fmt: Text_Table_Format) --- // https://doc.qt.io/qt-6.8/qtexttable.html#setFormat
 	@(require_results) text_cursor_insert_table_with_format :: proc(cursor: Text_Cursor, rows: c.int, cols: c.int, fmt: Text_Table_Format) -> Text_Table --- // https://doc.qt.io/qt-6.8/qtextcursor.html#insertTableWithFormat
 
@@ -4263,7 +4263,7 @@ foreign qt_lib {
 	@(require_results) text_table_cell_format_get_left_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double --- // https://doc.qt.io/qt-6.8/qtexttablecellformat.html#leftPadding
 	text_table_cell_format_set_right_padding :: proc(fmt: Text_Table_Cell_Format, padding: c.double) --- // https://doc.qt.io/qt-6.8/qtexttablecellformat.html#setRightPadding
 	@(require_results) text_table_cell_format_get_right_padding :: proc(fmt: Text_Table_Cell_Format) -> c.double --- // https://doc.qt.io/qt-6.8/qtexttablecellformat.html#rightPadding
-	text_table_cell_format_set_background :: proc(fmt: Text_Table_Cell_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtexttablecellformat.html#setBackground
+	text_table_cell_format_set_background :: proc(fmt: Text_Table_Cell_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtextformat.html#setBackground
 	text_table_cell_format_set_border_brush :: proc(fmt: Text_Table_Cell_Format, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qtexttablecellformat.html#setBorderBrush
 	text_table_cell_set_format :: proc(table: Text_Table, row: c.int, col: c.int, fmt: Text_Table_Cell_Format) --- // https://doc.qt.io/qt-6.8/qtexttablecell.html#setFormat
 
@@ -4341,7 +4341,7 @@ foreign qt_lib {
 
 	@(require_results) drag_create :: proc(source: rawptr) -> Drag --- // https://doc.qt.io/qt-6.8/qdrag.html#QDrag
 	drag_destroy :: proc(drag: Drag) --- // https://doc.qt.io/qt-6.8/qdrag.html#dtor.QDrag
-	drag_set_mime_data_text :: proc(drag: Drag, text: cstring) --- // https://doc.qt.io/qt-6.8/qdrag.html#setMimeDataText
+	drag_set_mime_data_text :: proc(drag: Drag, text: cstring) --- // https://doc.qt.io/qt-6.8/qdrag.html#setMimeData
 	drag_set_mime_data :: proc(drag: Drag, mime_data: Mime_Data) --- // https://doc.qt.io/qt-6.8/qdrag.html#setMimeData
 	drag_set_pixmap :: proc(drag: Drag, pixmap: Pixmap) --- // https://doc.qt.io/qt-6.8/qdrag.html#setPixmap
 	drag_set_hot_spot :: proc(drag: Drag, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qdrag.html#setHotSpot
@@ -4612,7 +4612,7 @@ foreign qt_lib {
 	process_connect_finished :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qprocess.html#finished
 	process_connect_error_occurred :: proc(process: Process, callback: Int_Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qprocess.html#errorOccurred
 	process_connect_started :: proc(process: Process, callback: Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qprocess.html#started
-	process_set_environment :: proc(process: Process, env: [^]cstring, count: c.int) --- // https://doc.qt.io/qt-6.8/qprocess.html#setEnvironment
+	process_set_environment :: proc(process: Process, env: [^]cstring, count: c.int) --- // https://doc.qt.io/qt-6.8/qprocess.html#setProcessEnvironment
 	process_set_standard_output_process :: proc(process: Process, destination: Process) --- // https://doc.qt.io/qt-6.8/qprocess.html#setStandardOutputProcess
 	process_set_read_channel :: proc(process: Process, channel: c.int) --- // https://doc.qt.io/qt-6.8/qprocess.html#setReadChannel
 	process_set_process_channel_mode :: proc(process: Process, mode: c.int) --- // https://doc.qt.io/qt-6.8/qprocess.html#setProcessChannelMode
@@ -4702,13 +4702,13 @@ foreign qt_lib {
 	json_object_destroy :: proc(obj: Json_Object) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#dtor.QJsonObject
 	@(require_results) json_object_get_count :: proc(obj: Json_Object) -> c.int --- // https://doc.qt.io/qt-6.8/qjsonobject.html#count
 	@(require_results) json_object_contains :: proc(obj: Json_Object, key: cstring) -> c.int --- // https://doc.qt.io/qt-6.8/qjsonobject.html#contains
-	json_object_set_string :: proc(obj: Json_Object, key: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setString
-	json_object_set_int :: proc(obj: Json_Object, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setInt
-	json_object_set_double :: proc(obj: Json_Object, key: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setDouble
-	json_object_set_bool :: proc(obj: Json_Object, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setBool
-	json_object_set_object :: proc(obj: Json_Object, key: cstring, child: Json_Object) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setObject
-	json_object_set_array :: proc(obj: Json_Object, key: cstring, array: Json_Array) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setArray
-	json_object_set_null :: proc(obj: Json_Object, key: cstring) --- // https://doc.qt.io/qt-6.8/qjsonobject.html#setNull
+	json_object_set_string :: proc(obj: Json_Object, key: cstring, value: cstring) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_int :: proc(obj: Json_Object, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_double :: proc(obj: Json_Object, key: cstring, value: c.double) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_bool :: proc(obj: Json_Object, key: cstring, value: c.int) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_object :: proc(obj: Json_Object, key: cstring, child: Json_Object) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_array :: proc(obj: Json_Object, key: cstring, array: Json_Array) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
+	json_object_set_null :: proc(obj: Json_Object, key: cstring) --- // https://doc.qt.io/qt-6.8/qjsonobject.html
 	@(require_results) json_object_get_string :: proc(obj: Json_Object, key: cstring) -> cstring --- // https://doc.qt.io/qt-6.8/qjsonobject.html#string
 	@(require_results) json_object_get_int :: proc(obj: Json_Object, key: cstring, default_val: c.int) -> c.int --- // https://doc.qt.io/qt-6.8/qjsonobject.html#int
 	@(require_results) json_object_get_double :: proc(obj: Json_Object, key: cstring, default_val: c.double) -> c.double --- // https://doc.qt.io/qt-6.8/qjsonobject.html#double
@@ -5204,7 +5204,7 @@ foreign qt_lib {
 	graphics_view_ensure_visible :: proc(view: Graphics_View, x: c.double, y: c.double, w: c.double, h: c.double, x_margin: c.int, y_margin: c.int) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#ensureVisible
 	graphics_view_set_transformation_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#transformationAnchor-prop
 	graphics_view_set_resize_anchor :: proc(view: Graphics_View, anchor: Graphics_View_Viewport_Anchor) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#resizeAnchor-prop
-	graphics_view_set_viewport :: proc(view: Graphics_View, viewport_widget: Widget) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#setViewport
+	graphics_view_set_viewport :: proc(view: Graphics_View, viewport_widget: Widget) --- // https://doc.qt.io/qt-6.8/qabstractscrollarea.html#setViewport
 	graphics_view_set_background_brush :: proc(view: Graphics_View, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#backgroundBrush-prop
 	graphics_view_set_foreground_brush :: proc(view: Graphics_View, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#foregroundBrush-prop
 	graphics_view_set_transform :: proc(view: Graphics_View, transform: Transform, is_combine: c.int) --- // https://doc.qt.io/qt-6.8/qgraphicsview.html#setTransform
@@ -5264,23 +5264,23 @@ foreign qt_lib {
 	@(require_results) graphics_rect_item_create :: proc(x: c.double, y: c.double, w: c.double, h: c.double, parent: Graphics_Item) -> Graphics_Rect_Item --- // https://doc.qt.io/qt-6.8/qgraphicsrectitem.html#QGraphicsRectItem
 	graphics_rect_item_set_rect :: proc(item: Graphics_Rect_Item, x: c.double, y: c.double, w: c.double, h: c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsrectitem.html#setRect
 	graphics_rect_item_get_rect :: proc(item: Graphics_Rect_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsrectitem.html#rect
-	graphics_rect_item_set_pen :: proc(item: Graphics_Rect_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qgraphicsrectitem.html#setPen
-	graphics_rect_item_set_brush :: proc(item: Graphics_Rect_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicsrectitem.html#setBrush
+	graphics_rect_item_set_pen :: proc(item: Graphics_Rect_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setPen
+	graphics_rect_item_set_brush :: proc(item: Graphics_Rect_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setBrush
 
 	/* QGraphicsEllipseItem */
 
 	@(require_results) graphics_ellipse_item_create :: proc(x: c.double, y: c.double, w: c.double, h: c.double, parent: Graphics_Item) -> Graphics_Ellipse_Item --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#QGraphicsEllipseItem
 	graphics_ellipse_item_set_rect :: proc(item: Graphics_Ellipse_Item, x: c.double, y: c.double, w: c.double, h: c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#setRect
 	graphics_ellipse_item_get_rect :: proc(item: Graphics_Ellipse_Item, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#rect
-	graphics_ellipse_item_set_pen :: proc(item: Graphics_Ellipse_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#setPen
-	graphics_ellipse_item_set_brush :: proc(item: Graphics_Ellipse_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#setBrush
+	graphics_ellipse_item_set_pen :: proc(item: Graphics_Ellipse_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setPen
+	graphics_ellipse_item_set_brush :: proc(item: Graphics_Ellipse_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setBrush
 	graphics_ellipse_item_set_start_angle :: proc(item: Graphics_Ellipse_Item, angle: c.int) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#setStartAngle
 	graphics_ellipse_item_set_span_angle :: proc(item: Graphics_Ellipse_Item, angle: c.int) --- // https://doc.qt.io/qt-6.8/qgraphicsellipseitem.html#setSpanAngle
 
 	/* QGraphicsTextItem */
 
 	@(require_results) graphics_text_item_create :: proc(text: cstring, parent: Graphics_Item) -> Graphics_Text_Item --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#QGraphicsTextItem
-	graphics_text_item_set_text :: proc(item: Graphics_Text_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#setText
+	graphics_text_item_set_text :: proc(item: Graphics_Text_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#setPlainText
 	graphics_text_item_set_html :: proc(item: Graphics_Text_Item, html: cstring) --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#setHtml
 	@(require_results) graphics_text_item_get_text :: proc(item: Graphics_Text_Item) -> cstring --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#text
 	graphics_text_item_set_font :: proc(item: Graphics_Text_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qgraphicstextitem.html#setFont
@@ -5307,15 +5307,15 @@ foreign qt_lib {
 
 	@(require_results) graphics_path_item_create :: proc(path: Painter_Path, parent: Graphics_Item) -> Graphics_Path_Item --- // https://doc.qt.io/qt-6.8/qgraphicspathitem.html#QGraphicsPathItem
 	graphics_path_item_set_path :: proc(item: Graphics_Path_Item, path: Painter_Path) --- // https://doc.qt.io/qt-6.8/qgraphicspathitem.html#setPath
-	graphics_path_item_set_pen :: proc(item: Graphics_Path_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qgraphicspathitem.html#setPen
-	graphics_path_item_set_brush :: proc(item: Graphics_Path_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicspathitem.html#setBrush
+	graphics_path_item_set_pen :: proc(item: Graphics_Path_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setPen
+	graphics_path_item_set_brush :: proc(item: Graphics_Path_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setBrush
 
 	/* QGraphicsPolygonItem */
 
 	@(require_results) graphics_polygon_item_create :: proc(polygon_f: Polygon_F, parent: Graphics_Item) -> Graphics_Polygon_Item --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#QGraphicsPolygonItem
 	graphics_polygon_item_set_polygon :: proc(item: Graphics_Polygon_Item, polygon_f: Polygon_F) --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#setPolygon
-	graphics_polygon_item_set_pen :: proc(item: Graphics_Polygon_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#setPen
-	graphics_polygon_item_set_brush :: proc(item: Graphics_Polygon_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#setBrush
+	graphics_polygon_item_set_pen :: proc(item: Graphics_Polygon_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setPen
+	graphics_polygon_item_set_brush :: proc(item: Graphics_Polygon_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setBrush
 	graphics_polygon_item_set_fill_rule :: proc(item: Graphics_Polygon_Item, fill_rule: Fill_Rule) --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#setFillRule
 	@(require_results) graphics_polygon_item_get_fill_rule :: proc(item: Graphics_Polygon_Item) -> Fill_Rule --- // https://doc.qt.io/qt-6.8/qgraphicspolygonitem.html#fillRule
 
@@ -5325,8 +5325,8 @@ foreign qt_lib {
 	graphics_simple_text_item_set_text :: proc(item: Graphics_Simple_Text_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qgraphicssimpletextitem.html#setText
 	@(require_results) graphics_simple_text_item_get_text :: proc(item: Graphics_Simple_Text_Item) -> cstring --- // https://doc.qt.io/qt-6.8/qgraphicssimpletextitem.html#text
 	graphics_simple_text_item_set_font :: proc(item: Graphics_Simple_Text_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qgraphicssimpletextitem.html#setFont
-	graphics_simple_text_item_set_pen :: proc(item: Graphics_Simple_Text_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qgraphicssimpletextitem.html#setPen
-	graphics_simple_text_item_set_brush :: proc(item: Graphics_Simple_Text_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qgraphicssimpletextitem.html#setBrush
+	graphics_simple_text_item_set_pen :: proc(item: Graphics_Simple_Text_Item, pen: Pen) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setPen
+	graphics_simple_text_item_set_brush :: proc(item: Graphics_Simple_Text_Item, brush: Brush) --- // https://doc.qt.io/qt-6.8/qabstractgraphicsshapeitem.html#setBrush
 
 	/* QGraphicsItemGroup */
 
@@ -5423,7 +5423,7 @@ foreign qt_lib {
 	graphics_item_animation_destroy :: proc(animation: Graphics_Item_Animation) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#dtor.QGraphicsItemAnimation
 	graphics_item_animation_set_item :: proc(animation: Graphics_Item_Animation, item: Graphics_Item) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#setItem
 	@(require_results) graphics_item_animation_get_item :: proc(animation: Graphics_Item_Animation) -> Graphics_Item --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#item
-	graphics_item_animation_set_timeline :: proc(animation: Graphics_Item_Animation, timeline: Time_Line) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#setTimeline
+	graphics_item_animation_set_timeline :: proc(animation: Graphics_Item_Animation, timeline: Time_Line) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#setTimeLine
 	@(require_results) graphics_item_animation_get_timeline :: proc(animation: Graphics_Item_Animation) -> Time_Line --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#timeline
 	graphics_item_animation_set_pos_at :: proc(animation: Graphics_Item_Animation, step: c.double, x: c.double, y: c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#setPosAt
 	graphics_item_animation_set_rotation_at :: proc(animation: Graphics_Item_Animation, step: c.double, angle: c.double) --- // https://doc.qt.io/qt-6.8/qgraphicsitemanimation.html#setRotationAt
@@ -5538,7 +5538,7 @@ foreign qt_lib {
 
 	@(require_results) proxy_style_create :: proc(base_style_key: cstring) -> Proxy_Style --- // https://doc.qt.io/qt-6.8/qproxystyle.html#QProxyStyle
 	proxy_style_destroy :: proc(style: Proxy_Style) --- // https://doc.qt.io/qt-6.8/qproxystyle.html#dtor.QProxyStyle
-	application_set_style_object :: proc(style: Proxy_Style) --- // https://doc.qt.io/qt-6.8/qapplication.html#setStyleObject
+	application_set_style_object :: proc(style: Proxy_Style) --- // https://doc.qt.io/qt-6.8/qapplication.html#setStyle
 
 	/* QScroller / QScrollerProperties */
 
@@ -5551,7 +5551,7 @@ foreign qt_lib {
 
 	@(require_results) scroller_properties_create :: proc(scroller: Scroller) -> Scroller_Properties --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#QScrollerProperties
 	scroller_properties_destroy :: proc(props: Scroller_Properties) --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#dtor.QScrollerProperties
-	scroller_properties_set_metric :: proc(props: Scroller_Properties, metric: Scroller_Metric, value: c.double) --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#setMetric
+	scroller_properties_set_metric :: proc(props: Scroller_Properties, metric: Scroller_Metric, value: c.double) --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#setScrollMetric
 	@(require_results) scroller_properties_get_metric :: proc(props: Scroller_Properties, metric: Scroller_Metric) -> c.double --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#metric
 	scroller_properties_apply :: proc(props: Scroller_Properties, scroller: Scroller) --- // https://doc.qt.io/qt-6.8/qscrollerproperties.html#apply
 
@@ -5584,9 +5584,9 @@ foreign qt_lib {
 
 	@(require_results) signal_mapper_create :: proc(parent: rawptr) -> Signal_Mapper --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#QSignalMapper
 	signal_mapper_destroy :: proc(mapper: Signal_Mapper) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#dtor.QSignalMapper
-	signal_mapper_set_mapping_int :: proc(mapper: Signal_Mapper, sender: rawptr, id: c.int) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMappingInt
-	signal_mapper_set_mapping_string :: proc(mapper: Signal_Mapper, sender: rawptr, text: cstring) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMappingString
-	signal_mapper_set_mapping_widget :: proc(mapper: Signal_Mapper, sender: rawptr, widget: Widget) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMappingWidget
+	signal_mapper_set_mapping_int :: proc(mapper: Signal_Mapper, sender: rawptr, id: c.int) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMapping
+	signal_mapper_set_mapping_string :: proc(mapper: Signal_Mapper, sender: rawptr, text: cstring) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMapping
+	signal_mapper_set_mapping_widget :: proc(mapper: Signal_Mapper, sender: rawptr, widget: Widget) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#setMapping
 	signal_mapper_remove_mappings :: proc(mapper: Signal_Mapper, sender: rawptr) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#removeMappings
 	signal_mapper_map :: proc(mapper: Signal_Mapper, sender: rawptr) --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#map
 	signal_mapper_connect_mapped_int :: proc(mapper: Signal_Mapper, callback: Int_Callback, user_data: rawptr) -> Connection_Id --- // https://doc.qt.io/qt-6.8/qsignalmapper.html#mappedInt
@@ -5765,9 +5765,9 @@ foreign qt_lib {
 	@(require_results) pdf_writer_new_page :: proc(writer: Pdf_Writer) -> c.int --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#newPage
 	pdf_writer_set_resolution :: proc(writer: Pdf_Writer, dpi: c.int) --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#setResolution
 	@(require_results) pdf_writer_get_resolution :: proc(writer: Pdf_Writer) -> c.int --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#resolution
-	pdf_writer_set_page_size :: proc(writer: Pdf_Writer, page_size_id: c.int) --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#setPageSize
-	pdf_writer_set_page_orientation :: proc(writer: Pdf_Writer, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#setPageOrientation
-	pdf_writer_set_page_margins :: proc(writer: Pdf_Writer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#setPageMargins
+	pdf_writer_set_page_size :: proc(writer: Pdf_Writer, page_size_id: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageSize
+	pdf_writer_set_page_orientation :: proc(writer: Pdf_Writer, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageOrientation
+	pdf_writer_set_page_margins :: proc(writer: Pdf_Writer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageMargins
 	pdf_writer_set_pdf_version :: proc(writer: Pdf_Writer, version: Pdf_Version) --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#setPdfVersion
 	@(require_results) pdf_writer_get_pdf_version :: proc(writer: Pdf_Writer) -> c.int --- // https://doc.qt.io/qt-6.8/qpdfwriter.html#pdfVersion
 
@@ -5849,7 +5849,7 @@ foreign qt_lib {
 	@(require_results) text_list_get_item_text :: proc(list: Text_List, block: Text_Block) -> cstring --- // https://doc.qt.io/qt-6.8/qtextlist.html#itemText
 	text_list_remove_item :: proc(list: Text_List, index: c.int) --- // https://doc.qt.io/qt-6.8/qtextlist.html#removeItem
 	text_list_add :: proc(list: Text_List, block: Text_Block) --- // https://doc.qt.io/qt-6.8/qtextlist.html#add
-	text_list_set_style :: proc(list: Text_List, style: Text_List_Style) --- // https://doc.qt.io/qt-6.8/qtextlist.html#setStyle
+	text_list_set_style :: proc(list: Text_List, style: Text_List_Style) --- // https://doc.qt.io/qt-6.8/qtextlistformat.html#setStyle
 	@(require_results) text_list_get_style :: proc(list: Text_List) -> Text_List_Style --- // https://doc.qt.io/qt-6.8/qtextlist.html#style
 
 	/* QTextFrame */
@@ -6146,333 +6146,333 @@ foreign qt_lib {
 	@(require_results) style_option_create_empty :: proc() -> Style_Option --- // https://doc.qt.io/qt-6.8/qstyleoption.html#QStyleOption
 	style_option_destroy :: proc(option: Style_Option) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#dtor.QStyleOption
 	style_option_init_from :: proc(option: Style_Option, widget: Widget) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#initFrom
-	style_option_set_rect :: proc(option: Style_Option, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#setRect
+	style_option_set_rect :: proc(option: Style_Option, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#rect-var
 	style_option_get_rect :: proc(option: Style_Option, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#rect
-	style_option_set_state :: proc(option: Style_Option, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#setState
+	style_option_set_state :: proc(option: Style_Option, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#state-var
 	@(require_results) style_option_get_state :: proc(option: Style_Option) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoption.html#state
-	style_option_set_direction :: proc(option: Style_Option, direction: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#setDirection
+	style_option_set_direction :: proc(option: Style_Option, direction: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoption.html#direction-var
 	@(require_results) style_option_get_direction :: proc(option: Style_Option) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoption.html#direction
 
 	/* QStyleOptionComplex */
 
 	@(require_results) style_option_complex_create :: proc(widget: Widget) -> Style_Option_Complex --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#QStyleOptionComplex
 	style_option_complex_destroy :: proc(option: Style_Option_Complex) --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#dtor.QStyleOptionComplex
-	style_option_complex_set_sub_controls :: proc(option: Style_Option_Complex, sub_controls: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#setSubControls
+	style_option_complex_set_sub_controls :: proc(option: Style_Option_Complex, sub_controls: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#subControls-var
 	@(require_results) style_option_complex_get_sub_controls :: proc(option: Style_Option_Complex) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#subControls
-	style_option_complex_set_active_sub_controls :: proc(option: Style_Option_Complex, active: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#setActiveSubControls
+	style_option_complex_set_active_sub_controls :: proc(option: Style_Option_Complex, active: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#activeSubControls-var
 	@(require_results) style_option_complex_get_active_sub_controls :: proc(option: Style_Option_Complex) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptioncomplex.html#activeSubControls
 
 	/* QStyleOptionButton */
 
 	@(require_results) style_option_button_create :: proc(widget: Widget) -> Style_Option_Button --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#QStyleOptionButton
 	style_option_button_destroy :: proc(option: Style_Option_Button) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#dtor.QStyleOptionButton
-	style_option_button_set_text :: proc(option: Style_Option_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#setText
+	style_option_button_set_text :: proc(option: Style_Option_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#text-var
 	@(require_results) style_option_button_get_text :: proc(option: Style_Option_Button) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#text
-	style_option_button_set_features :: proc(option: Style_Option_Button, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#setFeatures
+	style_option_button_set_features :: proc(option: Style_Option_Button, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#features-var
 	@(require_results) style_option_button_get_features :: proc(option: Style_Option_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#features
-	style_option_button_set_icon :: proc(option: Style_Option_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#setIcon
-	style_option_button_set_icon_size :: proc(option: Style_Option_Button, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#setIconSize
+	style_option_button_set_icon :: proc(option: Style_Option_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#icon-var
+	style_option_button_set_icon_size :: proc(option: Style_Option_Button, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#iconSize-var
 	style_option_button_get_icon_size :: proc(option: Style_Option_Button, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionbutton.html#iconSize
 
 	/* QStyleOptionFrame */
 
 	@(require_results) style_option_frame_create :: proc(widget: Widget) -> Style_Option_Frame --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#QStyleOptionFrame
 	style_option_frame_destroy :: proc(option: Style_Option_Frame) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#dtor.QStyleOptionFrame
-	style_option_frame_set_line_width :: proc(option: Style_Option_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#setLineWidth
+	style_option_frame_set_line_width :: proc(option: Style_Option_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#lineWidth-var
 	@(require_results) style_option_frame_get_line_width :: proc(option: Style_Option_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#lineWidth
-	style_option_frame_set_mid_line_width :: proc(option: Style_Option_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#setMidLineWidth
+	style_option_frame_set_mid_line_width :: proc(option: Style_Option_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#midLineWidth-var
 	@(require_results) style_option_frame_get_mid_line_width :: proc(option: Style_Option_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#midLineWidth
-	style_option_frame_set_features :: proc(option: Style_Option_Frame, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#setFeatures
+	style_option_frame_set_features :: proc(option: Style_Option_Frame, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#features-var
 	@(require_results) style_option_frame_get_features :: proc(option: Style_Option_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#features
-	style_option_frame_set_frame_shape :: proc(option: Style_Option_Frame, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#setFrameShape
+	style_option_frame_set_frame_shape :: proc(option: Style_Option_Frame, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#frameShape-var
 	@(require_results) style_option_frame_get_frame_shape :: proc(option: Style_Option_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionframe.html#frameShape
 
 	/* QStyleOptionProgressBar */
 
 	@(require_results) style_option_progress_bar_create :: proc(widget: Widget) -> Style_Option_Progress_Bar --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#QStyleOptionProgressBar
 	style_option_progress_bar_destroy :: proc(option: Style_Option_Progress_Bar) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#dtor.QStyleOptionProgressBar
-	style_option_progress_bar_set_minimum :: proc(option: Style_Option_Progress_Bar, min: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setMinimum
+	style_option_progress_bar_set_minimum :: proc(option: Style_Option_Progress_Bar, min: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#minimum-var
 	@(require_results) style_option_progress_bar_get_minimum :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#minimum
-	style_option_progress_bar_set_maximum :: proc(option: Style_Option_Progress_Bar, max: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setMaximum
+	style_option_progress_bar_set_maximum :: proc(option: Style_Option_Progress_Bar, max: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#maximum-var
 	@(require_results) style_option_progress_bar_get_maximum :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#maximum
-	style_option_progress_bar_set_progress :: proc(option: Style_Option_Progress_Bar, progress: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setProgress
+	style_option_progress_bar_set_progress :: proc(option: Style_Option_Progress_Bar, progress: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#progress-var
 	@(require_results) style_option_progress_bar_get_progress :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#progress
-	style_option_progress_bar_set_text :: proc(option: Style_Option_Progress_Bar, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setText
+	style_option_progress_bar_set_text :: proc(option: Style_Option_Progress_Bar, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#text-var
 	@(require_results) style_option_progress_bar_get_text :: proc(option: Style_Option_Progress_Bar) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#text
-	style_option_progress_bar_set_text_visible :: proc(option: Style_Option_Progress_Bar, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setTextVisible
+	style_option_progress_bar_set_text_visible :: proc(option: Style_Option_Progress_Bar, is_visible: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#textVisible-var
 	@(require_results) style_option_progress_bar_is_text_visible :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#isTextVisible
-	style_option_progress_bar_set_inverted_appearance :: proc(option: Style_Option_Progress_Bar, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setInvertedAppearance
+	style_option_progress_bar_set_inverted_appearance :: proc(option: Style_Option_Progress_Bar, is_inverted: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#invertedAppearance-var
 	@(require_results) style_option_progress_bar_is_inverted_appearance :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#isInvertedAppearance
-	style_option_progress_bar_set_bottom_to_top :: proc(option: Style_Option_Progress_Bar, is_bottom_to_top: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#setBottomToTop
+	style_option_progress_bar_set_bottom_to_top :: proc(option: Style_Option_Progress_Bar, is_bottom_to_top: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#bottomToTop-var
 	@(require_results) style_option_progress_bar_is_bottom_to_top :: proc(option: Style_Option_Progress_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionprogressbar.html#isBottomToTop
 
 	/* QStyleOptionSlider */
 
 	@(require_results) style_option_slider_create :: proc(widget: Widget) -> Style_Option_Slider --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#QStyleOptionSlider
 	style_option_slider_destroy :: proc(option: Style_Option_Slider) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#dtor.QStyleOptionSlider
-	style_option_slider_set_orientation :: proc(option: Style_Option_Slider, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setOrientation
+	style_option_slider_set_orientation :: proc(option: Style_Option_Slider, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#orientation-var
 	@(require_results) style_option_slider_get_orientation :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#orientation
-	style_option_slider_set_minimum :: proc(option: Style_Option_Slider, min: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setMinimum
+	style_option_slider_set_minimum :: proc(option: Style_Option_Slider, min: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#minimum-var
 	@(require_results) style_option_slider_get_minimum :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#minimum
-	style_option_slider_set_maximum :: proc(option: Style_Option_Slider, max: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setMaximum
+	style_option_slider_set_maximum :: proc(option: Style_Option_Slider, max: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#maximum-var
 	@(require_results) style_option_slider_get_maximum :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#maximum
-	style_option_slider_set_tick_position :: proc(option: Style_Option_Slider, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setTickPosition
+	style_option_slider_set_tick_position :: proc(option: Style_Option_Slider, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#tickPosition-var
 	@(require_results) style_option_slider_get_tick_position :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#tickPosition
-	style_option_slider_set_tick_interval :: proc(option: Style_Option_Slider, interval: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setTickInterval
+	style_option_slider_set_tick_interval :: proc(option: Style_Option_Slider, interval: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#tickInterval-var
 	@(require_results) style_option_slider_get_tick_interval :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#tickInterval
-	style_option_slider_set_single_step :: proc(option: Style_Option_Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setSingleStep
+	style_option_slider_set_single_step :: proc(option: Style_Option_Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#singleStep-var
 	@(require_results) style_option_slider_get_single_step :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#singleStep
-	style_option_slider_set_page_step :: proc(option: Style_Option_Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setPageStep
+	style_option_slider_set_page_step :: proc(option: Style_Option_Slider, step: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#pageStep-var
 	@(require_results) style_option_slider_get_page_step :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#pageStep
-	style_option_slider_set_slider_position :: proc(option: Style_Option_Slider, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setSliderPosition
+	style_option_slider_set_slider_position :: proc(option: Style_Option_Slider, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#sliderPosition-var
 	@(require_results) style_option_slider_get_slider_position :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#sliderPosition
-	style_option_slider_set_slider_value :: proc(option: Style_Option_Slider, value: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setSliderValue
+	style_option_slider_set_slider_value :: proc(option: Style_Option_Slider, value: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#sliderValue-var
 	@(require_results) style_option_slider_get_slider_value :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#sliderValue
-	style_option_slider_set_upsidedown :: proc(option: Style_Option_Slider, is_upsidedown: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setUpsidedown
+	style_option_slider_set_upsidedown :: proc(option: Style_Option_Slider, is_upsidedown: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#upsideDown-var
 	@(require_results) style_option_slider_is_upsidedown :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#isUpsidedown
-	style_option_slider_set_dial_wrapping :: proc(option: Style_Option_Slider, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#setDialWrapping
+	style_option_slider_set_dial_wrapping :: proc(option: Style_Option_Slider, is_wrapping: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#dialWrapping-var
 	@(require_results) style_option_slider_is_dial_wrapping :: proc(option: Style_Option_Slider) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionslider.html#isDialWrapping
 
 	/* QStyleOptionComboBox */
 
 	@(require_results) style_option_combo_box_create :: proc(widget: Widget) -> Style_Option_Combo_Box --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#QStyleOptionComboBox
 	style_option_combo_box_destroy :: proc(option: Style_Option_Combo_Box) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#dtor.QStyleOptionComboBox
-	style_option_combo_box_set_editable :: proc(option: Style_Option_Combo_Box, is_editable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setEditable
+	style_option_combo_box_set_editable :: proc(option: Style_Option_Combo_Box, is_editable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#editable-var
 	@(require_results) style_option_combo_box_is_editable :: proc(option: Style_Option_Combo_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#isEditable
-	style_option_combo_box_set_current_text :: proc(option: Style_Option_Combo_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setCurrentText
+	style_option_combo_box_set_current_text :: proc(option: Style_Option_Combo_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#currentText-var
 	@(require_results) style_option_combo_box_get_current_text :: proc(option: Style_Option_Combo_Box) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#currentText
-	style_option_combo_box_set_current_icon :: proc(option: Style_Option_Combo_Box, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setCurrentIcon
-	style_option_combo_box_set_icon_size :: proc(option: Style_Option_Combo_Box, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setIconSize
+	style_option_combo_box_set_current_icon :: proc(option: Style_Option_Combo_Box, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#currentIcon-var
+	style_option_combo_box_set_icon_size :: proc(option: Style_Option_Combo_Box, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#iconSize-var
 	style_option_combo_box_get_icon_size :: proc(option: Style_Option_Combo_Box, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#iconSize
-	style_option_combo_box_set_frame :: proc(option: Style_Option_Combo_Box, has_frame: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setFrame
+	style_option_combo_box_set_frame :: proc(option: Style_Option_Combo_Box, has_frame: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#frame-var
 	@(require_results) style_option_combo_box_has_frame :: proc(option: Style_Option_Combo_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#hasFrame
-	style_option_combo_box_set_popup_rect :: proc(option: Style_Option_Combo_Box, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#setPopupRect
+	style_option_combo_box_set_popup_rect :: proc(option: Style_Option_Combo_Box, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#popupRect-var
 	style_option_combo_box_get_popup_rect :: proc(option: Style_Option_Combo_Box, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptioncombobox.html#popupRect
 
 	/* QStyleOptionMenuItem */
 
 	@(require_results) style_option_menu_item_create :: proc(widget: Widget) -> Style_Option_Menu_Item --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#QStyleOptionMenuItem
 	style_option_menu_item_destroy :: proc(option: Style_Option_Menu_Item) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#dtor.QStyleOptionMenuItem
-	style_option_menu_item_set_menu_item_type :: proc(option: Style_Option_Menu_Item, type: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setMenuItemType
+	style_option_menu_item_set_menu_item_type :: proc(option: Style_Option_Menu_Item, type: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#menuItemType-var
 	@(require_results) style_option_menu_item_get_menu_item_type :: proc(option: Style_Option_Menu_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#menuItemType
-	style_option_menu_item_set_check_type :: proc(option: Style_Option_Menu_Item, type: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setCheckType
+	style_option_menu_item_set_check_type :: proc(option: Style_Option_Menu_Item, type: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#checkType-var
 	@(require_results) style_option_menu_item_get_check_type :: proc(option: Style_Option_Menu_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#checkType
-	style_option_menu_item_set_checked :: proc(option: Style_Option_Menu_Item, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setChecked
+	style_option_menu_item_set_checked :: proc(option: Style_Option_Menu_Item, is_checked: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#checked-var
 	@(require_results) style_option_menu_item_is_checked :: proc(option: Style_Option_Menu_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#isChecked
-	style_option_menu_item_set_text :: proc(option: Style_Option_Menu_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setText
+	style_option_menu_item_set_text :: proc(option: Style_Option_Menu_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#text-var
 	@(require_results) style_option_menu_item_get_text :: proc(option: Style_Option_Menu_Item) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#text
-	style_option_menu_item_set_icon :: proc(option: Style_Option_Menu_Item, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setIcon
-	style_option_menu_item_set_max_icon_width :: proc(option: Style_Option_Menu_Item, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setMaxIconWidth
+	style_option_menu_item_set_icon :: proc(option: Style_Option_Menu_Item, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#icon-var
+	style_option_menu_item_set_max_icon_width :: proc(option: Style_Option_Menu_Item, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#maxIconWidth-var
 	@(require_results) style_option_menu_item_get_max_icon_width :: proc(option: Style_Option_Menu_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#maxIconWidth
-	style_option_menu_item_set_reserved_shortcut_width :: proc(option: Style_Option_Menu_Item, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setReservedShortcutWidth
+	style_option_menu_item_set_reserved_shortcut_width :: proc(option: Style_Option_Menu_Item, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#reservedShortcutWidth-var
 	@(require_results) style_option_menu_item_get_reserved_shortcut_width :: proc(option: Style_Option_Menu_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#reservedShortcutWidth
-	style_option_menu_item_set_font :: proc(option: Style_Option_Menu_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#setFont
+	style_option_menu_item_set_font :: proc(option: Style_Option_Menu_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptionmenuitem.html#font-var
 
 	/* QStyleOptionTab */
 
 	@(require_results) style_option_tab_create :: proc(widget: Widget) -> Style_Option_Tab --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#QStyleOptionTab
 	style_option_tab_destroy :: proc(option: Style_Option_Tab) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#dtor.QStyleOptionTab
-	style_option_tab_set_shape :: proc(option: Style_Option_Tab, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setShape
+	style_option_tab_set_shape :: proc(option: Style_Option_Tab, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#shape-var
 	@(require_results) style_option_tab_get_shape :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#shape
-	style_option_tab_set_text :: proc(option: Style_Option_Tab, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setText
+	style_option_tab_set_text :: proc(option: Style_Option_Tab, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#text-var
 	@(require_results) style_option_tab_get_text :: proc(option: Style_Option_Tab) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#text
-	style_option_tab_set_icon :: proc(option: Style_Option_Tab, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setIcon
-	style_option_tab_set_row :: proc(option: Style_Option_Tab, row: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setRow
+	style_option_tab_set_icon :: proc(option: Style_Option_Tab, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#icon-var
+	style_option_tab_set_row :: proc(option: Style_Option_Tab, row: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#row-var
 	@(require_results) style_option_tab_get_row :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#row
-	style_option_tab_set_position :: proc(option: Style_Option_Tab, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setPosition
+	style_option_tab_set_position :: proc(option: Style_Option_Tab, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#position-var
 	@(require_results) style_option_tab_get_position :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#position
-	style_option_tab_set_selected_position :: proc(option: Style_Option_Tab, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setSelectedPosition
+	style_option_tab_set_selected_position :: proc(option: Style_Option_Tab, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#selectedPosition-var
 	@(require_results) style_option_tab_get_selected_position :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#selectedPosition
-	style_option_tab_set_corner_widgets :: proc(option: Style_Option_Tab, widgets: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setCornerWidgets
+	style_option_tab_set_corner_widgets :: proc(option: Style_Option_Tab, widgets: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#cornerWidgets-var
 	@(require_results) style_option_tab_get_corner_widgets :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#cornerWidgets
-	style_option_tab_set_icon_size :: proc(option: Style_Option_Tab, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setIconSize
+	style_option_tab_set_icon_size :: proc(option: Style_Option_Tab, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#iconSize-var
 	style_option_tab_get_icon_size :: proc(option: Style_Option_Tab, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#iconSize
-	style_option_tab_set_document_mode :: proc(option: Style_Option_Tab, is_document_mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#setDocumentMode
+	style_option_tab_set_document_mode :: proc(option: Style_Option_Tab, is_document_mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#documentMode-var
 	@(require_results) style_option_tab_is_document_mode :: proc(option: Style_Option_Tab) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontab.html#isDocumentMode
 
 	/* QStyleOptionHeader */
 
 	@(require_results) style_option_header_create :: proc(widget: Widget) -> Style_Option_Header --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#QStyleOptionHeader
 	style_option_header_destroy :: proc(option: Style_Option_Header) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#dtor.QStyleOptionHeader
-	style_option_header_set_section :: proc(option: Style_Option_Header, section: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setSection
+	style_option_header_set_section :: proc(option: Style_Option_Header, section: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#section-var
 	@(require_results) style_option_header_get_section :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#section
-	style_option_header_set_text :: proc(option: Style_Option_Header, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setText
+	style_option_header_set_text :: proc(option: Style_Option_Header, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#text-var
 	@(require_results) style_option_header_get_text :: proc(option: Style_Option_Header) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#text
-	style_option_header_set_icon :: proc(option: Style_Option_Header, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setIcon
-	style_option_header_set_icon_alignment :: proc(option: Style_Option_Header, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setIconAlignment
+	style_option_header_set_icon :: proc(option: Style_Option_Header, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#icon-var
+	style_option_header_set_icon_alignment :: proc(option: Style_Option_Header, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#iconAlignment-var
 	@(require_results) style_option_header_get_icon_alignment :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#iconAlignment
-	style_option_header_set_position :: proc(option: Style_Option_Header, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setPosition
+	style_option_header_set_position :: proc(option: Style_Option_Header, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#position-var
 	@(require_results) style_option_header_get_position :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#position
-	style_option_header_set_selected_position :: proc(option: Style_Option_Header, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setSelectedPosition
+	style_option_header_set_selected_position :: proc(option: Style_Option_Header, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#selectedPosition-var
 	@(require_results) style_option_header_get_selected_position :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#selectedPosition
-	style_option_header_set_sort_indicator :: proc(option: Style_Option_Header, indicator: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setSortIndicator
+	style_option_header_set_sort_indicator :: proc(option: Style_Option_Header, indicator: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#sortIndicator-var
 	@(require_results) style_option_header_get_sort_indicator :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#sortIndicator
-	style_option_header_set_orientation :: proc(option: Style_Option_Header, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setOrientation
+	style_option_header_set_orientation :: proc(option: Style_Option_Header, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#orientation-var
 	@(require_results) style_option_header_get_orientation :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#orientation
-	style_option_header_set_text_alignment :: proc(option: Style_Option_Header, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#setTextAlignment
+	style_option_header_set_text_alignment :: proc(option: Style_Option_Header, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#textAlignment-var
 	@(require_results) style_option_header_get_text_alignment :: proc(option: Style_Option_Header) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionheader.html#textAlignment
 
 	/* QStyleOptionToolButton */
 
 	@(require_results) style_option_tool_button_create :: proc(widget: Widget) -> Style_Option_Tool_Button --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#QStyleOptionToolButton
 	style_option_tool_button_destroy :: proc(option: Style_Option_Tool_Button) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#dtor.QStyleOptionToolButton
-	style_option_tool_button_set_features :: proc(option: Style_Option_Tool_Button, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setFeatures
+	style_option_tool_button_set_features :: proc(option: Style_Option_Tool_Button, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#features-var
 	@(require_results) style_option_tool_button_get_features :: proc(option: Style_Option_Tool_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#features
-	style_option_tool_button_set_icon :: proc(option: Style_Option_Tool_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setIcon
-	style_option_tool_button_set_icon_size :: proc(option: Style_Option_Tool_Button, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setIconSize
+	style_option_tool_button_set_icon :: proc(option: Style_Option_Tool_Button, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#icon-var
+	style_option_tool_button_set_icon_size :: proc(option: Style_Option_Tool_Button, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#iconSize-var
 	style_option_tool_button_get_icon_size :: proc(option: Style_Option_Tool_Button, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#iconSize
-	style_option_tool_button_set_text :: proc(option: Style_Option_Tool_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setText
+	style_option_tool_button_set_text :: proc(option: Style_Option_Tool_Button, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#text-var
 	@(require_results) style_option_tool_button_get_text :: proc(option: Style_Option_Tool_Button) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#text
-	style_option_tool_button_set_arrow_type :: proc(option: Style_Option_Tool_Button, arrow: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setArrowType
+	style_option_tool_button_set_arrow_type :: proc(option: Style_Option_Tool_Button, arrow: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#arrowType-var
 	@(require_results) style_option_tool_button_get_arrow_type :: proc(option: Style_Option_Tool_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#arrowType
-	style_option_tool_button_set_tool_button_style :: proc(option: Style_Option_Tool_Button, style: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setToolButtonStyle
+	style_option_tool_button_set_tool_button_style :: proc(option: Style_Option_Tool_Button, style: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#toolButtonStyle-var
 	@(require_results) style_option_tool_button_get_tool_button_style :: proc(option: Style_Option_Tool_Button) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#toolButtonStyle
-	style_option_tool_button_set_pos :: proc(option: Style_Option_Tool_Button, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setPos
+	style_option_tool_button_set_pos :: proc(option: Style_Option_Tool_Button, x: c.int, y: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#pos-var
 	style_option_tool_button_get_pos :: proc(option: Style_Option_Tool_Button, x: ^c.int, y: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#pos
-	style_option_tool_button_set_font :: proc(option: Style_Option_Tool_Button, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#setFont
+	style_option_tool_button_set_font :: proc(option: Style_Option_Tool_Button, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbutton.html#font-var
 
 	/* QStyleOptionSpinBox */
 
 	@(require_results) style_option_spin_box_create :: proc(widget: Widget) -> Style_Option_Spin_Box --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#QStyleOptionSpinBox
 	style_option_spin_box_destroy :: proc(option: Style_Option_Spin_Box) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#dtor.QStyleOptionSpinBox
-	style_option_spin_box_set_button_symbols :: proc(option: Style_Option_Spin_Box, symbols: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#setButtonSymbols
+	style_option_spin_box_set_button_symbols :: proc(option: Style_Option_Spin_Box, symbols: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#buttonSymbols-var
 	@(require_results) style_option_spin_box_get_button_symbols :: proc(option: Style_Option_Spin_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#buttonSymbols
-	style_option_spin_box_set_step_enabled :: proc(option: Style_Option_Spin_Box, steps: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#setStepEnabled
+	style_option_spin_box_set_step_enabled :: proc(option: Style_Option_Spin_Box, steps: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#stepEnabled-var
 	@(require_results) style_option_spin_box_get_step_enabled :: proc(option: Style_Option_Spin_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#stepEnabled
-	style_option_spin_box_set_frame :: proc(option: Style_Option_Spin_Box, has_frame: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#setFrame
+	style_option_spin_box_set_frame :: proc(option: Style_Option_Spin_Box, has_frame: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#frame-var
 	@(require_results) style_option_spin_box_has_frame :: proc(option: Style_Option_Spin_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionspinbox.html#hasFrame
 
 	/* QStyleOptionViewItem */
 
 	@(require_results) style_option_view_item_create :: proc(widget: Widget) -> Style_Option_View_Item --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#QStyleOptionViewItem
 	style_option_view_item_destroy :: proc(option: Style_Option_View_Item) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#dtor.QStyleOptionViewItem
-	style_option_view_item_set_display_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setDisplayAlignment
+	style_option_view_item_set_display_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#displayAlignment-var
 	@(require_results) style_option_view_item_get_display_alignment :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#displayAlignment
-	style_option_view_item_set_decoration_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setDecorationAlignment
+	style_option_view_item_set_decoration_alignment :: proc(option: Style_Option_View_Item, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationAlignment-var
 	@(require_results) style_option_view_item_get_decoration_alignment :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationAlignment
-	style_option_view_item_set_text_elide_mode :: proc(option: Style_Option_View_Item, mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setTextElideMode
+	style_option_view_item_set_text_elide_mode :: proc(option: Style_Option_View_Item, mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#textElideMode-var
 	@(require_results) style_option_view_item_get_text_elide_mode :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#textElideMode
-	style_option_view_item_set_decoration_position :: proc(option: Style_Option_View_Item, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setDecorationPosition
+	style_option_view_item_set_decoration_position :: proc(option: Style_Option_View_Item, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationPosition-var
 	@(require_results) style_option_view_item_get_decoration_position :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationPosition
-	style_option_view_item_set_decoration_size :: proc(option: Style_Option_View_Item, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setDecorationSize
+	style_option_view_item_set_decoration_size :: proc(option: Style_Option_View_Item, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationSize-var
 	style_option_view_item_get_decoration_size :: proc(option: Style_Option_View_Item, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#decorationSize
-	style_option_view_item_set_font :: proc(option: Style_Option_View_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setFont
-	style_option_view_item_set_show_decoration_selected :: proc(option: Style_Option_View_Item, is_selected: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setShowDecorationSelected
+	style_option_view_item_set_font :: proc(option: Style_Option_View_Item, font: Font_Handle) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#font-var
+	style_option_view_item_set_show_decoration_selected :: proc(option: Style_Option_View_Item, is_selected: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#showDecorationSelected-var
 	@(require_results) style_option_view_item_is_show_decoration_selected :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#isShowDecorationSelected
-	style_option_view_item_set_features :: proc(option: Style_Option_View_Item, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setFeatures
+	style_option_view_item_set_features :: proc(option: Style_Option_View_Item, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#features-var
 	@(require_results) style_option_view_item_get_features :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#features
-	style_option_view_item_set_text :: proc(option: Style_Option_View_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setText
+	style_option_view_item_set_text :: proc(option: Style_Option_View_Item, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#text-var
 	@(require_results) style_option_view_item_get_text :: proc(option: Style_Option_View_Item) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#text
-	style_option_view_item_set_icon :: proc(option: Style_Option_View_Item, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setIcon
-	style_option_view_item_set_check_state :: proc(option: Style_Option_View_Item, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#setCheckState
+	style_option_view_item_set_icon :: proc(option: Style_Option_View_Item, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#icon-var
+	style_option_view_item_set_check_state :: proc(option: Style_Option_View_Item, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#checkState-var
 	@(require_results) style_option_view_item_get_check_state :: proc(option: Style_Option_View_Item) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionviewitem.html#checkState
 
 	/* QStyleOptionFocusRect */
 
 	@(require_results) style_option_focus_rect_create :: proc(widget: Widget) -> Style_Option_Focus_Rect --- // https://doc.qt.io/qt-6.8/qstyleoptionfocusrect.html#QStyleOptionFocusRect
 	style_option_focus_rect_destroy :: proc(option: Style_Option_Focus_Rect) --- // https://doc.qt.io/qt-6.8/qstyleoptionfocusrect.html#dtor.QStyleOptionFocusRect
-	style_option_focus_rect_set_background_colour :: proc(option: Style_Option_Focus_Rect, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionfocusrect.html#setBackgroundColor
+	style_option_focus_rect_set_background_colour :: proc(option: Style_Option_Focus_Rect, r: c.int, g: c.int, b: c.int, a: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionfocusrect.html#backgroundColor-var
 	style_option_focus_rect_get_background_colour :: proc(option: Style_Option_Focus_Rect, r: ^c.int, g: ^c.int, b: ^c.int, a: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionfocusrect.html#backgroundColor
 
 	/* QStyleOptionDockWidget */
 
 	@(require_results) style_option_dock_widget_create :: proc(widget: Widget) -> Style_Option_Dock_Widget --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#QStyleOptionDockWidget
 	style_option_dock_widget_destroy :: proc(option: Style_Option_Dock_Widget) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#dtor.QStyleOptionDockWidget
-	style_option_dock_widget_set_title :: proc(option: Style_Option_Dock_Widget, title: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#setTitle
+	style_option_dock_widget_set_title :: proc(option: Style_Option_Dock_Widget, title: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#title-var
 	@(require_results) style_option_dock_widget_get_title :: proc(option: Style_Option_Dock_Widget) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#title
-	style_option_dock_widget_set_closable :: proc(option: Style_Option_Dock_Widget, is_closable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#setClosable
+	style_option_dock_widget_set_closable :: proc(option: Style_Option_Dock_Widget, is_closable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#closable-var
 	@(require_results) style_option_dock_widget_is_closable :: proc(option: Style_Option_Dock_Widget) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#isClosable
-	style_option_dock_widget_set_movable :: proc(option: Style_Option_Dock_Widget, is_movable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#setMovable
+	style_option_dock_widget_set_movable :: proc(option: Style_Option_Dock_Widget, is_movable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#movable-var
 	@(require_results) style_option_dock_widget_is_movable :: proc(option: Style_Option_Dock_Widget) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#isMovable
-	style_option_dock_widget_set_floatable :: proc(option: Style_Option_Dock_Widget, is_floatable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#setFloatable
+	style_option_dock_widget_set_floatable :: proc(option: Style_Option_Dock_Widget, is_floatable: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#floatable-var
 	@(require_results) style_option_dock_widget_is_floatable :: proc(option: Style_Option_Dock_Widget) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiondockwidget.html#isFloatable
 
 	/* QStyleOptionGroupBox */
 
 	@(require_results) style_option_group_box_create :: proc(widget: Widget) -> Style_Option_Group_Box --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#QStyleOptionGroupBox
 	style_option_group_box_destroy :: proc(option: Style_Option_Group_Box) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#dtor.QStyleOptionGroupBox
-	style_option_group_box_set_text :: proc(option: Style_Option_Group_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#setText
+	style_option_group_box_set_text :: proc(option: Style_Option_Group_Box, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#text-var
 	@(require_results) style_option_group_box_get_text :: proc(option: Style_Option_Group_Box) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#text
-	style_option_group_box_set_text_alignment :: proc(option: Style_Option_Group_Box, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#setTextAlignment
+	style_option_group_box_set_text_alignment :: proc(option: Style_Option_Group_Box, alignment: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#textAlignment-var
 	@(require_results) style_option_group_box_get_text_alignment :: proc(option: Style_Option_Group_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#textAlignment
-	style_option_group_box_set_line_width :: proc(option: Style_Option_Group_Box, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#setLineWidth
+	style_option_group_box_set_line_width :: proc(option: Style_Option_Group_Box, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#lineWidth-var
 	@(require_results) style_option_group_box_get_line_width :: proc(option: Style_Option_Group_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#lineWidth
-	style_option_group_box_set_mid_line_width :: proc(option: Style_Option_Group_Box, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#setMidLineWidth
+	style_option_group_box_set_mid_line_width :: proc(option: Style_Option_Group_Box, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#midLineWidth-var
 	@(require_results) style_option_group_box_get_mid_line_width :: proc(option: Style_Option_Group_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#midLineWidth
-	style_option_group_box_set_features :: proc(option: Style_Option_Group_Box, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#setFeatures
+	style_option_group_box_set_features :: proc(option: Style_Option_Group_Box, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#features-var
 	@(require_results) style_option_group_box_get_features :: proc(option: Style_Option_Group_Box) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiongroupbox.html#features
 
 	/* QStyleOptionTitleBar */
 
 	@(require_results) style_option_title_bar_create :: proc(widget: Widget) -> Style_Option_Title_Bar --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#QStyleOptionTitleBar
 	style_option_title_bar_destroy :: proc(option: Style_Option_Title_Bar) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#dtor.QStyleOptionTitleBar
-	style_option_title_bar_set_text :: proc(option: Style_Option_Title_Bar, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#setText
+	style_option_title_bar_set_text :: proc(option: Style_Option_Title_Bar, text: cstring) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#text-var
 	@(require_results) style_option_title_bar_get_text :: proc(option: Style_Option_Title_Bar) -> cstring --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#text
-	style_option_title_bar_set_icon :: proc(option: Style_Option_Title_Bar, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#setIcon
-	style_option_title_bar_set_title_bar_flags :: proc(option: Style_Option_Title_Bar, flags: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#setTitleBarFlags
+	style_option_title_bar_set_icon :: proc(option: Style_Option_Title_Bar, icon: Icon) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#icon-var
+	style_option_title_bar_set_title_bar_flags :: proc(option: Style_Option_Title_Bar, flags: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#titleBarFlags-var
 	@(require_results) style_option_title_bar_get_title_bar_flags :: proc(option: Style_Option_Title_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#titleBarFlags
-	style_option_title_bar_set_title_bar_state :: proc(option: Style_Option_Title_Bar, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#setTitleBarState
+	style_option_title_bar_set_title_bar_state :: proc(option: Style_Option_Title_Bar, state: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#titleBarState-var
 	@(require_results) style_option_title_bar_get_title_bar_state :: proc(option: Style_Option_Title_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontitlebar.html#titleBarState
 
 	/* QStyleOptionTabWidgetFrame */
 
 	@(require_results) style_option_tab_widget_frame_create :: proc(widget: Widget) -> Style_Option_Tab_Widget_Frame --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#QStyleOptionTabWidgetFrame
 	style_option_tab_widget_frame_destroy :: proc(option: Style_Option_Tab_Widget_Frame) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#dtor.QStyleOptionTabWidgetFrame
-	style_option_tab_widget_frame_set_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#setLineWidth
+	style_option_tab_widget_frame_set_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#lineWidth-var
 	@(require_results) style_option_tab_widget_frame_get_line_width :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#lineWidth
-	style_option_tab_widget_frame_set_mid_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#setMidLineWidth
+	style_option_tab_widget_frame_set_mid_line_width :: proc(option: Style_Option_Tab_Widget_Frame, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#midLineWidth-var
 	@(require_results) style_option_tab_widget_frame_get_mid_line_width :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#midLineWidth
-	style_option_tab_widget_frame_set_shape :: proc(option: Style_Option_Tab_Widget_Frame, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#setShape
+	style_option_tab_widget_frame_set_shape :: proc(option: Style_Option_Tab_Widget_Frame, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#shape-var
 	@(require_results) style_option_tab_widget_frame_get_shape :: proc(option: Style_Option_Tab_Widget_Frame) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#shape
-	style_option_tab_widget_frame_set_tab_bar_size :: proc(option: Style_Option_Tab_Widget_Frame, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#setTabBarSize
+	style_option_tab_widget_frame_set_tab_bar_size :: proc(option: Style_Option_Tab_Widget_Frame, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#tabBarSize-var
 	style_option_tab_widget_frame_get_tab_bar_size :: proc(option: Style_Option_Tab_Widget_Frame, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#tabBarSize
-	style_option_tab_widget_frame_set_selected_tab_rect :: proc(option: Style_Option_Tab_Widget_Frame, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#setSelectedTabRect
+	style_option_tab_widget_frame_set_selected_tab_rect :: proc(option: Style_Option_Tab_Widget_Frame, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#selectedTabRect-var
 	style_option_tab_widget_frame_get_selected_tab_rect :: proc(option: Style_Option_Tab_Widget_Frame, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabwidgetframe.html#selectedTabRect
 
 	/* QStyleOptionTabBarBase */
 
 	@(require_results) style_option_tab_bar_base_create :: proc(widget: Widget) -> Style_Option_Tab_Bar_Base --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#QStyleOptionTabBarBase
 	style_option_tab_bar_base_destroy :: proc(option: Style_Option_Tab_Bar_Base) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#dtor.QStyleOptionTabBarBase
-	style_option_tab_bar_base_set_shape :: proc(option: Style_Option_Tab_Bar_Base, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#setShape
+	style_option_tab_bar_base_set_shape :: proc(option: Style_Option_Tab_Bar_Base, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#shape-var
 	@(require_results) style_option_tab_bar_base_get_shape :: proc(option: Style_Option_Tab_Bar_Base) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#shape
-	style_option_tab_bar_base_set_tab_bar_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#setTabBarRect
+	style_option_tab_bar_base_set_tab_bar_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#tabBarRect-var
 	style_option_tab_bar_base_get_tab_bar_rect :: proc(option: Style_Option_Tab_Bar_Base, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#tabBarRect
-	style_option_tab_bar_base_set_selected_tab_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#setSelectedTabRect
+	style_option_tab_bar_base_set_selected_tab_rect :: proc(option: Style_Option_Tab_Bar_Base, x: c.int, y: c.int, w: c.int, h: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#selectedTabRect-var
 	style_option_tab_bar_base_get_selected_tab_rect :: proc(option: Style_Option_Tab_Bar_Base, x: ^c.int, y: ^c.int, w: ^c.int, h: ^c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#selectedTabRect
-	style_option_tab_bar_base_set_document_mode :: proc(option: Style_Option_Tab_Bar_Base, is_document_mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#setDocumentMode
+	style_option_tab_bar_base_set_document_mode :: proc(option: Style_Option_Tab_Bar_Base, is_document_mode: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#documentMode-var
 	@(require_results) style_option_tab_bar_base_is_document_mode :: proc(option: Style_Option_Tab_Bar_Base) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontabbarbase.html#isDocumentMode
 
 	/* QStyleOptionToolBar */
 
 	@(require_results) style_option_tool_bar_create :: proc(widget: Widget) -> Style_Option_Tool_Bar --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#QStyleOptionToolBar
 	style_option_tool_bar_destroy :: proc(option: Style_Option_Tool_Bar) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#dtor.QStyleOptionToolBar
-	style_option_tool_bar_set_position_of_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setPositionOfLine
+	style_option_tool_bar_set_position_of_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#positionOfLine-var
 	@(require_results) style_option_tool_bar_get_position_of_line :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#positionOfLine
-	style_option_tool_bar_set_position_within_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setPositionWithinLine
+	style_option_tool_bar_set_position_within_line :: proc(option: Style_Option_Tool_Bar, pos: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#positionWithinLine-var
 	@(require_results) style_option_tool_bar_get_position_within_line :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#positionWithinLine
-	style_option_tool_bar_set_toolbar_area :: proc(option: Style_Option_Tool_Bar, area: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setToolBarArea
+	style_option_tool_bar_set_toolbar_area :: proc(option: Style_Option_Tool_Bar, area: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#toolBarArea-var
 	@(require_results) style_option_tool_bar_get_toolbar_area :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#toolBarArea
-	style_option_tool_bar_set_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setLineWidth
+	style_option_tool_bar_set_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#lineWidth-var
 	@(require_results) style_option_tool_bar_get_line_width :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#lineWidth
-	style_option_tool_bar_set_mid_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setMidLineWidth
+	style_option_tool_bar_set_mid_line_width :: proc(option: Style_Option_Tool_Bar, width: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#midLineWidth-var
 	@(require_results) style_option_tool_bar_get_mid_line_width :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#midLineWidth
-	style_option_tool_bar_set_features :: proc(option: Style_Option_Tool_Bar, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#setFeatures
+	style_option_tool_bar_set_features :: proc(option: Style_Option_Tool_Bar, features: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#features-var
 	@(require_results) style_option_tool_bar_get_features :: proc(option: Style_Option_Tool_Bar) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptiontoolbar.html#features
 
 	/* QStyleOptionRubberBand */
 
 	@(require_results) style_option_rubber_band_create :: proc(widget: Widget) -> Style_Option_Rubber_Band --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#QStyleOptionRubberBand
 	style_option_rubber_band_destroy :: proc(option: Style_Option_Rubber_Band) --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#dtor.QStyleOptionRubberBand
-	style_option_rubber_band_set_shape :: proc(option: Style_Option_Rubber_Band, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#setShape
+	style_option_rubber_band_set_shape :: proc(option: Style_Option_Rubber_Band, shape: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#shape-var
 	@(require_results) style_option_rubber_band_get_shape :: proc(option: Style_Option_Rubber_Band) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#shape
-	style_option_rubber_band_set_opaque :: proc(option: Style_Option_Rubber_Band, is_opaque: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#setOpaque
+	style_option_rubber_band_set_opaque :: proc(option: Style_Option_Rubber_Band, is_opaque: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#opaque-var
 	@(require_results) style_option_rubber_band_is_opaque :: proc(option: Style_Option_Rubber_Band) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionrubberband.html#isOpaque
 
 	/* QStyleOptionSizeGrip */
 
 	@(require_results) style_option_size_grip_create :: proc(widget: Widget) -> Style_Option_Size_Grip --- // https://doc.qt.io/qt-6.8/qstyleoptionsizegrip.html#QStyleOptionSizeGrip
 	style_option_size_grip_destroy :: proc(option: Style_Option_Size_Grip) --- // https://doc.qt.io/qt-6.8/qstyleoptionsizegrip.html#dtor.QStyleOptionSizeGrip
-	style_option_size_grip_set_corner :: proc(option: Style_Option_Size_Grip, corner: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionsizegrip.html#setCorner
+	style_option_size_grip_set_corner :: proc(option: Style_Option_Size_Grip, corner: c.int) --- // https://doc.qt.io/qt-6.8/qstyleoptionsizegrip.html#corner-var
 	@(require_results) style_option_size_grip_get_corner :: proc(option: Style_Option_Size_Grip) -> c.int --- // https://doc.qt.io/qt-6.8/qstyleoptionsizegrip.html#corner
 
 	/* QCommonStyle */
@@ -6528,12 +6528,12 @@ foreign qt_lib {
 	@(require_results) opengl_shader_program_get_log :: proc(program: Opengl_Shader_Program) -> cstring --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#log
 	@(require_results) opengl_shader_program_get_attribute_location :: proc(program: Opengl_Shader_Program, name: cstring) -> c.int --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#attributeLocation
 	@(require_results) opengl_shader_program_get_uniform_location :: proc(program: Opengl_Shader_Program, name: cstring) -> c.int --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#uniformLocation
-	opengl_shader_program_set_uniform_int :: proc(program: Opengl_Shader_Program, location: c.int, value: c.int) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformInt
-	opengl_shader_program_set_uniform_float :: proc(program: Opengl_Shader_Program, location: c.int, value: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformFloat
-	opengl_shader_program_set_uniform_vec2 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformVec2
-	opengl_shader_program_set_uniform_vec3 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformVec3
-	opengl_shader_program_set_uniform_vec4 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float, w: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformVec4
-	opengl_shader_program_set_uniform_mat4 :: proc(program: Opengl_Shader_Program, location: c.int, value: [^]c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformMat4
+	opengl_shader_program_set_uniform_int :: proc(program: Opengl_Shader_Program, location: c.int, value: c.int) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
+	opengl_shader_program_set_uniform_float :: proc(program: Opengl_Shader_Program, location: c.int, value: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
+	opengl_shader_program_set_uniform_vec2 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
+	opengl_shader_program_set_uniform_vec3 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
+	opengl_shader_program_set_uniform_vec4 :: proc(program: Opengl_Shader_Program, location: c.int, x: c.float, y: c.float, z: c.float, w: c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
+	opengl_shader_program_set_uniform_mat4 :: proc(program: Opengl_Shader_Program, location: c.int, value: [^]c.float) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setUniformValue
 	opengl_shader_program_enable_attribute_array :: proc(program: Opengl_Shader_Program, location: c.int) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#enableAttributeArray
 	opengl_shader_program_disable_attribute_array :: proc(program: Opengl_Shader_Program, location: c.int) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#disableAttributeArray
 	opengl_shader_program_set_attribute_buffer :: proc(program: Opengl_Shader_Program, location: c.int, type: c.int, offset: c.int, tuple_size: c.int, stride: c.int) --- // https://doc.qt.io/qt-6.8/qopenglshaderprogram.html#setAttributeBuffer
@@ -6583,7 +6583,7 @@ foreign qt_lib {
 	opengl_texture_set_size :: proc(texture: Opengl_Texture, width: c.int, height: c.int, depth: c.int) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setSize
 	opengl_texture_set_format :: proc(texture: Opengl_Texture, format: c.int) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setFormat
 	opengl_texture_allocate_storage :: proc(texture: Opengl_Texture) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#allocateStorage
-	opengl_texture_set_data_2d :: proc(texture: Opengl_Texture, level: c.int, pixel_format: c.int, pixel_type: c.int, data: rawptr) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setData2d
+	opengl_texture_set_data_2d :: proc(texture: Opengl_Texture, level: c.int, pixel_format: c.int, pixel_type: c.int, data: rawptr) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setData
 	opengl_texture_generate_mip_maps :: proc(texture: Opengl_Texture) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#generateMipMaps
 	opengl_texture_set_min_mag_filters :: proc(texture: Opengl_Texture, min_filter: c.int, mag_filter: c.int) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setMinMagFilters
 	opengl_texture_set_wrap_mode :: proc(texture: Opengl_Texture, wrap_mode: c.int) --- // https://doc.qt.io/qt-6.8/qopengltexture.html#setWrapMode
@@ -6626,7 +6626,7 @@ foreign qt_lib {
 
 	/* Application-Level */
 
-	application_set_override_cursor :: proc(cursor_shape: c.int) --- // https://doc.qt.io/qt-6.8/qapplication.html#setOverrideCursor
+	application_set_override_cursor :: proc(cursor_shape: c.int) --- // https://doc.qt.io/qt-6.8/qguiapplication.html#setOverrideCursor
 	application_restore_override_cursor :: proc() --- // https://doc.qt.io/qt-6.8/qapplication.html#restoreOverrideCursor
 	@(require_results) application_get_screen_count :: proc() -> c.int --- // https://doc.qt.io/qt-6.8/qapplication.html#screenCount
 	application_get_screen_geometry :: proc(screen_index: c.int, x: ^c.int, y: ^c.int, width: ^c.int, height: ^c.int) --- // https://doc.qt.io/qt-6.8/qapplication.html#screenGeometry
@@ -6735,7 +6735,7 @@ foreign qt_lib {
 
 	/* QLabel scaled pixmap convenience */
 
-	label_set_pixmap_scaled :: proc(label: Label, pixmap: Pixmap, w: c.int, h: c.int, aspect_mode: c.int, transform_mode: c.int) --- // https://doc.qt.io/qt-6.8/qlabel.html#setPixmapScaled
+	label_set_pixmap_scaled :: proc(label: Label, pixmap: Pixmap, w: c.int, h: c.int, aspect_mode: c.int, transform_mode: c.int) --- // https://doc.qt.io/qt-6.8/qlabel.html#pixmap-prop
 
 	/* QRegularExpressionMatch */
 
@@ -6783,7 +6783,7 @@ foreign qt_lib {
 	@(require_results) printer_get_colour_mode :: proc(printer: Printer) -> Printer_Colour_Mode --- // https://doc.qt.io/qt-6.8/qprinter.html#colorMode
 	printer_set_collate_copies :: proc(printer: Printer, is_collate: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setCollateCopies
 	@(require_results) printer_get_collate_copies :: proc(printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qprinter.html#collateCopies
-	printer_set_is_full_page :: proc(printer: Printer, is_full_page: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setIsFullPage
+	printer_set_is_full_page :: proc(printer: Printer, is_full_page: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setFullPage
 	@(require_results) printer_get_is_full_page :: proc(printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qprinter.html#isFullPage
 	printer_set_copy_count :: proc(printer: Printer, count: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setCopyCount
 	@(require_results) printer_get_copy_count :: proc(printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qprinter.html#copyCount
@@ -6792,7 +6792,7 @@ foreign qt_lib {
 	@(require_results) printer_get_paper_source :: proc(printer: Printer) -> Printer_Paper_Source --- // https://doc.qt.io/qt-6.8/qprinter.html#paperSource
 	printer_set_duplex :: proc(printer: Printer, mode: Printer_Duplex_Mode) --- // https://doc.qt.io/qt-6.8/qprinter.html#setDuplex
 	@(require_results) printer_get_duplex :: proc(printer: Printer) -> Printer_Duplex_Mode --- // https://doc.qt.io/qt-6.8/qprinter.html#duplex
-	printer_set_is_font_embedding_enabled :: proc(printer: Printer, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setIsFontEmbeddingEnabled
+	printer_set_is_font_embedding_enabled :: proc(printer: Printer, is_enabled: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setFontEmbeddingEnabled
 	@(require_results) printer_is_font_embedding_enabled :: proc(printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qprinter.html#isFontEmbeddingEnabled
 	printer_get_paper_rect :: proc(printer: Printer, unit: Printer_Unit, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) --- // https://doc.qt.io/qt-6.8/qprinter.html#paperRect
 	printer_get_page_rect :: proc(printer: Printer, unit: Printer_Unit, x: ^c.double, y: ^c.double, w: ^c.double, h: ^c.double) --- // https://doc.qt.io/qt-6.8/qprinter.html#pageRect
@@ -6804,9 +6804,9 @@ foreign qt_lib {
 	@(require_results) printer_get_to_page :: proc(printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qprinter.html#toPage
 	printer_set_print_range :: proc(printer: Printer, range: Printer_Print_Range) --- // https://doc.qt.io/qt-6.8/qprinter.html#setPrintRange
 	@(require_results) printer_get_print_range :: proc(printer: Printer) -> Printer_Print_Range --- // https://doc.qt.io/qt-6.8/qprinter.html#printRange
-	printer_set_page_size :: proc(printer: Printer, page_size_id: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setPageSize
-	printer_set_page_orientation :: proc(printer: Printer, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setPageOrientation
-	printer_set_page_margins :: proc(printer: Printer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) --- // https://doc.qt.io/qt-6.8/qprinter.html#setPageMargins
+	printer_set_page_size :: proc(printer: Printer, page_size_id: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageSize
+	printer_set_page_orientation :: proc(printer: Printer, orientation: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageOrientation
+	printer_set_page_margins :: proc(printer: Printer, left: c.double, top: c.double, right: c.double, bottom: c.double, unit: c.int) --- // https://doc.qt.io/qt-6.8/qpagedpaintdevice.html#setPageMargins
 	@(require_results) painter_begin_printer :: proc(painter: Painter, printer: Printer) -> c.int --- // https://doc.qt.io/qt-6.8/qpainter.html
 
 	/* QPrinterInfo */
