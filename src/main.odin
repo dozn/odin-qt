@@ -754,6 +754,7 @@ build_data_views_tab :: proc() -> qt.Widget {
 	list_group := qt.group_box_create(nil, "List Widget")
 	list_layout := qt.vbox_layout_create(auto_cast list_group)
 	demo_state.data_list = qt.list_widget_create(nil)
+	qt.widget_set_style_sheet(auto_cast demo_state.data_list, "QListWidget::item { padding: 2px 0px; }")
 
 	// Styled items using QListWidgetItem
 	item_bold := qt.list_widget_item_create("Bold item")
@@ -2103,13 +2104,17 @@ build_graphics_scene_tab :: proc() -> qt.Widget {
 	text_item := qt.graphics_scene_add_text(scene, "QGraphicsTextItem", t_font)
 	qt.graphics_item_set_pos(auto_cast text_item, 20, 130)
 	qt.graphics_item_set_flag(auto_cast text_item, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast text_item, .Is_Selectable, 1)
 	qt.graphics_text_item_set_default_text_colour(text_item, 40, 40, 120, 255)
 	qt.font_destroy(t_font)
 
 	// QGraphicsLineItem
 	l_pen := qt.pen_create_with_colour(50, 150, 50, 255)
 	qt.pen_set_width(l_pen, 3)
-	_ = qt.graphics_scene_add_line(scene, 320, 20, 500, 120, l_pen)
+	line_item := qt.graphics_scene_add_line(scene, 320, 20, 500, 120, l_pen)
+	qt.graphics_item_set_flag(auto_cast line_item, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast line_item, .Is_Selectable, 1)
+	qt.graphics_item_set_tool_tip(auto_cast line_item, "QGraphicsLineItem")
 	qt.pen_destroy(l_pen)
 
 	// QGraphicsPathItem
@@ -2122,6 +2127,7 @@ build_graphics_scene_tab :: proc() -> qt.Widget {
 	p_brush := qt.brush_create_with_colour(180, 140, 220, 150)
 	gpath_item := qt.graphics_scene_add_path(scene, gpath, p_pen, p_brush)
 	qt.graphics_item_set_flag(auto_cast gpath_item, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast gpath_item, .Is_Selectable, 1)
 	qt.graphics_item_set_tool_tip(auto_cast gpath_item, "QGraphicsPathItem")
 	qt.painter_path_destroy(gpath)
 	qt.pen_destroy(p_pen)
@@ -2156,6 +2162,7 @@ build_graphics_scene_tab :: proc() -> qt.Widget {
 	qt.graphics_scene_add_item(scene, auto_cast simple_text)
 	qt.graphics_item_set_pos(auto_cast simple_text, 340, 250)
 	qt.graphics_item_set_flag(auto_cast simple_text, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast simple_text, .Is_Selectable, 1)
 	qt.graphics_item_set_tool_tip(auto_cast simple_text, "QGraphicsSimpleTextItem")
 	qt.brush_destroy(st_brush)
 	qt.font_destroy(st_font)
@@ -2165,6 +2172,7 @@ build_graphics_scene_tab :: proc() -> qt.Widget {
 	proxy := qt.graphics_scene_add_widget(scene, auto_cast proxy_btn)
 	qt.graphics_item_set_pos(auto_cast proxy, 20, 320)
 	qt.graphics_item_set_flag(auto_cast proxy, .Is_Movable, 1)
+	qt.graphics_item_set_flag(auto_cast proxy, .Is_Selectable, 1)
 
 	qt.layout_add_widget(layout, auto_cast view)
 
