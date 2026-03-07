@@ -31,10 +31,10 @@ Qt is a C++ library, so Odin cannot bind to it directly. This project bridges th
 ┌─────────────────────────────────────────────────────┐
 │  Odin application  (src/main.odin)                  │
 │    import qt "../libs/qt"                           │
-│    qt.application_create(...)                        │
+│    qt.application_create(...)                       │
 ├─────────────────────────────────────────────────────┤
 │  Odin bindings  (libs/qt/qt.odin)                   │
-│    foreign import qt_lib { "wrapper/qt_wrapper.lib", │
+│    foreign import qt_lib { "wrapper/qt_wrapper.lib",│
 │      Qt6Widgets.lib, Qt6Gui.lib, Qt6Core.lib, ... } │
 │    foreign qt_lib { ... }                           │
 ├─────────────────────────────────────────────────────┤
