@@ -4559,10 +4559,10 @@ foreign qt_lib {
 	@(require_results) dir_get_entry_count :: proc(dir: Dir, filters: Dir_Filter) -> c.int --- // https://doc.qt.io/qt-6.8/qdir.html
 	@(require_results) dir_get_entry_list :: proc(dir: Dir, filters: Dir_Filter, entries_out: ^[^]cstring) -> c.int --- // https://doc.qt.io/qt-6.8/qdir.html#entryList
 	dir_free_entry_list :: proc(entries: [^]cstring, count: c.int) --- // https://doc.qt.io/qt-6.8/qdir.html
-	@(require_results) dir_home_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#homePath
-	@(require_results) dir_temp_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#tempPath
-	@(require_results) dir_root_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#rootPath
-	@(require_results) dir_current_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#currentPath
+	@(require_results) home_dir_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#homePath
+	@(require_results) temp_dir_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#tempPath
+	@(require_results) root_dir_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#rootPath
+	@(require_results) current_dir_path :: proc() -> cstring --- // https://doc.qt.io/qt-6.8/qdir.html#currentPath
 
 	/* QDirIterator */
 

@@ -10073,19 +10073,19 @@ void qt_dir_free_entry_list(char **entries, int count) {
     free(entries);
 }
 
-char *qt_dir_home_path(void) {
+char *qt_home_dir_path(void) {
     return qstring_to_heap_utf8(QDir::homePath());
 }
 
-char *qt_dir_temp_path(void) {
+char *qt_temp_dir_path(void) {
     return qstring_to_heap_utf8(QDir::tempPath());
 }
 
-char *qt_dir_root_path(void) {
+char *qt_root_dir_path(void) {
     return qstring_to_heap_utf8(QDir::rootPath());
 }
 
-char *qt_dir_current_path(void) {
+char *qt_current_dir_path(void) {
     return qstring_to_heap_utf8(QDir::currentPath());
 }
 

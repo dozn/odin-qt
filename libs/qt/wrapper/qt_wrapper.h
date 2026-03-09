@@ -2515,10 +2515,10 @@ int   qt_dir_cd_up(void *dir);
 int   qt_dir_get_entry_count(void *dir, int filters);
 int   qt_dir_get_entry_list(void *dir, int filters, char ***entries_out);
 void  qt_dir_free_entry_list(char **entries, int count);
-char *qt_dir_home_path(void);
-char *qt_dir_temp_path(void);
-char *qt_dir_root_path(void);
-char *qt_dir_current_path(void);
+char *qt_home_dir_path(void);
+char *qt_temp_dir_path(void);
+char *qt_root_dir_path(void);
+char *qt_current_dir_path(void);
 
 /* ── QDirIterator ──────────────────────────────────────────────────── */
 

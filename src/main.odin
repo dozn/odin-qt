@@ -2441,8 +2441,8 @@ build_file_data_tab :: proc() -> qt.Widget {
 	{
 		dir := qt.dir_create(".")
 		dir_path := qt.dir_get_absolute_path(dir)
-		home_path := qt.dir_home_path()
-		temp_path := qt.dir_temp_path()
+		home_path := qt.home_dir_path()
+		temp_path := qt.temp_dir_path()
 		entry_count := qt.dir_get_entry_count(dir, .All_Entries)
 
 		info := qt.file_info_create(".")
